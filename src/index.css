@@ -47,7 +47,7 @@
 /* The green theme of the previous system: fresh green on white (dark: deep navy with a brighter green). It is the only
    palette (it overrides the base values above); the salon theme below still wins on the sales screens. */
 :root {
-  --background: #f8f9fa;
+  --background: #fff;
   --foreground: #1f2937;
   --card: #ffffff;
   --card-foreground: #1f2937;
