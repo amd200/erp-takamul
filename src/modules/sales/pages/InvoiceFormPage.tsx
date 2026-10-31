@@ -41,7 +41,7 @@ export default function InvoiceFormPage() {
 
   const form = useForm<InvoiceForm>({
     resolver: zodResolver(invoiceSchema),
-    defaultValues: { date: today(), customerId: 0, warehouseId: 0, employeeId: null, notes: "", globalDiscountKind: "value", globalDiscount: 0, lines: [], payments: [] },
+    defaultValues: { date: today(), customerId: 0, warehouseId: 1, employeeId: null, notes: "", globalDiscountKind: "value", globalDiscount: 0, lines: [], payments: [] },
   })
   const payments = useFieldArray({ control: form.control, name: "payments" })
   const [lines, gKind, gValue, pays, customerId] = useWatch({ control: form.control, name: ["lines", "globalDiscountKind", "globalDiscount", "payments", "customerId"] })
@@ -68,14 +68,12 @@ export default function InvoiceFormPage() {
     if (e && form.getValues("employeeId") == null) form.setValue("employeeId", e.id)
   }, [employees, defaultEmployee, appSettings.salonsTab?.showEmployeeService, form])
 
-  useEffect(() => { if (warehouses.length && !form.getValues("warehouseId")) form.setValue("warehouseId", warehouses[0].id) }, [warehouses, form])
-
   const submit = form.handleSubmit((data) => {
     if (overpaid) return
     create.mutate({ input: data, key: key.current }, {
       onSuccess: (res) => {
         const id = res?.data && typeof res.data === "object" ? res.data.id : typeof res?.data === "number" ? res.data : undefined
-        nav(id ? `/sales/invoices/${id}` : "/sales/invoices")
+        nav("/sales/invoices")
       },
     })
   })
