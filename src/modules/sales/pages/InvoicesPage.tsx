@@ -10,6 +10,7 @@ import { PageHeader } from "@/components/PageHeader"
 import { formatDateTime, formatMoney } from "@/lib/format"
 import { InvoiceActions } from "../components/InvoiceActions"
 import { NotesDialog } from "../components/NotesDialog"
+import { ZatcaResponseDialog } from "../components/ZatcaResponseDialog"
 import { PaymentsDialog } from "../components/PaymentsDialog"
 import { PaymentBadge, ZatcaBadge } from "../components/StatusBadges"
 import { useInvoicePage } from "../queries"
@@ -28,6 +29,7 @@ export default function InvoicesPage({ channel }: { channel: Channel }) {
   const { data, isLoading, isFetching, isError, refetch } = useInvoicePage({ page: page + 1, pageSize: PAGE_SIZE, searchTerm: search, channel, sortBy: sort.key, sortDescending: sort.desc })
   const [payments, setPayments] = useState<SalesOrderDto | null>(null)
   const [notes, setNotes] = useState<SalesOrderDto | null>(null)
+  const [zatcaDoc, setZatcaDoc] = useState<SalesOrderDto | null>(null)
   const onSearch = useCallback((q: string) => { setSearch((prev) => { if (prev !== q) setPage(0); return q }) }, [])
 
   const columns: Column<SalesOrderDto>[] = [
@@ -39,7 +41,7 @@ export default function InvoicesPage({ channel }: { channel: Channel }) {
     { id: "paid", header: t("sales.paid"), cell: (i) => formatMoney(i.totalPaid ?? 0) },
     { id: "total", sortKey: "grandTotal", header: t("sales.grandTotal"), cell: (i) => <span className="font-semibold">{formatMoney(i.grandTotal ?? 0)}</span> },
     ...(stage2 ? [{ id: "zatca", sortKey: "zatcaStatus", header: t("sales.zatcaStatus"), cell: (i: SalesOrderDto) => <ZatcaBadge status={i.zatcaStatus} message={i.zatcaStatus === "Rejected" ? i.zatcaResponse : null} /> }] : []),
-    { id: "actions", header: "", align: "end", cell: (i) => <InvoiceActions invoice={i} channel={channel} onPayments={() => setPayments(i)} onNotes={() => setNotes(i)} /> },
+    { id: "actions", header: "", align: "end", cell: (i) => <InvoiceActions invoice={i} channel={channel} onPayments={() => setPayments(i)} onNotes={() => setNotes(i)} onZatcaResponse={() => setZatcaDoc(i)} /> },
   ]
 
   return (
@@ -64,6 +66,7 @@ export default function InvoicesPage({ channel }: { channel: Channel }) {
       {/* Read from the page data so a recorded payment shows up without closing the dialog. */}
       <PaymentsDialog invoice={payments && (data?.items.find((i) => i.id === payments.id) ?? payments)} onOpenChange={(o) => !o && setPayments(null)} />
       <NotesDialog invoice={notes} onOpenChange={(o) => !o && setNotes(null)} />
+      <ZatcaResponseDialog doc={zatcaDoc && { number: zatcaDoc.orderNumber, zatcaStatus: zatcaDoc.zatcaStatus, zatcaResponse: zatcaDoc.zatcaResponse }} onOpenChange={(o) => !o && setZatcaDoc(null)} />
     </>
   )
 }

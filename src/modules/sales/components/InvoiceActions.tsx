@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query"
 import { Link } from "react-router-dom"
-import { DollarSign, Download, FileDown, FileSpreadsheet, FileText, Mail, MessageCircle, MoreHorizontal, PlusCircle, Printer, RefreshCw, RotateCcw } from "lucide-react"
+import { DollarSign, Download, FileDown, FileSpreadsheet, FileText, Mail, MessageCircle, MoreHorizontal, PlusCircle, Printer, RefreshCw, RotateCcw, ScrollText } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useCan } from "@/shared/permissions/usePermission"
@@ -16,7 +16,7 @@ type FileKind = "xml" | "xlsx" | "pdfa3"
 const fetchFile = (kind: FileKind, id: number) => (kind === "xml" ? invoicesApi.downloadXml(id) : kind === "xlsx" ? invoicesApi.downloadExcel(id) : invoicesApi.downloadPdfA3(id))
 
 /** The invoice row menu, item for item and in the same order and conditions as the current system (A4 and POS invoice lists). */
-export function InvoiceActions({ invoice, channel, onPayments, onNotes }: { invoice: SalesOrderDto; channel: Channel; onPayments: () => void; onNotes: () => void }) {
+export function InvoiceActions({ invoice, channel, onPayments, onNotes, onZatcaResponse }: { invoice: SalesOrderDto; channel: Channel; onPayments: () => void; onNotes: () => void; onZatcaResponse: () => void }) {
   const { t } = useTranslation()
   const can = useCan()
   const settings = useAppSettings()
@@ -74,6 +74,7 @@ export function InvoiceActions({ invoice, channel, onPayments, onNotes }: { invo
           <>
             <DropdownMenuSeparator />
             <DropdownMenuItem className={item} disabled={send.isPending} onSelect={() => send.mutate(invoice.id)}><RefreshCw size={14} />{t("sales.menu.resend")}</DropdownMenuItem>
+            <DropdownMenuItem className={item} onSelect={onZatcaResponse}><ScrollText size={14} />{t("sales.menu.zatcaResponse")}</DropdownMenuItem>
             <DropdownMenuItem className={item} disabled={download.isPending} onSelect={() => download.mutate("xml")}>{download.isPending && download.variables === "xml" ? <RefreshCw className="animate-spin" size={14} /> : <Download size={14} />}{t("sales.menu.zatcaXml")}</DropdownMenuItem>
             <DropdownMenuItem className={item} disabled={download.isPending} onSelect={() => download.mutate("xlsx")}>{download.isPending && download.variables === "xlsx" ? <RefreshCw className="animate-spin" size={14} /> : <Download size={14} />}{t("sales.menu.zatcaExcel")}</DropdownMenuItem>
           </>

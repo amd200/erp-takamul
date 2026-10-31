@@ -73,7 +73,7 @@ export type ReturnItemDto = {
 export type SalesReturnDto = {
   id: number; returnNumber?: string | null; salesOrderId?: number | null; salesOrderNumber?: string | null; customerName?: string | null; returnDate?: string | null
   reason?: string | null; subTotal?: number | null; taxAmount?: number | null; discountAmount?: number | null; grandTotal?: number | null
-  refundedAmount?: number | null; zatcaStatus?: string | null; items?: ReturnItemDto[] | null
+  refundedAmount?: number | null; zatcaStatus?: string | null; zatcaResponse?: string | null; items?: ReturnItemDto[] | null
 }
 
 export type ReturnInput = {
@@ -96,7 +96,7 @@ export type DebitNoteItemDto = {
 }
 export type DebitNoteDto = {
   id: number; debitNoteNumber?: string | null; salesOrderId?: number | null; salesOrderNumber?: string | null; customerName?: string | null; createdByName?: string | null; createdBy?: string | null
-  issueDate?: string | null; subTotal?: number | null; taxAmount?: number | null; grandTotal?: number | null; reason?: string | null; zatcaStatus?: string | null
+  issueDate?: string | null; subTotal?: number | null; taxAmount?: number | null; grandTotal?: number | null; reason?: string | null; zatcaStatus?: string | null; zatcaResponse?: string | null
   items?: DebitNoteItemDto[] | null; payments?: PaymentDto[] | null; totalPaid?: number | null
 }
 

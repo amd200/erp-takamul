@@ -51,7 +51,7 @@ export type DebitNoteForm = z.infer<typeof debitNoteSchema>
 
 export const returnSchema = z.object({
   date: z.string().min(1, "validation.dateRequired"),
-  reason: z.string().trim().min(1, "validation.reasonRequired"),
+  reason: z.string(),
   quantities: z.array(z.number().min(0, "validation.min0")),
   payments: z.array(z.object({ treasuryId: z.number().min(1, "validation.required"), amount: z.number().min(0, "validation.min0") })),
 })

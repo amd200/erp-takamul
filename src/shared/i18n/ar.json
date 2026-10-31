@@ -1074,7 +1074,8 @@
       "whatsapp": "إرسال واتساب",
       "resend": "إعادة الإرسال للهيئة",
       "zatcaXml": "تحميل رد الهيئة (XML)",
-      "zatcaExcel": "تحميل رد الهيئة (Excel)"
+      "zatcaExcel": "تحميل رد الهيئة (Excel)",
+      "zatcaResponse": "رد هيئة الزكاة والضريبة"
     }
   },
   "users": {

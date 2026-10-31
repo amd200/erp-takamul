@@ -1074,7 +1074,8 @@
       "whatsapp": "Send WhatsApp",
       "resend": "Resend to ZATCA",
       "zatcaXml": "Download ZATCA Response (XML)",
-      "zatcaExcel": "Download ZATCA Response (Excel)"
+      "zatcaExcel": "Download ZATCA Response (Excel)",
+      "zatcaResponse": "Zatca Response"
     }
   },
   "users": {

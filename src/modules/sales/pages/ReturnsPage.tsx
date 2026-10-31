@@ -1,5 +1,6 @@
+import { useState } from "react"
 import { Link } from "react-router-dom"
-import { Eye, Send, Undo2 } from "lucide-react"
+import { Eye, ScrollText, Send, Undo2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useAppSettings } from "@/modules/settings"
 import { Button } from "@/components/ui/button"
@@ -11,6 +12,7 @@ import { formatDateTime, formatMoney } from "@/lib/format"
 import { useCan } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
 import { ZatcaBadge } from "../components/StatusBadges"
+import { ZatcaResponseDialog } from "../components/ZatcaResponseDialog"
 import { useReturns, useSendReturn } from "../queries"
 import type { SalesReturnDto } from "../types"
 
@@ -20,6 +22,7 @@ export default function ReturnsPage() {
   const can = useCan()
   const { data, isLoading } = useReturns()
   const send = useSendReturn()
+  const [zatcaDoc, setZatcaDoc] = useState<SalesReturnDto | null>(null)
 
   const columns: Column<SalesReturnDto>[] = [
     { id: "number", header: t("sales.returnNumber"), cell: (r) => <span className="font-semibold">{r.returnNumber}</span> },
@@ -34,6 +37,7 @@ export default function ReturnsPage() {
         {stage2 && can(P.sales.zatca) && r.zatcaStatus !== "Sent" && (
           <Button variant="ghost" size="icon" aria-label={t("sales.actions.resend")} disabled={send.isPending} onClick={() => send.mutate(r.id)}><Send /></Button>
         )}
+        {stage2 && <Button variant="ghost" size="icon" aria-label={t("sales.menu.zatcaResponse")} title={t("sales.menu.zatcaResponse")} onClick={() => setZatcaDoc(r)}><ScrollText /></Button>}
         <Button asChild variant="ghost" size="icon" aria-label={t("common.view")}><Link to={`/sales/returns/${r.id}`}><Eye /></Link></Button>
       </div>
     ) },
@@ -47,6 +51,7 @@ export default function ReturnsPage() {
           searchText={(r) => `${r.returnNumber} ${r.salesOrderNumber} ${r.customerName}`} searchPlaceholder={t("sales.searchReturns")}
           empty={<EmptyState icon={<Undo2 />} title={t("sales.emptyReturns")} hint={t("sales.emptyReturnsHint")} />} />
       </SectionCard>
+      <ZatcaResponseDialog doc={zatcaDoc && { number: zatcaDoc.returnNumber, zatcaStatus: zatcaDoc.zatcaStatus, zatcaResponse: zatcaDoc.zatcaResponse }} onOpenChange={(o) => !o && setZatcaDoc(null)} />
     </>
   )
 }

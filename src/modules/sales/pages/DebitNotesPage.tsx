@@ -1,5 +1,6 @@
+import { useState } from "react"
 import { Link } from "react-router-dom"
-import { FilePlus2, FileText, Plus, Printer, Send } from "lucide-react"
+import { FilePlus2, FileText, Plus, Printer, ScrollText, Send } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useAppSettings } from "@/modules/settings"
 import { Button } from "@/components/ui/button"
@@ -11,6 +12,7 @@ import { formatMoney, formatDateTime } from "@/lib/format"
 import { Can, useCan } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
 import { ZatcaBadge } from "../components/StatusBadges"
+import { ZatcaResponseDialog } from "../components/ZatcaResponseDialog"
 import { useDebitNotes, useSendDebitNote } from "../queries"
 import { SectionCard } from "@/components/SectionCard"
 import type { DebitNoteDto } from "../types"
@@ -23,6 +25,7 @@ export default function DebitNotesPage() {
   const { data, isLoading } = useDebitNotes()
   const send = useSendDebitNote()
   const print = usePrintDebitNote()
+  const [zatcaDoc, setZatcaDoc] = useState<DebitNoteDto | null>(null)
 
   const columns: Column<DebitNoteDto>[] = [
     { id: "number", header: t("sales.debitNumber"), cell: (d) => <span className="font-semibold">{d.debitNoteNumber}</span> },
@@ -43,6 +46,12 @@ export default function DebitNotesPage() {
           <TooltipContent>{t("sales.actions.printRoll")}</TooltipContent>
         </Tooltip>
         {stage2 && can(P.sales.zatca) && d.zatcaStatus !== "Sent" && <Button variant="ghost" size="icon" aria-label={t("sales.actions.resend")} disabled={send.isPending} onClick={() => send.mutate(d.id)}><Send /></Button>}
+        {stage2 && (
+          <Tooltip>
+            <TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label={t("sales.menu.zatcaResponse")} onClick={() => setZatcaDoc(d)}><ScrollText /></Button></TooltipTrigger>
+            <TooltipContent>{t("sales.menu.zatcaResponse")}</TooltipContent>
+          </Tooltip>
+        )}
       </div>
     ) },
   ]
@@ -56,6 +65,7 @@ export default function DebitNotesPage() {
             searchText={(d) => `${d.debitNoteNumber} ${d.salesOrderNumber} ${d.customerName} ${d.reason}`} searchPlaceholder={t("sales.searchDebit")}
             empty={<EmptyState icon={<FilePlus2 />} title={t("sales.emptyDebit")} hint={t("sales.emptyDebitHint")} />} />
         </SectionCard>
+      <ZatcaResponseDialog doc={zatcaDoc && { number: zatcaDoc.debitNoteNumber, zatcaStatus: zatcaDoc.zatcaStatus, zatcaResponse: zatcaDoc.zatcaResponse }} onOpenChange={(o) => !o && setZatcaDoc(null)} />
     </>
   )
 }
