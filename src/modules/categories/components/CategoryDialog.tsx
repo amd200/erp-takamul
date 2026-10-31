@@ -1,0 +1,52 @@
+import { useEffect } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useTranslation } from "react-i18next"
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { FieldGroup } from "@/components/ui/field"
+import { FormInput, FormSelect, FormTextarea } from "@/components/form/FormFields"
+import { categorySchema, categoryFormValues, emptyCategory, type CategoryForm } from "../schema"
+import { useCategories, useSaveCategory } from "../queries"
+import type { Category } from "../types"
+
+export function CategoryDialog({ open, onOpenChange, category }: { open: boolean; onOpenChange: (o: boolean) => void; category: Category | null }) {
+  const { t } = useTranslation()
+  const { data: categories = [] } = useCategories()
+  const save = useSaveCategory()
+  const form = useForm<CategoryForm>({ resolver: zodResolver(categorySchema), defaultValues: emptyCategory })
+
+  useEffect(() => {
+    if (open) form.reset(category ? categoryFormValues(category) : emptyCategory)
+  }, [open, category, form])
+
+  const parents = categories.filter((c) => c.parentCategoryId == null && c.id !== category?.id)
+  const submit = form.handleSubmit((data) => save.mutate({ id: category?.id, data: { ...data, printerName: data.printerName?.trim() || null } }, { onSuccess: () => onOpenChange(false) }))
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader><DialogTitle>{category ? t("categories.edit") : t("categories.add")}</DialogTitle></DialogHeader>
+        <form onSubmit={submit} id="category-form" noValidate>
+          <FieldGroup className="gap-4">
+            <FormInput control={form.control} name="categoryNameAr" label={t("common.nameAr")} required />
+            <FormInput control={form.control} name="categoryNameEn" label={t("common.nameEn")} dir="ltr" />
+            <FormSelect control={form.control} name="parentCategoryId" numeric label={t("categories.parent")} allowEmpty={t("categories.isMain")}
+              options={parents.map((p) => ({ value: String(p.id), label: p.categoryNameAr }))} />
+            <FormInput control={form.control} name="displayOrder" type="number" label={t("common.displayOrder")} />
+            <FormTextarea control={form.control} name="description" label={t("common.description")} placeholder={t("common.optional")} />
+            {/* The server keeps printers per item; this sets it on every item already in the category. */}
+            {category && (
+              <FormInput control={form.control} name="printerName" label={t("categories.printerForItems")} dir="ltr"
+                placeholder="Kitchen" description={t("categories.printerForItemsHint")} />
+            )}
+          </FieldGroup>
+        </form>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
+          <Button type="submit" form="category-form" disabled={save.isPending}>{t("common.save")}</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}

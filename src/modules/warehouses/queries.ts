@@ -1,0 +1,39 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { toast } from "sonner"
+import i18n from "@/shared/i18n"
+import { errorToast } from "@/shared/api/crudQueries"
+import { warehousesApi } from "./service"
+import type { WarehouseInput } from "./types"
+
+export const warehouseKeys = {
+  all: ["warehouses"] as const,
+  list: ["warehouses", "list"] as const,
+}
+
+export const useWarehouseList = () =>
+  useQuery({ queryKey: warehouseKeys.list, queryFn: warehousesApi.list })
+
+export function useSaveWarehouse() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, data }: { id?: number; data: WarehouseInput }) =>
+      id ? warehousesApi.update(id, data) : warehousesApi.create(data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: warehouseKeys.all })
+      toast.success(i18n.t("common.saved"))
+    },
+    onError: (e) => errorToast(e, "common.saveFailed"),
+  })
+}
+
+export function useDeleteWarehouse() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) => warehousesApi.remove(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: warehouseKeys.all })
+      toast.success(i18n.t("common.deleted"))
+    },
+    onError: (e) => errorToast(e, "common.deleteFailed"),
+  })
+}

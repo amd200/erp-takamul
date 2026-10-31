@@ -1,0 +1,19 @@
+import { z } from "zod"
+import { lineSchema } from "@/modules/sales/schema"
+
+export const quoteSchema = z.object({
+  customerId: z.number({ error: "validation.customerRequired" }).min(1, "validation.customerRequired"),
+  date: z.string().min(1, "validation.dateRequired"),
+  validUntil: z.string(),
+  notes: z.string(),
+  globalDiscount: z.number({ error: "validation.number" }).min(0, "validation.min0"),
+  shipping: z.number({ error: "validation.number" }).min(0, "validation.min0"),
+  lines: z.array(lineSchema).min(1, "validation.linesRequired"),
+}).refine((v) => !v.validUntil || v.validUntil >= v.date.slice(0, 10), { path: ["validUntil"], message: "validation.dateOrder" })
+
+export type QuoteForm = z.infer<typeof quoteSchema>
+
+const today = () => new Date().toISOString().slice(0, 10)
+
+/** A new quotation has no expiry date; one that already has it keeps it when edited. */
+export const emptyQuote = (): QuoteForm => ({ customerId: 0, date: today(), validUntil: "", notes: "", globalDiscount: 0, shipping: 0, lines: [] })

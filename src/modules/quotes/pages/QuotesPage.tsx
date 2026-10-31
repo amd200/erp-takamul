@@ -1,0 +1,88 @@
+import { useCallback, useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import { Copy, Loader2, Pencil, Printer, RotateCw, ShoppingCart, Trash2 } from "lucide-react"
+import { useTranslation } from "react-i18next"
+import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { ConfirmDialog } from "@/components/ConfirmDialog"
+import { DataTable, type Column } from "@/components/DataTable"
+import { EmptyState } from "@/components/EmptyState"
+import { formatMoney, formatDateTime } from "@/lib/format"
+import { useCan } from "@/shared/permissions/usePermission"
+import { P } from "@/shared/permissions/permissions"
+import { useAppSettings } from "@/modules/settings"
+import { useLoadQuotation } from "@/modules/pos/useLoadQuotation"
+import { useDeleteQuote, useDuplicateQuote, useQuotePage } from "../queries"
+import type { Quote } from "../types"
+import { usePrintQuote } from "../print/usePrintQuote"
+
+const PAGE_SIZE = 20
+
+function IconAction({ label, onClick, to, children, danger, disabled }: { label: string; onClick?: () => void; to?: string; children: React.ReactNode; danger?: boolean; disabled?: boolean }) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button asChild={!!to} type="button" variant="ghost" size="icon" aria-label={label} onClick={onClick} disabled={disabled} className={danger ? "hover:bg-destructive-soft hover:text-destructive" : undefined}>
+          {to ? <Link to={to}>{children}</Link> : <span>{children}</span>}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>{label}</TooltipContent>
+    </Tooltip>
+  )
+}
+
+/** Price quotations, a page at a time; the server searches. */
+export default function QuotesPage() {
+  const { t, i18n } = useTranslation()
+  const can = useCan()
+  const nav = useNavigate()
+  const posPath = useAppSettings().salesScreenTab?.postype === "Pos2" ? "/pos2" : "/pos"
+  const quotation = useLoadQuotation(() => nav(posPath))
+  const [search, setSearch] = useState("")
+  const [page, setPage] = useState(0)
+  const { data, isLoading, isFetching, isError, refetch } = useQuotePage({ page: page + 1, pageSize: PAGE_SIZE, searchTerm: search })
+  const del = useDeleteQuote()
+  const copy = useDuplicateQuote()
+  const print = usePrintQuote()
+  const [toDelete, setToDelete] = useState<Quote | null>(null)
+  const day = (v: string) => (v ? formatDateTime(v, i18n.language) : "—")
+  const onSearch = useCallback((q: string) => { setSearch((prev) => { if (prev !== q) setPage(0); return q }) }, [])
+
+  // The same seven columns, in the same order and wording, as the current system.
+  const columns: Column<Quote>[] = [
+    { id: "number", header: t("quotes.colNumber"), cell: (q) => q.quotationNumber },
+    { id: "date", header: t("quotes.colDate"), cell: (q) => day(q.quotationDate ?? "") },
+    { id: "customer", header: t("quotes.colCustomer"), cell: (q) => q.customerName || "—" },
+    { id: "by", header: t("quotes.colUser"), cell: (q) => q.createdby || "—" },
+    { id: "discount", header: t("quotes.colDiscount"), cell: (q) => formatMoney(q.discountAmount ?? 0) },
+    { id: "total", header: t("quotes.colTotal"), cell: (q) => formatMoney(q.grandTotal ?? 0) },
+    { id: "actions", header: t("quotes.colActions"), cell: (q) => (
+      <div className="flex justify-center gap-2">
+        <IconAction label={t("quotes.print")} disabled={print.isPending} onClick={() => print.mutate(q)}>{print.isPending && print.variables?.id === q.id ? <Loader2 className="animate-spin" /> : <Printer />}</IconAction>
+        {can(P.sales.pos) && <IconAction label={t("quotes.openInPos")} onClick={() => quotation.load(q)}><ShoppingCart /></IconAction>}
+        {can(P.quotes.edit) && <IconAction label={t("common.edit")} to={`/quotes/${q.id}/edit`}><Pencil /></IconAction>}
+        {can(P.quotes.add) && <IconAction label={t("quotes.duplicate")} onClick={() => copy.mutate(q.id, { onSuccess: () => nav("/quotes") })}><Copy /></IconAction>}
+        {can(P.quotes.delete) && <IconAction label={t("common.delete")} danger onClick={() => setToDelete(q)}><Trash2 /></IconAction>}
+      </div>
+    ) },
+  ]
+
+  return (
+    <>
+      <div className="rounded-lg border border-gray-200 p-6 dark:border-zinc-800">
+        <div className="mb-6">
+          <h1 className="text-2xl leading-snug font-bold">{t("quotes.listTitle")}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{t("quotes.listSubtitle")}</p>
+        </div>
+        <DataTable rows={data?.items} loading={isLoading} columns={columns} rowKey={(q) => q.id} searchPlaceholder={t("quotes.searchOld")}
+          server={{ total: data?.total ?? 0, page, pageSize: PAGE_SIZE, onPage: setPage, onSearch, fetching: isFetching && !isLoading }}
+          emptyText={isError ? undefined : t("quotes.noData")}
+          empty={<EmptyState icon={<RotateCw />} title={t("common.loadFailed")} hint={t("common.loadFailedHint")} action={<Button variant="outline" onClick={() => refetch()}>{t("common.retry")}</Button>} />} />
+      </div>
+      {quotation.confirmation}
+      <ConfirmDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)} pending={del.isPending}
+        title={t("quotes.deleteTitle")} description={t("quotes.deleteBody", { number: toDelete?.quotationNumber })}
+        onConfirm={() => toDelete && del.mutate(toDelete.id, { onSettled: () => setToDelete(null) })} />
+    </>
+  )
+}

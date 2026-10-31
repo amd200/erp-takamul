@@ -1,0 +1,77 @@
+import { useMutation, useQueryClient, type QueryClient } from "@tanstack/react-query"
+import { useTranslation } from "react-i18next"
+import { errorToast } from "@/shared/api/crudQueries"
+import { downloadPdf, printDocument } from "@/shared/print"
+import { useSession } from "@/shared/session/session"
+import { branchKeys } from "@/modules/branches/queries"
+import { branchesApi } from "@/modules/branches/service"
+import { customerKeys } from "@/modules/customers/queries"
+import { customersApi } from "@/modules/customers/service"
+import { eyeText } from "@/modules/customers/form"
+import { EYE_FIELDS, type Customer } from "@/modules/customers/types"
+import { fetchProduct } from "@/modules/products/lookup"
+import { useAppSettings } from "@/modules/settings"
+import { invoicesApi } from "../service"
+import { editorLineOf, orderTotals } from "../totals"
+import type { PaymentMethod, SalesOrderDto } from "../types"
+import type { PrintInvoice } from "./printInvoice"
+import { invoiceA4Doc } from "./invoiceA4Doc"
+import { invoiceA5Doc } from "./invoiceA5Doc"
+import { invoiceRollDoc } from "./invoiceRollDoc"
+
+type Output = "print" | "pdf"
+
+/** Barcodes of the products on the invoice: only those items are read (by id, cached), not the whole catalog. */
+async function barcodesOf(qc: QueryClient, invoice: SalesOrderDto) {
+  const ids = [...new Set((invoice.items ?? []).map((l) => l.productId))]
+  // An item that cannot be read only loses its barcode; the invoice still prints.
+  const products = await Promise.all(ids.map((id) => fetchProduct(qc, id).catch(() => null)))
+  return new Map(products.flatMap((p) => (p && p.barcode ? [[p.id, p.barcode] as const] : [])))
+}
+
+/** The customer's own eye measurements, when there are any to print. */
+const measurementOf = (c: Customer | undefined) => (c && EYE_FIELDS.some((k) => String(c[k] ?? "").trim() !== "") ? eyeText(c) : null)
+type Paper = "a4" | "a5" | "roll"
+
+/** The saved invoice as the layouts print it: the server's own totals and line amounts. */
+const printInvoiceOf = (o: SalesOrderDto): PrintInvoice => ({
+  id: o.id, number: o.orderNumber ?? "", date: o.orderDate ?? "", customerName: o.customerName ?? "", warehouseName: o.warehouseName ?? "",
+  employeeName: o.employeeName ?? null, createdBy: o.createdBy ?? "", notes: o.notes ?? "",
+  lines: (o.items ?? []).map((l) => ({ ...editorLineOf(l), amounts: { discount: l.discountValue ?? 0, tax: l.taxAmount ?? 0, total: l.lineTotal ?? 0 } })),
+  totals: orderTotals(o),
+  payments: (o.payments ?? []).map((p) => ({ method: p.paymentMethod as PaymentMethod, amount: p.amount })),
+  paid: o.totalPaid ?? 0,
+})
+
+/** Prints an invoice on A4 or saves it as PDF. The invoice, branch and customer details it needs are fetched first. */
+export function useInvoiceOutput() {
+  const qc = useQueryClient()
+  const { t } = useTranslation()
+  const settings = useAppSettings()
+  const { branch } = useSession()
+  return useMutation({
+    mutationFn: async ({ invoice: row, as, paper = "a4" }: { invoice: { id: number }; as: Output; paper?: Paper }) => {
+      // A list row may carry only the summary, so the full invoice (its lines and payments) is read first.
+      const invoice = await invoicesApi.get(row.id)
+      const doc0 = printInvoiceOf(invoice)
+      // Missing branch or customer details only blank those boxes; the invoice still prints.
+      const [b, c] = await Promise.all([
+        branch.id ? qc.fetchQuery({ queryKey: branchKeys.detail(branch.id), queryFn: () => branchesApi.get(branch.id!) }).catch(() => undefined) : undefined,
+        invoice.customerId ? qc.fetchQuery({ queryKey: customerKeys.detail(invoice.customerId), queryFn: () => customersApi.get(invoice.customerId!) }).catch(() => undefined) : undefined,
+      ])
+      const isExempt = settings.taxSetting?.taxSetting === "Exempt"
+      const showPaymentMethods = settings.paymentTab?.showPaymentMethods !== false
+      const showPaidAndRemaining = settings.paymentTab?.showPaidAndRemainingAmount !== false
+      const showBranchName = settings.printRollTab?.showBranchNameInPrint === true
+      const methodLabel = (m: string) => t(`sales.methods.${m}`)
+      const doc = paper === "a5"
+        ? invoiceA5Doc(doc0, { branch: b, customer: c, isExempt, barcodes: await barcodesOf(qc, invoice), measurement: measurementOf(c), methodLabel })
+        : paper === "roll"
+        ? invoiceRollDoc(doc0, { branch: b, customer: c, isExempt, showPaymentMethods, showPaidAndRemaining, showBranchName, grid: settings.printRollTab?.invoiceDesign3 === true, showUnits: settings.itemsTab?.enablePieceAndCartonSystem === true, methodLabel })
+        : invoiceA4Doc(doc0, { branch: b, customer: c, isExempt, showPaymentMethods, showPaidAndRemaining, showBranchName, showHeaderAndFooter: settings.printA4Tab?.showHeaderAndFooterInPrint !== false, blue: settings.printA4Tab?.a4InvoiceType === "Design2", design: settings.printA4Tab?.a4InvoiceType === "Design3" || settings.printA4Tab?.a4InvoiceType === "Design4" ? settings.printA4Tab?.a4InvoiceType as "Design3" | "Design4" : undefined, methodLabel })
+      if (as === "pdf") await downloadPdf(doc, doc0.number)
+      else await printDocument(doc)
+    },
+    onError: (e, { as }) => errorToast(e, as === "pdf" ? "sales.pdfFailed" : "sales.printFailed"),
+  })
+}

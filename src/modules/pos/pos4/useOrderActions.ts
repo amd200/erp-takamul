@@ -1,0 +1,58 @@
+import { useCallback, useMemo, useState } from "react"
+import { enteredPrice, taxCalcOf } from "@/modules/products/mappers"
+import type { Product } from "@/modules/products/types"
+import { usePosStore } from "../store"
+import type { CartLine } from "../types"
+import { useBranchedItems } from "./queries"
+import { shownPrice } from "./useCatalog"
+
+type NewLine = Omit<CartLine, "key" | "notes" | "extras">
+
+/** An item as a cart line. The tax rate is the one the server sends with the item, so no tax list is read. */
+const lineOf = (p: Product, name: string): NewLine => ({
+  productId: p.id, unitId: p.baseUnitId ?? 0, name, unitName: "", quantity: 1, unitPrice: enteredPrice(p),
+  taxRate: p.taxPercentage ?? 0, taxCalculation: taxCalcOf(p), discountKind: "value", discount: 0, imageUrl: p.imageUrl ?? null,
+})
+
+/** What picking an item does: adds it, or opens the list of the items a branched item groups. */
+export function useOrderActions(items: Product[] | undefined, productName: (p: Pick<Product, "productNameAr" | "productNameEn">) => string) {
+  const add = usePosStore((s) => s.add)
+  const setQty = usePosStore((s) => s.setQty)
+  const lines = usePosStore((s) => s.lines)
+  const [parentId, setParentId] = useState<number | null>(null)
+  const branched = useBranchedItems(parentId)
+  const parent = parentId != null ? branched.data ?? null : null
+
+  const quantities = useMemo(() => {
+    const m = new Map<number, number>()
+    for (const l of lines) m.set(l.productId, (m.get(l.productId) ?? 0) + l.quantity)
+    return m
+  }, [lines])
+  const quantityOf = useCallback((id: number) => quantities.get(id) ?? 0, [quantities])
+
+  const pick = useCallback((p: Product) => {
+    if (p.productType === "Branched") setParentId(p.id)
+    else add(lineOf(p, productName(p)))
+  }, [add, productName])
+
+  // The newest line of the item loses one; at the last piece every line of the item goes.
+  const decrease = useCallback((productId: number, quantity: number) => {
+    const { lines: all, remove } = usePosStore.getState()
+    if (quantity <= 1) return all.filter((l) => l.productId === productId).forEach((l) => remove(l.key))
+    const last = [...all].reverse().find((l) => l.productId === productId)
+    if (last) setQty(last.key, last.quantity - 1)
+  }, [setQty])
+
+  const pickChild = (child: NonNullable<Product["children"]>[number]) => {
+    const full = items?.find((p) => p.id === child.id)
+    const name = productName(child)
+    if (full) return add(lineOf(full, name))
+    add({ productId: child.id, unitId: 0, name, unitName: "", quantity: 1, unitPrice: child.sellingPrice ?? 0, taxRate: 0, taxCalculation: 1, discountKind: "value", discount: 0, imageUrl: null })
+  }
+  const childPrice = (child: NonNullable<Product["children"]>[number]) => {
+    const full = items?.find((p) => p.id === child.id)
+    return full ? shownPrice(full) : child.sellingPrice ?? 0
+  }
+
+  return { pick, decrease, quantityOf, parent, closeParent: () => setParentId(null), pickChild, childPrice }
+}

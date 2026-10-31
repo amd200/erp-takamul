@@ -1,0 +1,312 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* shadcn tokens filled from the Takamul logo: deep navy wordmark, leaf green swoosh, graphite subtitle.
+   Navy leads (buttons, active states), green marks success, neutrals carry a faint navy tint.
+   Extra tokens beyond shadcn's set: success, warning, destructive-soft, faint, brand-green. */
+:root {
+  --radius: 0.625rem;
+  /* The old system's text, muted-text and page tones, used by the shell. */
+  --text-main: #4b5563;
+  --text-muted: #6b7280;
+  --bg-main: #ffffff;
+  --input-bg: #ffffff;
+  /* Tables: white header with grey text, a soft grey hover. */
+  --table-header-text: #9ca3af;
+  --table-header-border: #e2e8f0;
+  --table-row-hover: #f1f5f9;
+  --background: #ffffff;
+  --foreground: oklch(0.145 0 0);
+  --card: #ffffff;
+  --card-foreground: oklch(0.145 0 0);
+  --popover: #ffffff;
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: #2ecc71;
+  --primary-foreground: #ffffff;
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-soft: rgba(239, 68, 68, 0.1);
+  --success: #22c55e;
+  --success-soft: rgba(34, 197, 94, 0.1);
+  --warning: #eab308;
+  --warning-soft: rgba(234, 179, 8, 0.12);
+  --faint: #9ca3af;
+  --brand-green: #2ecc71;
+  /* The old project's dark navy (its POS sidebar and dashboard card). */
+  --brand-navy: #000052;
+  /* The purchase screen's table header and delete button in the current system. */
+  --pos-purchase: #871d46;
+  --pos-purchase-foreground: #ffffff;
+  /* The home page's four "today" cards, as in the current system (its dark theme keeps them). */
+  --dashboard-sales: #000052;
+  --dashboard-sales-text: #ffffff;
+  --dashboard-expenses: #6b7280;
+  --dashboard-expenses-text: #ffffff;
+  --dashboard-profit: #8b5cf6;
+  --dashboard-profit-text: #ffffff;
+  --dashboard-purchases: #ce2029;
+  --dashboard-purchases-text: #ffffff;
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: #2ecc71;
+  --chart-2: #3b82f6;
+  --chart-3: #8b5cf6;
+  --chart-4: #14b8a6;
+  --chart-5: #ef4444;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: #0e1426;
+  --foreground: #e6e9f3;
+  --card: #151c33;
+  --card-foreground: #e6e9f3;
+  --popover: #18203a;
+  --popover-foreground: #e6e9f3;
+  --primary: #5a78cc;
+  --primary-foreground: #ffffff;
+  --secondary: #1d2848;
+  --secondary-foreground: #bccaf4;
+  --muted: #1d2540;
+  --muted-foreground: #98a1b8;
+  --accent: #1d2540;
+  --accent-foreground: #e6e9f3;
+  --destructive: #e5857e;
+  --destructive-soft: #3b2325;
+  --success: #6cc27a;
+  --success-soft: #1b3326;
+  --warning: #dba957;
+  --warning-soft: #382f1d;
+  --faint: #6a738d;
+  --brand-green: #5cbf6a;
+  --border: #242d49;
+  --input: #2b3554;
+  --ring: #7d93d6;
+  --chart-1: #7d93d6;
+  --chart-2: #5cbf6a;
+  --chart-3: #bccaf4;
+  --chart-4: #2f8f3a;
+  --chart-5: #dba957;
+  --sidebar: #151c33;
+  --sidebar-foreground: #98a1b8;
+  --sidebar-primary: #5a78cc;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1d2848;
+  --sidebar-accent-foreground: #bccaf4;
+  --sidebar-border: #242d49;
+  --sidebar-ring: #7d93d6;
+}
+
+/* The green theme of the previous system: fresh green on white (dark: deep navy with a brighter green). It is an
+   accent on top of light / dark, picked from the theme menu; the salon theme below still wins on the sales screens. */
+.theme-green {
+  --background: #f8f9fa;
+  --foreground: #1f2937;
+  --card: #ffffff;
+  --card-foreground: #1f2937;
+  --popover: #ffffff;
+  --popover-foreground: #1f2937;
+  --primary: #2ecc71;
+  --primary-foreground: #ffffff;
+  --secondary: #eafaf1;
+  --secondary-foreground: #1e8449;
+  --muted: #f1f5f9;
+  --muted-foreground: #6b7280;
+  --accent: #eafaf1;
+  --accent-foreground: #1e8449;
+  --success: #27ae60;
+  --success-soft: #e3f7ec;
+  --faint: #9ca3af;
+  --brand-green: #2ecc71;
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #2ecc71;
+  --chart-1: #2ecc71;
+  --chart-2: #27ae60;
+  --chart-3: #1e8449;
+  --chart-4: #82e0aa;
+  --chart-5: #b97d1c;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #6b7280;
+  --sidebar-primary: #2ecc71;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #eafaf1;
+  --sidebar-accent-foreground: #1e8449;
+  --sidebar-border: #e5e7eb;
+  --sidebar-ring: #2ecc71;
+}
+
+.theme-green:where(.dark) {
+  --background: #0a1222;
+  --foreground: #f8fafc;
+  --card: #0f1a30;
+  --card-foreground: #f8fafc;
+  --popover: #0f1a30;
+  --popover-foreground: #f8fafc;
+  --primary: #22c55e;
+  --primary-foreground: #ffffff;
+  --secondary: #1b2745;
+  --secondary-foreground: #86efac;
+  --muted: #1b2745;
+  --muted-foreground: #94a3b8;
+  --accent: #1b2745;
+  --accent-foreground: #86efac;
+  --success: #4ade80;
+  --success-soft: #12301f;
+  --faint: #64748b;
+  --brand-green: #22c55e;
+  --border: #1e2a44;
+  --input: #263454;
+  --ring: #22c55e;
+  --chart-1: #22c55e;
+  --chart-2: #4ade80;
+  --chart-3: #86efac;
+  --chart-4: #16a34a;
+  --chart-5: #dba957;
+  --sidebar: #0f1a30;
+  --sidebar-foreground: #94a3b8;
+  --sidebar-primary: #22c55e;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1b2745;
+  --sidebar-accent-foreground: #86efac;
+  --sidebar-border: #1e2a44;
+  --sidebar-ring: #22c55e;
+}
+
+/* The salon (beauty) theme: warm rose over blush, as in the previous system. Switched on for the sales screens
+   by the "beautyTheme" setting (see usePosBeauty), so it also reaches dialogs, which sit outside the page root. */
+.beauty {
+  --background: #fdf0ed;
+  --foreground: #4a3535;
+  --card: #ffffff;
+  --card-foreground: #4a3535;
+  --popover: #ffffff;
+  --popover-foreground: #4a3535;
+  --primary: #d65f5f;
+  --primary-foreground: #ffffff;
+  --secondary: #feeae6;
+  --secondary-foreground: #d65f5f;
+  --muted: #feeae6;
+  --muted-foreground: #8c7373;
+  --accent: #feeae6;
+  --accent-foreground: #d65f5f;
+  --destructive: #c4484b;
+  --border: #f3d9d3;
+  --input: #f3d9d3;
+  --ring: #d65f5f;
+  --sidebar: #fdf0ed;
+  --sidebar-foreground: #4a3535;
+  --sidebar-primary: #d65f5f;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #feeae6;
+  --sidebar-accent-foreground: #d65f5f;
+  --sidebar-border: #f3d9d3;
+  --sidebar-ring: #d65f5f;
+}
+
+@theme inline {
+  --font-sans: "Cairo", "Segoe UI", Tahoma, sans-serif;
+  --font-heading: var(--font-sans);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-soft: var(--destructive-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-faint: var(--faint);
+  --color-brand-green: var(--brand-green);
+  --color-brand-navy: var(--brand-navy);
+  --color-pos-purchase: var(--pos-purchase);
+  --color-pos-purchase-foreground: var(--pos-purchase-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  html {
+    @apply font-sans;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+.btn-minimal-action {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-minimal-action.btn-edit:hover { background: #f0fdf4; color: #16a34a; }
+.btn-minimal-action.btn-delete:hover { background: #fef2f2; color: #dc2626; }
+
+.btn-minimal-action.btn-view:hover { background: #eff6ff; color: #2563eb; }

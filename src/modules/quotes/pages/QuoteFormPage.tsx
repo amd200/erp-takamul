@@ -1,0 +1,106 @@
+import { useEffect, useMemo, useRef, useState } from "react"
+import { quoteGlobalDiscount, quoteLineOf } from "../form"
+import { Controller, FormProvider, useForm, useWatch } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Link, useNavigate, useParams } from "react-router-dom"
+import { useTranslation } from "react-i18next"
+import { List, Plus } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { QuickCustomerDialog } from "@/modules/pos/components/QuickCustomerDialog"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { FormInput, FormSelect, FormTextarea } from "@/components/form/FormFields"
+import { PageHeader } from "@/components/PageHeader"
+import { SectionCard } from "@/components/SectionCard"
+import { useCustomers } from "@/modules/lookups/service"
+import { LinesEditor } from "@/modules/sales/components/LinesEditor"
+import { invoiceTotals } from "@/modules/sales/totals"
+import { QuoteSummary } from "../components/QuoteSummary"
+import { useQuote, useSaveQuote } from "../queries"
+import { useAppSettings } from "@/modules/settings"
+import { emptyQuote, quoteSchema, type QuoteForm } from "../schema"
+
+/** New or edited quotation: who it is for, how long it is open, the lines, and what it comes to with delivery. */
+export default function QuoteFormPage() {
+  const { t } = useTranslation()
+  const nav = useNavigate()
+  const { id } = useParams()
+  const editId = id ? Number(id) : undefined
+  const { data: existing, isLoading } = useQuote(editId)
+  const { data: customers = [] } = useCustomers()
+  const save = useSaveQuote()
+  const [addingCustomer, setAddingCustomer] = useState(false)
+  const defaultCustomer = useAppSettings().customersTab?.defultCustomar
+  const form = useForm<QuoteForm>({ resolver: zodResolver(quoteSchema), defaultValues: emptyQuote() })
+
+  // A new quotation starts on the branch's default customer, once; editing keeps the saved one.
+  const defaulted = useRef(false)
+  useEffect(() => {
+    if (editId || defaulted.current || !customers.length) return
+    defaulted.current = true
+    const c = customers.find((x) => x.id === Number(defaultCustomer))
+    if (c && !form.getValues("customerId")) form.setValue("customerId", c.id)
+  }, [editId, customers, defaultCustomer, form])
+
+  useEffect(() => {
+    if (!existing) return
+    form.reset({
+      customerId: existing.customerid ?? undefined, date: (existing.quotationDate ?? "").slice(0, 10), validUntil: (existing.validUntil ?? "").slice(0, 10), notes: existing.notes ?? "",
+      globalDiscount: quoteGlobalDiscount(existing), shipping: 0, lines: (existing.items ?? []).map(quoteLineOf),
+    })
+  }, [existing, form])
+
+  const [lines, globalDiscount, customerId, date] = useWatch({ control: form.control, name: ["lines", "globalDiscount", "customerId", "date"] })
+  const totals = useMemo(() => invoiceTotals(lines, "value", globalDiscount || 0), [lines, globalDiscount])
+
+  if (editId && isLoading) return <div className="h-96 animate-pulse rounded-xl bg-muted" />
+
+  const submit = form.handleSubmit((data) => save.mutate({ id: editId, data }, { onSuccess: () => nav("/quotes") }))
+
+  const customerName = customers.find((c) => c.id === customerId)?.customerName ?? ""
+
+  // Laid out as in the current system: basic data, the lines, then one box with the two buttons; the total floats in a corner.
+  return (
+    <FormProvider {...form}>
+      <form onSubmit={submit} noValidate className="flex flex-col gap-6">
+        <PageHeader title={editId ? t("quotes.editTitle", { number: existing?.quotationNumber }) : t("quotes.newTitle")}
+          actions={<Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/5 hover:text-primary"><Link to="/quotes"><List />{t("quotes.backToList")}</Link></Button>} />
+
+        <SectionCard title={t("sales.basics")}>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <Controller control={form.control} name="date" render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="q-date">{t("common.date")}<span className="text-destructive">*</span></FieldLabel>
+                <Input id="q-date" type="date" {...field} />
+              </Field>
+            )} />
+            <div className="flex items-start gap-3">
+              <div className="min-w-0 flex-1">
+                <FormSelect control={form.control} name="customerId" numeric required label={t("sales.customer")} placeholder={t("reports.pick")}
+                  options={customers.map((c) => ({ value: String(c.id), label: c.customerName }))} />
+              </div>
+              <Button type="button" variant="outline" size="icon-lg" className="mt-[27px] shrink-0" aria-label={t("customers.add")} title={t("customers.add")} onClick={() => setAddingCustomer(true)}><Plus /></Button>
+            </div>
+            <FormInput control={form.control} name="globalDiscount" type="number" label={t("quotes.discountValue")} />
+          </div>
+          <div className="mt-6">
+            <FormTextarea control={form.control} name="notes" label={t("common.notes")} placeholder={t("quotes.notesHint")} />
+          </div>
+        </SectionCard>
+
+        <SectionCard title={t("sales.invoiceDetails")}>
+          <h3 className="mb-4 text-sm font-semibold text-muted-foreground">{t("sales.itemsList")}</h3>
+          <LinesEditor simple />
+        </SectionCard>
+
+        <div className="flex flex-col-reverse items-stretch justify-between gap-3 rounded-sm border border-border bg-background p-5 sm:flex-row sm:items-center sm:p-6">
+          <Button asChild variant="destructive" size="xl"><Link to="/quotes">{t("common.cancel")}</Link></Button>
+          <span className="text-sm text-destructive" role="status">{form.formState.submitCount > 0 && Object.keys(form.formState.errors).length > 0 ? t("products.fixErrors") : ""}</span>
+          <Button type="submit" size="xl" disabled={save.isPending}>{editId ? t("common.saveChanges") : t("quotes.saveIssue")}</Button>
+        </div>
+      </form>
+      <QuoteSummary totals={totals} customerName={customerName} date={date} count={lines.length} />
+      <QuickCustomerDialog open={addingCustomer} onOpenChange={setAddingCustomer} onCreated={(id) => form.setValue("customerId", id, { shouldValidate: true })} />
+    </FormProvider>
+  )
+}

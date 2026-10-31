@@ -1,0 +1,322 @@
+.pos4-calories {
+  display: none;
+}
+
+/* The phone layout of the customer's ordering screen; the wide layout is plain Tailwind. */
+@media (width < 64rem) {
+  .pos4-menu {
+    scroll-padding-top: 108px;
+  }
+  .pos4-shell {
+    height: 100dvh;
+    --primary: #009c58;
+    --primary-foreground: #fff;
+    --bg-main: #f7f9f9;
+    --card: #fff;
+    --foreground: #202731;
+    --muted-foreground: #8b929d;
+    --border: #e8edeb;
+  }
+  .pos4-mobile-masthead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: max(18px, env(safe-area-inset-top)) 16px 10px;
+    min-height: 90px;
+  }
+  .pos4-brand-logo {
+    width: 98px;
+    height: 54px;
+    object-fit: contain;
+  }
+  .pos4-cart-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 42px;
+    padding: 3px 10px 3px 4px;
+    border: 1px solid #e2e8e5;
+    border-radius: 999px;
+    color: #424a50;
+    background: #fff;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .pos4-cart-pill-icon {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: #009c58;
+    color: white;
+  }
+  .pos4-cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -4px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 3px;
+    display: grid;
+    place-items: center;
+    border: 2px solid white;
+    border-radius: 999px;
+    background: #16875c;
+    font-size: 9px;
+    line-height: 1;
+  }
+  .pos4-menu-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: #f7f9f9;
+  }
+  .pos4-branch-card-wrap {
+    height: 54px;
+    background: transparent;
+  }
+  .pos4-branch-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 54px;
+    padding: 5px 16px 10px;
+    gap: 9px;
+    background: transparent;
+    direction: ltr;
+  }
+  .pos4-branch-text {
+    width: min(100%, 30rem);
+    direction: rtl;
+    text-align: left;
+  }
+  .pos4-location-icon {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    background: #eff2f4;
+    color: #8b929d;
+  }
+  .pos4-branch-name {
+    margin: 0;
+    color: var(--foreground);
+    letter-spacing: -.035em;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 800;
+  }
+  .pos4-branch-subtitle {
+    margin: 0;
+    color: #8b929d;
+    font-size: 11px;
+  }
+  .pos4-categories {
+    box-shadow: none;
+    border: 0;
+    background: transparent;
+    padding-block: 7px 12px;
+  }
+  .pos4-categories > div > div {
+    gap: 7px;
+    padding-inline: 14px;
+  }
+  .pos4-categories button[aria-pressed] {
+    height: 36px;
+    padding: 0 20px;
+    margin: 0;
+    border: 0;
+    border-radius: 14px;
+    background: #eef1f2;
+    color: #30373d;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .pos4-categories button[aria-pressed="true"] {
+    background: #009c58;
+    color: white;
+  }
+  .pos4-mobile-search {
+    padding: 0 14px 10px;
+  }
+  .pos4-mobile-search > div {
+    height: 36px;
+    border-radius: 12px;
+    box-shadow: none;
+  }
+  .pos4-product-group > h2 {
+    padding-block: 8px;
+    border: 0;
+    font-size: 12px !important;
+    color: #858e94;
+  }
+  .pos4-menu .pos4-product-card {
+    display: grid;
+    grid-template-columns: 30% minmax(0, 1fr);
+    direction: ltr;
+    min-height: 132px;
+    gap: 12px;
+    padding: 7px;
+    margin-bottom: 9px;
+    border: 1px solid #f0f3f2;
+    border-radius: 13px;
+    background: #fff;
+    box-shadow: 0 3px 14px rgb(24 58 42 / 3%);
+  }
+  .pos4-product-card > span[aria-label] {
+    display: none;
+  }
+  .pos4-product-card > div:first-of-type {
+    width: 100%;
+    display: block;
+  }
+  .pos4-product-card > div:first-of-type > div {
+    position: static;
+    width: 100%;
+    height: 100%;
+    min-height: 118px;
+    border-radius: 9px;
+    background: #f1f4f3;
+  }
+  .pos4-product-content {
+    padding: 6px 3px 42px 0;
+  }
+  .pos4-product-content > div:first-child {
+    font-size: 16px !important;
+    line-height: 1.5;
+    font-weight: 800;
+  }
+  .pos4-product-content > p {
+    margin-top: 3px;
+    font-size: 11px;
+    line-height: 1.7;
+    color: #89929d;
+  }
+  .pos4-product-meta {
+    position: absolute;
+    bottom: 13px;
+    right: 54px;
+    left: calc(30% + 20px);
+    justify-content: flex-start;
+    gap: 8px;
+    margin: 0;
+    flex-wrap: wrap;
+  }
+  .pos4-product-meta > span:first-child {
+    font-size: 15px !important;
+    white-space: nowrap;
+    color: #149465;
+  }
+  .pos4-product-meta > span:first-child svg {
+    width: 11px;
+    height: 11px;
+  }
+  .pos4-menu .pos4-calories {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    font-size: 9px;
+    font-weight: 600;
+    color: #9199a4;
+    padding-inline-start: 8px;
+    border-inline-start: 1px solid #e7eceb;
+  }
+  .pos4-product-card .pos4-quantity {
+    left: auto;
+    right: 10px;
+    bottom: 11px;
+    height: 32px;
+    flex-direction: row-reverse;
+    padding: 2px;
+    border-radius: 999px;
+    background: white;
+    border-color: #d9e8e0;
+    box-shadow: none;
+    color: #168f5c;
+  }
+  .pos4-product-card .pos4-quantity button {
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    background: #009c58;
+    color: white;
+  }
+  .pos4-product-card .pos4-quantity--empty {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 0;
+    background: #009c58;
+  }
+  .pos4-product-card .pos4-quantity--empty button {
+    width: 34px;
+    height: 34px;
+  }
+  .pos4-product-card:has(.pos4-quantity:not(.pos4-quantity--empty)) .pos4-product-meta {
+    right: 104px;
+  }
+  .pos4-cart-bar-wrap {
+    bottom: max(12px, env(safe-area-inset-bottom));
+  }
+  .pos4-cart-bar {
+    min-height: 58px;
+    padding: 9px 10px;
+    border-radius: 16px;
+    background: #12865c;
+    color: white;
+    box-shadow: 0 5px 20px rgb(12 111 71 / 12%);
+  }
+  .pos4-checkout-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 9px 12px;
+    border-radius: 999px;
+    background: white;
+    color: #15865d;
+    font-size: 11px;
+    font-weight: 800;
+  }
+  .pos4-cart-total {
+    text-align: center;
+    font-size: 10px;
+    color: #c5e4d6;
+  }
+  .pos4-cart-total strong {
+    font-size: 16px;
+    color: white;
+    line-height: 1.4;
+  }
+  .pos4-cart-count {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding-inline-start: 10px;
+    border-inline-start: 1px solid #4da47f;
+    font-size: 11px;
+  }
+  .pos4-cart-pill:focus-visible,
+  .pos4-quantity button:focus-visible {
+    outline: 2px solid #16865d;
+    outline-offset: 3px;
+  }
+  @media (width < 360px) {
+    .pos4-product-meta {
+      gap: 4px;
+    }
+    .pos4-menu .pos4-calories {
+      font-size: 8px;
+    }
+    .pos4-checkout-label {
+      padding-inline: 8px;
+    }
+    .pos4-cart-count {
+      gap: 3px;
+      padding-inline-start: 6px;
+    }
+  }
+}
