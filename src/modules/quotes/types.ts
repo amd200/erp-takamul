@@ -25,7 +25,6 @@ export type Quote = {
   createdby?: string | null
   notes?: string | null
   quotationDate?: string | null
-  validUntil?: string | null
   subTotal?: number | null
   taxAmount?: number | null
   discountAmount?: number | null
@@ -39,7 +38,6 @@ export type Quote = {
 export type QuoteInput = {
   customerId: number
   date: string
-  validUntil: string
   notes: string
   globalDiscount: number
   shipping: number

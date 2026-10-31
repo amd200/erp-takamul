@@ -20,7 +20,7 @@ import { useQuote, useSaveQuote } from "../queries"
 import { useAppSettings } from "@/modules/settings"
 import { emptyQuote, quoteSchema, type QuoteForm } from "../schema"
 
-/** New or edited quotation: who it is for, how long it is open, the lines, and what it comes to with delivery. */
+/** New or edited quotation: who it is for, the lines, and what it comes to with delivery. */
 export default function QuoteFormPage() {
   const { t } = useTranslation()
   const nav = useNavigate()
@@ -45,7 +45,7 @@ export default function QuoteFormPage() {
   useEffect(() => {
     if (!existing) return
     form.reset({
-      customerId: existing.customerid ?? undefined, date: (existing.quotationDate ?? "").slice(0, 10), validUntil: (existing.validUntil ?? "").slice(0, 10), notes: existing.notes ?? "",
+      customerId: existing.customerid ?? undefined, date: (existing.quotationDate ?? "").slice(0, 10), notes: existing.notes ?? "",
       globalDiscount: quoteGlobalDiscount(existing), shipping: 0, lines: (existing.items ?? []).map(quoteLineOf),
     })
   }, [existing, form])

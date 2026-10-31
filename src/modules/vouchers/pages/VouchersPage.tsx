@@ -1,8 +1,7 @@
 import { useState } from "react"
-import { partyTypeOf, voucherNumber } from "../types"
+import { voucherNumber } from "../types"
 import { FileDown, HandCoins, Loader2, Plus, Printer, Wallet } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
@@ -38,7 +37,7 @@ function VouchersPage({ kind }: { kind: VoucherKind }) {
     { id: "number", header: t("vouchers.number"), cell: (v) => <span className="font-semibold">{voucherNumber(v)}</span> },
     { id: "date", header: t("common.date"), cell: (v) => <span className="text-muted-foreground">{formatDateTime(v.transactionDate, i18n.language)}</span> },
     { id: "party", header: t(kind === "receipt" ? "vouchers.from" : "vouchers.to"), cell: (v) => (
-      <span className="inline-flex flex-wrap items-center gap-2">{v.partyName}<Badge variant="muted">{t(`vouchers.party.${partyTypeOf(v)}`)}</Badge></span>
+      <span>{v.partyName}</span>
     ) },
     { id: "treasury", header: t("sales.treasury"), cell: (v) => treasuries.find((x) => x.id === v.treasuryId)?.name },
     { id: "amount", header: t("sales.amount"), cell: (v) => <span className={kind === "receipt" ? "font-semibold text-success" : "font-semibold"}>{formatMoney(v.amount)}</span> },

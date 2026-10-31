@@ -36,7 +36,8 @@ export default function QuotesPage() {
   const { t, i18n } = useTranslation()
   const can = useCan()
   const nav = useNavigate()
-  const posPath = useAppSettings().salesScreenTab?.postype === "Pos2" ? "/pos2" : "/pos"
+  const postype = useAppSettings().salesScreenTab?.postype
+  const posPath = postype === "Pos3" ? "/pos-optics" : postype === "Pos2" ? "/pos2" : "/pos"
   const quotation = useLoadQuotation(() => nav(posPath))
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(0)

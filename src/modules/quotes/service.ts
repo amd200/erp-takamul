@@ -33,7 +33,7 @@ export const quotesApi = {
   },
   get: (id: number) => http<Quote>(`/Quotation/${id}`),
   create: (q: QuoteInput) => http<unknown>("/Quotation", { method: "POST", data: body(q) }),
-  update: (id: number, q: QuoteInput) => http<unknown>(`/Quotation/${id}`, { method: "PUT", data: { ...body(q), validUntil: q.validUntil || null } }),
+  update: (id: number, q: QuoteInput) => http<unknown>(`/Quotation/${id}`, { method: "PUT", data: body(q) }),
   remove: (id: number) => http<unknown>(`/Quotation/${id}`, { method: "DELETE" }),
   duplicate: (id: number) => http<unknown>(`/Quotation/${id}/duplicate`, { method: "POST" }),
 }
