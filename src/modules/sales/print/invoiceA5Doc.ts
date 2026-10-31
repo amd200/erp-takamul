@@ -161,8 +161,9 @@ ${measurementTable(o.measurement)}
   <thead><tr><td>م</td><td>رقم الصنف</td><td>اسم الصنف</td><td>الوحدة</td><td>الكمية</td><td>السعر</td><td>القيمة</td></tr></thead>
   <tbody>${rows}</tbody>
 </table>
-<div class="totals" style="height:${mm(hasDiscount ? 29.6 : 22.1)}">
+<div class="totals" style="height:${mm(hasDiscount ? 37.1 : 29.6)}">
   <div class="invoice-summary">
+    <div class="summary-value">${n2(t.subTotal + discount)}</div><div class="box summary-label">الإجمالي قبل الخصم</div>
     ${hasDiscount ? `<div class="summary-value">${n2(discount)}</div><div class="box summary-label">إجمالي الخصم</div>` : ""}
     <div class="summary-value">${n2(t.subTotal)}</div><div class="box summary-label">الإجمالي قبل الضريبة</div>
     <div class="summary-value">${n2(t.tax)}</div><div class="box summary-label">ضريبة القيمة المضافة</div>
