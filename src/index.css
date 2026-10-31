@@ -4,8 +4,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* shadcn tokens filled from the Takamul logo: deep navy wordmark, leaf green swoosh, graphite subtitle.
-   Navy leads (buttons, active states), green marks success, neutrals carry a faint navy tint.
+/* shadcn tokens: the old system's green palette (light and dark) is set further down and overrides these.
    Extra tokens beyond shadcn's set: success, warning, destructive-soft, faint, brand-green. */
 :root {
   --radius: 0.625rem;
@@ -18,28 +17,10 @@
   --table-header-text: #9ca3af;
   --table-header-border: #e2e8f0;
   --table-row-hover: #f1f5f9;
-  --background: #ffffff;
-  --foreground: oklch(0.145 0 0);
-  --card: #ffffff;
-  --card-foreground: oklch(0.145 0 0);
-  --popover: #ffffff;
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: #2ecc71;
-  --primary-foreground: #ffffff;
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-soft: rgba(239, 68, 68, 0.1);
-  --success: #22c55e;
-  --success-soft: rgba(34, 197, 94, 0.1);
   --warning: #eab308;
   --warning-soft: rgba(234, 179, 8, 0.12);
-  --faint: #9ca3af;
-  --brand-green: #2ecc71;
   /* The old project's dark navy (its POS sidebar and dashboard card). */
   --brand-navy: #000052;
   /* The purchase screen's table header and delete button in the current system. */
@@ -54,68 +35,18 @@
   --dashboard-profit-text: #ffffff;
   --dashboard-purchases: #ce2029;
   --dashboard-purchases-text: #ffffff;
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: #2ecc71;
-  --chart-2: #3b82f6;
-  --chart-3: #8b5cf6;
-  --chart-4: #14b8a6;
-  --chart-5: #ef4444;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
 }
 
 .dark {
-  --background: #0e1426;
-  --foreground: #e6e9f3;
-  --card: #151c33;
-  --card-foreground: #e6e9f3;
-  --popover: #18203a;
-  --popover-foreground: #e6e9f3;
-  --primary: #5a78cc;
-  --primary-foreground: #ffffff;
-  --secondary: #1d2848;
-  --secondary-foreground: #bccaf4;
-  --muted: #1d2540;
-  --muted-foreground: #98a1b8;
-  --accent: #1d2540;
-  --accent-foreground: #e6e9f3;
   --destructive: #e5857e;
   --destructive-soft: #3b2325;
-  --success: #6cc27a;
-  --success-soft: #1b3326;
   --warning: #dba957;
   --warning-soft: #382f1d;
-  --faint: #6a738d;
-  --brand-green: #5cbf6a;
-  --border: #242d49;
-  --input: #2b3554;
-  --ring: #7d93d6;
-  --chart-1: #7d93d6;
-  --chart-2: #5cbf6a;
-  --chart-3: #bccaf4;
-  --chart-4: #2f8f3a;
-  --chart-5: #dba957;
-  --sidebar: #151c33;
-  --sidebar-foreground: #98a1b8;
-  --sidebar-primary: #5a78cc;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #1d2848;
-  --sidebar-accent-foreground: #bccaf4;
-  --sidebar-border: #242d49;
-  --sidebar-ring: #7d93d6;
 }
 
-/* The green theme of the previous system: fresh green on white (dark: deep navy with a brighter green). It is an
-   accent on top of light / dark, picked from the theme menu; the salon theme below still wins on the sales screens. */
-.theme-green {
+/* The green theme of the previous system: fresh green on white (dark: deep navy with a brighter green). It is the only
+   palette (it overrides the base values above); the salon theme below still wins on the sales screens. */
+:root {
   --background: #f8f9fa;
   --foreground: #1f2937;
   --card: #ffffff;
@@ -152,7 +83,7 @@
   --sidebar-ring: #2ecc71;
 }
 
-.theme-green:where(.dark) {
+.dark {
   --background: #0a1222;
   --foreground: #f8fafc;
   --card: #0f1a30;

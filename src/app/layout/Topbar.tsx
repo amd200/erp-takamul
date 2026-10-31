@@ -13,7 +13,6 @@ import { useAppSettings } from "@/modules/settings"
 import { useLogout } from "@/modules/auth/queries"
 import { useTheme, type ThemeChoice } from "@/shared/theme/ThemeProvider"
 
-const ACCENTS = ["default", "green"] as const
 const THEMES: { id: ThemeChoice; icon: typeof Sun }[] = [
   { id: "light", icon: Sun }, { id: "dark", icon: Moon }, { id: "system", icon: Monitor },
 ]
@@ -28,7 +27,7 @@ const panelItem = "px-4 py-2 text-sm text-[var(--text-main)]"
 
 export function Topbar({ drawerOpen, onMenu, onToggleSidebar }: { drawerOpen: boolean; onMenu: () => void; onToggleSidebar: () => void }) {
   const { t, i18n } = useTranslation()
-  const { choice, resolved, setChoice, accent, setAccent } = useTheme()
+  const { choice, resolved, setChoice } = useTheme()
   const { user } = useSession()
   const postype = useAppSettings().salesScreenTab?.postype
   const posPath = postype === "Pos3" ? "/pos-optics" : postype === "Pos2" ? "/pos2" : "/pos"
@@ -94,13 +93,6 @@ export function Topbar({ drawerOpen, onMenu, onToggleSidebar }: { drawerOpen: bo
             {THEMES.map(({ id, icon: Icon }) => (
               <DropdownMenuItem key={id} onSelect={() => setChoice(id)} className={cn(panelItem, "justify-between")}>
                 <span className="flex items-center gap-2"><Icon size={16} />{t(`topbar.themes.${id}`)}</span>{choice === id && <Check size={16} className="text-primary" />}
-              </DropdownMenuItem>
-            ))}
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel className="px-4 py-1 text-xs text-[var(--text-muted)]">{t("topbar.colors")}</DropdownMenuLabel>
-            {ACCENTS.map((id) => (
-              <DropdownMenuItem key={id} onSelect={() => setAccent(id)} className={cn(panelItem, "justify-between")}>
-                <span className="flex items-center gap-2"><span aria-hidden className={`size-4 rounded-full ${id === "green" ? "bg-[#2ecc71]" : "bg-[#1c2b57]"}`} />{t(`topbar.accents.${id}`)}</span>{accent === id && <Check size={16} className="text-primary" />}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>

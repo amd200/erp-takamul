@@ -538,12 +538,7 @@
     "language": "اللغة",
     "account": "الحساب",
     "changePassword": "تغيير كلمة المرور",
-    "logout": "تسجيل الخروج",
-    "colors": "الألوان",
-    "accents": {
-      "default": "كحلي",
-      "green": "أخضر"
-    }
+    "logout": "تسجيل الخروج"
   },
   "home": {
     "totalSales": "اجمالي المبيعات",
@@ -1061,7 +1056,26 @@
     "downloadFailed": "معرفناش ننزّل الملف",
     "pdfFailed": "معرفناش ننزّل الفاتورة PDF",
     "printFailed": "معرفناش نطبع الفاتورة",
-    "debitPrintFailed": "معرفناش نطبع إشعار المدين"
+    "debitPrintFailed": "معرفناش نطبع إشعار المدين",
+    "menu": {
+      "printA4": "طباعة الفاتورة (A4)",
+      "printA5": "طباعة الفاتورة (A5)",
+      "printRoll": "طباعة الفاتورة (رول)",
+      "payments": "المدفوعات",
+      "notes": "تعديل ملاحظات الفاتورة",
+      "return": "إرجاع مبيع",
+      "debitNote": "إضافة إشعار مدين",
+      "downloadPdfA4": "تحميل بصيغة PDF (A4)",
+      "downloadPdfRoll": "تحميل بصيغة PDF (رول)",
+      "pdfa3": "تحميل فاتورة PDF/A-3",
+      "excel": "تحميل كملف إكسل",
+      "email": "إرسال الفاتورة بالبريد الالكتروني",
+      "emailPos": "إرسال بريد",
+      "whatsapp": "إرسال واتساب",
+      "resend": "إعادة الإرسال للهيئة",
+      "zatcaXml": "تحميل رد الهيئة (XML)",
+      "zatcaExcel": "تحميل رد الهيئة (Excel)"
+    }
   },
   "users": {
     "title": "المستخدمون",

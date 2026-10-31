@@ -39,7 +39,7 @@ export default function InvoicesPage({ channel }: { channel: Channel }) {
     { id: "paid", header: t("sales.paid"), cell: (i) => formatMoney(i.totalPaid ?? 0) },
     { id: "total", sortKey: "grandTotal", header: t("sales.grandTotal"), cell: (i) => <span className="font-semibold">{formatMoney(i.grandTotal ?? 0)}</span> },
     ...(stage2 ? [{ id: "zatca", sortKey: "zatcaStatus", header: t("sales.zatcaStatus"), cell: (i: SalesOrderDto) => <ZatcaBadge status={i.zatcaStatus} message={i.zatcaStatus === "Rejected" ? i.zatcaResponse : null} /> }] : []),
-    { id: "actions", header: "", align: "end", cell: (i) => <InvoiceActions invoice={i} onPayments={() => setPayments(i)} onNotes={() => setNotes(i)} /> },
+    { id: "actions", header: "", align: "end", cell: (i) => <InvoiceActions invoice={i} channel={channel} onPayments={() => setPayments(i)} onNotes={() => setNotes(i)} /> },
   ]
 
   return (

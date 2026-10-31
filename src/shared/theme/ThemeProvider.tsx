@@ -1,12 +1,10 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 
 export type ThemeChoice = "light" | "dark" | "system"
-export type Accent = "default" | "green"
-type Ctx = { choice: ThemeChoice; resolved: "light" | "dark"; setChoice: (c: ThemeChoice) => void; accent: Accent; setAccent: (a: Accent) => void }
+type Ctx = { choice: ThemeChoice; resolved: "light" | "dark"; setChoice: (c: ThemeChoice) => void }
 
 const ThemeContext = createContext<Ctx | null>(null)
 const KEY = "theme"
-const ACCENT_KEY = "accent"
 const media = () => window.matchMedia("(prefers-color-scheme: dark)")
 
 function readChoice(): ThemeChoice {
@@ -18,17 +16,8 @@ function readChoice(): ThemeChoice {
   }
 }
 
-function readAccent(): Accent {
-  try {
-    return localStorage.getItem(ACCENT_KEY) === "green" ? "green" : "default"
-  } catch {
-    return "default"
-  }
-}
-
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [choice, setChoiceState] = useState<ThemeChoice>(readChoice)
-  const [accent, setAccentState] = useState<Accent>(readAccent)
   const [systemDark, setSystemDark] = useState(() => media().matches)
 
   useEffect(() => {
@@ -44,20 +33,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     document.documentElement.classList.toggle("dark", resolved === "dark")
   }, [resolved])
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("theme-green", accent === "green")
-  }, [accent])
-
-  const setAccent = (a: Accent) => {
-    setAccentState(a)
-    try {
-      if (a === "default") localStorage.removeItem(ACCENT_KEY)
-      else localStorage.setItem(ACCENT_KEY, a)
-    } catch {
-      /* storage unavailable: keep the choice for this session only */
-    }
-  }
-
   const setChoice = (c: ThemeChoice) => {
     setChoiceState(c)
     try {
@@ -68,7 +43,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  return <ThemeContext.Provider value={{ choice, resolved, setChoice, accent, setAccent }}>{children}</ThemeContext.Provider>
+  return <ThemeContext.Provider value={{ choice, resolved, setChoice }}>{children}</ThemeContext.Provider>
 }
 
 export function useTheme() {

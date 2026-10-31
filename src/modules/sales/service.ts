@@ -45,6 +45,7 @@ export const invoicesApi = {
   sendToZatca: (invoiceId: number) => http<unknown>("/zatca-invoices/sell", { method: "POST", data: { invoiceId } }),
   downloadXml: (id: number) => http<Blob>(`/sales-orders/${id}/zatca-xml`, { responseType: "blob" }),
   downloadExcel: (id: number) => http<Blob>(`/sales-orders/${id}/zatca-excel`, { responseType: "blob" }),
+  downloadPdfA3: (saleId: number) => http<Blob>("/zatca-invoices/download-pdfa3", { method: "POST", data: { saleId, isSaleOrder: true }, responseType: "blob" }),
 }
 
 /** The warehouse a return goes back to is the invoice's; older answers only name it, so the name is matched. */
