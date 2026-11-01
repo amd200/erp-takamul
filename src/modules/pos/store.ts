@@ -5,7 +5,7 @@ import { newIdempotencyKey } from "@/shared/http/idempotency"
 import type { SelectedMeasurement } from "@/modules/customers/types"
 import type { Quote } from "@/modules/quotes/types"
 import { newLineKey, sameLine } from "./cart"
-import type { CartDiscount, CartLine, OrderType } from "./types"
+import type { CartDiscount, CartLine, DineInMode, OrderType } from "./types"
 
 /**
  * The sale being rung up. While a save is in flight, or its outcome is unknown (the connection dropped),
@@ -22,6 +22,13 @@ type PosState = {
   /** The pager the customer takes, and the table number asked before paying; both are only labels on the sale. */
   orderDeviceNumber: string | null
   tableNumber: string | null
+  /** Dine-in: the table picked, what the cart is doing with it, and the table's open order (add-items and checkout). */
+  tableId: number | null
+  dineInMode: DineInMode | null
+  dineInOrderId: number | null
+  /** Add-items: the open order's number and the lines it had when opened, so the kitchen ticket shows only what was added. */
+  dineInOrderNumber: string | null
+  originalLines: CartLine[]
   customerId: number | null
   customerName: string
   /** Whose eye measurements go on this invoice; cleared when the customer changes. */
@@ -45,6 +52,9 @@ type PosState = {
   setOrderTypeName: (name: string | null) => void
   setOrderDeviceNumber: (n: string | null) => void
   setTableNumber: (n: string | null) => void
+  setTable: (id: number | null) => void
+  /** Starts a dine-in sale on a table: an empty cart for a new order, or the table's open order to add to / to pay. */
+  startDineIn: (d: { mode: DineInMode; tableId: number; orderId: number | null; orderNumber?: string | null; lines?: CartLine[]; customerId?: number | null; customerName?: string; note?: string; orderDeviceNumber?: string | null; employeeId?: number | null }) => boolean
   setCustomer: (id: number | null, name: string) => void
   setMeasurement: (m: SelectedMeasurement | null) => void
   setDeliveryCompany: (id: number | null) => void
@@ -63,7 +73,7 @@ type PosState = {
   clear: () => void
 }
 
-const empty = { lines: [] as CartLine[], discount: { kind: "value", value: 0 } as CartDiscount, note: "", selectedMeasurement: null as SelectedMeasurement | null, orderTypeName: null as string | null, orderDeviceNumber: null as string | null, tableNumber: null as string | null, holdingOrderId: null, save: "idle" as SaveState, key: null, orderDate: null, ownerId: null }
+const empty = { lines: [] as CartLine[], discount: { kind: "value", value: 0 } as CartDiscount, note: "", selectedMeasurement: null as SelectedMeasurement | null, orderTypeName: null as string | null, orderDeviceNumber: null as string | null, tableNumber: null as string | null, tableId: null as number | null, dineInMode: null as DineInMode | null, dineInOrderId: null as number | null, dineInOrderNumber: null as string | null, originalLines: [] as CartLine[], holdingOrderId: null, save: "idle" as SaveState, key: null, orderDate: null, ownerId: null }
 
 export const usePosStore = create<PosState>()(persist((set, get) => {
   const locked = () => get().save !== "idle"
@@ -95,6 +105,17 @@ export const usePosStore = create<PosState>()(persist((set, get) => {
     setOrderTypeName: (orderTypeName) => { if (!locked()) set({ orderTypeName }) },
     setOrderDeviceNumber: (orderDeviceNumber) => { if (!locked()) set({ orderDeviceNumber }) },
     setTableNumber: (tableNumber) => { if (!locked()) set({ tableNumber }) },
+    setTable: (tableId) => { if (!locked()) set({ tableId }) },
+    startDineIn: (d) => {
+      if (locked()) return false
+      set((s) => ({
+        ...empty, orderType: "InDine", deliveryCompanyId: null, employeeId: d.employeeId ?? s.employeeId,
+        dineInMode: d.mode, tableId: d.tableId, dineInOrderId: d.orderId, dineInOrderNumber: d.orderNumber ?? null, originalLines: d.lines ?? [], lines: d.lines ?? [],
+        customerId: d.customerId !== undefined ? d.customerId : s.customerId, customerName: d.customerId !== undefined ? d.customerName ?? "" : s.customerName,
+        note: d.note ?? "", orderDeviceNumber: d.orderDeviceNumber ?? null,
+      }))
+      return true
+    },
     setCustomer: (customerId, customerName) => { if (!locked()) set((s) => ({ customerId, customerName, selectedMeasurement: s.customerId === customerId ? s.selectedMeasurement : null })) },
     setMeasurement: (selectedMeasurement) => { if (!locked()) set({ selectedMeasurement }) },
     setDeliveryCompany: (deliveryCompanyId) => { if (!locked()) set({ deliveryCompanyId }) },
@@ -133,7 +154,7 @@ export const usePosStore = create<PosState>()(persist((set, get) => {
   name: "pos-pending-sale",
   storage: createJSONStorage(() => localStorage),
   partialize: (s) => (s.save !== "idle" && s.key
-    ? { lines: s.lines, orderType: s.orderType, orderTypeName: s.orderTypeName, orderDeviceNumber: s.orderDeviceNumber, tableNumber: s.tableNumber, customerId: s.customerId, customerName: s.customerName, deliveryCompanyId: s.deliveryCompanyId, employeeId: s.employeeId, discount: s.discount, note: s.note, selectedMeasurement: s.selectedMeasurement, holdingOrderId: s.holdingOrderId, key: s.key, orderDate: s.orderDate, ownerId: s.ownerId }
+    ? { lines: s.lines, orderType: s.orderType, orderTypeName: s.orderTypeName, orderDeviceNumber: s.orderDeviceNumber, tableNumber: s.tableNumber, tableId: s.tableId, dineInMode: s.dineInMode, dineInOrderId: s.dineInOrderId, dineInOrderNumber: s.dineInOrderNumber, originalLines: s.originalLines, customerId: s.customerId, customerName: s.customerName, deliveryCompanyId: s.deliveryCompanyId, employeeId: s.employeeId, discount: s.discount, note: s.note, selectedMeasurement: s.selectedMeasurement, holdingOrderId: s.holdingOrderId, key: s.key, orderDate: s.orderDate, ownerId: s.ownerId }
     : {}),
   // A sale that was in flight when the page closed has an unknown outcome too.
   merge: (persisted, current) => {

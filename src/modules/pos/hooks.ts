@@ -8,6 +8,7 @@ import { productsApi } from "@/modules/products/service"
 import type { Product } from "@/modules/products/types"
 import { useTaxes } from "@/modules/taxes/service"
 import { useUnits } from "@/modules/units/queries"
+import { useCategoryDiscountOf } from "@/modules/sales/categoryDiscount"
 import type { InvoiceLine } from "@/modules/sales/types"
 import { useAppSettings } from "@/modules/settings"
 
@@ -22,14 +23,16 @@ export function useSellLine() {
   const units = useUnits()
   const unitName = useCallback((id: number) => units.data?.find((u) => u.id === id)?.name ?? "", [units.data])
   const rateOf = useCallback((p: Product) => taxes.data?.find((x) => x.id === p.taxId)?.amount ?? 0, [taxes.data])
+  const categoryDiscountOf = useCategoryDiscountOf()
 
   return useCallback((p: Product, opts: { unitId?: number; price?: number; name?: string } = {}): SellLine => {
     const unitId = opts.unitId ?? p.baseUnitId ?? 0
     return {
       productId: p.id, unitId, name: opts.name ?? p.productNameAr, unitName: unitName(unitId), quantity: 1, unitPrice: opts.price ?? enteredPrice(p),
       taxRate: rateOf(p), taxCalculation: taxCalcOf(p), discountKind: "value", discount: 0, imageUrl: p.imageUrl ?? null,
+      ...categoryDiscountOf(p.categoryId),
     }
-  }, [unitName, rateOf])
+  }, [unitName, rateOf, categoryDiscountOf])
 }
 
 /**
@@ -40,17 +43,15 @@ export function usePosGrid(search: string, categoryId: number | null) {
   const categories = useCategories()
   const term = useDebounced(search.trim())
 
-  const main = useMemo(() => (categories.data ?? []).filter((c) => c.parentCategoryId == null && c.isActive === 1).sort((a, b) => a.displayOrder - b.displayOrder), [categories.data])
+  const main = useMemo(() => (categories.data ?? []).filter((c) => c.parentCategoryId == null).sort((a, b) => a.displayOrder - b.displayOrder), [categories.data])
 
   // As in the current POS, a category shows the items filed under it (not under its sub-categories).
-  const categoryIds = useMemo<(number | undefined)[]>(() => [categoryId ?? undefined], [categoryId])
-
   const grid = useInfiniteQuery({
-    queryKey: [...productKeys.all, "pos-grid", term, categoryIds] as const,
+    queryKey: [...productKeys.all, "pos-grid", term, categoryId ?? undefined] as const,
     initialPageParam: 1,
     queryFn: async ({ pageParam }) => {
-      const pages = await Promise.all(categoryIds.map((id) => productsApi.page({ page: pageParam, pageSize: GRID_PAGE, searchTerm: term || undefined, categoryId: id })))
-      return { items: pages.flatMap((p) => p.items), more: pages.some((p) => p.total > pageParam * GRID_PAGE) }
+      const p = await productsApi.page({ page: pageParam, pageSize: GRID_PAGE, searchTerm: term || undefined, categoryId: categoryId ?? undefined })
+      return { items: p.items, more: p.total > pageParam * GRID_PAGE }
     },
     getNextPageParam: (last, _all, lastParam) => (last.more ? lastParam + 1 : undefined),
     staleTime: 60_000,
@@ -61,7 +62,6 @@ export function usePosGrid(search: string, categoryId: number | null) {
     return (grid.data?.pages ?? []).flatMap((p) => p.items)
       // A branched item's children are reached through it, so they are not cards of their own.
       .filter((p) => showsInSales(p) && p.productType !== "RawMatrial" && !(p.parentProductId && (p.productType === "Direct" || p.productType === "Prepared")) && !seen.has(p.id) && !!seen.add(p.id))
-      .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0) || a.productNameAr.localeCompare(b.productNameAr))
   }, [grid.data])
 
   return {

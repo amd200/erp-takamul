@@ -36,7 +36,7 @@ import { PurchaseLines } from "../screen/PurchaseLines"
 const nowLocal = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60_000).toISOString().slice(0, 16) }
 const noDiscount: CartDiscount = { kind: "value", value: 0 }
 const label = "text-[10px] text-pos-purchase dark:text-muted-foreground"
-const field = "text-[11px] border-pos-purchase bg-white text-pos-purchase dark:border-border dark:bg-background dark:text-foreground"
+const field = "text-[11px] border-pos-purchase bg-card text-pos-purchase dark:border-border dark:bg-background dark:text-foreground"
 
 /**
  * The second purchases screen, laid out as in the current system: the top bar, a row of purchase details (branch, supplier
@@ -167,7 +167,7 @@ export default function PurchaseScreenPage() {
                 </div>
               )}
               <div className="flex min-w-0 items-end gap-2">
-                <Button type="button" size="icon-lg" variant="outline" aria-label={t("pos3.addSupplier")} className="border-pos-purchase bg-white text-pos-purchase dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-muted" onClick={() => setAddingSupplier(true)}><Plus size={14} /></Button>
+                <Button type="button" size="icon-lg" variant="outline" aria-label={t("pos3.addSupplier")} className="border-pos-purchase bg-card text-pos-purchase dark:border-border dark:bg-background dark:text-foreground dark:hover:bg-muted" onClick={() => setAddingSupplier(true)}><Plus size={14} /></Button>
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                   <span className={label}>{t("pos3.pickSupplier")}</span>
                   <PartyPicker plain parties={suppliers.map((x) => ({ id: x.id, name: x.supplierName, phone: x.phone ?? "" }))} value={supplierId} onPick={(s) => setSupplierId(s.id)} invalid={tried && !supplierId}

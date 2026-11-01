@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/shared/auth/authStore"
+import type { ListSort } from "@/shared/api/crudQueries"
 import { http } from "@/shared/http/request"
 import { fetchAllPages, toFormData, type PagedResult } from "@/shared/http/paged"
 import type { Category, CategoryInput, CategoryQuery } from "./types"
@@ -13,8 +14,8 @@ const applyPrinter = (categoryId: number, printerName: string | null) =>
 
 export const categoriesApi = {
   page: (q: CategoryQuery) =>
-    http<PagedResult<Category>>("/ProductCategories", { params: { PageNumber: q.page, PageSize: q.pageSize, SearchTerm: q.searchTerm || undefined } }),
-  list: () => fetchAllPages<Category>("/ProductCategories", { pageParam: "PageNumber" }),
+    http<PagedResult<Category>>("/ProductCategories", { params: { Page: q.page, PageSize: q.pageSize, SearchTerm: q.searchTerm || undefined, SortBy: q.sortBy, SortDescending: q.sortBy ? q.sortDescending : undefined } }),
+  list: (sort?: ListSort) => fetchAllPages<Category>("/ProductCategories", { params: { ...sort } }),
   get: async (id: number) => {
     const all = await categoriesApi.list()
     const c = all.find((x) => x.id === id)

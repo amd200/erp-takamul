@@ -1,7 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import i18n from "@/shared/i18n"
-import { createCrudQueries, errorToast } from "@/shared/api/crudQueries"
+import { createCrudQueries, errorToast, type ListSort } from "@/shared/api/crudQueries"
 import { expenseItemsApi, expensesApi } from "./service"
 import type { ExpenseInput } from "./types"
 
@@ -10,7 +10,7 @@ export const { keys: expenseItemKeys, useList: useExpenseItems, useSave: useSave
 
 export const expenseKeys = { all: ["expenses"] as const, list: ["expenses", "list"] as const }
 
-export const useExpenses = () => useQuery({ queryKey: expenseKeys.list, queryFn: expensesApi.list })
+export const useExpenses = (sort?: ListSort) => useQuery({ queryKey: sort?.SortBy ? [...expenseKeys.list, sort] : expenseKeys.list, queryFn: () => expensesApi.list(sort), placeholderData: keepPreviousData })
 
 /** An expense moves money out of a treasury, so the balances refresh with the list. */
 function useExpenseMutation<A>(fn: (a: A) => Promise<unknown>, ok: string, failed: string) {

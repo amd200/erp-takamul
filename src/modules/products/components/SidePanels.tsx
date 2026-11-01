@@ -46,9 +46,9 @@ export function ImagePanel() {
       </div>
       {preview && (
         <div className="relative mt-3 w-fit">
-          <img src={preview} alt="" className="size-32 rounded-lg border border-gray-200 object-cover" />
+          <img src={preview} alt="" className="size-32 rounded-lg border border-border object-cover" />
           <Button type="button" variant="ghost" size="icon" aria-label={t("common.remove")} onClick={() => setValue("image", null, { shouldDirty: true })}
-            className="absolute -end-2 -top-2 size-6 rounded-full border border-gray-200 bg-white"><X size={12} /></Button>
+            className="absolute -end-2 -top-2 size-6 rounded-full border border-border bg-card"><X size={12} /></Button>
         </div>
       )}
       {error && <p className="mt-2 text-sm text-destructive">{error}</p>}

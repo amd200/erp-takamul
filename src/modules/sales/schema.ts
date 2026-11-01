@@ -15,6 +15,7 @@ export const lineSchema = z.object({
   taxCalculation: z.union([z.literal(1), z.literal(2)]),
   discountKind: z.enum(["percent", "value"]),
   discount: num().min(0, "validation.min0"),
+  categoryDiscount: z.object({ kind: z.enum(["percent", "value"]), value: z.number() }).optional(),
 }).refine((l) => l.discountKind !== "percent" || l.discount <= 100, { path: ["discount"], message: "validation.percentMax" })
 
 const paymentSchema = z.object({

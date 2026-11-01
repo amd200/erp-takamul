@@ -4,7 +4,7 @@ import { fullName } from "@/modules/lookups/types"
 import { useCategories } from "@/modules/categories/queries"
 import { useCustomers, useEmployees, useTreasuries } from "@/modules/lookups/service"
 import { useUnits } from "@/modules/units/queries"
-import { Flag, Grid, Choice, useLabel, type FieldsProps } from "./fields"
+import { Flag, Check, Section, Grid, Choice, useLabel, type FieldsProps } from "./fields"
 import { A4Preview, AppearancePreview, BarcodePreview } from "./Previews"
 
 /** The fields of each sales-settings tab, in the order the current system shows them. Names are the server's. */
@@ -50,9 +50,19 @@ export function SaleScreenFields({ form: { control } }: FieldsProps) {
       <Choice control={control} name="salesScreenTab.postype" values={["Pos1", "Pos2", "Pos3"]} />
       <FormSelect control={control} name="salesScreenTab.sales2InvoiceType" numeric required label={label("sales2InvoiceType")}
         options={[{ value: "2", label: t("settings.o.sales2InvoiceType.2") }, { value: "1", label: t("settings.o.sales2InvoiceType.1") }]} />
-      {["selectOrderTypeDuringSave", "selectTableNumberDuringSave", "showOrdertype", "isTekawuy", "isTables", "isDelivary", "isQuantity", "isPrice", "isAddons"].map((k) => (
-        <Flag key={k} control={control} name={`salesScreenTab.${k}`} />
-      ))}
+      <Flag control={control} name="salesScreenTab.selectOrderTypeDuringSave" />
+      <Section title={t("settings.sec.customerOrders")}>
+        <Flag control={control} name="salesScreenTab.selectTableNumberDuringSave" />
+      </Section>
+      <Section title={t("settings.sec.orderTypes")}>
+        <Flag control={control} name="salesScreenTab.showOrdertype" />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {["isTekawuy", "isTables", "isDelivary"].map((k) => <Check key={k} control={control} name={`salesScreenTab.${k}`} />)}
+        </div>
+      </Section>
+      <Section title={t("settings.sec.itemEditTabs")} cols>
+        {["isQuantity", "isPrice", "isAddons"].map((k) => <Check key={k} control={control} name={`salesScreenTab.${k}`} />)}
+      </Section>
     </Grid>
   )
 }

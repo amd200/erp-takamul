@@ -8,9 +8,10 @@ import { REPORT_CATEGORIES, type ReportCategory } from "../types"
 import { ReportLink } from "./ReportPage"
 
 /** Report catalogue, one category at a time (or all of them), filtered by the user's permissions. */
-export default function ReportsHome() {
+export default function ReportsHome({ category: fixed }: { category?: ReportCategory } = {}) {
   const { t } = useTranslation()
-  const { category } = useParams<{ category?: ReportCategory }>()
+  const params = useParams<{ category?: ReportCategory }>()
+  const category = fixed ?? params.category
   const can = useCan()
   const visible = REPORTS.filter((r) => can(r.perm))
   const cats = REPORT_CATEGORIES.filter((c) => visible.some((r) => r.category === c))

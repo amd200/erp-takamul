@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import type { Product } from "@/modules/products/types"
+import { CategoryDiscountBadge } from "@/modules/sales/components/CategoryDiscountBadge"
 import { lineAmounts } from "@/modules/sales/totals"
 import { usePosStore } from "../store"
 import type { CartLine } from "../types"
@@ -160,6 +161,7 @@ export function SalesLines({ lines, options: o, search, onPick, onCode, onQuery,
                     <div className="min-w-0 flex-1">
                       <h3 className="truncate text-sm font-extrabold text-[#17375f] dark:text-foreground">{l.name}</h3>
                       <p className="mt-0.5 truncate text-[10px] text-muted-foreground" dir="ltr">{codeOf(l)}</p>
+                      <CategoryDiscountBadge line={l} className="mt-1" />
                     </div>
                     <button type="button" disabled={locked} onClick={() => remove(l.key)} className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-500 transition hover:bg-red-100 dark:bg-red-950/20" aria-label={t("pos2.delete")}>
                       <Trash2 size={15} />
@@ -262,7 +264,7 @@ export function SalesLines({ lines, options: o, search, onPick, onCode, onQuery,
                 <tr key={l.key} className={cn("h-10.5 transition-colors [&>td]:border-b [&>td]:border-border", idx % 2 === 0 ? "bg-card" : "bg-muted/20")}>
                   <td>{idx + 1}</td>
                   <td dir="ltr">{codeOf(l)}</td>
-                  <td className="px-2.25 text-start"><span className="block truncate">{l.name}</span></td>
+                  <td className="px-2.25 text-start"><span className="block truncate">{l.name}</span><CategoryDiscountBadge line={l} className="mt-0.5" /></td>
                   <td className="px-1.5">
                     {canSwitch(l)
                       ? <UnitCell line={l} choices={units(l)} enabled locked={locked} className="mx-auto h-6.75! w-[84px] rounded-[6px] border-[#dfe7f1] bg-white text-[13px] font-semibold text-[#17375f] dark:border-border dark:bg-background dark:text-foreground" />

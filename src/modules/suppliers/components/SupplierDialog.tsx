@@ -36,7 +36,7 @@ export function SupplierDialog({ open, onOpenChange, supplier, onSaved }: { open
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex max-h-[90dvh] flex-col gap-3 overflow-hidden p-4 sm:max-w-screen-sm sm:gap-4 sm:p-6">
         <DialogHeader className="shrink-0 py-2 sm:py-3">
-          <DialogTitle className="flex items-center gap-2 text-[#2ecc71]"><UserPlus size={20} />{title}</DialogTitle>
+          <DialogTitle className="flex items-center gap-2 text-primary"><UserPlus size={20} />{title}</DialogTitle>
         </DialogHeader>
 
         <FormProvider {...form}>
@@ -53,16 +53,16 @@ export function SupplierDialog({ open, onOpenChange, supplier, onSaved }: { open
                   <FormInput control={c} name="district" label={t("custDialog.district")} placeholder={t("custDialog.districtHint")} />
                   <div className="col-span-2"><FormInput control={c} name="street" label={t("custDialog.street")} placeholder={t("custDialog.streetHint")} /></div>
 
-                  <div className="col-span-2 my-2 w-full rounded-2xl border border-gray-200 p-5">
+                  <div className="col-span-2 my-2 w-full rounded-2xl border border-border p-5">
                     <div className="flex flex-row items-center justify-between gap-4">
                       <div>
-                        <h3 className="text-base font-bold text-gray-800">{t("custDialog.nationalAddress")}</h3>
-                        <p className="mt-1 text-sm text-gray-500">{t("supDialog.vatHint")}</p>
+                        <h3 className="text-base font-bold text-foreground">{t("custDialog.nationalAddress")}</h3>
+                        <p className="mt-1 text-sm text-muted-foreground">{t("supDialog.vatHint")}</p>
                       </div>
                       <Controller control={c} name="isNational" render={({ field }) => <Switch className="shrink-0 scale-130 cursor-pointer" checked={field.value} onCheckedChange={field.onChange} />} />
                     </div>
                     {national && (
-                      <div className="mt-5 grid grid-cols-2 gap-4 border-t border-gray-100 pt-5">
+                      <div className="mt-5 grid grid-cols-2 gap-4 border-t border-border pt-5">
                         <FormInput control={c} name="taxNumber" required label={t("custDialog.taxNumber")} placeholder={t("custDialog.taxNumberHint")} dir="ltr" />
                         <FormInput control={c} name="commercialRegister" required label={t("custDialog.commercialRegister")} placeholder={t("custDialog.commercialRegisterHint")} dir="ltr" />
                       </div>

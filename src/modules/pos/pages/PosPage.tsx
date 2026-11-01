@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react"
 import { ShoppingBag, X } from "lucide-react"
 import { useTranslation } from "react-i18next"
+import { toast } from "sonner"
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { useWarehouses } from "@/modules/lookups/service"
@@ -15,6 +16,7 @@ import { usePayStep } from "../components/PayStep"
 import { PaymentScreen } from "../payment/PaymentScreen"
 import { ChildrenDialog, ProductGrid } from "../components/ProductGrid"
 import { Rail } from "../components/Rail"
+import { TablesScreen } from "../components/TablesScreen"
 import { ShiftGate } from "../components/ShiftGate"
 import { TopBar } from "../components/TopBar"
 import { useQueryClient } from "@tanstack/react-query"
@@ -23,9 +25,10 @@ import { useCodeLookup } from "../grid/useItemLookup"
 import { usePosBeauty, usePosGrid, useSellLine } from "../hooks"
 import { useSaveSale } from "../queries"
 import { useScanner } from "../grid/useScanner"
+import { useKitchenBon, type BonSale } from "../kitchenBon"
 import { useInvoiceOutput } from "@/modules/sales/print/useInvoiceOutput"
 import { getCustomerCompanionId, usePosStore } from "../store"
-import type { PosPayment } from "../types"
+import type { PosPayment, SaleResult } from "../types"
 
 export default function PosPage() {
   return <ShiftGate>{(shift) => <PosScreen shift={shift} />}</ShiftGate>
@@ -37,6 +40,7 @@ function PosScreen({ shift }: { shift: Shift }) {
   const [payOpen, setPayOpen] = useState(false)
   const orderStep = usePayStep(() => setPayOpen(true))
   const [cartOpen, setCartOpen] = useState(false)
+  const [screen, setScreen] = useState<"sales" | "tables">("sales")
   const [parent, setParent] = useState<Product | null>(null)
   const [report, setReport] = useState<Shift | null>(null)
   const [toClose, setToClose] = useState<Shift | null>(null)
@@ -50,6 +54,7 @@ function PosScreen({ shift }: { shift: Shift }) {
   const { data: warehouses = [] } = useWarehouses()
   const save = useSaveSale()
   const printInvoice = useInvoiceOutput()
+  const kitchenBon = useKitchenBon()
   const closeShift = useCloseShift()
 
   const lines = usePosStore((s) => s.lines)
@@ -81,33 +86,59 @@ function PosScreen({ shift }: { shift: Shift }) {
   const sale = (holding: boolean, payments: PosPayment[]) => {
     const s = usePosStore.getState()
     return {
-      orderType: s.orderType, orderTypeName: s.orderTypeName, orderDeviceNumber: s.orderDeviceNumber, tableNumber: s.tableNumber, customerId: s.customerId, customerCompanionId: getCustomerCompanionId(), deliveryCompanyId: s.deliveryCompanyId, employeeId: s.employeeId, warehouseId: warehouses[0]?.id ?? 0,
+      orderType: s.orderType, orderTypeName: s.orderTypeName, orderDeviceNumber: s.orderDeviceNumber, tableNumber: s.tableNumber, customerId: s.customerId, customerCompanionId: getCustomerCompanionId(), deliveryCompanyId: s.deliveryCompanyId, tableId: s.tableId, dineInMode: s.dineInMode, dineInOrderId: s.dineInOrderId, employeeId: s.employeeId, warehouseId: warehouses[0]?.id ?? 0,
       lines: s.lines, discount: s.discount, note: s.note, holding, holdingOrderId: s.holdingOrderId, payments,
     }
   }
 
+  // What the preparation ticket needs, taken before the save clears the cart. Adding to a dine-in order sends only the new lines.
+  const bonOf = (): Omit<BonSale, "result" | "held"> => {
+    const s = usePosStore.getState()
+    return { cart: s.lines, original: s.dineInMode === "add-items" ? s.originalLines : [], customerName: s.customerName, orderTypeName: s.orderType === "TakeAway" ? s.orderTypeName : null, orderDeviceNumber: s.orderDeviceNumber, tableNumber: s.dineInMode === "new-order" || s.dineInMode === "add-items" ? null : s.tableNumber, orderNumber: s.dineInOrderNumber }
+  }
+  const printBon = (bon: Omit<BonSale, "result" | "held">, result: SaleResult, held = false) => kitchenBon({ ...bon, result, held })
+
   const confirmPay = (payments: PosPayment[], print: boolean) => {
+    const bon = bonOf()
     save.mutate({ sale: sale(false, payments) }, {
       onSuccess: (res) => {
         setPayOpen(false)
         defaults()
-        // "Save and print" prints the saved invoice on the roll, like the Print Roll action.
-        if (print && res.id) printInvoice.mutate({ invoice: { id: res.id }, as: "print", paper: "roll" })
+        // "Save and print" prints the saved invoice on the roll, like the Print Roll action; the preparation ticket follows it, and is printed with "save only" too.
+        if (print && res.id) printInvoice.mutate({ invoice: { id: res.id }, as: "print", paper: "roll" }, { onSettled: () => printBon(bon, res) })
+        else printBon(bon, res)
       },
     })
   }
 
+  // Dine-in: the order goes to the kitchen unpaid (a new one, or the items added to the open one); the open order is paid at checkout.
+  const sendToKitchen = () => {
+    if (!usePosStore.getState().tableId) return void toast.error(t("posTables.chooseTable"))
+    const bon = bonOf()
+    save.mutate({ sale: sale(false, []) }, { onSuccess: (res) => { setCartOpen(false); defaults(); printBon(bon, res) } })
+  }
+  const pay = () => {
+    setCartOpen(false)
+    const s = usePosStore.getState()
+    if (s.orderType !== "InDine") return orderStep.start()
+    if (s.dineInMode === "checkout") setPayOpen(true)
+    else sendToKitchen()
+  }
+
   const cart = (
     <Cart categoryId={categoryId} busy={save.isPending || warehouses.length === 0} onShift={() => { setCartOpen(false); setReport(shift) }}
-      onPay={() => { setCartOpen(false); orderStep.start() }}
-      onHold={() => save.mutate({ sale: sale(true, []) }, { onSuccess: () => { setCartOpen(false); defaults() } })} />
+      onPay={pay} onSend={sendToKitchen}
+      onHold={() => { const bon = bonOf(); save.mutate({ sale: sale(true, []) }, { onSuccess: (res) => { setCartOpen(false); defaults(); printBon(bon, res, true) } }) }} />
   )
 
   return (
     // A navy frame around one rounded panel, as in the current POS: the rail sits on the frame, the catalog and the cart inside the panel.
     <div className="relative flex h-dvh overflow-hidden bg-brand-navy py-2">
-      <Rail />
+      <Rail screen={screen} onScreen={setScreen} />
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-lg bg-sidebar ltr:rounded-tl-[28px] rtl:rounded-tr-[28px]">
+        {screen === "tables" ? (
+          <div className="flex flex-1 overflow-hidden bg-[var(--bg-main)]"><TablesScreen onOpened={() => setScreen("sales")} /></div>
+        ) : (
         <div className="flex flex-1 overflow-hidden">
           <div className="flex min-w-0 flex-1 flex-col overflow-y-auto bg-[var(--bg-main)]">
             <div className="overflow-hidden bg-[var(--bg-main)] ltr:rounded-tl-[28px] rtl:rounded-tr-[28px]"><TopBar onPick={pick} /></div>
@@ -119,6 +150,7 @@ function PosScreen({ shift }: { shift: Shift }) {
           </div>
           <div className="hidden h-full shrink-0 lg:block">{cart}</div>
         </div>
+        )}
       </div>
 
       {/* On a phone the cart opens from a floating dock, as in the current POS. */}

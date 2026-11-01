@@ -3,12 +3,13 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Plus, Tags } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/StatusBadge"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { FieldGroup } from "@/components/ui/field"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
+import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
 import { FormInput, FormSwitch } from "@/components/form/FormFields"
 import { PageHeader } from "@/components/PageHeader"
@@ -50,7 +51,8 @@ function ItemDialog({ open, onOpenChange, item }: { open: boolean; onOpenChange:
 export default function ExpenseItemsPage() {
   const { t } = useTranslation()
   const can = useCan()
-  const { data, isLoading } = useExpenseItems()
+  const { sort, sortBy, sortDescending } = useTableSort()
+  const { data, isLoading } = useExpenseItems({ SortBy: sortBy, SortDescending: sortDescending })
   const del = useDeleteExpenseItem()
   const [editing, setEditing] = useState<ExpenseItem | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -58,8 +60,8 @@ export default function ExpenseItemsPage() {
   const open = (x: ExpenseItem | null) => { setEditing(x); setDialogOpen(true) }
 
   const columns: Column<ExpenseItem>[] = [
-    { id: "name", header: t("expenseItems.name"), cell: (x) => <span className="font-semibold">{x.name}</span> },
-    { id: "status", header: t("common.status"), cell: (x) => <Badge variant={x.isActive ? "success" : "muted"}>{x.isActive ? t("common.active") : t("common.inactive")}</Badge> },
+    { id: "name", sortKey: "name", header: t("expenseItems.name"), cell: (x) => <span className="font-semibold">{x.name}</span> },
+    { id: "status", sortKey: "isActive", header: t("common.status"), cell: (x) => <StatusBadge tone={x.isActive ? "success" : "danger"}>{x.isActive ? t("common.active") : t("common.inactive")}</StatusBadge> },
     { id: "actions", header: "", align: "end", cell: (x) => can(P.expenseItems.manage) && <RowActions onEdit={() => open(x)} onDelete={() => setToDelete(x)} /> },
   ]
 
@@ -68,7 +70,7 @@ export default function ExpenseItemsPage() {
       <PageHeader crumbs={[t("nav.expenses")]} title={t("expenseItems.title")} description={t("expenseItems.description")}
         actions={<Can perm={P.expenseItems.manage}><Button size="lg" onClick={() => open(null)}><Plus />{t("expenseItems.add")}</Button></Can>} />
       <SectionCard>
-          <DataTable rows={data} loading={isLoading} columns={columns} rowKey={(x) => x.id}
+          <DataTable rows={data} loading={isLoading} columns={columns} sort={sort} rowKey={(x) => x.id}
             searchText={(x) => x.name ?? ""} searchPlaceholder={t("expenseItems.search")}
             empty={<EmptyState icon={<Tags />} title={t("expenseItems.empty")} hint={t("expenseItems.emptyHint")} />} />
         </SectionCard>

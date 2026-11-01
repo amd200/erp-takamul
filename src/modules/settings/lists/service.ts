@@ -1,3 +1,4 @@
+import type { ListSort } from "@/shared/api/crudQueries"
 import { http } from "@/shared/http/request"
 import type { CategoryDiscount, Currency, DeliveryCompany, DiningTable, ExemptionReason, PricingSystem, Tax } from "./types"
 
@@ -10,11 +11,11 @@ function itemsOf<T>(res: unknown): { items: T[]; total: number } {
 }
 
 /** Every row of a list, walking the pages when the endpoint pages. */
-async function all<T>(url: string, paged: boolean): Promise<T[]> {
-  if (!paged) return itemsOf<T>(await http<unknown>(url)).items
+async function all<T>(url: string, paged: boolean, sort?: ListSort): Promise<T[]> {
+  if (!paged) return itemsOf<T>(await http<unknown>(url, { params: { ...sort } })).items
   const rows: T[] = []
   for (let page = 1; page < 200; page++) {
-    const { items, total } = itemsOf<T>(await http<unknown>(url, { params: { Page: page, PageSize: 50 } }))
+    const { items, total } = itemsOf<T>(await http<unknown>(url, { params: { Page: page, PageSize: 50, ...sort } }))
     rows.push(...items)
     if (!items.length || rows.length >= total) break
   }
@@ -23,7 +24,7 @@ async function all<T>(url: string, paged: boolean): Promise<T[]> {
 
 /** list/get/create/update/remove for a plain endpoint, the shape `createCrudQueries` expects. */
 function crud<T extends { id: number }, In>(url: string, paged = false) {
-  const list = () => all<T>(url, paged)
+  const list = (sort?: ListSort) => all<T>(url, paged, sort)
   return {
     list,
     get: async (id: number) => (await list()).find((r) => r.id === id) as T,

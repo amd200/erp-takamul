@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { cn } from "@/lib/utils"
+import { useClassic } from "@/shared/theme/ThemeProvider"
 import { Pager } from "./Pager"
 
 export type Column<T> = {
@@ -32,9 +33,12 @@ export type ServerPaging = {
   onSearch?: (q: string) => void
   /** True while a new page is loading behind the current one. */
   fetching?: boolean
-  /** Current sort; clicking a sortable header cycles ascending, descending, none. */
-  sort?: { key?: string; desc: boolean; onSort: (key: string | undefined, desc: boolean) => void }
+  /** Same as the table's own `sort` prop (kept so older pages keep working). */
+  sort?: TableSort
 }
+
+/** Current sort; clicking a sortable header toggles ascending / descending, as in the old system. */
+export type TableSort = { key?: string; desc: boolean; onSort: (key: string | undefined, desc: boolean) => void }
 
 const SEARCH_DELAY = 350
 const EMPTY: never[] = []
@@ -48,7 +52,7 @@ const features = tableFeatures({
 
 /** The one list pattern used by every page: search and filters on top, quiet table, pager at the bottom. */
 export function DataTable<T extends RowData>({
-  rows, columns, rowKey, loading, searchText, searchPlaceholder, filters, empty, emptyText, pageSize = 10, server, pager = true,
+  rows, columns, rowKey, loading, searchText, searchPlaceholder, filters, empty, emptyText, pageSize = 10, server, pager = true, sort: sortProp,
 }: {
   rows: T[] | undefined
   columns: Column<T>[]
@@ -65,10 +69,14 @@ export function DataTable<T extends RowData>({
   server?: ServerPaging
   /** False drops the footer (page numbers), for short fixed lists such as the home page's latest five. */
   pager?: boolean
+  /** Sort done by the server (works with server paging or with a fully loaded list); headers with a `sortKey` become buttons. */
+  sort?: TableSort
 }) {
   const { t } = useTranslation()
+  const classic = useClassic()
   const [q, setQ] = useState("")
   const onSearch = server?.onSearch
+  const sort = sortProp ?? server?.sort
 
   // Server search waits for the user to stop typing.
   useEffect(() => {
@@ -111,20 +119,20 @@ export function DataTable<T extends RowData>({
   const failed = isValidElement(empty) && (empty.props as { title?: string }).title === t("common.loadFailed")
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-zinc-800 [&_[data-slot=table-container]]:rounded-none [&_[data-slot=table-container]]:border-x-0">
+    <div className={cn(classic ? "overflow-hidden rounded-xl border border-border [&_[data-slot=table-container]]:rounded-none [&_[data-slot=table-container]]:border-x-0" : "flex flex-col gap-4")}>
       {(hasSearch || filters) && (
-        <div className="flex flex-wrap items-center gap-2 p-5">
+        <div className={cn("flex flex-wrap items-center gap-2", classic && "p-5")}>
           {hasSearch && (
-            <div className="relative min-w-52 flex-1">
-              <Search className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-faint" />
+            <div className={cn("relative min-w-52 flex-1", !classic && "max-w-sm")}>
+              <Search className={cn("pointer-events-none absolute top-1/2 size-4 -translate-y-1/2 text-faint", classic ? "end-3" : "start-3")} />
               <Input
                 value={q}
                 onChange={(e) => { setQ(e.target.value); setPage(0) }}
                 placeholder={searchPlaceholder ?? t("common.search")}
                 aria-label={searchPlaceholder ?? t("common.search")}
-                className="h-10 rounded-[10px] ps-4 pe-10"
+                className={classic ? "h-10 rounded-[10px] ps-4 pe-10" : "h-10 ps-9"}
               />
-              {server?.fetching && <Loader2 className="absolute end-10 top-1/2 size-4 -translate-y-1/2 animate-spin text-faint" aria-label={t("common.loading")} />}
+              {server?.fetching && <Loader2 className={cn("absolute top-1/2 size-4 -translate-y-1/2 animate-spin text-faint", classic ? "end-10" : "end-3")} aria-label={t("common.loading")} />}
             </div>
           )}
           {filters}
@@ -132,10 +140,10 @@ export function DataTable<T extends RowData>({
       )}
 
       {loading ? (
-        <div className="flex flex-col gap-2 px-5 pb-5" aria-busy="true" aria-label={t("common.loading")}>
+        <div className={cn("flex flex-col gap-2", classic && "px-5 pb-5")} aria-busy="true" aria-label={t("common.loading")}>
           {Array.from({ length: 5 }, (_, i) => <div key={i} className="h-11 animate-pulse rounded-lg bg-muted" />)}
         </div>
-      ) : slice.length === 0 && failed ? (
+      ) : slice.length === 0 && (failed || !classic) ? (
         empty
       ) : (
         <>
@@ -164,9 +172,9 @@ export function DataTable<T extends RowData>({
             <TableHeader>
               <TableRow className="hover:bg-transparent">
                 {columns.map((c) => (
-                  <TableHead key={c.id} aria-sort={c.sortKey && server?.sort?.key === c.sortKey ? (server.sort.desc ? "descending" : "ascending") : undefined}
-                    >
-                    {c.sortKey && server?.sort ? <SortButton column={c} sort={server.sort} /> : c.header}
+                  <TableHead key={c.id} aria-sort={c.sortKey && sort?.key === c.sortKey ? (sort.desc ? "descending" : "ascending") : undefined}
+                    className={classic ? undefined : cn("text-xs font-medium text-muted-foreground", c.align === "end" && "text-end")}>
+                    {c.sortKey && sort ? <SortButton column={c} sort={sort} onSorted={() => setPage(0)} /> : c.header}
                   </TableHead>
                 ))}
               </TableRow>
@@ -178,7 +186,7 @@ export function DataTable<T extends RowData>({
               {slice.map((row) => (
                 <TableRow key={row.id}>
                   {row.getAllCells().map((cell) => (
-                    <TableCell key={cell.id} className={cn("tabular-nums", columns.find((c) => c.id === cell.column.id)?.className)}><table.FlexRender cell={cell} /></TableCell>
+                    <TableCell key={cell.id} className={cn("tabular-nums", !classic && "py-3", !classic && columns.find((c) => c.id === cell.column.id)?.align === "end" && "text-end", columns.find((c) => c.id === cell.column.id)?.className)}><table.FlexRender cell={cell} /></TableCell>
                   ))}
                 </TableRow>
               ))}
@@ -188,7 +196,7 @@ export function DataTable<T extends RowData>({
       )}
 
       {!loading && pager && (
-        <div className="px-5 py-4">
+        <div className={cn(classic && "px-5 py-4")}>
           {server
             ? <Pager always total={server.total} page={server.page} pageSize={server.pageSize} onPage={server.onPage} />
             : <Pager always total={filteredCount} page={current} pageSize={pageSize} onPage={setPage} />}
@@ -198,11 +206,11 @@ export function DataTable<T extends RowData>({
   )
 }
 
-function SortButton<T>({ column, sort }: { column: Column<T>; sort: NonNullable<ServerPaging["sort"]> }) {
+function SortButton<T>({ column, sort, onSorted }: { column: Column<T>; sort: TableSort; onSorted: () => void }) {
   const active = sort.key === column.sortKey
   const Icon = !active ? ArrowUpDown : sort.desc ? ArrowDown : ArrowUp
-  // ascending -> descending -> back to the server's default order
-  const next = () => (!active ? sort.onSort(column.sortKey, false) : !sort.desc ? sort.onSort(column.sortKey, true) : sort.onSort(undefined, false))
+  // ascending <-> descending (a sorted column never goes back to unsorted, like the old system)
+  const next = () => { sort.onSort(column.sortKey, active && !sort.desc); onSorted() }
   return (
     <button type="button" onClick={next} className={cn("-mx-1 inline-flex items-center gap-1 rounded px-1 py-0.5 hover:text-foreground", active && "text-foreground")}>
       {column.header}<Icon className={cn("size-3.5", !active && "text-faint")} />

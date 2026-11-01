@@ -1,17 +1,23 @@
 import { Delete } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
 
-const KEYS = ["7", "8", "9", "4", "5", "6", "1", "2", "3", ".", "0", "00"]
+const ROWS = [["7", "8", "9"], ["4", "5", "6"], ["1", "2", "3"], [".", "0", "back"]]
 
-/** Digits for the amount being typed. The layout is fixed left to right, whatever the page direction. */
-export function Keypad({ onKey, disabled, className, keyClass }: { onKey: (k: string) => void; disabled?: boolean; className?: string; keyClass?: string }) {
+/** Digits for the amount being typed, as the old numpad: four rows of three. The layout is fixed left to right, whatever the page direction. */
+export function Keypad({ onKey, disabled }: { onKey: (k: string) => void; disabled?: boolean }) {
   const { t } = useTranslation()
   return (
-    <div dir="ltr" className={cn("grid grid-cols-3 gap-2", className)}>
-      {KEYS.map((k) => <Button key={k} type="button" variant="outline" disabled={disabled} className={cn("h-14 text-xl font-semibold", keyClass)} onClick={() => onKey(k)}>{k}</Button>)}
-      <Button type="button" variant="outline" disabled={disabled} aria-label={t("pos.backspace")} className={cn("col-span-3 h-12", keyClass)} onClick={() => onKey("back")}><Delete /></Button>
+    <div dir="ltr" className="flex flex-col gap-1.5">
+      {ROWS.map((row, i) => (
+        <div key={i} className="grid grid-cols-3 gap-1.5">
+          {row.map((k) => (
+            <button key={k} type="button" disabled={disabled} aria-label={k === "back" ? t("pos.backspace") : k} onClick={() => onKey(k)}
+              className="min-h-12 rounded-xl border bg-muted/50 text-sm font-semibold text-foreground transition-all hover:bg-muted active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-muted/50 disabled:active:scale-100">
+              {k === "back" ? <Delete className="mx-auto size-[15px] text-muted-foreground" /> : k}
+            </button>
+          ))}
+        </div>
+      ))}
     </div>
   )
 }

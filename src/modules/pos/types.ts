@@ -1,7 +1,10 @@
 import type { DiscountKind, InvoiceLine } from "@/modules/sales/types"
 
-/** The point of sale sells takeaway and delivery from this screen; dine-in (tables) is a separate flow. */
-export type OrderType = "TakeAway" | "Delivery"
+/** What the cashier sells from the point of sale; "InDine" is the dine-in (tables) flow. */
+export type OrderType = "TakeAway" | "InDine" | "Delivery"
+
+/** A dine-in order is sent to the kitchen first ("new-order"), grows with "add-items", and is paid at "checkout". */
+export type DineInMode = "new-order" | "add-items" | "checkout"
 
 export type Extra = { id: number; name: string }
 
@@ -32,6 +35,10 @@ export type SaleInput = {
   /** Set when the measurement on the sale is a companion of the customer. */
   customerCompanionId?: number | null
   deliveryCompanyId: number | null
+  /** Dine-in only: the table, the mode, and the open order of the table (add-items and checkout). */
+  tableId?: number | null
+  dineInMode?: DineInMode | null
+  dineInOrderId?: number | null
   employeeId: number | null
   warehouseId: number
   lines: CartLine[]
@@ -43,4 +50,5 @@ export type SaleInput = {
   orderDate: string
 }
 
-export type SaleResult = { id: number | null; number: string | null }
+/** `startNumber` is the running number of the order on the day (setting "salesOrderStartNumber"), shown on the kitchen ticket. */
+export type SaleResult = { id: number | null; number: string | null; startNumber?: string | number | null }

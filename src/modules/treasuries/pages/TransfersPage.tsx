@@ -9,6 +9,7 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
+import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
 import { FormInput, FormSelect, FormTextarea } from "@/components/form/FormFields"
 import { PageHeader } from "@/components/PageHeader"
@@ -63,7 +64,8 @@ function TransferDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (
 export default function TransfersPage() {
   const { t, i18n } = useTranslation()
   const can = useCan()
-  const { data, isLoading } = useTransferList()
+  const { sort, sortBy, sortDescending } = useTableSort()
+  const { data, isLoading } = useTransferList({ SortBy: sortBy, SortDescending: sortDescending })
   const { data: treasuries = [] } = useTreasuryList()
   const del = useDeleteTransfer()
   const [open, setOpen] = useState(false)
@@ -71,13 +73,13 @@ export default function TransfersPage() {
   const name = (id: number) => treasuries.find((x) => x.id === id)?.name ?? "—"
 
   const columns: Column<Transfer>[] = [
-    { id: "no", header: t("reports.c.doc"), cell: (x) => <span className="font-semibold">TRF-{x.id}</span> },
-    { id: "date", header: t("common.date"), cell: (x) => <span className="text-muted-foreground">{formatDateTime(x.date, i18n.language)}</span> },
-    { id: "route", header: t("treasuries.route"), cell: (x) => (
+    { id: "no", sortKey: "id", header: t("reports.c.doc"), cell: (x) => <span className="font-semibold">TRF-{x.id}</span> },
+    { id: "date", sortKey: "date", header: t("common.date"), cell: (x) => <span className="text-muted-foreground">{formatDateTime(x.date, i18n.language)}</span> },
+    { id: "route", sortKey: "fromTreasuryName", header: t("treasuries.route"), cell: (x) => (
       <span className="inline-flex items-center gap-2">{name(x.fromTreasuryId)}<ArrowLeftRight className="size-3.5 text-faint" />{name(x.toTreasuryId)}</span>
     ) },
-    { id: "amount", header: t("sales.amount"), cell: (x) => <span className="font-semibold">{formatMoney(x.amount)}</span> },
-    { id: "notes", header: t("common.notes"), cell: (x) => <span className="text-muted-foreground">{x.notes || "—"}</span> },
+    { id: "amount", sortKey: "amount", header: t("sales.amount"), cell: (x) => <span className="font-semibold">{formatMoney(x.amount)}</span> },
+    { id: "notes", sortKey: "notes", header: t("common.notes"), cell: (x) => <span className="text-muted-foreground">{x.notes || "—"}</span> },
     { id: "actions", header: "", align: "end", cell: (x) => can(P.treasuries.transfers) && <RowActions onDelete={() => setToDelete(x)} /> },
   ]
 
@@ -86,7 +88,7 @@ export default function TransfersPage() {
       <PageHeader crumbs={[t("nav.treasuries")]} title={t("treasuries.transfersTitle")} description={t("treasuries.transfersDescription")}
         actions={<Can perm={P.treasuries.transfers}><Button size="lg" onClick={() => setOpen(true)}><Plus />{t("treasuries.newTransfer")}</Button></Can>} />
       <SectionCard>
-        <DataTable rows={data ?? []} loading={isLoading} columns={columns} rowKey={(x) => x.id} searchText={(x) => `TRF-${x.id} ${x.notes ?? ""}`} searchPlaceholder={t("treasuries.searchTransfers")}
+        <DataTable rows={data ?? []} loading={isLoading} columns={columns} sort={sort} rowKey={(x) => x.id} searchText={(x) => `TRF-${x.id} ${x.notes ?? ""}`} searchPlaceholder={t("treasuries.searchTransfers")}
           empty={<EmptyState icon={<ArrowLeftRight />} title={t("treasuries.noTransfers")} hint={t("treasuries.noTransfersHint")} />} />
       </SectionCard>
       <TransferDialog open={open} onOpenChange={setOpen} />

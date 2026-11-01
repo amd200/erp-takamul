@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
+import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
 import { FormInput } from "@/components/form/FormFields"
 import { RowActions } from "@/components/RowActions"
@@ -33,7 +34,8 @@ function CompanyDialog({ open, onOpenChange, item }: { open: boolean; onOpenChan
 
 export function DeliveryList({ readOnly }: { readOnly: boolean }) {
   const { t } = useTranslation()
-  const { data, isLoading } = useDelivery()
+  const { sort, sortBy, sortDescending } = useTableSort()
+  const { data, isLoading } = useDelivery({ SortBy: sortBy, SortDescending: sortDescending })
   const del = useDeleteDelivery()
   const [editing, setEditing] = useState<DeliveryCompany | null>(null)
   const [dialog, setDialog] = useState(false)
@@ -41,13 +43,13 @@ export function DeliveryList({ readOnly }: { readOnly: boolean }) {
   const open = (c: DeliveryCompany | null) => { setEditing(c); setDialog(true) }
 
   const columns: Column<DeliveryCompany>[] = [
-    { id: "name", header: t("settings.lists.delivery_companies.name"), cell: (c) => <span className="font-semibold">{c.name}</span> },
+    { id: "name", sortKey: "name", header: t("settings.lists.delivery_companies.name"), cell: (c) => <span className="font-semibold">{c.name}</span> },
     { id: "actions", header: "", align: "end", cell: (c) => !readOnly && <RowActions onEdit={() => open(c)} onDelete={() => setToDelete(c)} /> },
   ]
   return (
     <SectionCard title={t("settings.s.delivery_companies")} description={t("settings.sd.delivery_companies")}
       action={!readOnly && <Button onClick={() => open(null)}><Plus />{t("settings.lists.delivery_companies.add")}</Button>}>
-      <DataTable rows={data ?? []} loading={isLoading} columns={columns} rowKey={(c) => c.id} searchText={(c) => c.name} searchPlaceholder={t("settings.lists.search")}
+      <DataTable rows={data ?? []} loading={isLoading} columns={columns} sort={sort} rowKey={(c) => c.id} searchText={(c) => c.name} searchPlaceholder={t("settings.lists.search")}
         empty={<EmptyState icon={<Inbox />} title={t("settings.lists.delivery_companies.empty")} />} />
       <CompanyDialog open={dialog} onOpenChange={setDialog} item={editing} />
       <ConfirmDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)} pending={del.isPending}

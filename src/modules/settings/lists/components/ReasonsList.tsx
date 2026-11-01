@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
+import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
 import { FormInput, FormSelect } from "@/components/form/FormFields"
 import { RowActions } from "@/components/RowActions"
@@ -40,7 +41,8 @@ function ReasonDialog({ open, onOpenChange, item }: { open: boolean; onOpenChang
 
 export function ReasonsList({ readOnly }: { readOnly: boolean }) {
   const { t } = useTranslation()
-  const { data, isLoading } = useReasons()
+  const { sort, sortBy, sortDescending } = useTableSort()
+  const { data, isLoading } = useReasons({ SortBy: sortBy, SortDescending: sortDescending })
   const { data: taxes = [] } = useTaxes()
   const del = useDeleteReason()
   const [editing, setEditing] = useState<ExemptionReason | null>(null)
@@ -50,15 +52,15 @@ export function ReasonsList({ readOnly }: { readOnly: boolean }) {
   const taxName = (id: number) => taxes.find((x) => x.id === id)?.name ?? "—"
 
   const columns: Column<ExemptionReason>[] = [
-    { id: "code", header: t("settings.lists.tax_exemption_reasons.taxExemptionReasonCode"), cell: (r) => <span className="font-semibold" dir="ltr">{r.taxExemptionReasonCode}</span> },
-    { id: "text", header: t("settings.lists.tax_exemption_reasons.taxExemptionReasonText"), cell: (r) => r.taxExemptionReasonText },
-    { id: "tax", header: t("settings.lists.tax_exemption_reasons.taxId"), cell: (r) => <span className="text-muted-foreground">{taxName(r.taxId)}</span> },
+    { id: "code", sortKey: "taxExemptionReasonCode", header: t("settings.lists.tax_exemption_reasons.taxExemptionReasonCode"), cell: (r) => <span className="font-semibold" dir="ltr">{r.taxExemptionReasonCode}</span> },
+    { id: "text", sortKey: "taxExemptionReasonText", header: t("settings.lists.tax_exemption_reasons.taxExemptionReasonText"), cell: (r) => r.taxExemptionReasonText },
+    { id: "tax", sortKey: "taxId", header: t("settings.lists.tax_exemption_reasons.taxId"), cell: (r) => <span className="text-muted-foreground">{taxName(r.taxId)}</span> },
     { id: "actions", header: "", align: "end", cell: (r) => !readOnly && <RowActions onEdit={() => open(r)} onDelete={() => setToDelete(r)} /> },
   ]
   return (
     <SectionCard title={t("settings.s.tax_exemption_reasons")} description={t("settings.sd.tax_exemption_reasons")}
       action={!readOnly && <Button onClick={() => open(null)}><Plus />{t("settings.lists.tax_exemption_reasons.add")}</Button>}>
-      <DataTable rows={data ?? []} loading={isLoading} columns={columns} rowKey={(r) => r.id}
+      <DataTable rows={data ?? []} loading={isLoading} columns={columns} sort={sort} rowKey={(r) => r.id}
         searchText={(r) => `${r.taxExemptionReasonCode} ${r.taxExemptionReasonText}`} searchPlaceholder={t("settings.lists.search")}
         empty={<EmptyState icon={<Inbox />} title={t("settings.lists.tax_exemption_reasons.empty")} />} />
       <ReasonDialog open={dialog} onOpenChange={setDialog} item={editing} />

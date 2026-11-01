@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Outlet, useLocation } from "react-router-dom"
 import { Sidebar } from "./Sidebar"
 import { Topbar } from "./Topbar"
+import { useClassic } from "@/shared/theme/ThemeProvider"
 
 export function AppLayout() {
   const [drawer, setDrawer] = useState(false)
@@ -9,9 +10,23 @@ export function AppLayout() {
   const { pathname } = useLocation()
   useEffect(() => { setDrawer(false) }, [pathname])
 
+  if (!useClassic()) {
+    return (
+      <div className="grid min-h-svh grid-cols-1 md:grid-cols-[248px_minmax(0,1fr)] print:block">
+        <Sidebar open={drawer} collapsed={false} onClose={() => setDrawer(false)} onExpand={() => {}} />
+        <div className="flex min-w-0 flex-col">
+          <Topbar drawerOpen={drawer} onMenu={() => setDrawer((o) => !o)} onToggleSidebar={() => {}} />
+          <main className="flex min-w-0 flex-col gap-5 px-4 py-6 md:px-6">
+            <Outlet />
+          </main>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex min-h-svh print:block">
-      <Sidebar open={drawer} collapsed={collapsed} onClose={() => setDrawer(false)} />
+      <Sidebar open={drawer} collapsed={collapsed} onClose={() => setDrawer(false)} onExpand={() => setCollapsed(false)} />
       <div className="relative flex min-w-0 flex-1 flex-col">
         <Topbar drawerOpen={drawer} onMenu={() => setDrawer((o) => !o)} onToggleSidebar={() => setCollapsed((c) => !c)} />
         <main className="flex min-w-0 flex-col gap-5 px-4 py-6 md:px-6">

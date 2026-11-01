@@ -8,16 +8,17 @@ import { LANGUAGES } from "@/shared/i18n"
 import { useTheme } from "@/shared/theme/ThemeProvider"
 import { useEmployees } from "@/modules/lookups/service"
 import { useAppSettings } from "@/modules/settings"
+import { useFreeTables, useTables } from "@/modules/tables/queries"
 import { useDeliveryCompanies, useHeldOrders } from "../queries"
 import { usePosStore } from "../store"
 import type { OrderType } from "../types"
 import { NumberPromptDialog } from "./NumberPromptDialog"
 import { OrdersDialog } from "./OrdersDialog"
 
-/** The order types the branch sells from this screen, in the current POS's order (dine-in is not on this screen yet). */
+/** The order types the branch sells from this screen, in the current POS's order. */
 export function useOrderTypes() {
   const s = useAppSettings().salesScreenTab
-  const types: OrderType[] = [...(s?.isTekawuy ? ["TakeAway" as const] : []), ...(s?.isDelivary ? ["Delivery" as const] : [])]
+  const types: OrderType[] = [...(s?.isTekawuy ? ["TakeAway" as const] : []), ...(s?.isTables ? ["InDine" as const] : []), ...(s?.isDelivary ? ["Delivery" as const] : [])]
   return { types, show: s?.showOrdertype !== false, none: s?.showOrdertype === false && !s?.isTekawuy && !s?.isTables && !s?.isDelivary }
 }
 
@@ -33,9 +34,16 @@ export function CartHeader({ onShift }: { onShift: () => void }) {
   const companyId = usePosStore((s) => s.deliveryCompanyId)
   const employeeId = usePosStore((s) => s.employeeId)
   const pager = usePosStore((s) => s.orderDeviceNumber)
-  const { setOrderType, setDeliveryCompany, setEmployee, setOrderDeviceNumber } = usePosStore.getState()
+  const tableId = usePosStore((s) => s.tableId)
+  const dineInMode = usePosStore((s) => s.dineInMode)
+  const { setOrderType, setDeliveryCompany, setEmployee, setOrderDeviceNumber, setTable } = usePosStore.getState()
   const { types, show } = useOrderTypes()
   const delivery = orderType === "Delivery"
+  const dineIn = orderType === "InDine"
+  // A table already open (adding to it, or paying it) is not in the free list: its name comes from the full list.
+  const open = dineInMode === "add-items" || dineInMode === "checkout"
+  const freeTables = useFreeTables(dineIn && !open)
+  const allTables = useTables(dineIn && open)
   const { data: companies = [] } = useDeliveryCompanies(delivery)
   const showEmployee = settings.salonsTab?.showEmployeeService === true
   const employees = useEmployees()
@@ -47,8 +55,8 @@ export function CartHeader({ onShift }: { onShift: () => void }) {
 
   // The order type always stays one the branch has switched on.
   useEffect(() => {
-    if (types.length && !types.includes(orderType)) setOrderType(types[0])
-  }, [types, orderType, setOrderType])
+    if (types.length && !dineInMode && !types.includes(orderType)) setOrderType(types[0])
+  }, [types, orderType, dineInMode, setOrderType])
 
   // A default service employee that was deleted would send a missing id with the order.
   useEffect(() => {
@@ -100,9 +108,18 @@ export function CartHeader({ onShift }: { onShift: () => void }) {
 
         {show && (
           <div className="w-20 shrink-0">
-            <Select value={orderType} onValueChange={(v) => { setOrderType(v as OrderType); setDeliveryCompany(null) }}>
+            <Select value={orderType} disabled={open} onValueChange={(v) => { setOrderType(v as OrderType); setDeliveryCompany(null); setTable(null) }}>
               <SelectTrigger className="h-8 w-full shrink-0 px-1.5 text-[11px]"><SelectValue /></SelectTrigger>
               <SelectContent>{types.map((o) => <SelectItem key={o} value={o}>{t(`pos.orderTypes.${o}`)}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+        )}
+
+        {dineIn && (
+          <div className="w-24 shrink-0">
+            <Select value={tableId ? String(tableId) : ""} disabled={open} onValueChange={(v) => setTable(Number(v))}>
+              <SelectTrigger className="h-8 w-full px-2 text-[11px]"><SelectValue placeholder={t("posTables.chooseTable")} /></SelectTrigger>
+              <SelectContent>{(open ? allTables.data : freeTables.data)?.filter((x) => !open || x.id === tableId).map((x) => <SelectItem key={x.id} value={String(x.id)}>{x.tableName}</SelectItem>)}</SelectContent>
             </Select>
           </div>
         )}

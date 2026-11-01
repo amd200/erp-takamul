@@ -9,7 +9,7 @@ import { EmptyState } from "@/components/EmptyState"
 import { cn } from "@/lib/utils"
 import { printDocument, renderDocument } from "@/shared/print"
 import { useAppSettings } from "@/modules/settings"
-import { bonDoc, type BonStatus } from "../bon"
+import { bonDoc, ticketOptions, type BonStatus } from "../bon"
 import { useMarkReady, usePreparationOrders } from "../queries"
 import type { PrepOrder } from "../types"
 
@@ -72,16 +72,6 @@ function Ticket({ order, minutes, onReady, onPrint, busy }: { order: PrepOrder; 
     </div>
   )
 }
-
-type Settings = ReturnType<typeof useAppSettings>
-const ticketOptions = (s: Settings, status: BonStatus, mode: "preview" | "print") => ({
-  status, mode,
-  language: s.preparationTicketTab?.preparationTicketInvoiceType,
-  showInvoiceNumber: s.preparationTicketTab?.showInvoiceNumberInPreparationTicket !== false,
-  showStartNumber: s.generalTab?.salesOrderStartNumber !== false,
-  showOrderType: s.salesScreenTab?.selectOrderTypeDuringSave === true,
-  showCustomer: s.preparationTicketTab?.showCustomerNameInPreparationTicket === true,
-})
 
 /** The kitchen screen: one ticket per order of the open shift, with the time left, a done button and a print button. */
 export default function PreparationPage() {

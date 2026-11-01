@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
+import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
 import { FormInput, FormSwitch } from "@/components/form/FormFields"
 import { RowActions } from "@/components/RowActions"
@@ -42,7 +43,8 @@ function CurrencyDialog({ open, onOpenChange, item }: { open: boolean; onOpenCha
 export function CurrenciesList({ readOnly }: { readOnly: boolean }) {
   const { t } = useTranslation()
   const qc = useQueryClient()
-  const { data, isLoading } = useCurrencies()
+  const { sort, sortBy, sortDescending } = useTableSort()
+  const { data, isLoading } = useCurrencies({ SortBy: sortBy, SortDescending: sortDescending })
   const del = useDeleteCurrency()
   const makeDefault = useMutation({
     mutationFn: (id: number) => currenciesApi.setDefault(id),
@@ -55,10 +57,10 @@ export function CurrenciesList({ readOnly }: { readOnly: boolean }) {
   const open = (r: Currency | null) => { setEditing(r); setDialog(true) }
 
   const columns: Column<Currency>[] = [
-    { id: "code", header: t("settings.lists.currencies.code"), cell: (r) => <span className="font-semibold" dir="ltr">{r.code}</span> },
-    { id: "name", header: t("settings.lists.currencies.name"), cell: (r) => r.name },
-    { id: "symbol", header: t("settings.lists.currencies.symbol"), cell: (r) => <span className="text-muted-foreground">{r.symbol}</span> },
-    { id: "default", header: "", cell: (r) => r.isDefault && <Badge>{t("settings.lists.currencies.default")}</Badge> },
+    { id: "code", sortKey: "code", header: t("settings.lists.currencies.code"), cell: (r) => <span className="font-semibold" dir="ltr">{r.code}</span> },
+    { id: "name", sortKey: "name", header: t("settings.lists.currencies.name"), cell: (r) => r.name },
+    { id: "symbol", sortKey: "symbol", header: t("settings.lists.currencies.symbol"), cell: (r) => <span className="text-muted-foreground">{r.symbol}</span> },
+    { id: "default", sortKey: "isDefault", header: "", cell: (r) => r.isDefault && <Badge>{t("settings.lists.currencies.default")}</Badge> },
     { id: "actions", header: "", align: "end", cell: (r) => !readOnly && (
       <div className="flex justify-end gap-1">
         {!r.isDefault && <Button size="sm" variant="outline" disabled={makeDefault.isPending} onClick={() => makeDefault.mutate(r.id)}><Star />{t("settings.lists.currencies.setDefault")}</Button>}
@@ -69,7 +71,7 @@ export function CurrenciesList({ readOnly }: { readOnly: boolean }) {
   return (
     <SectionCard title={t("settings.s.currencies")} description={t("settings.sd.currencies")}
       action={!readOnly && <Button onClick={() => open(null)}><Plus />{t("settings.lists.currencies.add")}</Button>}>
-      <DataTable rows={data ?? []} loading={isLoading} columns={columns} rowKey={(r) => r.id} searchText={(r) => `${r.code} ${r.name}`} searchPlaceholder={t("settings.lists.search")}
+      <DataTable rows={data ?? []} loading={isLoading} columns={columns} sort={sort} rowKey={(r) => r.id} searchText={(r) => `${r.code} ${r.name}`} searchPlaceholder={t("settings.lists.search")}
         empty={<EmptyState icon={<Inbox />} title={t("settings.lists.currencies.empty")} />} />
       <CurrencyDialog open={dialog} onOpenChange={setDialog} item={editing} />
       <ConfirmDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)} pending={del.isPending}

@@ -24,7 +24,7 @@ export function CustomerScreenDialog({ open, onOpenChange }: { open: boolean; on
       return String(c.DeviceId ?? c.deviceId ?? "")
     } catch { return "" }
   }, [token])
-  const devices = useQuery({ queryKey: ["pos-devices", "list"], queryFn: devicesApi.list, enabled: open })
+  const devices = useQuery({ queryKey: ["pos-devices", "list"], queryFn: () => devicesApi.list(), enabled: open })
   const device = deviceId ? (devices.data ?? []).find((d) => String(d.id) === deviceId) : undefined
   const name = device?.deviceName ?? deviceId
   const link = `${window.location.origin}/pos4?posDeviceName=${encodeURIComponent(name)}`

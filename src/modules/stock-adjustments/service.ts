@@ -1,4 +1,5 @@
 import { fetchAllPages } from "@/shared/http/paged"
+import type { ListSort } from "@/shared/api/crudQueries"
 import { http } from "@/shared/http/request"
 import { productsApi } from "@/modules/products/service"
 import type { AdjustmentDto, AdjustmentInput } from "./types"
@@ -15,7 +16,11 @@ async function stockRowOf(productId: number, barcode: string) {
 
 // Real endpoints: GET /StockInventory/bulk-adjustments, GET /StockInventory/{id}, POST /StockInventory/bulk-adjust
 export const adjustmentsApi = {
-  list: async () => (await fetchAllPages<AdjustmentDto>("/StockInventory/bulk-adjustments", { pageSize: 50 })).sort((a, b) => b.id - a.id),
+  list: async (sort?: ListSort) => {
+    const rows = await fetchAllPages<AdjustmentDto>("/StockInventory/bulk-adjustments", { pageSize: 50, params: { ...sort } })
+    // Newest first unless the user picked a sort.
+    return sort?.SortBy ? rows : rows.sort((a, b) => b.id - a.id)
+  },
   get: (id: number) => http<AdjustmentDto>(`/StockInventory/${id}`),
   create: async (input: AdjustmentInput) => {
     // The server adjusts stock rows, not items: each item is looked up for its row and its base unit.

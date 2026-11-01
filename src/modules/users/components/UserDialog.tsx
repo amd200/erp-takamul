@@ -57,7 +57,7 @@ export function UserDialog({ open, onOpenChange, user }: { open: boolean; onOpen
           {!user && <FormInput control={c} name="password" type="password" required label={t("oldUsers.password")} placeholder={t("oldUsers.passwordHint")} />}
           {!user && <FormInput control={c} name="confirmPassword" type="password" required label={t("oldUsers.confirmPassword")} placeholder={t("oldUsers.rewritePassword")} />}
 
-          <div className="rounded-lg border border-gray-200 p-3 sm:col-span-2">
+          <div className="rounded-lg border border-border p-3 sm:col-span-2">
             <div className="flex items-start gap-3">
               <Checkbox id="user-multi-branch" className="mt-0.5" checked={multi === true} onCheckedChange={(v) => form.setValue("isMultiBranch", v === true)} />
               <div className="space-y-1">

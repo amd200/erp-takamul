@@ -1,3 +1,4 @@
+import { PageBox } from "@/components/PageBox"
 import { useState } from "react"
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -18,8 +19,8 @@ import { adjustmentSchema, type AdjustmentForm } from "../schema"
 import { useAdjustments, useCreateAdjustment } from "../queries"
 
 const cols = "md:grid-cols-8"
-const box = "rounded-sm border border-gray-200 p-6 dark:border-gray-800"
-const cap = "mb-1.5 text-xs text-zinc-500 md:hidden"
+const box = "rounded-sm border border-border p-6"
+const cap = "mb-1.5 text-xs text-muted-foreground md:hidden"
 
 /**
  * Add a quantity adjustment, or (at /view/:id) look at a saved one: the same form with every field locked.
@@ -60,15 +61,12 @@ export default function AdjustmentFormPage() {
       })
 
   return (
-    <div className="rounded-lg border border-gray-200 p-6 dark:border-zinc-800">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl leading-snug font-bold">{t("adjForm.add")}</h1>
-        <Button asChild variant="outline"><Link to="/products/quantity-adjustments">{t("adjForm.back")}<ArrowLeft size={16} /></Link></Button>
-      </div>
+    <PageBox title={t("adjForm.add")}
+      action={<Button asChild variant="outline"><Link to="/products/quantity-adjustments">{t("adjForm.back")}<ArrowLeft size={16} /></Link></Button>}>
 
       <form onSubmit={submit} noValidate className="space-y-6">
         <div className={box}>
-          <h2 className="mb-6 text-lg font-bold text-gray-800">{t("adjForm.basic")}</h2>
+          <h2 className="mb-6 text-lg font-bold text-foreground">{t("adjForm.basic")}</h2>
           <div className="space-y-6">
             <Field>
               <FieldLabel>{t("adjForm.date")}</FieldLabel>
@@ -81,7 +79,7 @@ export default function AdjustmentFormPage() {
         </div>
 
         <div className={box}>
-          <h2 className="mb-6 text-lg font-bold text-zinc-900">{t("adjForm.itemsList")}</h2>
+          <h2 className="mb-6 text-lg font-bold text-foreground">{t("adjForm.itemsList")}</h2>
           {!isView && (
             <div className="mb-6">
               <FieldLabel className="mb-2 text-sm font-semibold">{t("adjForm.chooseProduct")}</FieldLabel>
@@ -89,7 +87,7 @@ export default function AdjustmentFormPage() {
             </div>
           )}
 
-          <div className={cn("hidden items-center gap-4 border-b border-zinc-200 px-2 pb-3 text-xs font-medium tracking-widest text-zinc-400 uppercase md:grid", cols)}>
+          <div className={cn("hidden items-center gap-4 border-b border-border px-2 pb-3 text-xs font-medium tracking-widest text-faint uppercase md:grid", cols)}>
             <div>{t("adjForm.productName")}</div><div>{t("adjForm.productCode")}</div><div>{t("adjForm.unit")}</div><div>{t("adjForm.before")}</div>
             <div>{t("adjForm.operationType")}</div><div>{t("adjForm.operationQty")}</div><div>{t("adjForm.after")}</div><div />
           </div>
@@ -98,7 +96,7 @@ export default function AdjustmentFormPage() {
             {rows.map((r, i) => {
               const after = r.before + (r.operation === "Add" ? 1 : -1) * r.quantity
               return (
-                <div key={r.key} className={cn("grid grid-cols-1 items-center gap-4 rounded-xl border border-zinc-100 bg-zinc-50 p-4 md:rounded-none md:border-none md:bg-transparent md:p-2 mb-8", cols)}>
+                <div key={r.key} className={cn("grid grid-cols-1 items-center gap-4 rounded-xl border border-zinc-100 bg-muted/50 p-4 md:rounded-none md:border-none md:bg-transparent md:p-2 mb-8", cols)}>
                   <div><div className={cap}>{t("adjForm.productName")}</div><div className="px-2 py-2.5 text-sm font-medium">{r.name}</div></div>
                   <div><div className={cap}>{t("adjForm.productCode")}</div><Input readOnly value={r.barcode} className="cursor-not-allowed text-center" /></div>
                   <div><div className={cap}>{t("adjForm.unit")}</div><Input readOnly value={r.unit} className="cursor-not-allowed text-center" /></div>
@@ -131,7 +129,7 @@ export default function AdjustmentFormPage() {
                   <div><div className={cap}>{t("adjForm.after")}</div><Input readOnly value={after} className={cn("cursor-not-allowed bg-zinc-100 text-center", after < 0 && "text-destructive")} /></div>
                   {!isView && (
                     <div className="flex justify-end md:justify-center">
-                      <button type="button" aria-label={t("common.remove")} onClick={() => lines.remove(i)} className="rounded-md p-2 text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-500"><Trash2 size={18} strokeWidth={1.5} /></button>
+                      <button type="button" aria-label={t("common.remove")} onClick={() => lines.remove(i)} className="rounded-md p-2 text-faint transition-colors hover:bg-red-50 hover:text-red-500"><Trash2 size={18} strokeWidth={1.5} /></button>
                     </div>
                   )}
                 </div>
@@ -141,13 +139,13 @@ export default function AdjustmentFormPage() {
           </div>
         </div>
 
-        <div className="flex flex-col-reverse items-stretch justify-between gap-4 rounded-sm border border-gray-200 p-5 sm:flex-row sm:items-center sm:p-6 dark:border-gray-800">
+        <div className="form-footer in-box flex flex-col-reverse items-stretch justify-between gap-4 sm:flex-row sm:items-center">
           <Button type="button" variant="destructive" size="xl" onClick={() => nav("/products/quantity-adjustments")}>{t("adjForm.cancelBack")}</Button>
           {isView
             ? null
             : <Button type="submit" size="xl" disabled={create.isPending}>{t("adjForm.add")}</Button>}
         </div>
       </form>
-    </div>
+    </PageBox>
   )
 }

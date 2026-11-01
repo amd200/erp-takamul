@@ -1,4 +1,4 @@
-import type { ReactNode } from "react"
+import { useEffect, useRef, useState, type ComponentProps, type ReactNode } from "react"
 import { Controller, type Control, type FieldPath, type FieldValues } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
@@ -42,9 +42,26 @@ function useErrorText() {
  */
 const emptyNumber = (name: string) => (/\.\d+(\.|$)/.test(name) ? null : undefined)
 
+/**
+ * A number box that has been 0 shows nothing (its placeholder) while it is 0, and clearing it means 0 again. Boxes that never
+ * held 0 (optional ones such as calories) keep their own empty value. The text is kept here so "0." can be typed.
+ */
+function NumberText({ value, onValue, empty, placeholder, ...rest }: { value: number | null | undefined; onValue: (v: number | null | undefined) => void; empty: null | undefined } & Omit<ComponentProps<typeof Input>, "value" | "onChange" | "type">) {
+  const zero = useRef(false)
+  if (value === 0) zero.current = true
+  const show = (v: number | null | undefined) => (v == null || (zero.current && v === 0) ? "" : String(v))
+  const [text, setText] = useState(show(value))
+  // Follow outside changes (a reset, a computed value) but not our own typing.
+  useEffect(() => { if (value !== (text === "" ? (zero.current ? 0 : empty) : Number(text))) setText(show(value)) }, [value]) // eslint-disable-line react-hooks/exhaustive-deps
+  return (
+    <Input {...rest} type="number" value={text} placeholder={placeholder ?? (zero.current ? "0" : undefined)}
+      onChange={(e) => { setText(e.target.value); onValue(e.target.value === "" ? (zero.current ? 0 : empty) : Number(e.target.value)) }} />
+  )
+}
+
 export function FormInput<T extends FieldValues>({
-  control, name, label, description, required, className, type = "text", dir, placeholder, disabled, end, labelHidden, autoComplete,
-}: Base<T> & { type?: "text" | "number" | "password" | "email"; dir?: "ltr" | "rtl"; placeholder?: string; disabled?: boolean; end?: ReactNode; autoComplete?: string }) {
+  control, name, label, description, required, className, type = "text", dir, placeholder, disabled, end, labelHidden, autoComplete, readOnly,
+}: Base<T> & { readOnly?: boolean; type?: "text" | "number" | "password" | "email"; dir?: "ltr" | "rtl"; placeholder?: string; disabled?: boolean; end?: ReactNode; autoComplete?: string }) {
   const err = useErrorText()
   return (
     <Controller
@@ -54,21 +71,29 @@ export function FormInput<T extends FieldValues>({
         <Field data-invalid={fieldState.invalid} className={className}>
           <Label label={label} required={required} hidden={labelHidden} />
           <div className="flex gap-2">
+            {type === "number" ? (
+              <NumberText
+                name={field.name} ref={field.ref} onBlur={field.onBlur}
+                value={field.value} onValue={field.onChange} empty={emptyNumber(name)}
+                id={name} step="any" inputMode="decimal" dir={dir} autoComplete={autoComplete} placeholder={placeholder}
+                disabled={disabled} readOnly={readOnly} aria-invalid={fieldState.invalid} className="h-10"
+              />
+            ) : (
             <Input
               {...field}
               id={name}
               type={type}
-              step={type === "number" ? "any" : undefined}
-              inputMode={type === "number" ? "decimal" : undefined}
               dir={dir}
               autoComplete={autoComplete}
               placeholder={placeholder}
               disabled={disabled}
+              readOnly={readOnly}
               aria-invalid={fieldState.invalid}
               value={field.value ?? ""}
-              onChange={(e) => field.onChange(type === "number" ? (e.target.value === "" ? emptyNumber(name) : Number(e.target.value)) : e.target.value)}
+              onChange={(e) => field.onChange(e.target.value)}
               className="h-10"
             />
+            )}
             {end}
           </div>
           {description && <FieldDescription>{description}</FieldDescription>}
@@ -79,7 +104,7 @@ export function FormInput<T extends FieldValues>({
   )
 }
 
-export function FormTextarea<T extends FieldValues>({ control, name, label, description, className, placeholder }: Base<T> & { placeholder?: string }) {
+export function FormTextarea<T extends FieldValues>({ control, name, label, description, className, placeholder, readOnly }: Base<T> & { placeholder?: string; readOnly?: boolean }) {
   const err = useErrorText()
   return (
     <Controller
@@ -88,7 +113,7 @@ export function FormTextarea<T extends FieldValues>({ control, name, label, desc
       render={({ field, fieldState }) => (
         <Field data-invalid={fieldState.invalid} className={className}>
           <Label label={label} />
-          <Textarea {...field} id={name} value={field.value ?? ""} placeholder={placeholder} aria-invalid={fieldState.invalid} />
+          <Textarea {...field} id={name} value={field.value ?? ""} placeholder={placeholder} readOnly={readOnly} aria-invalid={fieldState.invalid} />
           {description && <FieldDescription>{description}</FieldDescription>}
           <FieldError errors={err(fieldState.error?.message)} />
         </Field>

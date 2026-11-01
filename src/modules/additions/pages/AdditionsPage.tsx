@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
+import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
 import { FormInput } from "@/components/form/FormFields"
 import { MultiPicker } from "@/components/form/MultiPicker"
@@ -60,7 +61,8 @@ export default function AdditionsPage() {
   const can = useCan()
   const [page, setPage] = useState(0)
   const [search, setSearch] = useState("")
-  const { data, isLoading, isFetching } = useAdditionPage({ page: page + 1, pageSize: 20, searchTerm: search })
+  const { sort, sortBy, sortDescending } = useTableSort(() => setPage(0))
+  const { data, isLoading, isFetching } = useAdditionPage({ page: page + 1, pageSize: 20, searchTerm: search, sortBy, sortDescending })
   const onSearch = useCallback((value: string) => { setSearch((previous) => { if (previous !== value) setPage(0); return value }) }, [])
   const del = useDeleteAddition()
   const [editing, setEditing] = useState<Addition | null>(null)
@@ -69,7 +71,7 @@ export default function AdditionsPage() {
   const open = (a: Addition | null) => { setEditing(a); setDialogOpen(true) }
 
   const columns: Column<Addition>[] = [
-    { id: "name", header: t("additions.name"), cell: (a) => <span className="font-semibold">{a.additionNameAr}</span> },
+    { id: "name", sortKey: "additionNameAr", header: t("additions.name"), cell: (a) => <span className="font-semibold">{a.additionNameAr}</span> },
     { id: "actions", header: "", align: "end", cell: (a) => can(P.additions.manage) && <RowActions onEdit={() => open(a)} onDelete={() => setToDelete(a)} /> },
   ]
 
@@ -78,7 +80,7 @@ export default function AdditionsPage() {
       <PageHeader crumbs={[t("nav.items")]} title={t("additions.title")} description={t("additions.description")}
         actions={<Can perm={P.additions.manage}><Button size="lg" onClick={() => open(null)}><Plus />{t("additions.add")}</Button></Can>} />
       <SectionCard>
-          <DataTable rows={data?.items ?? []} loading={isLoading} columns={columns} rowKey={(a) => a.id}
+          <DataTable rows={data?.items ?? []} loading={isLoading} columns={columns} rowKey={(a) => a.id} sort={sort}
             server={{ total: data?.totalCount ?? 0, page, pageSize: data?.pageSize ?? 20, onPage: setPage, onSearch, fetching: isFetching }} searchPlaceholder={t("additions.search")}
             empty={<EmptyState icon={<Puzzle />} title={t("additions.empty")} hint={t("additions.emptyHint")} />} />
         </SectionCard>

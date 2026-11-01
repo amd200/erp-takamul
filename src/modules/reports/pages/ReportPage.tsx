@@ -95,6 +95,10 @@ function Report({ def }: { def: ReportDef }) {
 
 export default function ReportPage() {
   const { id } = useParams()
+  return <ReportById id={id} />
+}
+
+export function ReportById({ id }: { id?: string }) {
   const def = reportById(id)
   if (!def) return <Navigate to="/reports" replace />
   return (

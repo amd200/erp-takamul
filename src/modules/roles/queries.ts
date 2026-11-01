@@ -1,14 +1,14 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import i18n from "@/shared/i18n"
-import { errorToast } from "@/shared/api/crudQueries"
+import { errorToast, type ListSort } from "@/shared/api/crudQueries"
 import { refreshAccessToken } from "@/shared/http/client"
 import { rolesApi } from "./service"
 import type { RoleInput } from "./types"
 
 export const roleKeys = { all: ["roles"] as const, list: ["roles", "list"] as const, detail: (id: string) => ["roles", "detail", id] as const }
 
-export const useRoles = () => useQuery({ queryKey: roleKeys.list, queryFn: rolesApi.list })
+export const useRoles = (sort?: ListSort) => useQuery({ queryKey: sort?.SortBy ? [...roleKeys.list, sort] : roleKeys.list, queryFn: () => rolesApi.list(sort), placeholderData: keepPreviousData })
 export const useRole = (roleId: string | undefined) => useQuery({ queryKey: roleKeys.detail(roleId ?? ""), queryFn: () => rolesApi.get(roleId!), enabled: !!roleId })
 
 /**

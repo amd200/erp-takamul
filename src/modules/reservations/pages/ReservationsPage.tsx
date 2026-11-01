@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
+import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
 import { FormInput, FormSelect, FormTextarea } from "@/components/form/FormFields"
 import { PageHeader } from "@/components/PageHeader"
@@ -75,7 +76,8 @@ export default function ReservationsPage() {
   const [status, setStatus] = useState<"all" | BookingStatus>("all")
   const [from, setFrom] = useState("")
   const [to, setTo] = useState("")
-  const { data, isLoading } = useReservations({ status: status === "all" ? undefined : status, dateFrom: from, dateTo: to })
+  const { sort, sortBy, sortDescending } = useTableSort()
+  const { data, isLoading } = useReservations({ status: status === "all" ? undefined : status, dateFrom: from, dateTo: to, sortBy, sortDescending })
   const setBookingStatus = useSetReservationStatus()
   const del = useDeleteReservation()
   const [editing, setEditing] = useState<Reservation | null>(null)
@@ -83,18 +85,18 @@ export default function ReservationsPage() {
   const [toDelete, setToDelete] = useState<Reservation | null>(null)
 
   const columns: Column<Reservation>[] = [
-    { id: "number", header: t("reservations.number"), cell: (r) => <span className="font-semibold">{r.bookingNumber}</span> },
-    { id: "customer", header: t("reservations.customerName"), cell: (r) => <span className="font-medium">{r.customerName}</span> },
-    { id: "phone", header: t("users.mobile"), cell: (r) => <span dir="ltr" className="text-muted-foreground">{r.customerPhone}</span> },
-    { id: "when", header: t("reservations.when"), cell: (r) => <span className="text-muted-foreground">{formatDateTime(r.bookingDateTime ?? r.bookingDate ?? "", i18n.language, (r.bookingTime ?? "").slice(0, 5))}</span> },
-    { id: "branch", header: t("shifts.branch"), cell: (r) => <span className="text-muted-foreground">{r.branchName || "—"}</span> },
-    { id: "status", header: t("common.status"), cell: (r) => (
+    { id: "number", sortKey: "bookingNumber", header: t("reservations.number"), cell: (r) => <span className="font-semibold">{r.bookingNumber}</span> },
+    { id: "customer", sortKey: "customerName", header: t("reservations.customerName"), cell: (r) => <span className="font-medium">{r.customerName}</span> },
+    { id: "phone", sortKey: "customerPhone", header: t("users.mobile"), cell: (r) => <span dir="ltr" className="text-muted-foreground">{r.customerPhone}</span> },
+    { id: "when", sortKey: "bookingDate", header: t("reservations.when"), cell: (r) => <span className="text-muted-foreground">{formatDateTime(r.bookingDateTime ?? r.bookingDate ?? "", i18n.language, (r.bookingTime ?? "").slice(0, 5))}</span> },
+    { id: "branch", sortKey: "branchName", header: t("shifts.branch"), cell: (r) => <span className="text-muted-foreground">{r.branchName || "—"}</span> },
+    { id: "status", sortKey: "status", header: t("common.status"), cell: (r) => (
       <Select value={bookingStatusOf(r.status)} disabled={!canManage || setBookingStatus.isPending} onValueChange={(v) => setBookingStatus.mutate({ id: r.id, status: v as BookingStatus })}>
         <SelectTrigger className={`h-8 w-28 text-xs font-medium ${STATUS_TONE[bookingStatusOf(r.status)]}`} aria-label={t("common.status")}><SelectValue /></SelectTrigger>
         <SelectContent>{BOOKING_STATUSES.map((s) => <SelectItem key={s} value={s}>{t(`reservations.statuses.${s}`)}</SelectItem>)}</SelectContent>
       </Select>
     ) },
-    { id: "notes", header: t("common.notes"), cell: (r) => <span className="line-clamp-1 max-w-48 text-muted-foreground">{r.notes || "—"}</span> },
+    { id: "notes", sortKey: "notes", header: t("common.notes"), cell: (r) => <span className="line-clamp-1 max-w-48 text-muted-foreground">{r.notes || "—"}</span> },
     { id: "actions", header: "", align: "end", cell: (r) => canManage && <RowActions onEdit={() => { setEditing(r); setOpen(true) }} onDelete={() => setToDelete(r)} /> },
   ]
 
@@ -103,7 +105,7 @@ export default function ReservationsPage() {
       <PageHeader crumbs={[t("nav.reservations")]} title={t("reservations.title")} description={t("reservations.description")}
         actions={canManage && <Button size="lg" onClick={() => { setEditing(null); setOpen(true) }}><Plus />{t("reservations.add")}</Button>} />
       <SectionCard>
-        <DataTable rows={data ?? []} loading={isLoading} columns={columns} rowKey={(r) => r.id}
+        <DataTable rows={data ?? []} loading={isLoading} columns={columns} sort={sort} rowKey={(r) => r.id}
           searchText={(r) => `${r.bookingNumber} ${r.customerName} ${r.customerPhone} ${r.notes}`} searchPlaceholder={t("reservations.search")}
           filters={
             <>

@@ -1,9 +1,10 @@
 import { fetchAllPages } from "@/shared/http/paged"
+import type { ListSort } from "@/shared/api/crudQueries"
 import { http } from "@/shared/http/request"
 import type { Employee, EmployeeInput } from "./types"
 
 export const employeesApi = {
-  list: () => fetchAllPages<Employee>("/employees"),
+  list: (sort?: ListSort) => fetchAllPages<Employee>("/employees", { params: { ...sort } }),
   get: (id: number) => http<Employee>(`/employees/${id}`),
   create: ({ firstName, mobile, branchId }: EmployeeInput) =>
     http<{ message: string }>("/employees/CreateEmployee", { method: "POST", data: { firstName, lastName: "", mobile, ...(branchId ? { branchId } : {}) } }),

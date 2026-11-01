@@ -22,7 +22,7 @@ export type Reservation = {
 
 export type ReservationInput = { customerName: string; customerPhone: string; date: string; time: string; status: BookingStatus; notes: string; customerId: number | null }
 
-export type ReservationQuery = { status?: BookingStatus; dateFrom?: string; dateTo?: string; search?: string }
+export type ReservationQuery = { status?: BookingStatus; dateFrom?: string; dateTo?: string; search?: string; sortBy?: string; sortDescending?: boolean }
 
 /** A booking with no status yet is a confirmed one. */
 export const bookingStatusOf = (status: string | null | undefined): BookingStatus => (BOOKING_STATUSES as readonly string[]).includes(status ?? "") ? (status as BookingStatus) : "Confirmed"

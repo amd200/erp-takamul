@@ -1,3 +1,4 @@
+import { PageBox } from "@/components/PageBox"
 import { useCallback, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Copy, Loader2, Pencil, Printer, RotateCw, ShoppingCart, Trash2 } from "lucide-react"
@@ -6,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
+import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
 import { formatMoney, formatDateTime } from "@/lib/format"
 import { useCan } from "@/shared/permissions/usePermission"
@@ -41,7 +43,8 @@ export default function QuotesPage() {
   const quotation = useLoadQuotation(() => nav(posPath))
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(0)
-  const { data, isLoading, isFetching, isError, refetch } = useQuotePage({ page: page + 1, pageSize: PAGE_SIZE, searchTerm: search })
+  const { sort, sortBy, sortDescending } = useTableSort(() => setPage(0))
+  const { data, isLoading, isFetching, isError, refetch } = useQuotePage({ page: page + 1, pageSize: PAGE_SIZE, searchTerm: search, sortBy, sortDescending })
   const del = useDeleteQuote()
   const copy = useDuplicateQuote()
   const print = usePrintQuote()
@@ -51,12 +54,12 @@ export default function QuotesPage() {
 
   // The same seven columns, in the same order and wording, as the current system.
   const columns: Column<Quote>[] = [
-    { id: "number", header: t("quotes.colNumber"), cell: (q) => q.quotationNumber },
-    { id: "date", header: t("quotes.colDate"), cell: (q) => day(q.quotationDate ?? "") },
-    { id: "customer", header: t("quotes.colCustomer"), cell: (q) => q.customerName || "—" },
-    { id: "by", header: t("quotes.colUser"), cell: (q) => q.createdby || "—" },
-    { id: "discount", header: t("quotes.colDiscount"), cell: (q) => formatMoney(q.discountAmount ?? 0) },
-    { id: "total", header: t("quotes.colTotal"), cell: (q) => formatMoney(q.grandTotal ?? 0) },
+    { id: "number", sortKey: "quotationNumber", header: t("quotes.colNumber"), cell: (q) => q.quotationNumber },
+    { id: "date", sortKey: "quotationDate", header: t("quotes.colDate"), cell: (q) => day(q.quotationDate ?? "") },
+    { id: "customer", sortKey: "customerName", header: t("quotes.colCustomer"), cell: (q) => q.customerName || "—" },
+    { id: "by", sortKey: "createdby", header: t("quotes.colUser"), cell: (q) => q.createdby || "—" },
+    { id: "discount", sortKey: "discountAmount", header: t("quotes.colDiscount"), cell: (q) => formatMoney(q.discountAmount ?? 0) },
+    { id: "total", sortKey: "grandTotal", header: t("quotes.colTotal"), cell: (q) => formatMoney(q.grandTotal ?? 0) },
     { id: "actions", header: t("quotes.colActions"), cell: (q) => (
       <div className="flex justify-center gap-2">
         <IconAction label={t("quotes.print")} disabled={print.isPending} onClick={() => print.mutate(q)}>{print.isPending && print.variables?.id === q.id ? <Loader2 className="animate-spin" /> : <Printer />}</IconAction>
@@ -70,16 +73,12 @@ export default function QuotesPage() {
 
   return (
     <>
-      <div className="rounded-lg border border-gray-200 p-6 dark:border-zinc-800">
-        <div className="mb-6">
-          <h1 className="text-2xl leading-snug font-bold">{t("quotes.listTitle")}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{t("quotes.listSubtitle")}</p>
-        </div>
-        <DataTable rows={data?.items} loading={isLoading} columns={columns} rowKey={(q) => q.id} searchPlaceholder={t("quotes.searchOld")}
+      <PageBox title={t("quotes.listTitle")} subtitle={t("quotes.listSubtitle")}>
+        <DataTable rows={data?.items} loading={isLoading} columns={columns} rowKey={(q) => q.id} sort={sort} searchPlaceholder={t("quotes.searchOld")}
           server={{ total: data?.total ?? 0, page, pageSize: PAGE_SIZE, onPage: setPage, onSearch, fetching: isFetching && !isLoading }}
           emptyText={isError ? undefined : t("quotes.noData")}
           empty={<EmptyState icon={<RotateCw />} title={t("common.loadFailed")} hint={t("common.loadFailedHint")} action={<Button variant="outline" onClick={() => refetch()}>{t("common.retry")}</Button>} />} />
-      </div>
+      </PageBox>
       {quotation.confirmation}
       <ConfirmDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)} pending={del.isPending}
         title={t("quotes.deleteTitle")} description={t("quotes.deleteBody", { number: toDelete?.quotationNumber })}

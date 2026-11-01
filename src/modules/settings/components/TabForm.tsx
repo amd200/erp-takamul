@@ -59,7 +59,7 @@ export function TabForm({ tab, readOnly }: { tab: FormTab; readOnly: boolean }) 
     <form onSubmit={submit} noValidate>
       {fields}
       {readOnly && <p className="mt-4 text-sm text-muted-foreground">{t("settings.readOnly")}</p>}
-      <div className="mt-8 flex flex-col-reverse justify-between gap-3 rounded border border-gray-100 px-3 py-4 sm:flex-row">
+      <div className="sticky-footer mt-8 flex flex-col-reverse justify-between gap-3 rounded border border-border px-3 py-4 sm:flex-row">
         <Button type="button" size="lg" variant="destructive" className="h-12 w-full px-8 sm:w-auto" onClick={() => navigate(-1)}>{t("common.cancel")}</Button>
         {!readOnly && <Button type="submit" size="lg" className="h-12 w-full px-8 text-base sm:w-auto" disabled={save.isPending}>{t("settings.saveSettings")}</Button>}
       </div>

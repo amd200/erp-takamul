@@ -1,6 +1,5 @@
 import { productsApi } from "@/modules/products/service"
 import type { Product } from "@/modules/products/types"
-import { lookupData } from "@/modules/lookups/service"
 import { categoriesApi } from "@/modules/categories/service"
 import type { Category } from "@/modules/categories/types"
 
@@ -77,7 +76,7 @@ function build(products: Product[], categories: Category[]): Dataset {
   for (let back = DAYS - 1; back >= 0; back--) {
     const date = daysAgo(back)
     const weekend = new Date(date).getDay() === 5
-    const dayShifts = [0, 1].map((half) => ({ id: shiftId++, user: lookupData.EMPLOYEES[half].name, half }))
+    const dayShifts = [0, 1].map((half) => ({ id: shiftId++, user: `#${half + 1}`, half }))
     const invoices = int(weekend ? 12 : 6, weekend ? 18 : 13)
     for (let i = 0; i < invoices; i++) {
       const channel = rand() < 0.72 ? "POS" : "A4"

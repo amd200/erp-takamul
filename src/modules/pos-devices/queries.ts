@@ -1,7 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import i18n from "@/shared/i18n"
-import { createCrudQueries, errorToast } from "@/shared/api/crudQueries"
+import { createCrudQueries, errorToast, type ListSort } from "@/shared/api/crudQueries"
 import { devicesApi } from "./service"
 
 export const {
@@ -11,7 +11,7 @@ export const {
   useDelete: useDeleteDevice,
 } = createCrudQueries("pos-devices", devicesApi)
 
-export const useCertificates = () => useQuery({ queryKey: ["pos-devices", "certificates"], queryFn: devicesApi.certificates })
+export const useCertificates = (sort?: ListSort) => useQuery({ queryKey: sort?.SortBy ? ["pos-devices", "certificates", sort] : ["pos-devices", "certificates"], queryFn: () => devicesApi.certificates(sort), placeholderData: keepPreviousData })
 
 /** Onboarding steps; each refreshes the device list. Errors are shown by the wizard itself. */
 function useStep<A, R>(fn: (a: A) => Promise<R>) {

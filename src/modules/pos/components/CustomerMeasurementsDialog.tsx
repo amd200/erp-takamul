@@ -55,7 +55,7 @@ export function CustomerMeasurementsDialog({ open, onOpenChange, customerId, emb
         <PartyPicker parties={customers.map((c) => ({ id: c.id, name: c.customerName, phone: c.phone ?? "" }))} value={viewedId ?? 0} onPick={(p) => setViewedId(p.id)}
           placeholder={t("pos.measurements.searchCustomer")} searchPlaceholder={t("customers.search")} empty={t("pos.noCustomer")} />
 
-        <div className="overflow-x-auto rounded-lg border">
+        <div className="min-h-0 flex-1 overflow-auto rounded-lg border">
           {!viewedId ? null : isLoading ? <p className="py-6 text-center text-sm text-muted-foreground">{t("common.loading")}</p> : (
             <Table className="min-w-[760px]">
               <TableHeader>
@@ -90,7 +90,7 @@ export function CustomerMeasurementsDialog({ open, onOpenChange, customerId, emb
           )}
         </div>
 
-        <DialogFooter className="items-center sm:justify-between">
+        <DialogFooter className="shrink-0 items-center sm:justify-between">
           <p className="text-xs text-muted-foreground">
             {selected ? <>{t("pos.measurements.selectedOwner")}: <span className="font-bold text-foreground">{selected.name}</span></> : t("pos.measurements.none")}
           </p>

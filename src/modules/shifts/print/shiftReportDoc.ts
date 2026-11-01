@@ -1,5 +1,5 @@
 import i18n from "@/shared/i18n"
-import { formatMoney, formatNumber, formatDateTime, formatClock } from "@/lib/format"
+import { formatMoney, formatNumber, formatQty, formatDateTime, formatClock } from "@/lib/format"
 import { esc, type PrintDoc } from "@/shared/print"
 import type { ShiftReport } from "../types"
 
@@ -34,7 +34,7 @@ ${opts.withVouchers ? row(t("shifts.unlinkedVoucherCount"), number(x.paymentCoun
 ${row(t("shifts.net"), money(x.netTotal), "b")}</div>`).join("")
 
   const employees = (opts.byEmployee ? r.employeeSalesSummary ?? [] : []).map((x) => `<tr><td>${esc(x.employeeName || "—")}</td><td>${number(x.salesInvoicesCount)}</td><td>${money(x.netSales)}</td></tr>`).join("")
-  const items = (r.soldItems ?? []).map((x) => `<tr><td>${esc(x.productName)}</td><td>${number(x.quantity)}</td><td>${money(x.lineTotal)}</td></tr>`).join("")
+  const items = (r.soldItems ?? []).map((x) => `<tr><td>${esc(x.productName)}</td><td>${formatQty(x.quantity)}</td><td>${money(x.lineTotal)}</td></tr>`).join("")
 
   return {
     title: t("shifts.reportTitle", { id: r.shiftId }),

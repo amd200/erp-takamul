@@ -1,3 +1,4 @@
+import type { ListSort } from "@/shared/api/crudQueries"
 import { http } from "@/shared/http/request"
 import { fetchAllPages } from "@/shared/http/paged"
 import { currentBranchId, partyToBody } from "@/modules/partners/mappers"
@@ -17,7 +18,7 @@ const body = (c: CustomerInput) => ({
 })
 
 export const customersApi = {
-  list: () => fetchAllPages<Customer>("/Customer", { pageSize: 100 }),
+  list: (sort?: ListSort) => fetchAllPages<Customer>("/Customer", { pageSize: 100, params: { ...sort } }),
   get: (id: number) => http<Customer>(`/Customer/${id}`),
   create: (data: CustomerInput) => http<unknown>("/Customer", { method: "POST", data: { ...body(data), branchId: currentBranchId() } }),
   update: (id: number, data: CustomerInput) => http<unknown>(`/Customer/${id}`, { method: "PUT", data: body(data) }),

@@ -1,3 +1,4 @@
+import type { ListSort } from "@/shared/api/crudQueries"
 import { http } from "@/shared/http/request"
 import type { VoucherKind, Voucher, VoucherInput, TransactionDto } from "./types"
 
@@ -6,10 +7,10 @@ const PATH: Record<VoucherKind, string> = { receipt: "/CustomerTransaction", pay
 const stamp = (day: string) => `${day}T${new Date().toTimeString().slice(0, 8)}`
 
 export const vouchersApi = {
-  list: async () => {
+  list: async (sort?: ListSort) => {
     const [receipts, payments] = await Promise.all([
-      http<TransactionDto[]>(PATH.receipt),
-      http<TransactionDto[]>(PATH.payment),
+      http<TransactionDto[]>(PATH.receipt, { params: { ...sort } }),
+      http<TransactionDto[]>(PATH.payment, { params: { ...sort } }),
     ])
     return [...receipts.map((d): Voucher => ({ ...d, kind: "receipt" })), ...payments.map((d): Voucher => ({ ...d, kind: "payment" }))]
   },

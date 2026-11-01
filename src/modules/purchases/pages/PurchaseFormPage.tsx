@@ -37,7 +37,8 @@ export default function PurchaseFormPage() {
   const showBalance = useAppSettings().customersTab?.showActualBalance
   const { data: warehouses = [] } = useWarehouses()
   const { data: treasuries = [] } = useTreasuries()
-  const defaultVault = useAppSettings().sales?.defaultPurchasesVault
+  const exempt = useAppSettings().taxSetting?.taxSetting === "Exempt"
+  const defaultVault =useAppSettings().sales?.defaultPurchasesVault
   const { data: taxes = [] } = useTaxes()
   const save = useSavePurchase()
   // One key per invoice being written, so a double click or a retry after a dropped connection saves it once.
@@ -64,10 +65,17 @@ export default function PurchaseFormPage() {
 
   useEffect(() => { if (!editId && warehouses.length && !form.getValues("warehouseId")) form.setValue("warehouseId", warehouses[0].id) }, [editId, warehouses, form])
 
+  useEffect(() => { if (!editId && suppliers.length && !form.getValues("supplierId")) form.setValue("supplierId", suppliers[0].id) }, [editId, suppliers, form])
+
   if (editId && isLoading) return <div className="h-96 animate-pulse rounded-xl bg-muted" />
 
   const submit = form.handleSubmit((data) => {
     if (overpaid) return
+    // As in the current system: unless the branch is tax-exempt, every line needs a tax.
+    if (!exempt) {
+      const missing = data.lines.flatMap((l, i) => (l.taxId ? [] : [i]))
+      if (missing.length) { missing.forEach((i) => form.setError(`lines.${i}.taxId`, { message: "pos3.taxRequired" })); return }
+    }
     save.mutate({ id: editId, data, key: key.current }, { onSuccess: () => nav("/purchases") })
   })
 
@@ -78,7 +86,7 @@ export default function PurchaseFormPage() {
   return (
     <FormProvider {...form}>
       <form onSubmit={submit} noValidate className="flex flex-col gap-6">
-        <PageHeader title={editId ? t("purchases.editTitle", { number: existing?.purchaseOrderNumber }) : t("purchases.formTitle")}
+        <PageHeader crumbs={[t("nav.purchases")]} title={editId ? t("purchases.editTitle", { number: existing?.purchaseOrderNumber }) : t("purchases.formTitle")}
           actions={<Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/5 hover:text-primary"><Link to="/purchases"><List />{t("purchases.backToPurchases")}</Link></Button>} />
 
         <SectionCard title={t("sales.basics")}>
@@ -125,14 +133,14 @@ export default function PurchaseFormPage() {
               {overpaid && <p className="text-sm text-destructive">{t("sales.overpaid")}</p>}
               <Button type="button" size="lg" variant="secondary" disabled={remaining <= 0} onClick={addPayment} className="w-max rounded-lg px-4 text-sm font-medium transition-colors"><Plus size={16} strokeWidth={2} />{t("sales.addPayment")}</Button>
             </div>
-            <aside className="rounded-2xl border border-border bg-muted/30 p-6">
+            <aside className="summary-box">
               <h3 className="mb-5 text-base font-semibold text-foreground">{t("sales.invoiceSummary")}</h3>
               <TotalsPanel totals={totals} paid={paid} />
             </aside>
           </div>
         </section>
 
-        <div className="flex flex-col-reverse items-stretch justify-between gap-3 rounded-sm border border-border bg-background p-5 sm:flex-row sm:items-center sm:p-6">
+        <div className="form-footer flex flex-col-reverse items-stretch justify-between gap-3 sm:flex-row sm:items-center">
           <Button asChild variant="destructive" size="xl"><Link to="/purchases">{t("sales.cancelBack")}</Link></Button>
           <span className="text-sm text-destructive" role="status">{form.formState.submitCount > 0 && Object.keys(form.formState.errors).length > 0 ? t("products.fixErrors") : ""}</span>
           <Button type="submit" size="xl" disabled={save.isPending || overpaid}>{editId ? t("common.saveChanges") : t("sales.saveInvoice")}</Button>

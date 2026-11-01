@@ -39,7 +39,7 @@ export function QuotationDialog({ open, onOpenChange }: { open: boolean; onOpenC
       <Dialog open={open} onOpenChange={close}>
         <DialogContent showCloseButton={false} className="max-w-md gap-0 border-border bg-background p-0 text-foreground">
           <div className={cn("flex items-center justify-between px-4 py-3 dark:bg-secondary", beauty ? "bg-primary text-primary-foreground" : "bg-[#000052] text-white")}>
-            <DialogTitle className={cn("text-[14px] font-medium", beauty ? "text-primary-foreground" : "text-white")}>{t("pos2.loadQuotation")}</DialogTitle>
+            <DialogTitle className={cn("text-[14px] font-medium", beauty ? "text-primary-foreground!" : "text-white!")}>{t("pos2.loadQuotation")}</DialogTitle>
             <DialogDescription className="sr-only">{t("pos2.loadQuotationHint")}</DialogDescription>
             <div className="flex items-center gap-2">
               {found && <span className="rounded bg-white/15 px-2.5 py-1 text-[13px]">{t("pos1.total")}: {(found.grandTotal ?? 0).toFixed(2)} {t("pos1.sar")}</span>}

@@ -80,11 +80,11 @@ export function CustomerDialog({ open, onOpenChange, customer, onCreated, withMe
   const body = (
     <>
         <DialogHeader className={cn("shrink-0 py-2 sm:py-3", embedded && "sr-only")}>
-          <DialogTitle className="flex items-center gap-2 text-[#2ecc71]"><UserPlus size={20} />{editing ? t("custDialog.edit") : t("custDialog.add")}</DialogTitle>
+          <DialogTitle className="flex items-center gap-2 text-primary"><UserPlus size={20} />{editing ? t("custDialog.edit") : t("custDialog.add")}</DialogTitle>
         </DialogHeader>
 
         <FormProvider {...form}>
-          <form id="customer-form" onSubmit={submit} noValidate className="-mx-1 min-h-0 flex-1 overflow-y-auto px-1 sm:-mx-4 sm:px-4">
+          <form id="customer-form" onSubmit={submit} noValidate className={cn("min-h-0 flex-1 overflow-x-hidden overflow-y-auto", !embedded && "-mx-1 px-1 sm:-mx-4 sm:px-4")}>
             <div className="grid grid-cols-2 gap-4 p-1 sm:gap-5 sm:p-2">
               {part !== "companions" && <>
               {/* In the optics tools the file number, name and mobile share one row, as in the current POS. */}
@@ -102,16 +102,16 @@ export function CustomerDialog({ open, onOpenChange, customer, onCreated, withMe
                   <FormInput control={c} name="district" label={t("custDialog.district")} placeholder={t("custDialog.districtHint")} />
                   <div className="col-span-2"><FormInput control={c} name="street" label={t("custDialog.street")} placeholder={t("custDialog.streetHint")} /></div>
 
-                  <div className="col-span-2 my-2 w-full rounded-2xl border border-gray-200 p-5">
+                  <div className="col-span-2 my-2 w-full rounded-2xl border border-border p-5">
                     <div className="flex flex-row items-center justify-between gap-4">
                       <div>
-                        <h3 className="text-base font-bold text-gray-800">{t("custDialog.nationalAddress")}</h3>
-                        <p className="mt-1 text-sm text-gray-500">{t("custDialog.vatHint")}</p>
+                        <h3 className="text-base font-bold text-foreground">{t("custDialog.nationalAddress")}</h3>
+                        <p className="mt-1 text-sm text-muted-foreground">{t("custDialog.vatHint")}</p>
                       </div>
                       <Controller control={c} name="isNational" render={({ field }) => <Switch className="shrink-0 scale-130 cursor-pointer" checked={field.value} onCheckedChange={field.onChange} />} />
                     </div>
                     {national && (
-                      <div className="mt-5 grid grid-cols-2 gap-4 border-t border-gray-100 pt-5">
+                      <div className="mt-5 grid grid-cols-2 gap-4 border-t border-border pt-5">
                         <FormInput control={c} name="taxNumber" required label={t("custDialog.taxNumber")} placeholder={t("custDialog.taxNumberHint")} dir="ltr" />
                         <FormInput control={c} name="commercialRegister" required label={t("custDialog.commercialRegister")} placeholder={t("custDialog.commercialRegisterHint")} dir="ltr" />
                       </div>
@@ -143,7 +143,7 @@ export function CustomerDialog({ open, onOpenChange, customer, onCreated, withMe
           </form>
         </FormProvider>
 
-        <DialogFooter>
+        <DialogFooter className="shrink-0">
           <Button type="button" variant="destructive" className="h-12 w-full px-6 text-base sm:w-auto" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
           <Button type="submit" form="customer-form" className="h-12 w-full px-6 text-base sm:w-auto" disabled={save.isPending}>{editing ? t("custDialog.edit") : t("custDialog.add")}</Button>
         </DialogFooter>

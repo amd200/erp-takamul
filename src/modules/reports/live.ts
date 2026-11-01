@@ -1,5 +1,6 @@
 import { productsApi } from "@/modules/products/service"
 import * as api from "./api"
+import { GUIDE, GUIDE_SALES } from "./liveGuide"
 import type { Cell, Filters, ReportResult, Row } from "./types"
 
 /**
@@ -205,6 +206,9 @@ export const LIVE: Record<string, Live> = {
     }
   },
 }
+
+// Reports whose endpoints follow the back end guide replace the older entries above.
+Object.assign(LIVE, GUIDE, GUIDE_SALES)
 
 /** A customer or supplier account: opening balance, the movements, the closing balance. */
 function statementResult(s: { rows: api.StatementRow[]; first: api.Statement } | undefined): ReportResult {

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react"
-import { Clock, FileText, Plus, Printer, SaudiRiyal, Search, Trash2, User, X } from "lucide-react"
+import { Clock, CreditCard, FileText, Plus, Printer, SaudiRiyal, Search, Trash2, User, X } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
@@ -12,16 +12,17 @@ import { invoicesApi } from "@/modules/sales/service"
 import { editorLineOf } from "@/modules/sales/totals"
 import type { SalesOrderDto } from "@/modules/sales/types"
 import { useInvoiceOutput } from "@/modules/sales/print/useInvoiceOutput"
-import { newLineKey } from "../cart"
+import { useAppSettings } from "@/modules/settings"
+import { dineInLineOf, newLineKey } from "../cart"
 import { posKeys, useDeleteHeld } from "../queries"
 import { usePosStore } from "../store"
 
-export type Order = SalesOrderDto & { isHolding?: boolean | null; orderType?: string | null; orderDeviceNumber?: number | string | null; employeeId?: number | null }
-type Tab = "completed" | "pending"
+export type Order = SalesOrderDto & { isHolding?: boolean | null; orderType?: string | null; orderDeviceNumber?: number | string | null; employeeId?: number | null; tableId?: number | null }
+type Tab = "completed" | "pending" | "tables"
 
 /** The latest cashier invoices (10, as the current POS asks for) or the held ones, as /sales-orders sends them. */
-export const fetchOrders = async (held: boolean) =>
-  (await http<PagedResult<Order>>("/sales-orders", { params: { Page: 1, PageSize: held ? 100 : 10, OrderType: "POS", IsHold: held } })).items ?? []
+export const fetchOrders = async (held: boolean, size = held ? 100 : 10) =>
+  (await http<PagedResult<Order>>("/sales-orders", { params: { Page: 1, PageSize: size, OrderType: "POS", IsHold: held } })).items ?? []
 
 export const badgeOf = (status?: string | null) => {
   const s = status?.toLowerCase()
@@ -39,6 +40,12 @@ export function useOrderToCart(done: () => void) {
     if (pos.save !== "idle") return toast.error(t("pos.lockedHint"))
     try {
       const inv = (await invoicesApi.get(o.id)) as Order
+      // A table's open order is paid on its table; the held-order release does not apply to it.
+      if (inv.orderType === "InDine") {
+        if (inv.orderStatus !== "InProgress" || !inv.tableId) return
+        if (!pos.startDineIn({ mode: "checkout", tableId: inv.tableId, orderId: inv.id, lines: (inv.items ?? []).map(dineInLineOf), customerId: inv.customerId || null, customerName: inv.customerName ?? "", note: inv.notes ?? "", orderDeviceNumber: inv.orderDeviceNumber ? String(inv.orderDeviceNumber) : null, employeeId: inv.employeeId })) return
+        return done()
+      }
       if (!pos.loadHeld(o.id, (inv.items ?? []).map((l) => ({ ...editorLineOf(l), key: newLineKey(), notes: "", extras: [], imageUrl: null })), inv.customerId || null, inv.customerName ?? "", inv.notes ?? "")) return
       const s = usePosStore.getState()
       if (inv.discountAmount) s.setDiscount({ kind: "value", value: inv.discountAmount })
@@ -61,9 +68,11 @@ export function OrdersDialog({ open, onOpenChange, onlySuspended = false }: { op
   const [tab, setTab] = useState<Tab>("completed")
   const [search, setSearch] = useState("")
   const held = onlySuspended || tab === "pending"
+  const showTables = useAppSettings().salesScreenTab?.isTables === true
+  const tables = !onlySuspended && tab === "tables"
   const { data = [] } = useQuery({
-    queryKey: held ? posKeys.held : ["sales", "pos-latest"],
-    queryFn: () => fetchOrders(held),
+    queryKey: held ? posKeys.held : tables ? ["sales", "pos-tables"] : ["sales", "pos-latest"],
+    queryFn: () => fetchOrders(held, tables ? 100 : undefined),
     enabled: open,
     refetchInterval: held ? 5000 : undefined,
     refetchOnWindowFocus: true,
@@ -76,6 +85,7 @@ export function OrdersDialog({ open, onOpenChange, onlySuspended = false }: { op
     return data.filter((o) => {
       if (onlySuspended) return o.orderStatus === "UnConfirmed"
       const match = !q || o.orderNumber?.toLowerCase().includes(q) || o.customerName?.toLowerCase().includes(q) || o.orderStatus?.toLowerCase().includes(q)
+      if (tab === "tables") return o.orderType === "InDine" && !o.isHolding && match
       const status = tab === "completed" ? "Confirmed" : "UnConfirmed"
       return match && (o.orderStatus === status || (tab === "completed" && o.orderStatus?.toLowerCase() === "readyfordelivery"))
     })
@@ -107,10 +117,10 @@ export function OrdersDialog({ open, onOpenChange, onlySuspended = false }: { op
         {!onlySuspended && (
           <>
             <div className="flex shrink-0 flex-wrap items-center gap-1.5 border-b border-border bg-card px-4 py-3">
-              {(["completed", "pending"] as const).map((k) => (
+              {(showTables ? ["completed", "pending", "tables"] as const : ["completed", "pending"] as const).map((k) => (
                 <button key={k} type="button" onClick={() => setTab(k)}
                   className={`rounded-full border px-3 py-1.5 text-[11px] font-medium transition-all ${tab === k ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground hover:bg-muted"}`}>
-                  {k === "completed" ? t("pos1.invoices") : t("pos1.pendingInvoices")}
+                  {k === "completed" ? t("pos1.invoices") : k === "pending" ? t("pos1.pendingInvoices") : t("posTables.tables")}
                 </button>
               ))}
             </div>
@@ -162,6 +172,7 @@ export function OrdersDialog({ open, onOpenChange, onlySuspended = false }: { op
                         {!held && o.orderStatus !== "Cancelled" && (
                           <button type="button" className={icon} disabled={printInvoice.isPending} onClick={() => printInvoice.mutate({ invoice: { id: o.id }, as: "print", paper: "roll" }, { onSuccess: () => onOpenChange(false) })}><Printer size={15} /></button>
                         )}
+                        {tables && o.orderStatus === "InProgress" && <button type="button" title={t("posTables.proceedToPayment")} aria-label={t("posTables.proceedToPayment")} className={icon} onClick={() => void toCart(o)}><CreditCard size={15} /></button>}
                         {held && <button type="button" title={t("pos1.completeInvoice")} className={icon} onClick={() => void toCart(o)}><Plus size={15} /></button>}
                         {o.isHolding && (
                           <button type="button" title={t("common.delete")} aria-label={t("common.delete")} disabled={del.isPending} onClick={() => del.mutate(o.id)}

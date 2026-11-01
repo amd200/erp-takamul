@@ -2,7 +2,6 @@ import {
   ArrowLeftRight, BarChart3, Boxes, CalendarDays, ClipboardList, Clock, FileText, PackageSearch, Receipt, RotateCcw,
   ScanBarcode, ShoppingBag, TrendingUp, TriangleAlert, Truck, UserRound, Users, Wallet,
 } from "lucide-react"
-import { lookupData } from "@/modules/lookups/service"
 import { P } from "@/shared/permissions/permissions"
 import type { Dataset, PurchaseLine, SaleLine } from "./dataset"
 import type { Cell, Filters, ReportDef, Row, Tone } from "./types"
@@ -24,9 +23,9 @@ function groupBy<T>(xs: T[], key: (x: T) => string | number) {
 }
 const productName = (d: Dataset, id: number) => d.products.find((p) => p.id === id)?.productNameAr ?? `#${id}`
 const categoryName = (d: Dataset, id: number | null) => d.categories.find((c) => c.id === id)?.categoryNameAr ?? "—"
-const customerName = (id: number) => lookupData.CUSTOMERS.find((c) => c.id === id)?.name ?? `#${id}`
-const supplierName = (id: number) => lookupData.SUPPLIERS.find((s) => s.id === id)?.name ?? `#${id}`
-const employeeName = (id: number) => lookupData.EMPLOYEES.find((e) => e.id === id)?.name ?? `#${id}`
+const customerName = (id: number) => `#${id}`
+const supplierName = (id: number) => `#${id}`
+const employeeName = (id: number) => `#${id}`
 const days = (f: Filters) => {
   const out: string[] = []
   for (let d = new Date(f.from + "T12:00:00"); d.toISOString().slice(0, 10) <= f.to; d.setDate(d.getDate() + 1)) out.push(d.toISOString().slice(0, 10))
@@ -304,7 +303,7 @@ export const REPORTS: ReportDef[] = [
   {
     id: "customers-balances", category: "customers", icon: Users, perm: P.reports.customers, filters: ["period"],
     run: (d, f) => {
-      const rows = lookupData.CUSTOMERS.map((c) => {
+      const rows = [...new Set(d.sales.map((l) => l.customerId))].map((id) => ({ id, name: customerName(id), phone: "" })).map((c) => {
         const sales = sum(d.sales.filter((l) => l.customerId === c.id && inPeriod(l.date, f)), total)
         const paid = c.id === 1 ? sales : sum(d.receipts.filter((p) => p.partyId === c.id && inPeriod(p.date, f)), (p) => p.amount)
         return { customer: c.name, phone: c.phone || "—", invoices: new Set(d.sales.filter((l) => l.customerId === c.id && inPeriod(l.date, f)).map((l) => l.invoice)).size, sales, paid, balance: r2(sales - paid) }
@@ -341,7 +340,7 @@ export const REPORTS: ReportDef[] = [
     id: "expenses-detail", category: "expenses", icon: Wallet, perm: P.reports.expenses, filters: ["period"],
     run: (d, f) => {
       const ex = d.expenses.filter((e) => inPeriod(e.date, f))
-      const treasury = (id: number) => lookupData.TREASURIES.find((t) => t.id === id)?.name ?? "—"
+      const treasury = (id: number) => `#${id}`
       const rows = ex.map((e) => ({ date: e.date, expenseItem: e.item, notes: e.notes || "—", treasury: treasury(e.treasuryId), amount: e.amount, tax: e.tax, total: r2(e.amount + e.tax) })).sort((a, b) => b.date.localeCompare(a.date))
       const byItem = [...groupBy(ex, (e) => e.item).entries()].map(([k, g]) => ({ label: String(k), value: sum(g, (e) => e.amount + e.tax) })).sort((a, b) => b.value - a.value)
       return {

@@ -31,13 +31,13 @@ export type Branch = {
   isActive?: boolean | null
 }
 
-/** What the form edits; a new image is a file, otherwise the current one stays. */
+/** What the form edits; a new image is a file, otherwise the saved one (`imageUrl`) stays, or goes when emptied. */
 export type BranchInput = {
-  [K in Exclude<keyof Branch, "id" | "imageUrl" | "stampImageUrl" | "isActive">]-?: string
+  [K in Exclude<keyof Branch, "id" | "isActive">]-?: string
 } & { image: File | null; stampImage: File | null }
 
 /** Fields used by the branch list, without replacing missing API values. */
 export type BranchRow = Pick<Branch, "id" | "code" | "name" | "shortName" | "shortNameEn" | "phone" | "isActive">
 
 export type BranchPage = { items: BranchRow[]; totalCount: number; pageNumber: number; pageSize: number }
-export type BranchQuery = { page: number; pageSize: number; searchTerm?: string }
+export type BranchQuery = { page: number; pageSize: number; searchTerm?: string; sortBy?: string; sortDescending?: boolean }

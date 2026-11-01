@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { BarChart3, DollarSign, FileText, Receipt, RotateCcw, Search } from "lucide-react"
+import { BarChart3, DollarSign, FileText, RotateCcw, Search } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import type { Column } from "@/components/DataTable"
 import { Button } from "@/components/ui/button"
@@ -37,9 +37,7 @@ export default function NetSalesReport() {
   const cards: SummaryCard[] = [
     { title: t("oldReports.total_sales"), value: money(data?.totalSales), suffix: sar, icon: DollarSign, color: "teal" },
     { title: t("oldReports.total_returns"), value: money(data?.totalReturns), suffix: sar, icon: RotateCcw, color: "red" },
-    { title: t("oldReports.net_sales"), value: money(data?.netSales), suffix: sar, icon: BarChart3, color: (data?.netSales ?? 0) < 0 ? "red" : "green" },
-    { title: t("oldReports.sales_invoices_count"), value: String(data?.salesInvoicesCount ?? 0), icon: Receipt, color: "blue" },
-    { title: t("oldReports.return_invoices_count"), value: String(data?.returnInvoicesCount ?? 0), icon: Receipt, color: "orange" },
+    { title: t("oldReports.net_sales"), value: money(data?.totalNet), suffix: sar, icon: BarChart3, color: (data?.totalNet ?? 0) < 0 ? "red" : "green" },
   ]
 
   const title = t("oldReports.net_sales_report")
@@ -48,7 +46,7 @@ export default function NetSalesReport() {
     { header: t("oldReports.date"), value: (r) => dayText(r.date) },
     { header: t("oldReports.invoice_number"), value: (r) => r.number },
     { header: t("oldReports.document_type"), value: (r) => typeLabel(r.type) },
-    { header: t("oldReports.grand_total"), value: (r) => money(r.grandTotal) },
+    { header: t("oldReports.grand_total"), value: (r) => money(r.netAmount) },
   ]
   const exportWith = (fn: (o: ReportOutput<NetSalesRow>) => unknown) => async () => {
     if (!params || !rows.length) return
@@ -69,13 +67,13 @@ export default function NetSalesReport() {
     { id: "date", sortKey: "date", header: t("oldReports.date"), cell: (r) => <span className="text-sm">{dayText(r.date)}</span> },
     { id: "number", sortKey: "number", header: t("oldReports.invoice_number"), cell: (r) => <span dir="ltr" className="text-sm font-bold">{r.number}</span> },
     { id: "type", header: t("oldReports.document_type"), cell: (r) => <span className={`text-sm font-medium ${r.type === "SalesReturn" ? "text-red-500" : "text-primary"}`}>{typeLabel(r.type)}</span> },
-    { id: "total", sortKey: "grandTotal", header: t("oldReports.grand_total"), cell: (r) => <span dir="ltr" className={`text-sm font-bold ${r.type === "SalesReturn" ? "text-red-500" : ""}`}>{r.type === "SalesReturn" ? "-" : ""}{money(r.grandTotal)}</span> },
+    { id: "total", sortKey: "netAmount", header: t("oldReports.grand_total"), cell: (r) => <span dir="ltr" className={`text-sm font-bold ${r.type === "SalesReturn" ? "text-red-500" : ""}`}>{r.type === "SalesReturn" ? "-" : ""}{money(r.netAmount)}</span> },
   ]
 
   return (
     <ReportShell title={title} icon={FileText} onPrint={exportWith(printReport)} onExcel={exportWith(excelReport)} pdfBusy={busy} onPdf={exportWith(pdfReport)}>
       <SummaryCards cards={cards} />
-      <form onSubmit={(e) => { e.preventDefault(); search() }} className="grid grid-cols-1 items-end gap-4 rounded-xl border border-slate-200/80 bg-slate-50/50 p-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] lg:p-5 dark:border-slate-800 dark:bg-slate-900/40">
+      <form onSubmit={(e) => { e.preventDefault(); search() }} className="grid grid-cols-1 items-end gap-4 rounded-xl border border-slate-200/80 bg-slate-50/50 p-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] lg:p-5 dark:bg-slate-900/40">
         <div className="grid min-w-0 gap-2"><Label className="text-xs font-semibold text-slate-500">{t("oldReports.from_date")}</Label><Input type="date" className="h-11" value={filters.from} onChange={(e) => setFilters((p) => ({ ...p, from: e.target.value }))} /></div>
         <div className="grid min-w-0 gap-2"><Label className="text-xs font-semibold text-slate-500">{t("oldReports.to_date")}</Label><Input type="date" className="h-11" value={filters.to} onChange={(e) => setFilters((p) => ({ ...p, to: e.target.value }))} /></div>
         <div className="grid min-w-0 gap-2">

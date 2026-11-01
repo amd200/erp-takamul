@@ -1,11 +1,13 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import { useClassic } from "@/shared/theme/ThemeProvider"
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {
+  const classic = useClassic()
   return (
     <div
       data-slot="table-container"
-      className="relative w-full overflow-x-auto rounded-lg border bg-card"
+      className={cn("relative w-full overflow-x-auto", classic && "rounded-lg border bg-card")}
     >
       <table
         data-slot="table"
@@ -63,11 +65,13 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
 }
 
 function TableHead({ className, ...props }: React.ComponentProps<"th">) {
+  const classic = useClassic()
   return (
     <th
       data-slot="table-head"
       className={cn(
-        "h-auto px-6 py-[0.7rem] text-center align-middle text-sm font-semibold whitespace-nowrap text-[var(--table-header-text)] [&:has([role=checkbox])]:pe-0",
+        "align-middle whitespace-nowrap text-[var(--table-header-text)] [&:has([role=checkbox])]:pe-0",
+        classic ? "h-auto px-6 py-[0.7rem] text-center text-sm font-semibold" : "h-10 px-2 text-start font-medium",
         className
       )}
       {...props}
@@ -76,11 +80,13 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
 }
 
 function TableCell({ className, ...props }: React.ComponentProps<"td">) {
+  const classic = useClassic()
   return (
     <td
       data-slot="table-cell"
       className={cn(
-        "px-6 py-[0.8rem] text-center align-middle text-sm font-semibold whitespace-nowrap text-[var(--text-main)] [&:has([role=checkbox])]:pe-0",
+        "align-middle whitespace-nowrap [&:has([role=checkbox])]:pe-0",
+        classic ? "px-6 py-[0.8rem] text-center text-sm font-semibold text-[var(--text-main)]" : "p-2",
         className
       )}
       {...props}

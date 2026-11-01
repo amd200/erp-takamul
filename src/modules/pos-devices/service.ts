@@ -1,4 +1,5 @@
 import { ApiError } from "@/shared/http/ApiError"
+import type { ListSort } from "@/shared/api/crudQueries"
 import { http } from "@/shared/http/request"
 import type { CertificateSummary, DeviceCertificate, DeviceInput, PosDevice, Registration, Reply } from "./types"
 
@@ -12,7 +13,7 @@ const step = async (url: string, body: unknown) => {
 }
 
 export const devicesApi = {
-  list: () => data(http<Reply<PosDevice[]>>("/pos-devices")),
+  list: (sort?: ListSort) => data(http<Reply<PosDevice[]>>("/pos-devices", { params: { ...sort } })),
   get: (id: number) => data(http<Reply<PosDevice>>(`/pos-devices/${id}`)),
   // The form's branch travels as X-Branch-Id (it wins over the signed-in branch), not in the body.
   create: ({ branchId, deviceName, serialNumber, invoiceSequence }: DeviceInput) =>
@@ -32,8 +33,8 @@ export const devicesApi = {
     const all = await data(http<Reply<DeviceCertificate[]>>(`/certificates/device/${deviceId}/history`))
     return [...(all ?? [])].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0] ?? null
   },
-  certificates: async () => {
-    try { return await data(http<Reply<CertificateSummary[]>>("/certificates/all-certificates/summary")) }
+  certificates: async (sort?: ListSort) => {
+    try { return await data(http<Reply<CertificateSummary[]>>("/certificates/all-certificates/summary", { params: { ...sort } })) }
     // The server answers 404 when no device has a certificate yet.
     catch (e) { if (e instanceof ApiError && e.status === 404) return [] ; throw e }
   },

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { formatNumber } from "@/lib/format"
+import { useClassic } from "@/shared/theme/ThemeProvider"
 
 /** Page numbers with gaps: 1 … 4 5 [6] 7 8 … 20. */
 function pageList(current: number, pages: number): (number | "gap")[] {
@@ -20,6 +21,9 @@ function pageList(current: number, pages: number): (number | "gap")[] {
  */
 export function Pager({ total, page, pageSize, onPage, always }: { total: number; page: number; pageSize: number; onPage: (p: number) => void; /** Shows the first / previous / next / last buttons even when everything fits on one page, as the lists of the current system do. */ always?: boolean }) {
   const { t } = useTranslation()
+  const classic = useClassic()
+  // The always-visible, centred footer belongs to the classic look; the modern one hides when everything fits.
+  always = always && classic
   if (total <= pageSize && !always) return null
   const pages = Math.max(1, Math.ceil(total / pageSize))
   const current = Math.min(page, pages - 1)
@@ -37,8 +41,8 @@ export function Pager({ total, page, pageSize, onPage, always }: { total: number
         {pageList(current, pages).map((p, i) => p === "gap"
           ? <span key={`g${i}`} className="px-1 text-faint" aria-hidden>…</span>
           : (
-            <Button key={p} variant="ghost" size="icon" aria-current={p === current ? "page" : undefined}
-              aria-label={t("common.page", { n: p + 1 })} onClick={() => onPage(p)} className={cn("tabular-nums", p === current && "bg-[#ecfdf5] font-semibold text-[#10b981] hover:bg-[#ecfdf5] hover:text-[#10b981] dark:bg-primary dark:text-primary-foreground")}>
+            <Button key={p} variant={!classic && p === current ? "secondary" : "ghost"} size="icon" aria-current={p === current ? "page" : undefined}
+              aria-label={t("common.page", { n: p + 1 })} onClick={() => onPage(p)} className={cn("tabular-nums", p === current && !classic && "font-semibold", p === current && classic && "bg-[#ecfdf5] font-semibold text-[#10b981] hover:bg-[#ecfdf5] hover:text-[#10b981] dark:bg-primary dark:text-primary-foreground")}>
               {formatNumber(p + 1)}
             </Button>
           ))}

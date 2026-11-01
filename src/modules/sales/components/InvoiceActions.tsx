@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query"
 import { Link } from "react-router-dom"
-import { DollarSign, Download, FileDown, FileSpreadsheet, FileText, Mail, MessageCircle, MoreHorizontal, PlusCircle, Printer, RefreshCw, RotateCcw, ScrollText } from "lucide-react"
+import { DollarSign, Download, FileDown, FileSpreadsheet, FileText, Mail, MessageCircle, MoreHorizontal, PlusCircle, Printer, RefreshCw, RotateCcw, ScrollText, Warehouse, FileCheck } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useCan } from "@/shared/permissions/usePermission"
@@ -41,7 +41,7 @@ export function InvoiceActions({ invoice, channel, onPayments, onNotes, onZatcaR
   const canReturn = ops?.allowSalesReturn && can(P.sales.returnsAdd)
   const canAddDebitNote = enableDebitNote && can(P.sales.debitAdd)
 
-  const item = "flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700"
+  const item = "flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground"
 
   return (
     <DropdownMenu>
@@ -58,6 +58,8 @@ export function InvoiceActions({ invoice, channel, onPayments, onNotes, onZatcaR
         <DropdownMenuSeparator />
         {canReturn && <DropdownMenuItem asChild><Link to={`/sales/returns/create?invoice=${invoice.id}`} className={item}><RotateCcw size={14} />{t("sales.menu.return")}</Link></DropdownMenuItem>}
         {canAddDebitNote && <DropdownMenuItem asChild><Link to={`/sales/debit-notes/create?invoice=${invoice.id}`} className={item}><PlusCircle size={14} />{t("sales.menu.debitNote")}</Link></DropdownMenuItem>}
+        {ops?.isStockVoucher && <DropdownMenuItem className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "print", voucher: "stock" })}><Warehouse size={14} />{t("sales.menu.stockVoucher")}</DropdownMenuItem>}
+        {ops?.isClaimVoucher && <DropdownMenuItem className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "print", voucher: "claim" })}><FileCheck size={14} />{t("sales.menu.claimVoucher")}</DropdownMenuItem>}
         <DropdownMenuSeparator />
         {ops?.allowDownloadInvoicePdfA4 && <DropdownMenuItem className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "pdf" })}><FileDown size={14} />{t("sales.menu.downloadPdfA4")}</DropdownMenuItem>}
         {ops?.allowDownloadInvoicePdfRoll && <DropdownMenuItem className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "pdf", paper: "roll" })}>{channel === "POS" ? <Printer size={14} /> : <Download size={14} />}{t("sales.menu.downloadPdfRoll")}</DropdownMenuItem>}

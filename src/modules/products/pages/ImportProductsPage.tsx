@@ -2,7 +2,7 @@ import { useRef, useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { CheckCircle2, Download, FileSpreadsheet, Loader2, UploadCloud } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/StatusBadge"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { PageHeader } from "@/components/PageHeader"
@@ -81,7 +81,7 @@ export default function ImportProductsPage() {
 
       {result && (
         <SectionCard title={t("import.resultTitle")} description={t("import.resultSummary", { total: formatNumber(result.totalRows) })}
-          action={<Badge variant={result.failedCount ? "warning" : "success"}><CheckCircle2 />{t("import.added", { count: result.successCount })}</Badge>}>
+          action={<StatusBadge tone={result.failedCount ? "warning" : "success"}><CheckCircle2 className="me-1 size-3" />{t("import.added", { count: result.successCount })}</StatusBadge>}>
           <div className="grid gap-3 sm:grid-cols-3">
             {([["added", result.successCount, "text-success"], ["updated", result.updatedCount, ""], ["failedRows", result.failedCount, result.failedCount ? "text-destructive" : ""]] as const).map(([k, v, tone]) => (
               <div key={k} className="flex flex-col gap-1 rounded-xl border px-4 py-3">

@@ -1,3 +1,4 @@
+import { PageBox } from "@/components/PageBox"
 import { useEffect, useMemo } from "react"
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -17,7 +18,7 @@ import { useTreasuries } from "@/modules/lookups/service"
 import { useCreateReturn, useInvoice } from "../queries"
 import { returnSchema, today, type ReturnForm } from "../schema"
 
-const box = "rounded-sm border border-gray-100 bg-white p-6 dark:border-gray-800 dark:bg-transparent"
+const box = "inner-box"
 const money = (n: number) => n.toLocaleString("en-EG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
 /**
@@ -44,12 +45,12 @@ export default function ReturnFormPage() {
   const quantities = useWatch({ control: form.control, name: "quantities" })
 
   // What the server says is left to return on each item.
-  const leftOf = (i: number) => items[i].remainingQuantity ?? items[i].quantity
+  const leftOf = (i: number) => items[i].remainingQuantity ?? 0
   // The items start as the invoice's; the refund goes back to the treasury the invoice was paid into (the one that took most).
   useEffect(() => {
     if (!inv) return
     const paidInto = [...(inv.payments ?? [])].sort((a, b) => b.amount - a.amount)[0]?.treasuryId
-    form.reset({ ...form.getValues(), quantities: (inv.items ?? []).map((l) => l.remainingQuantity ?? l.quantity), payments: [{ treasuryId: paidInto || form.getValues("payments.0.treasuryId"), amount: 0 }] })
+    form.reset({ ...form.getValues(), quantities: (inv.items ?? []).map((l) => l.remainingQuantity ?? 0), payments: [{ treasuryId: paidInto || form.getValues("payments.0.treasuryId"), amount: 0 }] })
   }, [inv, form])
 
   // A line's server total and tax are for its whole quantity, so the returned part is that share of them.
@@ -80,15 +81,12 @@ export default function ReturnFormPage() {
   const locked = "cursor-not-allowed"
 
   return (
-    <form onSubmit={submit} noValidate className="rounded-lg border border-gray-200 p-6 dark:border-zinc-800">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl leading-snug font-bold">{t("viewDoc.returnInvoice")}</h1>
-        <Button asChild variant="outline"><Link to="/sales/returns">{t("viewDoc.backToReturns")}<ArrowLeft size={16} /></Link></Button>
-      </div>
+    <PageBox onSubmit={submit} title={t("viewDoc.returnInvoice")}
+      action={<Button asChild variant="outline"><Link to="/sales/returns">{t("viewDoc.backToReturns")}<ArrowLeft size={16} /></Link></Button>}>
 
       <div className="space-y-6">
         <div className={box}>
-          <h2 className="mb-6 text-lg font-bold text-gray-800 dark:text-white">{t("sales.basics")}</h2>
+          <h2 className="mb-6 text-lg font-bold text-foreground">{t("sales.basics")}</h2>
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
             <Field><FieldLabel>{t("common.date")} *</FieldLabel><Input disabled className={locked} value={form.watch("date")} /></Field>
             <Field><FieldLabel>{t("oldReturn.serviceEmployee")}</FieldLabel><Input disabled className={locked} value={inv.employeeName ?? ""} placeholder={t("oldReturn.chooseServiceEmployee")} /></Field>
@@ -107,8 +105,8 @@ export default function ReturnFormPage() {
         </div>
 
         <div className={box}>
-          <h2 className="mb-6 text-lg font-bold text-zinc-900 dark:text-white">{t("sales.invoiceDetails")}</h2>
-          <h3 className="mb-4 text-sm font-semibold text-zinc-500">{t("sales.itemsList")}</h3>
+          <h2 className="mb-6 text-lg font-bold text-foreground">{t("sales.invoiceDetails")}</h2>
+          <h3 className="mb-4 text-sm font-semibold text-muted-foreground">{t("sales.itemsList")}</h3>
           <div className="w-full overflow-x-auto pb-4">
             <div className={cn("hidden items-center gap-3 border-b border-border px-2 pb-3 text-center text-xs font-medium tracking-widest text-muted-foreground uppercase md:grid md:min-w-[900px]", cols)}>
               {head.map((h, i) => <div key={i} className={i === 0 ? "text-start" : ""}>{h}</div>)}
@@ -132,7 +130,7 @@ export default function ReturnFormPage() {
                     </div>
                     {!exempt && <div className="text-center font-medium">{money(total - tax)}</div>}
                     {!exempt && <div className="text-center font-medium text-orange-500">{money(tax)}</div>}
-                    <div className="text-center font-bold text-green-500">{money(total)}</div>
+                    <div className="text-center font-bold text-success">{money(total)}</div>
                     <div className="flex justify-center"><button type="button" disabled aria-label={t("common.remove")} className="p-2 text-muted-foreground disabled:opacity-30"><Trash2 size={16} /></button></div>
                     {showReturned && (
                       <div className="flex flex-wrap gap-2 text-xs text-muted-foreground md:col-span-full">
@@ -192,17 +190,17 @@ export default function ReturnFormPage() {
               <hr className="border-border" />
               <div className="flex items-center justify-between"><span className="font-bold">{t("viewDoc.grandTotal")}</span><span className="text-2xl font-black tabular-nums text-primary">{money(totals.grandTotal)}</span></div>
               <hr className="border-border" />
-              <div className="flex justify-between"><span className="text-muted-foreground">{t("viewDoc.paid")}</span><span className="font-semibold tabular-nums text-emerald-600">{money(refundAmount)}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">{t("viewDoc.paid")}</span><span className="font-semibold tabular-nums text-success">{money(refundAmount)}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">{t("viewDoc.remaining")}</span><span className="font-semibold tabular-nums text-red-500">{money(totals.grandTotal - refundAmount)}</span></div>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col-reverse items-stretch justify-between gap-4 rounded-sm border border-border bg-background p-5 sm:flex-row sm:items-center sm:p-6">
+        <div className="form-footer in-box flex flex-col-reverse items-stretch justify-between gap-4 sm:flex-row sm:items-center">
           <Button type="button" variant="destructive" size="xl" onClick={() => nav("/sales/returns")}>{t("oldDebit.cancel")}</Button>
           <Button type="submit" size="xl" disabled={overLimit || !hasReturn || create.isPending}>{t("oldReturn.save")}</Button>
         </div>
       </div>
-    </form>
+    </PageBox>
   )
 }

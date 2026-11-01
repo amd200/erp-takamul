@@ -77,12 +77,12 @@ export function EyePrescriptionBox({ prefix = "", bare }: { prefix?: Prefix; bar
         <table dir="ltr" className="w-full min-w-[560px] table-fixed border-collapse text-center text-xs">
           <colgroup><col className="w-14" /><col span={6} /></colgroup>
           <thead className="bg-muted/20 text-muted-foreground [&_th]:font-semibold">
-            <tr className="border-b border-border/60 bg-emerald-50/50">
+            <tr className="border-b border-border/60 bg-success-soft">
               <th rowSpan={2} aria-label={t("custDialog.eyePrescription")} />
               <th scope="colgroup" colSpan={3} className="border-x border-border/60 px-2 py-2">RIGHT</th>
               <th scope="colgroup" colSpan={3} className="px-2 py-2">LEFT</th>
             </tr>
-            <tr className="border-b border-border/60 bg-zinc-50">
+            <tr className="border-b border-border/60 bg-muted/50">
               {(["right", "left"] as const).flatMap((side) => ROWS.map((r) => <th key={`${side}-${r.label}`} scope="col" className="border-s border-border/60 px-1 py-1.5">{r.label}</th>))}
             </tr>
           </thead>

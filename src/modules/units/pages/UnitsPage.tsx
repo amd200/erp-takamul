@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { FieldGroup } from "@/components/ui/field"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
+import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
 import { FormInput } from "@/components/form/FormFields"
 import { PageHeader } from "@/components/PageHeader"
@@ -49,7 +50,8 @@ function UnitDialog({ open, onOpenChange, unit }: { open: boolean; onOpenChange:
 export default function UnitsPage() {
   const { t } = useTranslation()
   const can = useCan()
-  const { data, isLoading } = useUnits()
+  const { sort, sortBy, sortDescending } = useTableSort()
+  const { data, isLoading } = useUnits({ SortBy: sortBy, SortDescending: sortDescending })
   const del = useDeleteUnit()
   const [editing, setEditing] = useState<Unit | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -57,9 +59,9 @@ export default function UnitsPage() {
   const open = (u: Unit | null) => { setEditing(u); setDialogOpen(true) }
 
   const columns: Column<Unit>[] = [
-    { id: "name", header: t("units.name"), cell: (u) => <span className="font-semibold">{u.name}</span> },
-    { id: "code", header: t("units.taxCode"), cell: (u) => <span className="text-muted-foreground" dir="ltr">{u.taxCode || "—"}</span> },
-    { id: "desc", header: t("common.description"), cell: (u) => <span className="text-muted-foreground">{u.description || "—"}</span> },
+    { id: "name", sortKey: "name", header: t("units.name"), cell: (u) => <span className="font-semibold">{u.name}</span> },
+    { id: "code", sortKey: "taxCode", header: t("units.taxCode"), cell: (u) => <span className="text-muted-foreground" dir="ltr">{u.taxCode || "—"}</span> },
+    { id: "desc", sortKey: "description", header: t("common.description"), cell: (u) => <span className="text-muted-foreground">{u.description || "—"}</span> },
     { id: "actions", header: "", align: "end", cell: (u) => can(P.units.manage) && <RowActions onEdit={() => open(u)} onDelete={() => setToDelete(u)} /> },
   ]
 
@@ -68,7 +70,7 @@ export default function UnitsPage() {
       <PageHeader crumbs={[t("nav.items")]} title={t("units.title")} description={t("units.description")}
         actions={<Can perm={P.units.manage}><Button size="lg" onClick={() => open(null)}><Plus />{t("units.add")}</Button></Can>} />
       <SectionCard>
-          <DataTable rows={data} loading={isLoading} columns={columns} rowKey={(u) => u.id}
+          <DataTable rows={data} loading={isLoading} columns={columns} sort={sort} rowKey={(u) => u.id}
             searchText={(u) => `${u.name} ${u.taxCode}`} searchPlaceholder={t("units.search")}
             empty={<EmptyState icon={<Ruler />} title={t("units.empty")} hint={t("units.emptyHint")} />} />
         </SectionCard>

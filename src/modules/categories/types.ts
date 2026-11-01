@@ -22,4 +22,4 @@ export type CategoryInput = {
   displayOrder: number
   printerName: string | null
 }
-export type CategoryQuery = { page: number; pageSize: number; searchTerm?: string }
+export type CategoryQuery = { page: number; pageSize: number; searchTerm?: string; sortBy?: string; sortDescending?: boolean }

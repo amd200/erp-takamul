@@ -1,10 +1,11 @@
+import type { ListSort } from "@/shared/api/crudQueries"
 import { http } from "@/shared/http/request"
 import { fetchAllPages } from "@/shared/http/paged"
 import type { User, UserInput } from "./types"
 
 type RoleDto = { roleId: string; roleName: string }
 
-const list = () => fetchAllPages<User>("/employees/GetAllUsers")
+const list = (sort?: ListSort) => fetchAllPages<User>("/employees/GetAllUsers", { params: { ...sort } })
 
 export const usersApi = {
   list,

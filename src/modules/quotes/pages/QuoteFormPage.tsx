@@ -15,7 +15,7 @@ import { SectionCard } from "@/components/SectionCard"
 import { useCustomers } from "@/modules/lookups/service"
 import { LinesEditor } from "@/modules/sales/components/LinesEditor"
 import { invoiceTotals } from "@/modules/sales/totals"
-import { QuoteSummary } from "../components/QuoteSummary"
+import { TotalsPanel } from "@/modules/sales/components/TotalsPanel"
 import { useQuote, useSaveQuote } from "../queries"
 import { useAppSettings } from "@/modules/settings"
 import { emptyQuote, quoteSchema, type QuoteForm } from "../schema"
@@ -50,20 +50,18 @@ export default function QuoteFormPage() {
     })
   }, [existing, form])
 
-  const [lines, globalDiscount, customerId, date] = useWatch({ control: form.control, name: ["lines", "globalDiscount", "customerId", "date"] })
+  const [lines, globalDiscount] = useWatch({ control: form.control, name: ["lines", "globalDiscount"] })
   const totals = useMemo(() => invoiceTotals(lines, "value", globalDiscount || 0), [lines, globalDiscount])
 
   if (editId && isLoading) return <div className="h-96 animate-pulse rounded-xl bg-muted" />
 
   const submit = form.handleSubmit((data) => save.mutate({ id: editId, data }, { onSuccess: () => nav("/quotes") }))
 
-  const customerName = customers.find((c) => c.id === customerId)?.customerName ?? ""
-
-  // Laid out as in the current system: basic data, the lines, then one box with the two buttons; the total floats in a corner.
+  // Laid out as in the current system: basic data, the lines, then one box with the two buttons; the summary sits at the end.
   return (
     <FormProvider {...form}>
       <form onSubmit={submit} noValidate className="flex flex-col gap-6">
-        <PageHeader title={editId ? t("quotes.editTitle", { number: existing?.quotationNumber }) : t("quotes.newTitle")}
+        <PageHeader crumbs={[t("nav.quotes")]} title={editId ? t("quotes.editTitle", { number: existing?.quotationNumber }) : t("quotes.newTitle")}
           actions={<Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/5 hover:text-primary"><Link to="/quotes"><List />{t("quotes.backToList")}</Link></Button>} />
 
         <SectionCard title={t("sales.basics")}>
@@ -81,7 +79,6 @@ export default function QuoteFormPage() {
               </div>
               <Button type="button" variant="outline" size="icon-lg" className="mt-[27px] shrink-0" aria-label={t("customers.add")} title={t("customers.add")} onClick={() => setAddingCustomer(true)}><Plus /></Button>
             </div>
-            <FormInput control={form.control} name="globalDiscount" type="number" label={t("quotes.discountValue")} />
           </div>
           <div className="mt-6">
             <FormTextarea control={form.control} name="notes" label={t("common.notes")} placeholder={t("quotes.notesHint")} />
@@ -93,13 +90,25 @@ export default function QuoteFormPage() {
           <LinesEditor simple />
         </SectionCard>
 
-        <div className="flex flex-col-reverse items-stretch justify-between gap-3 rounded-sm border border-border bg-background p-5 sm:flex-row sm:items-center sm:p-6">
+        <section className="rounded-xl border border-border bg-background p-6">
+          <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-3">
+            <div className="hidden lg:col-span-2 lg:block" />
+            <aside className="summary-box">
+              <h3 className="mb-5 text-base font-semibold text-foreground">{t("sales.invoiceSummary")}</h3>
+              <div className="mb-4">
+                <FormInput control={form.control} name="globalDiscount" type="number" label={t("sales.invoiceDiscount")} />
+              </div>
+              <TotalsPanel totals={totals} />
+            </aside>
+          </div>
+        </section>
+
+        <div className="form-footer flex flex-col-reverse items-stretch justify-between gap-3 sm:flex-row sm:items-center">
           <Button asChild variant="destructive" size="xl"><Link to="/quotes">{t("common.cancel")}</Link></Button>
           <span className="text-sm text-destructive" role="status">{form.formState.submitCount > 0 && Object.keys(form.formState.errors).length > 0 ? t("products.fixErrors") : ""}</span>
           <Button type="submit" size="xl" disabled={save.isPending}>{editId ? t("common.saveChanges") : t("quotes.saveIssue")}</Button>
         </div>
       </form>
-      <QuoteSummary totals={totals} customerName={customerName} date={date} count={lines.length} />
       <QuickCustomerDialog open={addingCustomer} onOpenChange={setAddingCustomer} onCreated={(id) => form.setValue("customerId", id, { shouldValidate: true })} />
     </FormProvider>
   )

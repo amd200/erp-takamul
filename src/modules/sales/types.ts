@@ -22,6 +22,8 @@ export type InvoiceLine = {
   taxCalculation: 1 | 2
   discountKind: DiscountKind
   discount: number
+  /** The active discount of the item's category; the server uses it instead of `discount`. A flat amount is per unit. */
+  categoryDiscount?: { kind: DiscountKind; value: number }
   /** The invoice item's own id (what a return points back to) and how much of it earlier returns took, when it comes from a saved invoice. */
   itemId?: number
   returnedQuantity?: number
@@ -54,9 +56,9 @@ export type InvoiceInput = {
 
 /** The sales order, as /sales-orders sends it. */
 export type ItemDto = {
-  id?: number | null; returnedQuantity?: number | null; remainingQuantity?: number | null
+  id?: number | null; returnedQuantity?: number | null; remainingQuantity?: number | null; notes?: string | null
   productId: number; productName?: string | null; unitId?: number | null; unitName?: string | null; quantity: number; unitPrice?: number | null
-  priceBeforeTax?: number | null; taxPercentage?: number | null; taxAmount?: number | null; discountValue?: number | null; lineTotal?: number | null; taxCalculation?: number | null
+  priceBeforeTax?: number | null; taxPercentage?: number | null; taxAmount?: number | null; discountValue?: number | null; discountPercentage?: number | null; lineTotal?: number | null; taxCalculation?: number | null
 }
 export type PaymentDto = { id: number; amount: number; paymentMethod?: string | null; paymentDate?: string | null; notes?: string | null; treasuryId?: number | null; treasuryName?: string | null }
 export type SalesOrderDto = {

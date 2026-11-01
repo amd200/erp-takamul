@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
+import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
 import { FormInput, FormSelect } from "@/components/form/FormFields"
 import { RowActions } from "@/components/RowActions"
@@ -41,7 +42,8 @@ function PricingDialog({ open, onOpenChange, item }: { open: boolean; onOpenChan
 
 export function PricingList({ readOnly }: { readOnly: boolean }) {
   const { t } = useTranslation()
-  const { data, isLoading } = usePricing()
+  const { sort, sortBy, sortDescending } = useTableSort()
+  const { data, isLoading } = usePricing({ SortBy: sortBy, SortDescending: sortDescending })
   const del = useDeletePricing()
   const [editing, setEditing] = useState<PricingSystem | null>(null)
   const [dialog, setDialog] = useState(false)
@@ -50,16 +52,16 @@ export function PricingList({ readOnly }: { readOnly: boolean }) {
   const label = (k: string) => t(`settings.lists.pricing_systems.${k}`)
 
   const columns: Column<PricingSystem>[] = [
-    { id: "name", header: label("nameAr"), cell: (r) => <span className="font-semibold">{r.nameAr}</span> },
-    { id: "type", header: label("systemType"), cell: (r) => <span className="text-muted-foreground">{label(`o.systemType.${r.systemType}`)}</span> },
-    { id: "adjustment", header: label("adjustmentType"), cell: (r) => <span className="text-muted-foreground">{label(`o.adjustmentType.${r.adjustmentType}`)}</span> },
-    { id: "value", header: label("value"), cell: (r) => <span className="tabular-nums">{r.value}{r.adjustmentType === "Percentage" ? "%" : ""}</span> },
+    { id: "name", sortKey: "nameAr", header: label("nameAr"), cell: (r) => <span className="font-semibold">{r.nameAr}</span> },
+    { id: "type", sortKey: "systemType", header: label("systemType"), cell: (r) => <span className="text-muted-foreground">{label(`o.systemType.${r.systemType}`)}</span> },
+    { id: "adjustment", sortKey: "adjustmentType", header: label("adjustmentType"), cell: (r) => <span className="text-muted-foreground">{label(`o.adjustmentType.${r.adjustmentType}`)}</span> },
+    { id: "value", sortKey: "value", header: label("value"), cell: (r) => <span className="tabular-nums">{r.value}{r.adjustmentType === "Percentage" ? "%" : ""}</span> },
     { id: "actions", header: "", align: "end", cell: (r) => !readOnly && <RowActions onEdit={() => open(r)} onDelete={() => setToDelete(r)} /> },
   ]
   return (
     <SectionCard title={t("settings.s.pricing_systems")} description={t("settings.sd.pricing_systems")}
       action={!readOnly && <Button onClick={() => open(null)}><Plus />{label("add")}</Button>}>
-      <DataTable rows={data ?? []} loading={isLoading} columns={columns} rowKey={(r) => r.id} searchText={(r) => r.nameAr} searchPlaceholder={t("settings.lists.search")}
+      <DataTable rows={data ?? []} loading={isLoading} columns={columns} sort={sort} rowKey={(r) => r.id} searchText={(r) => r.nameAr} searchPlaceholder={t("settings.lists.search")}
         empty={<EmptyState icon={<Inbox />} title={label("empty")} />} />
       <PricingDialog open={dialog} onOpenChange={setDialog} item={editing} />
       <ConfirmDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)} pending={del.isPending}

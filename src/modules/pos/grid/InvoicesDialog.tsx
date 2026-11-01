@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react"
-import { Clock, CreditCard, FileText, Play, Plus, Printer, SaudiRiyal, Search, Trash2, User, X } from "lucide-react"
+import { ChefHat, Clock, CreditCard, FileText, Play, Plus, Printer, SaudiRiyal, Search, Trash2, User, X } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
@@ -7,6 +7,8 @@ import { formatDateTime } from "@/lib/format"
 import { cn } from "@/lib/utils"
 import { useInvoiceOutput } from "@/modules/sales/print/useInvoiceOutput"
 import { useAppSettings } from "@/modules/settings"
+import { bonDoc, ticketOptions } from "@/modules/preparation/bon"
+import { printDocument } from "@/shared/print"
 import { http } from "@/shared/http/request"
 import type { PagedResult } from "@/shared/http/paged"
 import { badgeOf, useOrderToCart, type Order } from "../components/OrdersDialog"
@@ -26,7 +28,8 @@ export function InvoicesDialog({ open, onOpenChange }: { open: boolean; onOpenCh
   const beauty = useAppSettings().salonsTab?.beautyTheme === true
   const [tab, setTab] = useState<Tab>("all")
   const [search, setSearch] = useState("")
-  const invoiceType = useAppSettings().salesScreenTab?.sales2InvoiceType
+  const settings = useAppSettings()
+  const invoiceType = settings.salesScreenTab?.sales2InvoiceType
   const paper = invoiceType === 2 ? "roll" : invoiceType === 3 ? "a5" : "a4"
   const isHold = tab === "pending" ? true : tab === "completed" ? false : undefined
   const { data = [], refetch } = useQuery({
@@ -67,7 +70,7 @@ export function InvoicesDialog({ open, onOpenChange }: { open: boolean; onOpenCh
         <div className={cn("flex shrink-0 items-center justify-between px-4 py-3 dark:bg-secondary", navy)}>
           <div className="flex items-center gap-2">
             <FileText size={15} />
-            <DialogTitle className={cn("text-[14px] font-medium", beauty ? "text-primary-foreground" : "text-white")}>{t("pos1.invoices")}</DialogTitle>
+            <DialogTitle className={cn("text-[14px] font-medium", beauty ? "text-primary-foreground!" : "text-white!")}>{t("pos1.invoices")}</DialogTitle>
             <DialogDescription className="sr-only">{t("pos1.invoices")}</DialogDescription>
           </div>
           <button type="button" aria-label={t("common.close")} onClick={() => onOpenChange(false)} className="flex size-7 items-center justify-center rounded bg-white/15 transition-colors hover:bg-white/25"><X size={14} /></button>
@@ -120,6 +123,7 @@ export function InvoicesDialog({ open, onOpenChange }: { open: boolean; onOpenCh
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
                       <span className="flex items-center gap-1 text-[12px] font-bold text-foreground">{(o.grandTotal ?? 0).toFixed(2)}<SaudiRiyal size={11} /></span>
+                      <button type="button" title={t("pos2.printPrepTicket")} aria-label={t("pos2.printPrepTicket")} className={icon} onClick={() => printDocument(bonDoc(o, ticketOptions(settings, "pending", "print")))}><ChefHat size={13} /></button>
                       {!pending ? (
                         <button type="button" aria-label={t("pos2.print")} className={icon} disabled={printInvoice.isPending} onClick={() => printInvoice.mutate({ invoice: { id: o.id }, as: "print", paper })}><Printer size={13} /></button>
                       ) : (

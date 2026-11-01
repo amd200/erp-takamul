@@ -1,3 +1,4 @@
+import type { ListSort } from "@/shared/api/crudQueries"
 import { http } from "@/shared/http/request"
 import { currentBranchId } from "@/modules/partners/mappers"
 import type { Warehouse, WarehouseInput } from "./types"
@@ -5,8 +6,8 @@ import type { Warehouse, WarehouseInput } from "./types"
 const blank = (s: string) => s.trim() || null
 
 export const warehousesApi = {
-  list: async () => {
-    const res = await http<Warehouse[] | { data?: Warehouse[] }>("/Warehouse")
+  list: async (sort?: ListSort) => {
+    const res = await http<Warehouse[] | { data?: Warehouse[] }>("/Warehouse", { params: { ...sort } })
     return Array.isArray(res) ? res : res?.data ?? []
   },
   get: (id: number) => http<Warehouse>(`/Warehouse/${id}`),

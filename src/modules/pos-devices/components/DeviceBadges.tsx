@@ -1,12 +1,12 @@
 import { useTranslation } from "react-i18next"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/StatusBadge"
 import type { DeviceStatus } from "../types"
 
-const STATUS_VARIANT = { Active: "success", PCSIDRegistered: "success", CCSIDRegistered: "warning", PendingOTP: "warning", NotRegistered: "muted", Expired: "destructive", Revoked: "destructive" } as const
+const STATUS_TONE = { Active: "success", PCSIDRegistered: "success", CCSIDRegistered: "warning", PendingOTP: "warning", NotRegistered: "neutral", Expired: "danger", Revoked: "danger" } as const
 
 export function DeviceStatusBadge({ status }: { status: DeviceStatus }) {
   const { t } = useTranslation()
-  return <Badge variant={STATUS_VARIANT[status] ?? "muted"}>{t(`devices.status.${status}`, { defaultValue: status })}</Badge>
+  return <StatusBadge tone={STATUS_TONE[status] ?? "neutral"}>{t(`devices.status.${status}`, { defaultValue: status })}</StatusBadge>
 }
 
 /** Expiry with urgency, from what the server reports: red once expired, amber within 30 days. */
@@ -17,8 +17,8 @@ export function ExpiryBadge({ expiresAt, daysLeft, expired }: { expiresAt?: stri
   return (
     <span className="inline-flex flex-wrap items-center gap-1.5">
       <span className="text-muted-foreground">{date}</span>
-      {expired ? <Badge variant="destructive">{t("devices.expired")}</Badge>
-        : daysLeft != null && daysLeft <= 30 ? <Badge variant="warning">{t("devices.daysLeft", { count: daysLeft })}</Badge> : null}
+      {expired ? <StatusBadge tone="danger">{t("devices.expired")}</StatusBadge>
+        : daysLeft != null && daysLeft <= 30 ? <StatusBadge tone="warning">{t("devices.daysLeft", { count: daysLeft })}</StatusBadge> : null}
     </span>
   )
 }

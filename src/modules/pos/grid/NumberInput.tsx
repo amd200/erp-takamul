@@ -3,7 +3,7 @@ import { Minus, Plus } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { cn } from "@/lib/utils"
 
-const shown = (n: number) => String(Number(n.toFixed(4)))
+const shown = (n: number, decimals = 4) => String(Number(n.toFixed(decimals)))
 
 /**
  * A number field the user can clear while typing: the value only changes on a valid number, and the
@@ -23,7 +23,7 @@ export function NumberInput({ value, onChange, positive, decimals, className, la
   const [draft, setDraft] = useState<string | null>(null)
   return (
     <input type="text" inputMode="decimal" dir="ltr" aria-label={label} aria-invalid={invalid || undefined} disabled={disabled}
-      value={draft ?? shown(value)}
+      value={draft ?? shown(value, decimals)}
       onFocus={(e) => e.currentTarget.select()}
       onBlur={() => setDraft(null)}
       onChange={(e) => {

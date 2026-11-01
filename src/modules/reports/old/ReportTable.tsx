@@ -9,7 +9,7 @@ export function ReportTable<T extends object>({ rows, columns, loading, searched
   const { t } = useTranslation()
   const empty: ReactNode = null
   return (
-    <div className="rounded-xl border border-gray-100 dark:border-slate-800">
+    <div className="rounded-xl border border-border">
       <DataTable rows={rows} columns={columns} rowKey={rowKey} loading={loading} server={server} pageSize={pageSize} empty={empty}
         emptyText={searched ? t("oldReports.no_data") : t("oldReports.click_search_to_view")} />
     </div>

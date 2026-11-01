@@ -6,9 +6,9 @@ export function PartyBox({ icon, name, lines, accent }: { icon: "company" | "cus
   const Icon = icon === "company" ? Building2 : User
   return (
     <div className="relative space-y-1">
-      <div className="absolute end-0 top-0 text-gray-400"><Icon size={48} strokeWidth={1} /></div>
-      <h3 className="font-bold text-gray-800">{name || "—"}</h3>
-      {lines.filter(Boolean).map((l, i) => <p key={i} className="text-sm text-gray-600">{l}</p>)}
+      <div className="absolute end-0 top-0 text-faint"><Icon size={48} strokeWidth={1} /></div>
+      <h3 className="font-bold text-foreground">{name || "—"}</h3>
+      {lines.filter(Boolean).map((l, i) => <p key={i} className="text-sm text-[var(--text-main)]">{l}</p>)}
       <div className="pt-1">{accent.filter(Boolean).map((l, i) => <p key={i} className="text-sm text-primary">{l}</p>)}</div>
     </div>
   )

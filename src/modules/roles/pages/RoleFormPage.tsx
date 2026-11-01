@@ -1,3 +1,4 @@
+import { PageBox } from "@/components/PageBox"
 import { useEffect } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -29,14 +30,8 @@ export default function RoleFormPage() {
   const name = form.watch("name")
 
   return (
-    <form onSubmit={submit} noValidate className="rounded-lg border border-gray-200 p-6 dark:border-zinc-800">
-      <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-2xl leading-snug font-bold">{t("oldRoles.addNew")}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{t("oldRoles.selectPages")}</p>
-        </div>
-        <Button asChild variant="outline"><Link to="/roles">{t("oldRoles.back")}<ArrowLeft size={16} /></Link></Button>
-      </div>
+    <PageBox onSubmit={submit} title={t("oldRoles.addNew")} subtitle={t("oldRoles.selectPages")}
+      action={<Button asChild variant="outline"><Link to="/roles">{t("oldRoles.back")}<ArrowLeft size={16} /></Link></Button>}>
 
       <div className="space-y-5">
         <div className="rounded-lg border p-5">
@@ -55,11 +50,11 @@ export default function RoleFormPage() {
           )} />
         </div>
 
-        <div className="flex flex-col-reverse items-stretch justify-between gap-4 rounded-sm border border-border bg-background p-5 sm:flex-row sm:items-center sm:p-6">
+        <div className="form-footer in-box flex flex-col-reverse items-stretch justify-between gap-4 sm:flex-row sm:items-center">
           <Button type="button" variant="destructive" size="xl" onClick={() => nav("/roles")}>{t("common.cancel")}</Button>
           <Button type="submit" size="xl" disabled={!name.trim() || save.isPending}>{t("oldRoles.save")}</Button>
         </div>
       </div>
-    </form>
+    </PageBox>
   )
 }

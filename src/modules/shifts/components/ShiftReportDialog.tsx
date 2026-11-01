@@ -8,6 +8,8 @@ import { useAppSettings } from "@/modules/settings"
 import { useShiftReport } from "../queries"
 import { useShiftReportOutput } from "../print/useShiftReportOutput"
 import type { Shift } from "../types"
+import { useClassic } from "@/shared/theme/ThemeProvider"
+import { ShiftReportModern } from "./ShiftReportModern"
 
 const fmt = (v: number | null | undefined) => (typeof v === "number" && !Number.isNaN(v) ? v.toFixed(2) : "—")
 
@@ -39,7 +41,14 @@ const Box = ({ title, children }: { title?: string; children: React.ReactNode })
  * buttons; under it the statement on a pale background (who and when, what was sold, the totals, each treasury, the
  * returns and net, each service employee, then purchases and expenses).
  */
-export function ShiftReportDialog({ shift, onOpenChange, onClose }: { shift: Shift | null; onOpenChange: (o: boolean) => void; onClose?: (s: Shift) => void }) {
+type Props = { shift: Shift | null; onOpenChange: (o: boolean) => void; onClose?: (s: Shift) => void }
+
+/** The statement in the active look: the current system's, or erpv2's (see ShiftReportModern). */
+export function ShiftReportDialog(props: Props) {
+  return useClassic() ? <ClassicShiftReport {...props} /> : <ShiftReportModern {...props} />
+}
+
+function ClassicShiftReport({ shift, onOpenChange, onClose }: Props) {
   const { t, i18n } = useTranslation()
   const appSettings = useAppSettings()
   const withVouchers = !!appSettings.shiftsTab?.enableShiftStatement

@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/StatusBadge"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import type { PaymentStatus } from "../types"
 
-const PAYMENT_VARIANT = { Paid: "success", Partial: "warning", Unpaid: "destructive", Refunded: "muted" } as const
-const ZATCA_VARIANT = { Sent: "success", NotSentYet: "warning", Rejected: "destructive" } as const
+const PAYMENT_TONE = { Paid: "success", Partial: "warning", Unpaid: "danger", Refunded: "refunded" } as const
+const ZATCA_TONE = { Sent: "success", NotSentYet: "danger", Rejected: "danger" } as const
 
 const PAYMENT_STATES: PaymentStatus[] = ["Unpaid", "Partial", "Paid", "Refunded"]
 
@@ -12,7 +12,7 @@ export function PaymentBadge({ status }: { status?: string | null }) {
   const { t } = useTranslation()
   const state = PAYMENT_STATES.find((x) => x === status)
   if (!state) return null
-  return <Badge variant={PAYMENT_VARIANT[state]}>{t(`sales.payment.${state}`)}</Badge>
+  return <StatusBadge tone={PAYMENT_TONE[state]}>{t(`sales.payment.${state}`)}</StatusBadge>
 }
 
 /** E-invoice (ZATCA phase 2) state; a rejection shows the authority's message on hover. */
@@ -20,7 +20,7 @@ export function ZatcaBadge({ status, message }: { status?: string | null; messag
   const { t } = useTranslation()
   // The server leaves the state empty until the invoice is first sent.
   const state = status === "Sent" || status === "Rejected" ? status : "NotSentYet"
-  const badge = <Badge variant={ZATCA_VARIANT[state]}>{t(`sales.zatca.${state}`)}</Badge>
+  const badge = <StatusBadge tone={ZATCA_TONE[state]}>{t(`sales.zatca.${state}`)}</StatusBadge>
   if (!message) return badge
   return (
     <Tooltip>

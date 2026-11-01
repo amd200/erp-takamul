@@ -1,14 +1,14 @@
 import { useMemo, useState } from "react"
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/StatusBadge"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Pager } from "@/components/Pager"
 import { cn } from "@/lib/utils"
 import { cellText } from "../format"
 import type { Cell, Column, Row } from "../types"
 
-const TONE = { good: "success", warn: "warning", bad: "destructive", muted: "muted" } as const
+const TONE = { good: "success", warn: "warning", bad: "danger", muted: "neutral" } as const
 const numeric = (k: Column["kind"]) => k === "money" || k === "number" || k === "percent"
 const sortValue = (c: Cell) => (c == null ? -Infinity : typeof c === "object" ? c.text : c)
 
@@ -56,7 +56,7 @@ export function ReportTable({ columns, rows, totals }: { columns: Column[]; rows
               return (
                 <TableCell key={c.id} className={cn("py-2.5 tabular-nums", numeric(c.kind) && "text-end", c.strong && "font-semibold", v == null && "text-faint")}>
                   {c.kind === "badge" && v && typeof v === "object"
-                    ? <Badge variant={TONE[v.tone]}>{cellText(v, c.kind, t, i18n.language)}</Badge>
+                    ? <StatusBadge tone={TONE[v.tone]}>{cellText(v, c.kind, t, i18n.language)}</StatusBadge>
                     : cellText(v, c.kind, t, i18n.language)}
                 </TableCell>
               )

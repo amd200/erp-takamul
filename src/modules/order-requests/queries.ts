@@ -7,7 +7,7 @@ import { orderRequestsApi } from "./service"
 
 export const orderRequestKeys = { all: ["order-requests"] as const, page: (q: object) => ["order-requests", "page", q] as const, detail: (id: number) => ["order-requests", "detail", id] as const }
 
-export const useOrderRequestPage = (q: { page: number; pageSize: number; searchTerm?: string; from?: string; to?: string }) =>
+export const useOrderRequestPage = (q: { page: number; pageSize: number; searchTerm?: string; from?: string; to?: string; sortBy?: string; sortDescending?: boolean }) =>
   useQuery({ queryKey: orderRequestKeys.page(q), queryFn: () => orderRequestsApi.page(q), placeholderData: keepPreviousData })
 export const useOrderRequest = (id: number | null) => useQuery({ queryKey: orderRequestKeys.detail(id ?? 0), queryFn: () => orderRequestsApi.get(id!), enabled: id != null })
 

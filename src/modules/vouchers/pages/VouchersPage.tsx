@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
+import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
 import { PageHeader } from "@/components/PageHeader"
 import { RowActions } from "@/components/RowActions"
@@ -23,7 +24,8 @@ import { useVoucherOutput } from "../print/useVoucherOutput"
 function VouchersPage({ kind }: { kind: VoucherKind }) {
   const { t, i18n } = useTranslation()
   const can = useCan()
-  const { data, isLoading } = useVouchers()
+  const { sort, sortBy, sortDescending } = useTableSort()
+  const { data, isLoading } = useVouchers({ SortBy: sortBy, SortDescending: sortDescending })
   const { data: treasuries = [] } = useTreasuryList()
   const del = useDeleteVoucher()
   const output = useVoucherOutput()
@@ -31,17 +33,17 @@ function VouchersPage({ kind }: { kind: VoucherKind }) {
   const [open, setOpen] = useState(false)
   const [toDelete, setToDelete] = useState<Voucher | null>(null)
   const perm = kind === "receipt" ? P.vouchers.receipts : P.vouchers.payments
-  const rows = (data ?? []).filter((v) => v.kind === kind).sort((a, b) => b.transactionDate.localeCompare(a.transactionDate))
+  const rows = (data ?? []).filter((v) => v.kind === kind).sort((a, b) => (sortBy ? 0 : b.transactionDate.localeCompare(a.transactionDate)))
 
   const columns: Column<Voucher>[] = [
-    { id: "number", header: t("vouchers.number"), cell: (v) => <span className="font-semibold">{voucherNumber(v)}</span> },
-    { id: "date", header: t("common.date"), cell: (v) => <span className="text-muted-foreground">{formatDateTime(v.transactionDate, i18n.language)}</span> },
-    { id: "party", header: t(kind === "receipt" ? "vouchers.from" : "vouchers.to"), cell: (v) => (
+    { id: "number", sortKey: "id", header: t("vouchers.number"), cell: (v) => <span className="font-semibold">{voucherNumber(v)}</span> },
+    { id: "date", sortKey: "transactionDate", header: t("common.date"), cell: (v) => <span className="text-muted-foreground">{formatDateTime(v.transactionDate, i18n.language)}</span> },
+    { id: "party", sortKey: kind === "receipt" ? "customerName" : "supplierName", header: t(kind === "receipt" ? "vouchers.from" : "vouchers.to"), cell: (v) => (
       <span>{v.partyName}</span>
     ) },
-    { id: "treasury", header: t("sales.treasury"), cell: (v) => treasuries.find((x) => x.id === v.treasuryId)?.name },
-    { id: "amount", header: t("sales.amount"), cell: (v) => <span className={kind === "receipt" ? "font-semibold text-success" : "font-semibold"}>{formatMoney(v.amount)}</span> },
-    { id: "desc", header: t("vouchers.description"), cell: (v) => <span className="text-muted-foreground">{v.description || "—"}</span> },
+    { id: "treasury", sortKey: "treasuryName", header: t("sales.treasury"), cell: (v) => treasuries.find((x) => x.id === v.treasuryId)?.name },
+    { id: "amount", sortKey: "amount", header: t("sales.amount"), cell: (v) => <span className={kind === "receipt" ? "font-semibold text-success" : "font-semibold"}>{formatMoney(v.amount)}</span> },
+    { id: "desc", sortKey: "description", header: t("vouchers.description"), cell: (v) => <span className="text-muted-foreground">{v.description || "—"}</span> },
     { id: "actions", header: "", align: "end", cell: (v) => (
       <div className="flex justify-end gap-0.5">
         <Tooltip>
@@ -62,7 +64,7 @@ function VouchersPage({ kind }: { kind: VoucherKind }) {
       <PageHeader crumbs={[t("nav.bonds")]} title={t(`vouchers.title.${kind}`)} description={t(`vouchers.description.${kind}`)}
         actions={<Can perm={perm}><Button size="lg" onClick={() => setOpen(true)}><Plus />{t(`vouchers.new.${kind}`)}</Button></Can>} />
       <SectionCard>
-        <DataTable rows={rows} loading={isLoading} columns={columns} rowKey={(v) => voucherNumber(v)}
+        <DataTable rows={rows} loading={isLoading} columns={columns} sort={sort} rowKey={(v) => voucherNumber(v)}
           searchText={(v) => `${voucherNumber(v)} ${v.partyName} ${v.description}`} searchPlaceholder={t("vouchers.search")}
           empty={<EmptyState icon={kind === "receipt" ? <HandCoins /> : <Wallet />} title={t(`vouchers.empty.${kind}`)} hint={t("vouchers.emptyHint")} />} />
       </SectionCard>

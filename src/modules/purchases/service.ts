@@ -27,8 +27,8 @@ function body(p: PurchaseInput) {
 }
 
 export const purchasesApi = {
-  page: async (p: { page: number; pageSize: number; searchTerm?: string }) => {
-    const res = await http<PagedResult<Purchase>>("/PurchaseOrder", { params: { Page: p.page, PageSize: p.pageSize, SearchTerm: p.searchTerm || undefined } })
+  page: async (p: { page: number; pageSize: number; searchTerm?: string; sortBy?: string; sortDescending?: boolean }) => {
+    const res = await http<PagedResult<Purchase>>("/PurchaseOrder", { params: { Page: p.page, PageSize: p.pageSize, SearchTerm: p.searchTerm || undefined, SortBy: p.sortBy, SortDescending: p.sortBy ? p.sortDescending : undefined } })
     return { items: res.items, total: res.totalCount }
   },
   get: (id: number) => http<Purchase>(`/PurchaseOrder/${id}`),

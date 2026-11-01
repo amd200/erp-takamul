@@ -9,6 +9,7 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
+import { useTableSort } from "@/components/useTableSort"
 import { FormInput, FormSelect, FormTextarea } from "@/components/form/FormFields"
 import { PageHeader } from "@/components/PageHeader"
 import { RowActions } from "@/components/RowActions"
@@ -82,7 +83,8 @@ function ExpenseDialog({ open, onOpenChange, expense }: { open: boolean; onOpenC
 export default function ExpensesPage() {
   const { t, i18n } = useTranslation()
   const can = useCan()
-  const { data, isLoading } = useExpenses()
+  const { sort, sortBy, sortDescending } = useTableSort()
+  const { data, isLoading } = useExpenses({ SortBy: sortBy, SortDescending: sortDescending })
   const del = useDeleteExpense()
   const [editing, setEditing] = useState<Expense | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -91,12 +93,12 @@ export default function ExpensesPage() {
 
   // The same seven columns, in the same order, as the current system.
   const columns: Column<Expense>[] = [
-    { id: "date", header: t("expenses.colDate"), cell: (x) => (x.date ? formatDateTime(x.date + "T12:00:00", i18n.language) : "—") },
-    { id: "name", header: t("expenses.colName"), cell: (x) => <span className="font-semibold">{x.name}</span> },
-    { id: "treasury", header: t("expenses.treasury"), cell: (x) => x.treasuryName || "—" },
-    { id: "item", header: t("expenses.item"), cell: (x) => x.itemName || "—" },
-    { id: "amount", header: t("expenses.amount"), cell: (x) => <span className="tabular-nums">{formatMoney(x.amount ?? 0)}</span> },
-    { id: "notes", header: t("expenses.colNotes"), cell: (x) => x.notes || "—" },
+    { id: "date", sortKey: "date", header: t("expenses.colDate"), cell: (x) => (x.date ? formatDateTime(x.date + "T12:00:00", i18n.language) : "—") },
+    { id: "name", sortKey: "name", header: t("expenses.colName"), cell: (x) => <span className="font-semibold">{x.name}</span> },
+    { id: "treasury", sortKey: "treasuryName", header: t("expenses.treasury"), cell: (x) => x.treasuryName || "—" },
+    { id: "item", sortKey: "itemName", header: t("expenses.item"), cell: (x) => x.itemName || "—" },
+    { id: "amount", sortKey: "amount", header: t("expenses.amount"), cell: (x) => <span className="tabular-nums">{formatMoney(x.amount ?? 0)}</span> },
+    { id: "notes", sortKey: "notes", header: t("expenses.colNotes"), cell: (x) => x.notes || "—" },
     { id: "actions", header: t("expenses.colActions"), cell: (x) => (can(P.expenses.edit) || can(P.expenses.delete)) && (
       <RowActions onEdit={can(P.expenses.edit) ? () => open(x) : undefined} onDelete={can(P.expenses.delete) ? () => setToDelete(x) : undefined} />
     ) },
@@ -106,7 +108,7 @@ export default function ExpensesPage() {
     <>
       <PageHeader title={t("expenses.title")} description={t("expenses.subtitle")}
         actions={<Can perm={P.expenses.add}><Button size="lg" onClick={() => open(null)}><Plus />{t("expenses.add")}</Button></Can>} />
-      <DataTable rows={data} loading={isLoading} columns={columns} rowKey={(x) => x.id} emptyText={t("expenses.noData")}
+      <DataTable rows={data} loading={isLoading} columns={columns} sort={sort} rowKey={(x) => x.id} emptyText={t("expenses.noData")}
         empty={null} />
       <ExpenseDialog open={dialogOpen} onOpenChange={setDialogOpen} expense={editing} />
       <ConfirmDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)} pending={del.isPending}

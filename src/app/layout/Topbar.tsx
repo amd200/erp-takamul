@@ -11,11 +11,121 @@ import { LANGUAGES } from "@/shared/i18n"
 import { useSession } from "@/shared/session/session"
 import { useAppSettings } from "@/modules/settings"
 import { useLogout } from "@/modules/auth/queries"
-import { useTheme, type ThemeChoice } from "@/shared/theme/ThemeProvider"
+import { BranchSwitcher } from "./BranchSwitcher"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { useClassic, useTheme, type ThemeChoice, type UiStyle } from "@/shared/theme/ThemeProvider"
 
 const THEMES: { id: ThemeChoice; icon: typeof Sun }[] = [
   { id: "light", icon: Sun }, { id: "dark", icon: Moon }, { id: "system", icon: Monitor },
 ]
+
+const STYLES: UiStyle[] = ["modern", "classic"]
+
+/** The look entries of the theme menu, shared by both bars (the mode light / dark / system comes first). */
+function StyleItems({ itemClass }: { itemClass?: string }) {
+  const { t } = useTranslation()
+  const { style, setStyle } = useTheme()
+  return (
+    <>
+      <DropdownMenuSeparator />
+      <DropdownMenuLabel className="text-xs text-muted-foreground">{t("topbar.style")}</DropdownMenuLabel>
+      {STYLES.map((id) => (
+        <DropdownMenuItem key={id} onSelect={() => setStyle(id)} className={cn(itemClass, "justify-between")}>
+          <span>{t(`topbar.styles.${id}`)}</span>{style === id && <Check size={16} className="text-primary" />}
+        </DropdownMenuItem>
+      ))}
+    </>
+  )
+}
+
+/** The erpv2 bar: a search field, three quick-action buttons and a row of round icon buttons. */
+function ModernTopbar({ onMenu }: { onMenu: () => void }) {
+  const { t, i18n } = useTranslation()
+  const { choice, resolved, setChoice } = useTheme()
+  const { user } = useSession()
+  const postype = useAppSettings().salesScreenTab?.postype
+  const posPath = postype === "Pos3" ? "/pos-optics" : postype === "Pos2" ? "/pos2" : "/pos"
+  const logout = useLogout()
+  return (
+    <header className="sticky top-0 z-10 flex flex-wrap items-center gap-2 border-b bg-background/90 px-4 py-3 backdrop-blur md:px-6 print:hidden">
+      <Button variant="ghost" size="icon-lg" className="md:hidden" aria-label={t("nav.open")} onClick={onMenu}><Menu /></Button>
+      <div className="relative max-w-xs min-w-40 flex-1">
+        <Search className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-faint" />
+        <Input aria-label={t("common.search")} placeholder={t("topbar.search")} className="h-10 bg-card ps-9" />
+      </div>
+      <div className="hidden gap-2 lg:flex">
+        <Button asChild variant="secondary" className="rounded-full"><Link to="/sales/invoices/create">{t("topbar.quickA4")}</Link></Button>
+        <Button asChild variant="secondary" className="rounded-full"><Link to={posPath}>{t("topbar.quickPos")}</Link></Button>
+        <Can perm={P.products.add}><Button asChild variant="ghost" className="rounded-full bg-muted"><Link to="/products/create">{t("topbar.quickItem")}</Link></Button></Can>
+      </div>
+
+      <div className="ms-auto flex items-center gap-1">
+        <BranchSwitcher />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon-lg" className="relative rounded-full" aria-label={t("topbar.notifications")}>
+              <Bell /><span className="absolute end-2 top-2 size-2 rounded-full border-2 border-background bg-destructive" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-72">
+            <DropdownMenuLabel>{t("topbar.notifications")}</DropdownMenuLabel>
+            <DropdownMenuItem asChild>
+              <Link to="/reports/low-stock" className="flex flex-col items-start gap-0.5">
+                <span className="font-medium">{t("topbar.lowStockTitle")}</span>
+                <span className="text-xs text-muted-foreground">{t("topbar.lowStockBody")}</span>
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon-lg" className="rounded-full" aria-label={t("topbar.theme")}>{resolved === "dark" ? <Moon /> : <Sun />}</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {THEMES.map(({ id, icon: Icon }) => (
+              <DropdownMenuItem key={id} onSelect={() => setChoice(id)}>
+                <Icon />{t(`topbar.themes.${id}`)}{choice === id && <Check className="ms-auto" />}
+              </DropdownMenuItem>
+            ))}
+            <StyleItems />
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon-lg" className="rounded-full" aria-label={t("topbar.language")}><Globe /></Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {LANGUAGES.map((l) => (
+              <DropdownMenuItem key={l.code} onSelect={() => i18n.changeLanguage(l.code)}>
+                {l.label}{i18n.language === l.code && <Check className="ms-auto" />}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-10 rounded-full px-1" aria-label={t("topbar.account")}>
+              <span className="grid size-8 place-items-center rounded-full bg-secondary text-[13px] font-semibold text-secondary-foreground">{(user.name[0] ?? "?").toUpperCase()}</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel className="flex flex-col">
+              <span dir="ltr" className="text-start">{user.name}</span>
+              <span className="text-xs font-normal text-muted-foreground">{user.role}</span>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem><KeyRound />{t("topbar.changePassword")}</DropdownMenuItem>
+            <DropdownMenuItem variant="destructive" onSelect={() => logout.mutate()}><LogOut />{t("topbar.logout")}</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </header>
+  )
+}
 
 /** One round icon button of the strip: grey, turning green on hover. */
 const iconButton = "relative flex size-9 items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-[var(--bg-main)] hover:text-primary sm:size-10"
@@ -26,6 +136,11 @@ const panel = "mt-2 rounded-lg border bg-card py-1 shadow-lg"
 const panelItem = "px-4 py-2 text-sm text-[var(--text-main)]"
 
 export function Topbar({ drawerOpen, onMenu, onToggleSidebar }: { drawerOpen: boolean; onMenu: () => void; onToggleSidebar: () => void }) {
+  const classic = useClassic()
+  return classic ? <ClassicTopbar drawerOpen={drawerOpen} onMenu={onMenu} onToggleSidebar={onToggleSidebar} /> : <ModernTopbar onMenu={onMenu} />
+}
+
+function ClassicTopbar({ drawerOpen, onMenu, onToggleSidebar }: { drawerOpen: boolean; onMenu: () => void; onToggleSidebar: () => void }) {
   const { t, i18n } = useTranslation()
   const { choice, resolved, setChoice } = useTheme()
   const { user } = useSession()
@@ -48,6 +163,7 @@ export function Topbar({ drawerOpen, onMenu, onToggleSidebar }: { drawerOpen: bo
       </div>
 
       <div className="flex min-w-0 flex-1 flex-nowrap items-center justify-end gap-1 sm:gap-2 lg:flex-none lg:gap-3">
+        <div className="me-auto min-w-0 lg:me-0"><BranchSwitcher /></div>
         <div className="hidden shrink-0 items-center gap-3 lg:flex">
           <Link to="/sales/invoices/create" className={cn(pill, "bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50")}><LayoutGrid size={15} />{t("topbar.quickA4")}</Link>
           <Link to={posPath} className={cn(pill, "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-300 dark:hover:bg-emerald-900/50")}><ShoppingCart size={15} />{t("topbar.quickPos")}</Link>
@@ -95,6 +211,7 @@ export function Topbar({ drawerOpen, onMenu, onToggleSidebar }: { drawerOpen: bo
                 <span className="flex items-center gap-2"><Icon size={16} />{t(`topbar.themes.${id}`)}</span>{choice === id && <Check size={16} className="text-primary" />}
               </DropdownMenuItem>
             ))}
+            <StyleItems itemClass={panelItem} />
           </DropdownMenuContent>
         </DropdownMenu>
 

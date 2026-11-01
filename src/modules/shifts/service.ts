@@ -11,7 +11,7 @@ const localDay = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad
 const localTime = (d: Date) => `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
 
 export const shiftsApi = {
-  list: (q: ShiftQuery) => http<ShiftListResponse>("/Shifts", { params: { PageNumber: q.page, PageSize: q.pageSize, SearchTerm: q.searchTerm || undefined } }),
+  list: (q: ShiftQuery) => http<ShiftListResponse>("/Shifts", { params: { Page: q.page, PageSize: q.pageSize, SearchTerm: q.searchTerm || undefined, SortBy: q.sortBy, SortDescending: q.sortBy ? q.sortDescending : undefined } }),
 
   // The form's branch travels as X-Branch-Id (it wins over the header selection), not in the body.
   open: ({ branchId, ...v }: OpenShiftInput) => {

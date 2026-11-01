@@ -1,9 +1,10 @@
 import { fetchAllPages } from "@/shared/http/paged"
+import type { ListSort } from "@/shared/api/crudQueries"
 import { http } from "@/shared/http/request"
 import type { Role } from "./types"
 
 export const rolesApi = {
-  list: () => fetchAllPages<Role>("/permissions/AllRoles", { pageParam: "PageNumber" }),
+  list: (sort?: ListSort) => fetchAllPages<Role>("/permissions/AllRoles", { pageParam: "PageNumber", params: { ...sort } }),
   get: (roleId: string) => http<Role>(`/role-permissions/${roleId}`),
   // Creating also sets the permissions, and saving a role again with the same name would update it.
   create: (roleName: string, permissions: string[]) => http<unknown>("/permissions/upsert", { method: "POST", data: { roleName, permissions } }),

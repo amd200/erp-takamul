@@ -98,7 +98,7 @@ export function PurchaseLines({ lines, taxes, exempt, editTotal, showErrors, sea
       case "code": return <span dir="ltr">{codeOf(l)}</span>
       case "name": return <span className="block truncate">{l.name}</span>
       case "unit": return l.unitName || "—"
-      case "cost": return <NumberInput value={l.unitPrice} decimals={4} label={t("pos3.unitCost")} onChange={(n) => onChange(l.key, { unitPrice: n })} className={cn(small, "mx-auto w-20")} />
+      case "cost": return <NumberInput value={l.unitPrice} decimals={editTotal ? 2 : 4} label={t("pos3.unitCost")} onChange={(n) => onChange(l.key, { unitPrice: n })} className={cn(small, "mx-auto w-20")} />
       case "qty": return <NumberInput value={l.quantity} positive label={t("products.quantity")} onChange={(n) => setQty(l, n)} className={cn(small, "mx-auto w-16")} />
       case "net": return <span className="font-semibold tabular-nums">{formatMoney(a.net)}</span>
       case "taxId": return taxCell(l)

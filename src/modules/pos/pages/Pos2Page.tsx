@@ -49,7 +49,11 @@ function Pos2Screen({ shift, optics }: { shift: Shift; optics: boolean }) {
   const closeShift = useCloseShift()
   const saleDefaults = useSaleDefaults()
   // The optics screen starts every sale with no customer: the cashier picks or adds one in the customer tools.
-  const defaults = () => (optics ? usePosStore.getState().setCustomer(null, "") : saleDefaults())
+  // This screen has no order type: a table paid from the invoices list (dine-in checkout) leaves it selling as before.
+  const defaults = () => {
+    if (usePosStore.getState().orderType === "InDine") usePosStore.getState().setOrderType("TakeAway")
+    return optics ? usePosStore.getState().setCustomer(null, "") : saleDefaults()
+  }
 
   const [payOpen, setPayOpen] = useState(false)
   const [heldOpen, setHeldOpen] = useState(false)
@@ -111,7 +115,7 @@ function Pos2Screen({ shift, optics }: { shift: Shift; optics: boolean }) {
   const sale = (holding: boolean, payments: PosPayment[]) => {
     const s = store()
     return {
-      orderType: s.orderType, customerId: s.customerId, customerCompanionId: getCustomerCompanionId(), deliveryCompanyId: s.deliveryCompanyId, employeeId: s.employeeId, warehouseId: warehouses[0]?.id ?? 0,
+      orderType: s.orderType, customerId: s.customerId, customerCompanionId: getCustomerCompanionId(), deliveryCompanyId: s.deliveryCompanyId, tableId: s.tableId, dineInMode: s.dineInMode, dineInOrderId: s.dineInOrderId, employeeId: s.employeeId, warehouseId: warehouses[0]?.id ?? 0,
       lines: s.lines, discount: s.discount, note: s.note, holding, holdingOrderId: s.holdingOrderId, payments,
     }
   }
@@ -151,14 +155,14 @@ function Pos2Screen({ shift, optics }: { shift: Shift; optics: boolean }) {
           <SalesSummary totals={totals} undiscounted={undiscounted} discount={discount} onDiscount={(d) => store().setDiscount(d)} exempt={exempt}
             locked={locked} uncertain={saveState === "uncertain"} busy={save.isPending || noWarehouse}
             onQuotation={() => setQuoteOpen(true)}
-            onHold={() => needLines(() => save.mutate({ sale: sale(true, []) }, { onSuccess: () => defaults() }))}
+            onHold={() => store().dineInMode ? toast.error(t("posTables.cannotHold")) : needLines(() => save.mutate({ sale: sale(true, []) }, { onSuccess: () => defaults() }))}
             onClear={() => { if (locked) return; store().clear(); defaults() }}
             onHeld={() => setHeldOpen(true)}
             onPay={() => needLines(() => setPayOpen(true))} optics={optics} />
         </div>
       </div>
 
-      <PaymentScreen open={payOpen} onOpenChange={setPayOpen} total={totals.grandTotal} hasCustomer={customerId != null} customerName={customerName} pending={save.isPending} onConfirm={confirmPay} />
+      <PaymentScreen open={payOpen} onOpenChange={setPayOpen} total={totals.grandTotal} hasCustomer={customerId != null} customerName={customerName} showCustomer={false} pending={save.isPending} onConfirm={confirmPay} />
       <InvoicesDialog open={heldOpen} onOpenChange={setHeldOpen} />
       <QuotationDialog open={quoteOpen} onOpenChange={setQuoteOpen} />
       {optics && <OpticsToolsDialog open={toolsOpen} onOpenChange={setToolsOpen} />}

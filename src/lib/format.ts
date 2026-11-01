@@ -3,6 +3,9 @@ const numFmt = new Intl.NumberFormat("en-US")
 
 export const formatMoney = (n: number) => moneyFmt.format(n)
 export const formatNumber = (n: number) => numFmt.format(n)
+/** A quantity for display only: at most 2 decimals (the stored value is untouched). */
+const qtyFmt = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 })
+export const formatQty = (n: number) => qtyFmt.format(n)
 
 /**
  * Dates and times look the same everywhere: "26 Oct 2026 · 1:05:30 PM". The time always has seconds and follows

@@ -56,4 +56,4 @@ export type ShiftEmployee = { id: number; firstName: string }
 export type ShiftDevice = { id: number; deviceName: string }
 
 export type ShiftListResponse = { items: Shift[]; totalCount: number; pageNumber: number; pageSize: number }
-export type ShiftQuery = { page: number; pageSize: number; searchTerm?: string }
+export type ShiftQuery = { page: number; pageSize: number; searchTerm?: string; sortBy?: string; sortDescending?: boolean }

@@ -3,6 +3,7 @@ import { Controller, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { HandCoins, Loader2, Truck, Users } from "lucide-react"
 import { useTranslation } from "react-i18next"
+import { cn } from "@/lib/utils"
 import { EmbeddedDialog } from "@/components/EmbeddedDialog"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -57,11 +58,11 @@ export function VoucherDialog({ kind, open, onOpenChange, embedded = false, cust
 
   const body = (
     <>
-        <DialogHeader className="border-b border-gray-100 px-5 py-2">
-          <DialogTitle className="flex flex-wrap items-center gap-2 text-lg font-semibold text-[#2ecc71]"><Icon size={18} />{t(`vouchers.new.${kind}`)}</DialogTitle>
+        <DialogHeader className="border-b border-border px-5 py-2">
+          <DialogTitle className="flex flex-wrap items-center gap-2 text-lg font-semibold text-primary"><Icon size={18} />{t(`vouchers.new.${kind}`)}</DialogTitle>
         </DialogHeader>
 
-        <form id="voucher-form" onSubmit={submit} noValidate className="max-h-[60vh] space-y-3 overflow-y-auto px-5 py-4">
+        <form id="voucher-form" onSubmit={submit} noValidate className={cn("space-y-3 overflow-x-hidden overflow-y-auto px-5 py-4", embedded ? "min-h-0 flex-1" : "max-h-[60vh]")}>
           <div className="grid grid-cols-2 gap-3">
             <Controller control={form.control} name="date" render={({ field }) => (
               <Field><FieldLabel htmlFor="v-date">{t("common.date")}</FieldLabel><Input id="v-date" type="date" className="h-9" {...field} /></Field>
@@ -70,8 +71,8 @@ export function VoucherDialog({ kind, open, onOpenChange, embedded = false, cust
               options={treasuries.map((x) => ({ value: String(x.id), label: x.name }))} />
           </div>
 
-          {customerId === undefined && <div className="space-y-2 rounded-2xl border border-gray-200 p-3">
-            <div className="flex items-center gap-2"><Users size={16} className="text-[#2ecc71]" /><h3 className="text-sm font-semibold text-gray-800">{t("vouchers.accountType")}</h3></div>
+          {customerId === undefined && <div className="space-y-2 rounded-2xl border border-border p-3">
+            <div className="flex items-center gap-2"><Users size={16} className="text-primary" /><h3 className="text-sm font-semibold text-foreground">{t("vouchers.accountType")}</h3></div>
             <div role="radiogroup" className="mt-1 flex gap-6 px-1">
               {order.map((p) => (
                 <label key={p} className="flex cursor-pointer items-center gap-2 select-none">
@@ -81,7 +82,7 @@ export function VoucherDialog({ kind, open, onOpenChange, embedded = false, cust
                   <span aria-hidden className="grid size-4 shrink-0 place-items-center rounded-full border border-input bg-background transition-colors peer-checked:border-primary peer-checked:[&>i]:opacity-100 peer-focus-visible:ring-2 peer-focus-visible:ring-ring/40">
                     <i className="size-2 rounded-full bg-primary opacity-0 transition-opacity" />
                   </span>
-                  <span className="text-sm font-semibold text-gray-700">{t(`vouchers.party.${p}`)}</span>
+                  <span className="text-sm font-semibold text-foreground">{t(`vouchers.party.${p}`)}</span>
                 </label>
               ))}
             </div>
@@ -101,7 +102,7 @@ export function VoucherDialog({ kind, open, onOpenChange, embedded = false, cust
             )} />
           </div>
 
-          <Field><FieldLabel>{t("vouchers.balanceAfter")}</FieldLabel><Input readOnly value={num(balanceAfter)} className="h-9 bg-gray-50 text-center font-semibold text-[#2ecc71]" /></Field>
+          <Field><FieldLabel>{t("vouchers.balanceAfter")}</FieldLabel><Input readOnly value={num(balanceAfter)} className="h-9 bg-gray-50 text-center font-semibold text-primary" /></Field>
           {overdraw && <p className="text-sm text-destructive">{t("vouchers.overdraw", { amount: num(treasury!.currentBalance!) })}</p>}
 
           <Controller control={form.control} name="description" render={({ field }) => (
@@ -109,7 +110,7 @@ export function VoucherDialog({ kind, open, onOpenChange, embedded = false, cust
           )} />
         </form>
 
-        <DialogFooter className="border-t border-gray-100 px-5 py-7">
+        <DialogFooter className="shrink-0 border-t border-border px-5 py-7">
           <div className="flex w-full flex-col-reverse gap-3 px-2 sm:flex-row sm:justify-end">
             <Button type="button" variant="destructive" size="xl" onClick={() => onOpenChange(false)} className="w-full sm:w-auto">{t("common.cancel")}</Button>
             <Button type="submit" form="voucher-form" size="xl" disabled={create.isPending || overdraw} className="w-full sm:w-auto">

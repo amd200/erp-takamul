@@ -1,3 +1,4 @@
+import { PageBox } from "@/components/PageBox"
 import { useEffect, useMemo } from "react"
 import { productFormOf, typeOf } from "../mappers"
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
@@ -6,12 +7,22 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
+import { PageHeader } from "@/components/PageHeader"
+import { SectionCard } from "@/components/SectionCard"
+import { useClassic } from "@/shared/theme/ThemeProvider"
 import { useAppSettings } from "@/modules/settings"
 import { useTaxes } from "@/modules/taxes/service"
 import { useUnits } from "@/modules/units/queries"
 import { productsApi } from "../service"
 import { ChildrenSection } from "../components/ChildrenSection"
 import { ComponentsSection } from "../components/ComponentsSection"
+import { BasicInfoSection } from "../components/modern/BasicInfoSection"
+import { ComponentsSection as ModernComponents } from "../components/modern/ComponentsSection"
+import { ChildrenSection as ModernChildren } from "../components/modern/ChildrenSection"
+import { PricingSection } from "../components/modern/PricingSection"
+import { StockUnitsSection } from "../components/modern/StockUnitsSection"
+import { ProductTypePicker as ModernTypePicker } from "../components/modern/ProductTypePicker"
+import { ImagePanel as SideImagePanel, OptionsPanel, PriceSummary } from "../components/modern/SidePanels"
 import { ProductTypePicker } from "../components/ProductTypePicker"
 import { ImagePanel } from "../components/SidePanels"
 import { BarcodeUnitFields, CategoryField, DescriptionField, ExtraUnitsBox, NamesFields, PricingFields, PrinterField, ShowInSalesBox } from "../components/ProductFields"
@@ -21,6 +32,7 @@ import type { ProductType } from "../types"
 
 export default function ProductFormPage() {
   const { t } = useTranslation()
+  const classic = useClassic()
   const nav = useNavigate()
   const { id } = useParams()
   const editId = id ? Number(id) : undefined
@@ -75,14 +87,50 @@ export default function ProductFormPage() {
 
   const hasErrors = form.formState.submitCount > 0 && Object.keys(form.formState.errors).length > 0
 
+  if (!classic) {
+    return (
+      <FormProvider {...form}>
+        <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
+          <PageHeader crumbs={[t("nav.items"), editId ? t("common.edit") : t("common.add")]}
+            title={editId ? t("products.editTitle", { name: existing?.productNameAr }) : t("products.addTitle")} />
+
+          <SectionCard title={t("products.type")} description={editId ? t("products.typeLocked") : t("products.typePick")}>
+            <ModernTypePicker value={type} onChange={changeType} locked={!!editId} />
+          </SectionCard>
+
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+            <div className="flex min-w-0 flex-col gap-5">
+              <BasicInfoSection />
+              {rules.components && <ModernComponents computedCost={computedCost} />}
+              {rules.children && <ModernChildren selfId={editId} />}
+              <PricingSection computedCost={computedCost} />
+              <StockUnitsSection />
+            </div>
+            <aside className="flex min-w-0 flex-col gap-5 lg:sticky lg:top-20 lg:self-start">
+              {rules.ownBarcodeAndPrice && <PriceSummary />}
+              {rules.sells && <SideImagePanel />}
+              <OptionsPanel />
+            </aside>
+          </div>
+
+          <div className="sticky bottom-0 z-10 -mx-4 flex flex-wrap items-center justify-between gap-3 border-t bg-background/90 px-4 py-3 backdrop-blur md:-mx-6 md:px-6">
+            <span className="text-sm text-destructive" role="status">{hasErrors ? t("products.fixErrors") : ""}</span>
+            <div className="flex gap-2">
+              <Button asChild variant="outline" size="lg"><Link to="/products">{t("common.cancel")}</Link></Button>
+              <Button type="submit" size="lg" disabled={save.isPending}>{editId ? t("common.saveChanges") : t("products.save")}</Button>
+            </div>
+          </div>
+        </form>
+      </FormProvider>
+    )
+  }
+
+
   return (
     <FormProvider {...form}>
       <form onSubmit={submit} className="flex flex-col gap-6" noValidate>
-        <div className="rounded-lg border border-gray-200 p-6 dark:border-zinc-800">
-          <div className="mb-6">
-            <h1 className="text-2xl leading-snug font-bold">{editId ? t("productForm.editTitle") : t("productForm.addTitle")}</h1>
-            <p className="mt-1 text-sm text-muted-foreground">{t("productForm.addSubtitle")}</p>
-          </div>
+        <PageBox crumbs={[t("nav.items"), editId ? t("common.edit") : t("common.add")]}
+          title={editId ? t("productForm.editTitle") : t("productForm.addTitle")} subtitle={t("productForm.addSubtitle")}>
           <div className="mb-8"><ProductTypePicker value={type} onChange={changeType} locked={!!editId} /></div>
 
           {/* One two-column grid, in the order of the current system's form. */}
@@ -94,9 +142,9 @@ export default function ProductFormPage() {
             {type === "Prepared" && <><PricingFields computedCost={computedCost} /><BarcodeUnitFields /><DescriptionField />{rules.components && <div className="lg:col-span-2"><ComponentsSection computedCost={computedCost} /></div>}<ImagePanel /></>}
             {type === "RawMatrial" && <><PricingFields computedCost={computedCost} /><DescriptionField /><BarcodeUnitFields /></>}
           </div>
-        </div>
+        </PageBox>
 
-        <div className="flex flex-col-reverse items-stretch justify-between gap-3 rounded-lg border px-3 py-4 lg:flex-row lg:items-center">
+        <div className="form-footer flex flex-col-reverse items-stretch justify-between gap-3 lg:flex-row lg:items-center">
           <Button asChild variant="destructive" size="xl"><Link to="/products">{t("common.cancel")}</Link></Button>
           <span className="text-sm text-destructive" role="status">{hasErrors ? t("products.fixErrors") : ""}</span>
           <Button type="submit" size="xl" disabled={save.isPending}>{t("productForm.save")}</Button>

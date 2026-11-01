@@ -5,6 +5,7 @@ import { errorToast } from "@/shared/api/crudQueries"
 import { ApiError } from "@/shared/http/ApiError"
 import { useAuthStore } from "@/shared/auth/authStore"
 import { currentShift } from "@/modules/shifts/service"
+import { tableKeys } from "@/modules/tables/queries"
 import { invoicesApi } from "@/modules/sales/service"
 import { posApi } from "./service"
 import type { SaleInput, SaleResult } from "./types"
@@ -46,6 +47,9 @@ export function useSaveSale({ message }: { message?: string } = {}) {
       const { key, orderDate } = usePosStore.getState().beginSave(useAuthStore.getState().session?.userId ?? null, today())
       const input: SaleInput = { ...sale, holding: !!sale.holding, orderDate }
       try {
+        if (sale.orderType === "InDine") {
+          return sale.dineInMode === "checkout" ? await posApi.dineIn.checkout(input, key) : sale.dineInMode === "add-items" ? await posApi.dineIn.update(input) : await posApi.dineIn.create(input, key)
+        }
         return sale.holdingOrderId && !sale.holding ? await posApi.release(sale.holdingOrderId, sale.payments, key) : await posApi.save(input, key)
       } catch (e) {
         if (isUnsure(e)) usePosStore.getState().saveUncertain()
@@ -59,7 +63,9 @@ export function useSaveSale({ message }: { message?: string } = {}) {
       qc.invalidateQueries({ queryKey: ["sales"] })
       qc.invalidateQueries({ queryKey: ["customers"] })
       qc.invalidateQueries({ queryKey: ["treasuries"] })
-      toast.success(message ?? i18n.t(sale.holding ? "pos.held" : "pos.saved"))
+      qc.invalidateQueries({ queryKey: tableKeys.all })
+      const sentToKitchen = sale.orderType === "InDine" && sale.dineInMode !== "checkout"
+      toast.success(message ?? i18n.t(sale.holding ? "pos.held" : sentToKitchen ? "posTables.sent" : "pos.saved"))
     },
     onError: (e) => {
       if (isUnsure(e)) toast.error(i18n.t("pos.unsure"))

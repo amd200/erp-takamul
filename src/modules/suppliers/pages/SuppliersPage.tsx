@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
+import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
 import { PageHeader } from "@/components/PageHeader"
 import { RowActions } from "@/components/RowActions"
@@ -18,7 +19,8 @@ import { useDeleteSupplier, useSupplierList } from "../queries"
 export default function SuppliersPage() {
   const { t } = useTranslation()
   const can = useCan()
-  const { data, isLoading } = useSupplierList()
+  const { sort, sortBy, sortDescending } = useTableSort()
+  const { data, isLoading } = useSupplierList({ SortBy: sortBy, SortDescending: sortDescending })
   const del = useDeleteSupplier()
   const [toDelete, setToDelete] = useState<Supplier | null>(null)
   // The add / edit pop-up: `{}` adds, `{ supplier }` edits the selected row.
@@ -26,10 +28,10 @@ export default function SuppliersPage() {
   const all = data ?? []
 
   const columns: Column<Supplier>[] = [
-    { id: "code", header: t("suppliers.code"), cell: (s) => <span className="tabular-nums">{s.supplierCode ?? s.id}</span> },
-    { id: "name", header: t("partners.name"), cell: (s) => <span className="font-semibold">{s.supplierName}</span> },
-    { id: "phone", header: t("suppliers.mobile"), cell: (s) => <span dir="ltr">{s.phone || "—"}</span> },
-    { id: "openingBalance", header: t("partners.openingBalance"), cell: (s) => <span dir="ltr">{formatMoney(s.openingBalance ?? 0)}</span> },
+    { id: "code", sortKey: "id", header: t("suppliers.code"), cell: (s) => <span className="tabular-nums">{s.supplierCode ?? s.id}</span> },
+    { id: "name", sortKey: "supplierName", header: t("partners.name"), cell: (s) => <span className="font-semibold">{s.supplierName}</span> },
+    { id: "phone", sortKey: "phone", header: t("suppliers.mobile"), cell: (s) => <span dir="ltr">{s.phone || "—"}</span> },
+    { id: "openingBalance", sortKey: "openingBalance", header: t("partners.openingBalance"), cell: (s) => <span dir="ltr">{formatMoney(s.openingBalance ?? 0)}</span> },
     { id: "actions", header: "", align: "end", cell: (s) => (
       <div className="flex items-center justify-end gap-0.5">
         <RowActions onEdit={can(P.suppliers.edit) ? () => setForm({ supplier: s }) : undefined} onDelete={can(P.suppliers.delete) ? () => setToDelete(s) : undefined} />
@@ -42,7 +44,7 @@ export default function SuppliersPage() {
       <PageHeader crumbs={[t("nav.suppliers")]} title={t("suppliers.title")} description={t("suppliers.description")}
         actions={<Can perm={P.suppliers.add}><Button size="lg" onClick={() => setForm({})}><Plus />{t("suppliers.add")}</Button></Can>} />
       <SectionCard>
-          <DataTable rows={all} loading={isLoading} columns={columns} rowKey={(s) => s.id}
+          <DataTable rows={all} loading={isLoading} columns={columns} sort={sort} rowKey={(s) => s.id}
             searchText={(s) => `${s.supplierName} ${s.phone} ${s.taxNumber} ${s.supplierCode ?? s.id}`} searchPlaceholder={t("suppliers.search")}
             empty={<EmptyState icon={<Truck />} title={t("suppliers.empty")} hint={t("suppliers.emptyHint")} />} />
         </SectionCard>

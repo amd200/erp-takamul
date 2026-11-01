@@ -47,8 +47,12 @@ export const useBranchChoice = create<BranchChoice>()(
 export const canManageAllBranches = (s: Session | null) => !!s && (s.isMultiBranch || s.role === "SuperAdmin")
 
 /** The branch every request is scoped to, or null to let the server use the user's own. */
+/** The shift screens work on the user's own branch, never on the one picked in the header (picking branch 2 must not load its customers into the till). */
+const isShiftScreen = () => /^\/(pos2?|pos-optics|pos4|preparation)\/?$/.test(window.location.pathname)
+
 export function activeBranchId(): number | null {
   const { session } = useAuthStore.getState()
+  if (session?.branchId && isShiftScreen()) return session.branchId
   const choice = useBranchChoice.getState()
   if (!session || !canManageAllBranches(session)) return null
   return choice.ownerUserId === session.userId && choice.branchId && choice.branchId > 0 ? choice.branchId : null

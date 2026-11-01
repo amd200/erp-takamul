@@ -1,6 +1,7 @@
 import { memo } from "react"
 import { Minus, Plus, Trash2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
+import { CategoryDiscountBadge } from "@/modules/sales/components/CategoryDiscountBadge"
 import { formatMoney } from "@/lib/format"
 import { cn } from "@/lib/utils"
 import { lineAmounts } from "@/modules/sales/totals"
@@ -39,7 +40,8 @@ export const CartLineRow = memo(function CartLineRow({ line: l, index, locked, o
       <div className="min-w-0">
         <div className="text-xs leading-snug font-bold">{l.name}</div>
         {l.extras.length > 0 && <div className="text-[10px] text-gray-400">+ {l.extras.map((e) => e.name).join("، ")}</div>}
-        {l.discount > 0 && <div className="text-[10px] font-semibold text-primary">{l.discountKind === "percent" ? `${l.discount}% ${t("pos.off")}` : `-${formatMoney(l.discount)}`}</div>}
+        {l.categoryDiscount && <CategoryDiscountBadge line={l} className="mt-0.5" />}
+        {!l.categoryDiscount && l.discount > 0 && <div className="text-[10px] font-semibold text-primary">{l.discountKind === "percent" ? `${l.discount}% ${t("pos.off")}` : `-${formatMoney(l.discount)}`}</div>}
               </div>
 
       <div className="flex items-center justify-center gap-1" onClick={stop} onKeyDown={stop}>

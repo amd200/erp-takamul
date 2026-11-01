@@ -1,7 +1,7 @@
 import { useRef, useState } from "react"
 import { CheckCircle2, Download, FileSpreadsheet, UploadCloud } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/StatusBadge"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { SectionCard } from "@/components/SectionCard"
@@ -39,7 +39,7 @@ export function ImportPanel({ headers, preview, onImport, pending }: {
 
       {file && (
         <SectionCard title={t("import.step2")} description={t("import.summary", { total: preview.length, bad: preview.length - valid })}
-          action={<Badge variant="success"><CheckCircle2 />{t("import.ready", { count: valid })}</Badge>}>
+          action={<StatusBadge tone="success"><CheckCircle2 className="me-1 size-3" />{t("import.ready", { count: valid })}</StatusBadge>}>
           <Table className="min-w-[560px]">
             <TableHeader>
               <TableRow className="hover:bg-transparent">
@@ -50,7 +50,7 @@ export function ImportPanel({ headers, preview, onImport, pending }: {
               {preview.map((r, i) => (
                 <TableRow key={i}>
                   {r.cells.map((c, j) => <TableCell key={j} className={j === 0 ? "font-medium" : undefined}>{c || "—"}</TableCell>)}
-                  <TableCell><Badge variant={r.error ? "destructive" : "success"}>{r.error ?? t("import.valid")}</Badge></TableCell>
+                  <TableCell><StatusBadge tone={r.error ? "danger" : "success"}>{r.error ?? t("import.valid")}</StatusBadge></TableCell>
                 </TableRow>
               ))}
             </TableBody>

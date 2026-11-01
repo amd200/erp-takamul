@@ -7,7 +7,7 @@ import type { PurchaseInput } from "./types"
 
 export const purchaseKeys = { all: ["purchases"] as const, page: (q: object) => ["purchases", "page", q] as const, detail: (id: number) => ["purchases", "detail", id] as const }
 
-export const usePurchasePage = (q: { page: number; pageSize: number; searchTerm?: string }) =>
+export const usePurchasePage = (q: { page: number; pageSize: number; searchTerm?: string; sortBy?: string; sortDescending?: boolean }) =>
   useQuery({ queryKey: purchaseKeys.page(q), queryFn: () => purchasesApi.page(q), placeholderData: keepPreviousData })
 /** The latest purchase number plus one, keeping its prefix ("PO-B1-000041" → "PO-B1-000042"); the server gives the real number on saving. */
 export const useNextPurchaseNumber = () => useQuery({

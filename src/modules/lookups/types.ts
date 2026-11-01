@@ -11,6 +11,3 @@ export type EmployeeDto = { id: number; firstName?: string | null; lastName?: st
 export const fullName = (e: Pick<EmployeeDto, "firstName" | "lastName">) => [e.firstName, e.lastName].filter(Boolean).join(" ")
 
 /** Mock-only seeds for report data. */
-export type CustomerSeed = { id: number; name: string; phone: string; taxNumber: string | null; balance: number }
-export type NamedSeed = { id: number; name: string }
-export type SupplierSeed = { id: number; name: string; phone: string }

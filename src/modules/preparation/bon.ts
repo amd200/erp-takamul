@@ -1,4 +1,5 @@
 import { esc, type PrintDoc } from "@/shared/print"
+import type { useAppSettings } from "@/modules/settings"
 import type { PrepOrder } from "./types"
 
 export type BonStatus = "pending" | "ready" | "overdue"
@@ -11,6 +12,8 @@ export type BonOptions = {
   showStartNumber: boolean
   showOrderType: boolean
   showCustomer: boolean
+  /** A changed order is reprinted whole under the title "Amendment Ticket" (بون تعديل). */
+  amended?: boolean
   /** The ticket on the kitchen screen scrolls and is coloured by status; the printed one is plain black on white. */
   mode: "preview" | "print"
 }
@@ -57,7 +60,8 @@ export function bonDoc(o: PrepOrder, opt: BonOptions): PrintDoc {
   const en = lang === "English"
   const dir = en ? "ltr" : "rtl"
   const label = (ar: string, e: string) => (lang === "ArabicAndEnglish" ? `${esc(ar)}<br><span dir="ltr">${esc(e)}</span>` : esc(en ? e : ar))
-  const title = lang === "ArabicAndEnglish" ? `بون تحضير<br><span dir="ltr">Preparation Ticket</span>` : en ? "Preparation Ticket" : "بون تحضير"
+  const [titleAr, titleEn] = opt.amended ? ["بون تعديل", "Amendment Ticket"] : ["بون تحضير", "Preparation Ticket"]
+  const title = lang === "ArabicAndEnglish" ? `${titleAr}<br><span dir="ltr">${titleEn}</span>` : en ? titleEn : titleAr
 
   const orderType = String(o.orderTypeName || o.orderType || "").trim()
   const key = orderType.toLowerCase().replace(/[\s_-]/g, "")
@@ -89,3 +93,13 @@ ${head || info ? `<table class="info-grid" dir="${dir}">${head}${info}</table>` 
 
   return { title: o.orderNumber ?? String(o.id), paper: "roll80", font: "Alexandria", css: CSS, body }
 }
+
+/** The ticket options the settings call for; the kitchen screen and the invoices window print the same one. */
+export const ticketOptions = (s: ReturnType<typeof useAppSettings>, status: BonStatus, mode: BonOptions["mode"]): BonOptions => ({
+  status, mode,
+  language: s.preparationTicketTab?.preparationTicketInvoiceType,
+  showInvoiceNumber: s.preparationTicketTab?.showInvoiceNumberInPreparationTicket !== false,
+  showStartNumber: s.generalTab?.salesOrderStartNumber !== false,
+  showOrderType: s.salesScreenTab?.selectOrderTypeDuringSave === true,
+  showCustomer: s.preparationTicketTab?.showCustomerNameInPreparationTicket === true,
+})

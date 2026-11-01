@@ -1,13 +1,14 @@
 import { useCallback, useRef, useState } from "react"
 import { CheckCheck, ClipboardList, Eye, Wallet } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/StatusBadge"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { DataTable, type Column } from "@/components/DataTable"
+import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
 import { PageHeader } from "@/components/PageHeader"
 import { formatMoney, formatDateTime } from "@/lib/format"
@@ -69,7 +70,8 @@ export default function OrderRequestsPage() {
   const [page, setPage] = useState(0)
   const [from, setFrom] = useState("")
   const [to, setTo] = useState("")
-  const { data, isLoading, isFetching } = useOrderRequestPage({ page: page + 1, pageSize: PAGE_SIZE, searchTerm: search, from, to })
+  const { sort, sortBy, sortDescending } = useTableSort(() => setPage(0))
+  const { data, isLoading, isFetching } = useOrderRequestPage({ page: page + 1, pageSize: PAGE_SIZE, searchTerm: search, from, to, sortBy, sortDescending })
   const ready = useMarkReady()
   const checkout = useCheckoutOrderRequest()
   const [viewing, setViewing] = useState<number | null>(null)
@@ -85,12 +87,12 @@ export default function OrderRequestsPage() {
   }
 
   const columns: Column<OrderRequest>[] = [
-    { id: "number", header: t("orderRequests.number"), cell: (o) => <span className="font-semibold">{o.orderNumber}</span> },
-    { id: "customer", header: t("sales.customer"), cell: (o) => <div><div>{o.customerName || "—"}</div>{o.customerPhone && <div className="text-xs text-muted-foreground" dir="ltr">{o.customerPhone}</div>}</div> },
-    { id: "date", header: t("common.date"), cell: (o) => <span className="text-muted-foreground">{o.orderDate ? formatDateTime(o.orderDate, i18n.language) : "—"}</span> },
-    { id: "items", header: t("orderRequests.items"), cell: (o) => o.itemsCount },
-    { id: "total", header: t("sales.grandTotal"), cell: (o) => <span className="font-semibold">{formatMoney(o.grandTotal ?? 0)}</span> },
-    { id: "status", header: t("common.status"), cell: (o) => <Badge variant={o.salesOrderId ? "success" : "warning"}>{o.salesOrderId ? t("orderRequests.invoiced") : t(`orderRequests.statuses.${o.status}`, { defaultValue: o.status || t("orderRequests.pending") })}</Badge> },
+    { id: "number", sortKey: "orderNumber", header: t("orderRequests.number"), cell: (o) => <span className="font-semibold">{o.orderNumber}</span> },
+    { id: "customer", sortKey: "customerName", header: t("sales.customer"), cell: (o) => <div><div>{o.customerName || "—"}</div>{o.customerPhone && <div className="text-xs text-muted-foreground" dir="ltr">{o.customerPhone}</div>}</div> },
+    { id: "date", sortKey: "orderDate", header: t("common.date"), cell: (o) => <span className="text-muted-foreground">{o.orderDate ? formatDateTime(o.orderDate, i18n.language) : "—"}</span> },
+    { id: "items", sortKey: "itemsCount", header: t("orderRequests.items"), cell: (o) => o.itemsCount },
+    { id: "total", sortKey: "grandTotal", header: t("sales.grandTotal"), cell: (o) => <span className="font-semibold">{formatMoney(o.grandTotal ?? 0)}</span> },
+    { id: "status", sortKey: "status", header: t("common.status"), cell: (o) => <StatusBadge tone={o.salesOrderId ? "success" : "warning"}>{o.salesOrderId ? t("orderRequests.invoiced") : t(`orderRequests.statuses.${o.status}`, { defaultValue: o.status || t("orderRequests.pending") })}</StatusBadge> },
     { id: "actions", header: "", align: "end", cell: (o) => (
       <div className="flex justify-end gap-0.5">
         <Tooltip><TooltipTrigger asChild><Button type="button" variant="ghost" size="icon" aria-label={t("sales.actions.view")} onClick={() => setViewing(o.id)}><Eye /></Button></TooltipTrigger><TooltipContent>{t("sales.actions.view")}</TooltipContent></Tooltip>
@@ -108,7 +110,7 @@ export default function OrderRequestsPage() {
     <>
       <PageHeader crumbs={[t("nav.orders")]} title={t("orderRequests.title")} description={t("orderRequests.description")} />
       <SectionCard>
-        <DataTable rows={data?.items} loading={isLoading} columns={columns} rowKey={(o) => o.id} searchPlaceholder={t("orderRequests.search")}
+        <DataTable rows={data?.items} loading={isLoading} columns={columns} rowKey={(o) => o.id} sort={sort} searchPlaceholder={t("orderRequests.search")}
           server={{ total: data?.total ?? 0, page, pageSize: PAGE_SIZE, onPage: setPage, onSearch, fetching: isFetching && !isLoading }}
           filters={
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">

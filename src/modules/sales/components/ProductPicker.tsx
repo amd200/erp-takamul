@@ -10,17 +10,19 @@ import { findByBarcode, rememberProduct, useProductSearch } from "@/modules/prod
 import { useUnits } from "@/modules/units/queries"
 import { useTaxes } from "@/modules/taxes/service"
 import type { Product } from "@/modules/products/types"
+import { useCategoryDiscountOf } from "../categoryDiscount"
 import type { InvoiceLine } from "../types"
 
 /**
  * One box to add invoice lines, as in the current system: type a name and the matching items drop down under the box
  * (searched on the server); scan or type a barcode and press Enter to add it (sale units and branch variants included).
  */
-export function ProductPicker({ onAdd, purchase }: { onAdd: (line: InvoiceLine) => void; /** Buying: lines carry the cost, before tax, and raw materials can be picked. */ purchase?: boolean }) {
+export function ProductPicker({ onAdd, purchase, noCategoryDiscount }: { onAdd: (line: InvoiceLine) => void; /** Lines that do not show a discount (quotations) do not take the category one either. */ noCategoryDiscount?: boolean; /** Buying: lines carry the cost, before tax, and raw materials can be picked. */ purchase?: boolean }) {
   const { t } = useTranslation()
   const qc = useQueryClient()
   const { data: units = [] } = useUnits()
   const { data: taxes = [] } = useTaxes()
+  const categoryDiscountOf = useCategoryDiscountOf()
   const [q, setQ] = useState("")
   const [active, setActive] = useState(0)
   const [notFound, setNotFound] = useState(false)
@@ -28,7 +30,7 @@ export function ProductPicker({ onAdd, purchase }: { onAdd: (line: InvoiceLine) 
   const unitName = (id: number) => units.find((u) => u.id === id)?.name ?? ""
   const rateOf = (p: Product) => taxes.find((x) => x.id === p.taxId)?.amount ?? 0
   const base = (p: Product, unitId = p.baseUnitId ?? 0): Omit<InvoiceLine, "name" | "unitName" | "unitPrice"> =>
-    ({ productId: p.id, taxId: p.taxId ?? undefined, unitId, quantity: 1, taxRate: rateOf(p), taxCalculation: purchase ? 2 : taxCalcOf(p), discountKind: "value", discount: 0 })
+    ({ productId: p.id, taxId: p.taxId ?? undefined, unitId, quantity: 1, taxRate: rateOf(p), taxCalculation: purchase ? 2 : taxCalcOf(p), discountKind: "value", discount: 0, ...(purchase || noCategoryDiscount ? {} : categoryDiscountOf(p.categoryId)) })
   const priceOf = (p: Product, factor = 1) => (purchase ? (p.costPrice ?? 0) * factor : enteredPrice(p))
 
   // A branched item only groups existing items, and those are sold on their own, so it is not listed.

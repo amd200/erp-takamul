@@ -18,7 +18,7 @@ import { loginSchema, type LoginForm } from "../schema"
 const LANG_LABELS = { ar: "عربي", en: "English" } as const
 
 const fieldClass =
-  "h-auto w-full p-4 rounded-xl outline-none transition-colors text-sm border focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary bg-white dark:bg-input border-border text-foreground placeholder:text-muted-foreground"
+  "h-auto w-full px-4 py-4 text-base sm:text-sm rounded-xl outline-none transition-colors border focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary bg-card dark:bg-input border-border text-foreground placeholder:text-muted-foreground"
 
 export default function LoginPage() {
   const { t, i18n } = useTranslation()
@@ -53,7 +53,7 @@ export default function LoginPage() {
 
   return (
     <div
-      className="relative flex h-screen w-screen flex-col overflow-hidden transition-colors duration-300"
+      className="relative flex min-h-dvh w-screen flex-col overflow-x-hidden transition-colors duration-300"
       style={{
         backgroundImage: "url('https://static.portal.daftra.com/images/back-sign-in-texture.svg')",
         backgroundSize: "cover",
@@ -63,24 +63,24 @@ export default function LoginPage() {
     >
       <div className="absolute inset-0 transition-all duration-300" style={{ background: isDark ? "rgba(10,15,35,0.78)" : "rgba(220,228,240,0.42)" }} />
 
-      <nav className="relative z-20 flex items-center justify-between px-10 py-5">
+      <nav className="relative z-20 flex items-center justify-between px-4 py-4 sm:px-10 sm:py-5">
         <div className={cn("flex items-center gap-3 rounded-full border px-5 py-2 text-sm font-bold", isDark ? "border-white/10 bg-white/5 text-slate-400" : "border-black/10 bg-white/70 text-slate-500")}>
           {(["ar", "en"] as const).map((l, i) => (
             <Fragment key={l}>
               {i > 0 && <span className="opacity-40">|</span>}
-              <button type="button" onClick={() => i18n.changeLanguage(l)} className={cn("font-bold transition-colors", lang === l ? "text-emerald-500" : "hover:text-emerald-500")}>
+              <button type="button" onClick={() => i18n.changeLanguage(l)} className={cn("font-bold transition-colors", lang === l ? "text-success" : "hover:text-success")}>
                 {LANG_LABELS[l]}
               </button>
             </Fragment>
           ))}
         </div>
-        <button type="button" onClick={() => setChoice(isDark ? "light" : "dark")} className={cn("flex size-12 items-center justify-center rounded-full transition-all hover:bg-emerald-500/10 hover:text-emerald-500", isDark ? "text-slate-400" : "text-slate-500")}>
+        <button type="button" onClick={() => setChoice(isDark ? "light" : "dark")} className={cn("flex size-12 items-center justify-center rounded-full transition-all hover:bg-success/10 hover:text-success", isDark ? "text-slate-400" : "text-slate-500")}>
           {isDark ? <Sun size={24} /> : <Moon size={24} />}
         </button>
       </nav>
 
-      <main className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col items-center justify-center gap-10 overflow-hidden px-10 py-4 lg:flex-row lg:gap-20 rtl:lg:flex-row-reverse">
-        <div className="w-full max-w-md rounded-xl border border-border bg-card p-8 shadow-xl transition-colors duration-300 sm:p-10">
+      <main className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col items-center justify-center gap-6 px-4 pt-2 pb-8 sm:px-10 sm:py-4 lg:overflow-hidden lg:gap-10 lg:flex-row lg:gap-20 rtl:lg:flex-row-reverse">
+        <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-xl transition-colors duration-300 sm:rounded-xl sm:p-10">
           <div className="mb-8 flex flex-col items-center text-center">
             <h1 className="mt-6 text-2xl font-bold">{t("login.title")}</h1>
             <p className="mt-2 text-sm text-muted-foreground">{t("login.sub")}</p>
@@ -101,7 +101,7 @@ export default function LoginPage() {
             {error && <p className="py-1 text-center text-sm text-red-500">{error}</p>}
 
             {conflict && (
-              <button type="button" onClick={() => logoutAll.mutate()} disabled={logoutAll.isPending} className="flex w-full cursor-pointer items-center justify-center gap-2 text-xs font-medium text-[#4b5563] underline underline-offset-2 transition-colors disabled:cursor-not-allowed disabled:opacity-50 dark:text-white">
+              <button type="button" onClick={() => logoutAll.mutate()} disabled={logoutAll.isPending} className="flex w-full cursor-pointer items-center justify-center gap-2 text-xs font-medium text-[#4b5563] underline underline-offset-2 transition-colors disabled:cursor-not-allowed disabled:opacity-50">
                 {logoutAll.isPending ? <span className="inline-block size-4 animate-spin rounded-full border-2 border-red-400/30 border-t-red-500" /> : t("login.logoutAll")}
               </button>
             )}
@@ -117,7 +117,7 @@ export default function LoginPage() {
               </button>
             </div>
 
-            <button type="submit" disabled={login.isPending} className="mt-4 w-full rounded-lg bg-primary py-3 text-base font-bold text-white transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50">
+            <button type="submit" disabled={login.isPending} className="mt-4 w-full rounded-lg bg-primary py-4 sm:py-3 text-base font-bold text-white transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50">
               {login.isPending ? <span className="inline-block size-5 animate-spin rounded-full border-2 border-white/30 border-t-white" /> : t("login.loginBtn")}
             </button>
           </form>

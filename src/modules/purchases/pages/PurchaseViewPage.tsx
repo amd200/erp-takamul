@@ -2,7 +2,7 @@ import { Link, useParams } from "react-router-dom"
 import { purchaseTotals } from "../form"
 import { Pencil, Printer, ShoppingBag } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/StatusBadge"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { EmptyState } from "@/components/EmptyState"
@@ -65,7 +65,7 @@ export default function PurchaseViewPage() {
                     <TableRow key={i}>
                       <TableCell>
                         <div className="font-semibold">{l.productName}</div>
-                        <div className="text-xs text-muted-foreground">{l.unitName}{returned > 0 && <Badge variant="warning" className="ms-2">{t("purchases.returned", { count: returned })}</Badge>}</div>
+                        <div className="text-xs text-muted-foreground">{l.unitName}{returned > 0 && <StatusBadge tone="warning" className="ms-2">{t("purchases.returned", { count: returned })}</StatusBadge>}</div>
                       </TableCell>
                       <TableCell className="tabular-nums">{l.quantity}</TableCell>
                       <TableCell className="tabular-nums">{formatMoney(l.priceBeforeTax ?? l.unitPrice ?? 0)}</TableCell>

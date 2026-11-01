@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import { PackageSearch, Plus, RotateCw, Upload } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/StatusBadge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -29,7 +30,7 @@ function StockCell({ p }: { p: Product }) {
   return (
     <span className="inline-flex items-center gap-2">
       <span className="font-medium">{formatNumber(p.balance)}</span>
-      {p.balance <= 0 ? <Badge variant="destructive">{t("products.outOfStock")}</Badge> : low && <Badge variant="warning">{t("products.low")}</Badge>}
+      {p.balance <= 0 ? <StatusBadge tone="danger">{t("products.outOfStock")}</StatusBadge> : low && <StatusBadge tone="warning">{t("products.low")}</StatusBadge>}
     </span>
   )
 }
@@ -72,13 +73,13 @@ export default function ProductsListPage() {
         </div>
       </div>
     ) },
-    { id: "type", header: t("products.type"), cell: (p) => <Badge variant={p.productType === "Direct" ? "muted" : "secondary"}>{t(`products.types.${p.productType}`)}</Badge> },
+    { id: "type", sortKey: "productType", header: t("products.type"), cell: (p) => <Badge variant="secondary">{t(`products.types.${p.productType}`)}</Badge> },
     { id: "category", sortKey: "categoryName", header: t("products.category"), cell: (p) => p.categoryName || "—" },
     { id: "qty", sortKey: "balance", header: t("products.quantity"), cell: (p) => <StockCell p={p} /> },
     { id: "barcode", sortKey: "barcode", header: t("products.barcode"), cell: (p) => <span className="text-muted-foreground" dir="ltr">{p.barcode || "—"}</span> },
     { id: "cost", sortKey: "costPrice", header: t("products.cost"), cell: (p) => <span className="text-muted-foreground">{p.costPrice ? formatMoney(p.costPrice) : "—"}</span> },
     { id: "price", sortKey: "sellingPrice", header: t("products.price"), cell: (p) => <span className="font-medium">{p.sellingPrice ? formatMoney(p.sellingPrice) : "—"}</span> },
-    { id: "status", header: t("common.status"), cell: (p) => <Badge variant={p.isActive ? "success" : "muted"}>{p.isActive ? t("common.active") : t("common.inactive")}</Badge> },
+    { id: "status", sortKey: "isActive", header: t("common.status"), cell: (p) => <StatusBadge tone={p.isActive ? "success" : "danger"}>{p.isActive ? t("common.active") : t("common.inactive")}</StatusBadge> },
     { id: "actions", header: "", align: "end", cell: (p) => (
       <RowActions editTo={can(P.products.edit) ? `/products/edit/${p.id}?type=${p.productType}` : undefined} onDelete={can(P.products.delete) ? () => setToDelete(p) : undefined} />
     ) },

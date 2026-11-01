@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { FieldGroup } from "@/components/ui/field"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
+import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
 import { FormInput, FormSelect } from "@/components/form/FormFields"
 import { PageHeader } from "@/components/PageHeader"
@@ -58,7 +59,8 @@ export default function EmployeesPage() {
   const { t } = useTranslation()
   const can = useCan()
   const canSeeBranch = useAuthStore((s) => canManageAllBranches(s.session))
-  const { data, isLoading } = useEmployeeList()
+  const { sort, sortBy, sortDescending } = useTableSort()
+  const { data, isLoading } = useEmployeeList({ SortBy: sortBy, SortDescending: sortDescending })
   const del = useDeleteEmployee()
   const [editing, setEditing] = useState<Employee | null>(null)
   const [open, setOpen] = useState(false)
@@ -66,9 +68,9 @@ export default function EmployeesPage() {
   const show = (e: Employee | null) => { setEditing(e); setOpen(true) }
 
   const columns: Column<Employee>[] = [
-    { id: "name", header: t("employees.name"), cell: (e) => <span className="font-semibold">{e.firstName}</span> },
-    { id: "mobile", header: t("users.mobile"), cell: (e) => <span dir="ltr">{e.mobile || "—"}</span> },
-    ...(canSeeBranch ? [{ id: "branch", header: t("users.branch"), cell: (e: Employee) => e.branchName || "—" }] : []),
+    { id: "name", sortKey: "firstName", header: t("employees.name"), cell: (e) => <span className="font-semibold">{e.firstName}</span> },
+    { id: "mobile", sortKey: "mobile", header: t("users.mobile"), cell: (e) => <span dir="ltr">{e.mobile || "—"}</span> },
+    ...(canSeeBranch ? [{ id: "branch", sortKey: "branchName", header: t("users.branch"), cell: (e: Employee) => e.branchName || "—" }] : []),
     { id: "actions", header: "", align: "end", cell: (e) => (
       // An employee with a sign-in is managed on the users page, which removes both together.
       <RowActions onEdit={can(P.employees.edit) ? () => show(e) : undefined} onDelete={can(P.employees.delete) && !e.userName ? () => setToDelete(e) : undefined} />
@@ -80,7 +82,7 @@ export default function EmployeesPage() {
       <PageHeader crumbs={[t("nav.users")]} title={t("employees.title")} description={t("employees.description")}
         actions={<Can perm={P.employees.add}><Button size="lg" onClick={() => show(null)}><Plus />{t("employees.add")}</Button></Can>} />
       <SectionCard>
-        <DataTable rows={data} loading={isLoading} columns={columns} rowKey={(e) => e.id}
+        <DataTable rows={data} loading={isLoading} columns={columns} sort={sort} rowKey={(e) => e.id}
           searchText={(e) => `${e.firstName ?? ""} ${e.mobile ?? ""}`} searchPlaceholder={t("employees.search")}
           empty={<EmptyState icon={<IdCard />} title={t("employees.empty")} hint={t("employees.emptyHint")} />} />
       </SectionCard>

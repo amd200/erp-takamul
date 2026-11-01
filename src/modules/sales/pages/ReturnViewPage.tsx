@@ -1,3 +1,4 @@
+import { PageBox } from "@/components/PageBox"
 import { Link, useParams } from "react-router-dom"
 import { ArrowLeft, Undo2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
@@ -10,7 +11,7 @@ import { formatMoney } from "@/lib/format"
 import { useAppSettings } from "@/modules/settings"
 import { useReturns } from "../queries"
 
-const box = "rounded-sm border border-gray-100 bg-white p-6"
+const box = "inner-box"
 
 /** A saved return, shown as in the current system: the return form itself, with every field locked. */
 export default function ReturnViewPage() {
@@ -28,15 +29,12 @@ export default function ReturnViewPage() {
   const head = [t("sales.productCol"), t("products.unit"), t("sales.unitPrice"), t("products.quantity"), ...(exempt ? [] : [t("sales.beforeTax"), t("sales.vat")]), t("sales.lineTotal")]
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl leading-snug font-bold">{t("viewDoc.returnInvoice")}</h1>
-        <Button asChild variant="outline"><Link to="/sales/returns">{t("viewDoc.backToReturns")}<ArrowLeft size={16} /></Link></Button>
-      </div>
+    <PageBox title={t("viewDoc.returnInvoice")}
+      action={<Button asChild variant="outline"><Link to="/sales/returns">{t("viewDoc.backToReturns")}<ArrowLeft size={16} /></Link></Button>}>
 
       <div className="space-y-6">
         <div className={box}>
-          <h2 className="mb-6 text-lg font-bold text-gray-800">{t("sales.basics")}</h2>
+          <h2 className="mb-6 text-lg font-bold text-foreground">{t("sales.basics")}</h2>
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
             <Field><FieldLabel>{t("common.date")} *</FieldLabel><Input disabled value={r.returnDate?.slice(0, 10) ?? ""} /></Field>
             <Field><FieldLabel>{t("sales.invoice")}</FieldLabel><Input disabled value={r.salesOrderNumber ?? ""} /></Field>
@@ -47,8 +45,8 @@ export default function ReturnViewPage() {
         </div>
 
         <div className={box}>
-          <h2 className="mb-6 text-lg font-bold text-zinc-900">{t("sales.invoiceDetails")}</h2>
-          <h3 className="mb-4 text-sm font-semibold text-zinc-500">{t("sales.itemsList")}</h3>
+          <h2 className="mb-6 text-lg font-bold text-foreground">{t("sales.invoiceDetails")}</h2>
+          <h3 className="mb-4 text-sm font-semibold text-muted-foreground">{t("sales.itemsList")}</h3>
           <div className="w-full overflow-x-auto pb-4">
             <div className={`hidden items-center border-b border-border px-2 pb-3 text-center text-xs font-medium tracking-widest text-muted-foreground uppercase md:grid ${cols}`}>
               {head.map((h, i) => <div key={h} className={i === 0 ? "text-start" : ""}>{h}</div>)}
@@ -65,7 +63,7 @@ export default function ReturnViewPage() {
                     <Input disabled className="text-center" value={l.quantity} />
                     {!exempt && <div className="text-center font-medium">{money(total - tax)}</div>}
                     {!exempt && <div className="text-center font-medium text-orange-500">{money(tax)}</div>}
-                    <div className="text-center font-bold text-green-500">{money(total)}</div>
+                    <div className="text-center font-bold text-success">{money(total)}</div>
                   </div>
                 )
               })}
@@ -93,12 +91,12 @@ export default function ReturnViewPage() {
               <hr className="border-border" />
               <div className="flex items-center justify-between"><span className="font-bold">{t("viewDoc.grandTotal")}</span><span className="text-2xl font-black tabular-nums text-primary">{formatMoney(r.grandTotal ?? 0)}</span></div>
               <hr className="border-border" />
-              <div className="flex justify-between"><span className="text-muted-foreground">{t("sales.refunded")}</span><span className="font-semibold tabular-nums text-emerald-600">{money(r.refundedAmount ?? 0)}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">{t("sales.refunded")}</span><span className="font-semibold tabular-nums text-success">{money(r.refundedAmount ?? 0)}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">{t("viewDoc.remaining")}</span><span className="font-semibold tabular-nums text-red-500">{money(Math.max(0, (r.grandTotal ?? 0) - (r.refundedAmount ?? 0)))}</span></div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </PageBox>
   )
 }

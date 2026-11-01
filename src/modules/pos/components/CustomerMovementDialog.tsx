@@ -126,7 +126,7 @@ export function CustomerMovementDialog({ open, onOpenChange, customerId, embedde
         <Pager total={data?.totalCount ?? 0} page={page} pageSize={PAGE_SIZE} onPage={setPage} />
     </>
   )
-  if (embedded) return <EmbeddedDialog>{body}</EmbeddedDialog>
+  if (embedded) return <EmbeddedDialog className="overflow-y-auto">{body}</EmbeddedDialog>
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[92dvh] overflow-y-auto sm:max-w-5xl">{body}</DialogContent>

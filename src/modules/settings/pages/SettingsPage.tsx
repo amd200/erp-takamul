@@ -32,7 +32,7 @@ export default function SettingsPage() {
   if (page === "sales") {
     return (
       <div className="space-y-4 pb-24">
-        <div className="flex items-center gap-1 text-sm text-gray-500">
+        <div className="flex items-center gap-1 text-sm text-muted-foreground">
           <Link to="/" className="hover:text-primary">{t("nav.home")}</Link>
           <span>/</span>
           <Link to="/settings/system" className="hover:text-primary">{t("nav.settings")}</Link>
@@ -53,7 +53,7 @@ export default function SettingsPage() {
                     return (
                       <NavLink key={s.id} to={`/settings/${page}/${s.id}`}
                         className={({ isActive }) => cn("group/tab flex h-auto min-h-12 min-w-0 max-w-full flex-none items-center justify-start gap-1.5 rounded-lg border border-transparent px-2.5 py-2.5 text-start text-xs whitespace-normal transition-colors sm:min-h-11 sm:gap-2 sm:rounded-xl sm:px-4 sm:text-sm max-sm:border-border max-sm:bg-background/50",
-                          isActive ? "bg-background/80 font-medium text-green-600 max-sm:border-green-500/40 max-sm:bg-green-50 dark:text-green-400" : "text-[var(--text-muted)] hover:bg-background/60 hover:text-foreground")}>
+                          isActive ? "bg-background/80 font-medium text-success max-sm:border-green-500/40 max-sm:bg-green-50 dark:text-green-400" : "text-[var(--text-muted)] hover:bg-background/60 hover:text-foreground")}>
                         <Icon aria-hidden="true" className="size-4 shrink-0 opacity-65 group-[.active]/tab:opacity-100" />
                         <span className="min-w-0 break-words leading-5">{t(`settings.s.${s.id}`)}</span>
                       </NavLink>

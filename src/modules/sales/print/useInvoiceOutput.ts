@@ -18,6 +18,7 @@ import type { PrintInvoice } from "./printInvoice"
 import { invoiceA4Doc } from "./invoiceA4Doc"
 import { invoiceA5Doc } from "./invoiceA5Doc"
 import { invoiceRollDoc } from "./invoiceRollDoc"
+import { claimVoucherDoc, stockVoucherDoc } from "./voucherDocs"
 
 type Output = "print" | "pdf"
 
@@ -50,7 +51,7 @@ export function useInvoiceOutput() {
   const settings = useAppSettings()
   const { branch } = useSession()
   return useMutation({
-    mutationFn: async ({ invoice: row, as, paper = "a4" }: { invoice: { id: number }; as: Output; paper?: Paper }) => {
+    mutationFn: async ({ invoice: row, as, paper = "a4", voucher }: { invoice: { id: number }; as: Output; paper?: Paper; voucher?: "stock" | "claim" }) => {
       // A list row may carry only the summary, so the full invoice (its lines and payments) is read first.
       const invoice = await invoicesApi.get(row.id)
       const doc0 = printInvoiceOf(invoice)
@@ -59,6 +60,10 @@ export function useInvoiceOutput() {
         branch.id ? qc.fetchQuery({ queryKey: branchKeys.detail(branch.id), queryFn: () => branchesApi.get(branch.id!) }).catch(() => undefined) : undefined,
         invoice.customerId ? qc.fetchQuery({ queryKey: customerKeys.detail(invoice.customerId), queryFn: () => customersApi.get(invoice.customerId!) }).catch(() => undefined) : undefined,
       ])
+      if (voucher) {
+        const opts = { branch: b, customerPhone: c?.mobile || c?.phone }
+        return printDocument(voucher === "stock" ? stockVoucherDoc(invoice, opts) : claimVoucherDoc(invoice, opts))
+      }
       const isExempt = settings.taxSetting?.taxSetting === "Exempt"
       const showPaymentMethods = settings.paymentTab?.showPaymentMethods !== false
       const showPaidAndRemaining = settings.paymentTab?.showPaidAndRemainingAmount !== false

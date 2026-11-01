@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
+import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
 import { FormInput } from "@/components/form/FormFields"
 import { RowActions } from "@/components/RowActions"
@@ -34,7 +35,8 @@ function TaxDialog({ open, onOpenChange, item }: { open: boolean; onOpenChange: 
 
 export function TaxesList({ readOnly }: { readOnly: boolean }) {
   const { t } = useTranslation()
-  const { data, isLoading } = useTaxList()
+  const { sort, sortBy, sortDescending } = useTableSort()
+  const { data, isLoading } = useTaxList({ SortBy: sortBy, SortDescending: sortDescending })
   const del = useDeleteTax()
   const [editing, setEditing] = useState<Tax | null>(null)
   const [dialog, setDialog] = useState(false)
@@ -42,14 +44,14 @@ export function TaxesList({ readOnly }: { readOnly: boolean }) {
   const open = (r: Tax | null) => { setEditing(r); setDialog(true) }
 
   const columns: Column<Tax>[] = [
-    { id: "name", header: t("settings.lists.taxes.name"), cell: (r) => <span className="font-semibold">{r.name}</span> },
-    { id: "amount", header: t("settings.lists.taxes.amount"), cell: (r) => <span className="text-muted-foreground tabular-nums">{r.amount}%</span> },
+    { id: "name", sortKey: "name", header: t("settings.lists.taxes.name"), cell: (r) => <span className="font-semibold">{r.name}</span> },
+    { id: "amount", sortKey: "amount", header: t("settings.lists.taxes.amount"), cell: (r) => <span className="text-muted-foreground tabular-nums">{r.amount}%</span> },
     { id: "actions", header: "", align: "end", cell: (r) => !readOnly && <RowActions onEdit={() => open(r)} onDelete={() => setToDelete(r)} /> },
   ]
   return (
     <SectionCard title={t("settings.s.taxes")} description={t("settings.sd.taxes")}
       action={!readOnly && <Button onClick={() => open(null)}><Plus />{t("settings.lists.taxes.add")}</Button>}>
-      <DataTable rows={data ?? []} loading={isLoading} columns={columns} rowKey={(r) => r.id} searchText={(r) => r.name} searchPlaceholder={t("settings.lists.search")}
+      <DataTable rows={data ?? []} loading={isLoading} columns={columns} sort={sort} rowKey={(r) => r.id} searchText={(r) => r.name} searchPlaceholder={t("settings.lists.search")}
         empty={<EmptyState icon={<Inbox />} title={t("settings.lists.taxes.empty")} />} />
       <TaxDialog open={dialog} onOpenChange={setDialog} item={editing} />
       <ConfirmDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)} pending={del.isPending}

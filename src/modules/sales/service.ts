@@ -1,4 +1,5 @@
 import { fetchAllPages } from "@/shared/http/paged"
+import type { ListSort } from "@/shared/api/crudQueries"
 import { http } from "@/shared/http/request"
 import { type PagedResult } from "@/shared/http/paged"
 import { idempotencyHeaders, retryWhileInProgress } from "@/shared/http/idempotency"
@@ -57,7 +58,7 @@ async function warehouseIdOf(order: SalesOrderDto) {
 }
 
 export const returnsApi = {
-  list: () => fetchAllPages<SalesReturnDto>("/sales-returns", { pageSize: 50 }),
+  list: (sort?: ListSort) => fetchAllPages<SalesReturnDto>("/sales-returns", { pageSize: 50, params: { ...sort } }),
   get: (id: number) => http<SalesReturnDto>(`/sales-returns/${id}`),
   create: async (input: ReturnInput) => {
     const items = (input.order.items ?? []).flatMap((l, i) => (input.quantities[i] > 0 ? [{ originalItemId: l.id, productId: l.productId, unitId: l.unitId, quantity: input.quantities[i] }] : []))
@@ -77,7 +78,7 @@ export const returnsApi = {
 }
 
 export const debitNotesApi = {
-  list: () => fetchAllPages<DebitNoteDto>("/debit-notes", { pageSize: 50 }),
+  list: (sort?: ListSort) => fetchAllPages<DebitNoteDto>("/debit-notes", { pageSize: 50, params: { ...sort } }),
   get: (id: number) => http<DebitNoteDto>(`/debit-notes/${id}`),
   create: async (input: DebitNoteInput) => retryWhileInProgress(() => http<{ id?: number }>("/debit-notes", {
     method: "POST", headers: idempotencyHeaders(input.key),

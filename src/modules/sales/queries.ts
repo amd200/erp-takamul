@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { keepPreviousData } from "@tanstack/react-query"
 import { toast } from "sonner"
 import i18n from "@/shared/i18n"
-import { errorToast } from "@/shared/api/crudQueries"
+import { errorToast, type ListSort } from "@/shared/api/crudQueries"
 import { debitNotesApi, invoicesApi, returnsApi } from "./service"
 import type { InvoiceQuery } from "./types"
 import type { DebitNoteInput, InvoiceInput, Payment, ReturnInput } from "./types"
@@ -22,8 +22,8 @@ export const useInvoices = () => useQuery({ queryKey: [...salesKeys.invoices, "r
 /** One invoice, as the server sends it (items with what earlier returns took, payments, totals). */
 export const useInvoice = (id: number | undefined) =>
   useQuery({ queryKey: salesKeys.invoice(id ?? 0), queryFn: () => invoicesApi.get(id!), enabled: !!id })
-export const useReturns = () => useQuery({ queryKey: salesKeys.returns, queryFn: returnsApi.list })
-export const useDebitNotes = () => useQuery({ queryKey: salesKeys.debitNotes, queryFn: debitNotesApi.list })
+export const useReturns = (sort?: ListSort) => useQuery({ queryKey: sort?.SortBy ? [...salesKeys.returns, sort] : salesKeys.returns, queryFn: () => returnsApi.list(sort), placeholderData: keepPreviousData })
+export const useDebitNotes = (sort?: ListSort) => useQuery({ queryKey: sort?.SortBy ? [...salesKeys.debitNotes, sort] : salesKeys.debitNotes, queryFn: () => debitNotesApi.list(sort), placeholderData: keepPreviousData })
 
 // Any sales write can change invoices, returns and balances together, so each one refreshes the whole module (["sales"]).
 

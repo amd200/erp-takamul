@@ -1,7 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import i18n from "@/shared/i18n"
-import { errorToast } from "@/shared/api/crudQueries"
+import { errorToast, type ListSort } from "@/shared/api/crudQueries"
 import { warehousesApi } from "./service"
 import type { WarehouseInput } from "./types"
 
@@ -10,8 +10,8 @@ export const warehouseKeys = {
   list: ["warehouses", "list"] as const,
 }
 
-export const useWarehouseList = () =>
-  useQuery({ queryKey: warehouseKeys.list, queryFn: warehousesApi.list })
+export const useWarehouseList = (sort?: ListSort) =>
+  useQuery({ queryKey: sort?.SortBy ? [...warehouseKeys.list, sort] : warehouseKeys.list, queryFn: () => warehousesApi.list(sort), placeholderData: keepPreviousData })
 
 export function useSaveWarehouse() {
   const qc = useQueryClient()

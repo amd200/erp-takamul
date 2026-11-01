@@ -35,7 +35,9 @@ export function useSaleDefaults() {
 }
 
 /** The sale being rung up, laid out like the current POS's cart panel. */
-export function Cart({ onPay, onHold, busy, onShift, categoryId = null }: { onPay: () => void; onHold: () => void; busy: boolean; onShift: () => void
+export function Cart({ onPay, onHold, onSend, busy, onShift, categoryId = null }: { onPay: () => void; onHold: () => void; busy: boolean; onShift: () => void
+  /** Dine-in: sends the table's order to the kitchen (a new order, or the items added to the open one). */
+  onSend: () => void
   /** The category picked on the grid: the item window then offers only that category's additions, as the current POS does. */
   categoryId?: number | null }) {
   const { t } = useTranslation()
@@ -69,6 +71,7 @@ export function Cart({ onPay, onHold, busy, onShift, categoryId = null }: { onPa
   const itemDiscounts = before.discount
   const hasItemDiscount = s.lines.some((l) => l.discount > 0)
   const exempt = settings.taxSetting?.taxSetting === "Exempt"
+  const dineIn = s.orderType === "InDine"
   const canHold = settings.operationsTab?.btnHolding === true
   const sales = settings.salesScreenTab
   const canEdit = sales?.isQuantity !== false || sales?.isPrice !== false || sales?.isAddons !== false
@@ -191,10 +194,12 @@ export function Cart({ onPay, onHold, busy, onShift, categoryId = null }: { onPa
               <Button type="button" variant="outline" disabled={empty || locked} onClick={clearInvoice} className="h-12 w-full gap-2 px-5 text-base border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive">
                 <Trash2 size={16} />{t("pos1.emptyInvoice")}
               </Button>
-              {canHold && (
+              {dineIn ? (
+                <Button type="button" variant="outline" disabled={busy || s.dineInMode === "checkout"} onClick={() => ready() && onSend()} className="h-12 w-full gap-2 border-primary px-5 text-base text-primary hover:bg-primary/10 hover:text-primary">{t("posTables.sendToKitchen")} <Plus /></Button>
+              ) : canHold && (
                 <Button type="button" variant="outline" disabled={busy} onClick={() => ready() && onHold()} className="h-12 w-full gap-2 border-primary px-5 text-base text-primary hover:bg-primary/10 hover:text-primary">{t("pos1.holdCart")} <Pause /></Button>
               )}
-              <Button type="button" disabled={busy} onClick={() => ready() && onPay()} className={cn("h-12 w-full gap-2 px-5 text-base", canHold && "order-first col-span-2")}>
+              <Button type="button" disabled={busy} onClick={() => ready() && onPay()} className={cn("h-12 w-full gap-2 px-5 text-base", (canHold || dineIn) && "order-first col-span-2")}>
                 {t("pos1.pay")} <CircleArrowRight />
               </Button>
             </div>

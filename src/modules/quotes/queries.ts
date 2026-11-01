@@ -7,7 +7,7 @@ import type { QuoteInput } from "./types"
 
 export const quoteKeys = { all: ["quotes"] as const, page: (q: object) => ["quotes", "page", q] as const, detail: (id: number) => ["quotes", "detail", id] as const }
 
-export const useQuotePage = (q: { page: number; pageSize: number; searchTerm?: string }) =>
+export const useQuotePage = (q: { page: number; pageSize: number; searchTerm?: string; sortBy?: string; sortDescending?: boolean }) =>
   useQuery({ queryKey: quoteKeys.page(q), queryFn: () => quotesApi.page(q), placeholderData: keepPreviousData })
 export const useQuote = (id: number | undefined) => useQuery({ queryKey: quoteKeys.detail(id ?? 0), queryFn: () => quotesApi.get(id!), enabled: !!id })
 

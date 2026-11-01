@@ -3,12 +3,13 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Plus, Store } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/StatusBadge"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { FieldGroup } from "@/components/ui/field"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
+import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
 import { FormInput } from "@/components/form/FormFields"
 import { PageHeader } from "@/components/PageHeader"
@@ -58,19 +59,20 @@ function WarehouseDialog({ open, onOpenChange, warehouse }: { open: boolean; onO
 export default function WarehousesPage() {
   const { t } = useTranslation()
   const can = useCan()
-  const { data, isLoading } = useWarehouseList()
+  const { sort, sortBy, sortDescending } = useTableSort()
+  const { data, isLoading } = useWarehouseList({ SortBy: sortBy, SortDescending: sortDescending })
   const del = useDeleteWarehouse()
   const [editing, setEditing] = useState<Warehouse | null>(null)
   const [open, setOpen] = useState(false)
   const [toDelete, setToDelete] = useState<Warehouse | null>(null)
 
   const columns: Column<Warehouse>[] = [
-    { id: "code", header: t("warehouses.code"), cell: (w) => <span className="font-semibold" dir="ltr">{w.warehouseCode || "—"}</span> },
-    { id: "name", header: t("warehouses.name"), cell: (w) => <span className="font-semibold">{w.warehouseName || "—"}</span> },
-    { id: "address", header: t("warehouses.address"), cell: (w) => <span className="text-muted-foreground">{[w.address, w.city].filter(Boolean).join("، ") || "—"}</span> },
-    { id: "capacity", header: t("warehouses.capacity"), cell: (w) => (w.capacity != null ? formatNumber(w.capacity) : <span className="text-faint">—</span>) },
-    { id: "manager", header: t("warehouses.manager"), cell: (w) => w.managerName || <span className="text-faint">—</span> },
-    { id: "status", header: t("common.status"), cell: (w) => w.isActive == null ? <span className="text-faint">—</span> : <Badge variant={w.isActive ? "success" : "muted"}>{w.isActive ? t("common.active") : t("common.inactive")}</Badge> },
+    { id: "code", sortKey: "warehouseCode", header: t("warehouses.code"), cell: (w) => <span className="font-semibold" dir="ltr">{w.warehouseCode || "—"}</span> },
+    { id: "name", sortKey: "warehouseName", header: t("warehouses.name"), cell: (w) => <span className="font-semibold">{w.warehouseName || "—"}</span> },
+    { id: "address", sortKey: "address", header: t("warehouses.address"), cell: (w) => <span className="text-muted-foreground">{[w.address, w.city].filter(Boolean).join("، ") || "—"}</span> },
+    { id: "capacity", sortKey: "capacity", header: t("warehouses.capacity"), cell: (w) => (w.capacity != null ? formatNumber(w.capacity) : <span className="text-faint">—</span>) },
+    { id: "manager", sortKey: "managerName", header: t("warehouses.manager"), cell: (w) => w.managerName || <span className="text-faint">—</span> },
+    { id: "status", sortKey: "isActive", header: t("common.status"), cell: (w) => w.isActive == null ? <span className="text-faint">—</span> : <StatusBadge tone={w.isActive ? "success" : "danger"}>{w.isActive ? t("common.active") : t("common.inactive")}</StatusBadge> },
     { id: "actions", header: "", align: "end", cell: (w) => (
       <RowActions onEdit={can(P.warehouses.edit) ? () => { setEditing(w); setOpen(true) } : undefined} onDelete={can(P.warehouses.delete) ? () => setToDelete(w) : undefined} />
     ) },
@@ -81,7 +83,7 @@ export default function WarehousesPage() {
       <PageHeader crumbs={[t("nav.warehouses")]} title={t("warehouses.title")} description={t("warehouses.description")}
         actions={<Can perm={P.warehouses.add}><Button size="lg" onClick={() => { setEditing(null); setOpen(true) }}><Plus />{t("warehouses.add")}</Button></Can>} />
       <SectionCard>
-        <DataTable rows={data ?? []} loading={isLoading} columns={columns} rowKey={(w) => w.id} searchText={(w) => [w.warehouseCode, w.warehouseName, w.address].filter(Boolean).join(" ")} searchPlaceholder={t("warehouses.search")}
+        <DataTable rows={data ?? []} loading={isLoading} columns={columns} sort={sort} rowKey={(w) => w.id} searchText={(w) => [w.warehouseCode, w.warehouseName, w.address].filter(Boolean).join(" ")} searchPlaceholder={t("warehouses.search")}
           empty={<EmptyState icon={<Store />} title={t("warehouses.empty")} hint={t("warehouses.emptyHint")} />} />
       </SectionCard>
       <WarehouseDialog open={open} onOpenChange={setOpen} warehouse={editing} />

@@ -1,10 +1,11 @@
 import { useState } from "react"
 import { Monitor, Plus, ShieldCheck } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/StatusBadge"
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
+import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
 import { PageHeader } from "@/components/PageHeader"
 import { RowActions } from "@/components/RowActions"
@@ -23,7 +24,8 @@ export default function DevicesPage() {
   const { t } = useTranslation()
   const can = useCan()
   const taxSetting = useAppSettings().taxSetting?.taxSetting
-  const { data, isLoading } = useDevices()
+  const { sort, sortBy, sortDescending } = useTableSort()
+  const { data, isLoading } = useDevices({ SortBy: sortBy, SortDescending: sortDescending })
   const del = useDeleteDevice()
   const [editing, setEditing] = useState<PosDevice | null>(null)
   const [open, setOpen] = useState(false)
@@ -32,15 +34,15 @@ export default function DevicesPage() {
   const onboarding = taxSetting === "SecondStage"
 
   const columns: Column<PosDevice>[] = [
-    { id: "name", header: t("devices.name"), cell: (d) => (
+    { id: "name", sortKey: "deviceName", header: t("devices.name"), cell: (d) => (
       <div>
-        <div className="flex items-center gap-2 font-semibold">{d.deviceName}{!d.isActive && <Badge variant="muted">{t("common.inactive")}</Badge>}</div>
+        <div className="flex items-center gap-2 font-semibold">{d.deviceName}{!d.isActive && <StatusBadge tone="danger">{t("common.inactive")}</StatusBadge>}</div>
         <div className="text-xs text-faint" dir="ltr">{d.invoiceSequence}</div>
       </div>
     ) },
-    { id: "branch", header: t("users.branch"), cell: (d) => d.branchName || "—" },
+    { id: "branch", sortKey: "branchName", header: t("users.branch"), cell: (d) => d.branchName || "—" },
     ...(onboarding ? [
-      { id: "status", header: t("devices.registration"), cell: (d: PosDevice) => (
+      { id: "status", sortKey: "certificateType", header: t("devices.registration"), cell: (d: PosDevice) => (
         <div className="flex flex-wrap items-center gap-2">
           <DeviceStatusBadge status={d.status} />
           {!registered(d.status) && can(P.posDevices.edit) && (
@@ -48,9 +50,9 @@ export default function DevicesPage() {
           )}
         </div>
       ) },
-      { id: "cert", header: t("devices.certExpiry"), cell: (d: PosDevice) => <ExpiryBadge expiresAt={d.certificateExpiresAt} daysLeft={d.daysUntilExpiry} expired={d.isCertificateExpired} /> },
+      { id: "cert", sortKey: "certificateExpiresAt", header: t("devices.certExpiry"), cell: (d: PosDevice) => <ExpiryBadge expiresAt={d.certificateExpiresAt} daysLeft={d.daysUntilExpiry} expired={d.isCertificateExpired} /> },
     ] : []),
-    { id: "icv", header: t("devices.lastIcv"), cell: (d) => (d.currentICV ? <span className="tabular-nums">{d.currentICV}</span> : <span className="text-faint">—</span>) },
+    { id: "icv", sortKey: "currentICV", header: t("devices.lastIcv"), cell: (d) => (d.currentICV ? <span className="tabular-nums">{d.currentICV}</span> : <span className="text-faint">—</span>) },
     { id: "actions", header: "", align: "end", cell: (d) => (
       <RowActions onEdit={can(P.posDevices.edit) ? () => show(d) : undefined} onDelete={can(P.posDevices.delete) ? () => setToDelete(d) : undefined} />
     ) },
@@ -68,7 +70,7 @@ export default function DevicesPage() {
         </div>
       )}
       <SectionCard>
-          <DataTable rows={data} loading={isLoading} columns={columns} rowKey={(d) => d.id}
+          <DataTable rows={data} loading={isLoading} columns={columns} sort={sort} rowKey={(d) => d.id}
             searchText={(d) => `${d.deviceName} ${d.serialNumber} ${d.invoiceSequence ?? ""}`} searchPlaceholder={t("devices.search")}
             empty={<EmptyState icon={<Monitor />} title={t("devices.empty")} hint={t("devices.emptyHint")} />} />
         </SectionCard>

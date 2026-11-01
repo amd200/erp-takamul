@@ -10,6 +10,8 @@ export type PaymentProps = {
   total: number
   hasCustomer: boolean
   customerName: string
+  /** The customer's name under the title; the second sales screen leaves it out. */
+  showCustomer?: boolean
   pending: boolean
   /** Paying a purchase: starts on the default purchases treasury instead of the sales one. */
   purchase?: boolean
@@ -73,10 +75,12 @@ export function usePayment({ open, total, hasCustomer, purchase }: Pick<PaymentP
   const selectSingle = useCallback((id: number) => { setMode("single"); setSingleId(id); setFresh(true) }, [])
   const selectCredit = () => { setMode("credit"); setFresh(true) }
 
-  const startSplit = (ids?: number[]) => {
-    const pick = ids ?? treasuries.slice(0, 2).map((x) => x.id)
+  /** `empty` starts every share at zero (the first design, which offers up to three treasuries). */
+  const startSplit = (ids?: number[], empty?: boolean) => {
+    const pick = ids ?? treasuries.slice(0, empty ? 3 : 2).map((x) => x.id)
     const first = pick[0] ?? singleId
-    setSplits(pick.map((id, i) => ({ id: seq++, treasuryId: id, raw: i === 0 ? total.toFixed(2) : "0.00" })))
+    setSplits(pick.map((id, i) => ({ id: seq++, treasuryId: id, raw: i === 0 && !empty ? total.toFixed(2) : empty ? "0" : "0.00" })))
+    setActiveId(seq - pick.length)
     setSingleId(first); setMode("split"); setFresh(true)
   }
   const stopSplit = () => { setMode("single"); setSingleRaw(total.toFixed(2)); setFresh(true) }

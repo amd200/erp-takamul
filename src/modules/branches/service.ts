@@ -24,12 +24,12 @@ function form(b: BranchInput, extra: Record<string, unknown>) {
 }
 
 export const branchesApi = {
-  page: (q: BranchQuery) => http<BranchPage>("/Branch", { params: { PageNumber: q.page, PageSize: q.pageSize, SearchTerm: q.searchTerm || undefined } }),
-  list: () => fetchAllPages<BranchRow>("/Branch", { pageParam: "PageNumber" }),
+  page: (q: BranchQuery) => http<BranchPage>("/Branch", { params: { Page: q.page, PageSize: q.pageSize, SearchTerm: q.searchTerm || undefined, SortBy: q.sortBy, SortDescending: q.sortBy ? q.sortDescending : undefined } }),
+  list: () => fetchAllPages<BranchRow>("/Branch"),
   get: (id: number) => http<Branch>(`/Branch/${id}`),
   create: (b: BranchInput) => http<unknown>("/Branch", { method: "POST", data: form(b, { Image: b.image, StampImage: b.stampImage }) }),
   update: (id: number, b: BranchInput, current: Branch) => http<unknown>(`/Branch/${id}`, {
     method: "PUT",
-    data: form(b, { Id: id, IsActive: current.isActive == null ? undefined : String(current.isActive), Image: b.image, ImageUrl: b.image ? undefined : current.imageUrl ?? "", StampImage: b.stampImage }),
+    data: form(b, { Id: id, IsActive: current.isActive == null ? undefined : String(current.isActive), Image: b.image, ImageUrl: b.image ? undefined : b.imageUrl, StampImage: b.stampImage }),
   }),
 }

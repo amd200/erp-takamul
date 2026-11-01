@@ -19,7 +19,7 @@ export default function SalesReportsCategory() {
     { title: t("oldReports.employee_sales_report"), icon: Users, path: "/reports/employee-sales" },
   ]
   return (
-    <div className="flex h-full flex-col rounded-lg border border-gray-200 dark:border-zinc-800">
+    <div className="flex h-full flex-col page-box-flat">
       <div className="flex items-center justify-between border-b p-4">
         <div className="flex items-center gap-2">
           <div className="rounded bg-primary p-1.5 text-white"><BarChart3 size={18} /></div>
