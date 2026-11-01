@@ -104,8 +104,7 @@ export function MethodsDialog(props: PaymentProps) {
               </div>
             )}
           </section>
-          {p.credit && !p.hasCustomer && <p role="alert" className="text-sm text-destructive">{t("pos.creditNeedsCustomer")}</p>}
-          {!p.credit && !p.canSave && p.paid > 0 && <p role="alert" className="text-sm text-destructive">{t("pos.needsFullPayment")}</p>}
+          {props.requestCheckout && !p.canSave && p.paid > 0 && <p role="alert" className="text-sm text-destructive">{t("pos.needsFullPayment")}</p>}
         </main>
 
         <DialogFooter className="mx-0 mb-0 grid shrink-0 grid-cols-2 gap-3 rounded-none border-t border-border bg-muted/20 px-5 py-3 max-sm:static sm:grid sm:grid-cols-2 sm:flex-none sm:px-7">

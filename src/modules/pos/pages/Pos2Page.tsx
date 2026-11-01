@@ -124,14 +124,16 @@ function Pos2Screen({ shift, optics }: { shift: Shift; optics: boolean }) {
   /** Holding or paying an empty invoice says why nothing happened. */
   const needLines = (go: () => void) => (empty ? toast.error(t("pos2.addItemsFirst")) : go())
 
-  const confirmPay = (payments: PosPayment[], print: boolean) => {
+  const confirmPay = (payments: PosPayment[], print: boolean, action?: "pdf") => {
     save.mutate({ sale: sale(false, payments) }, {
       onSuccess: (res) => {
         setPayOpen(false)
         defaults()
         // "Save and print" prints on the paper the sales screen's invoice type setting names (2 roll, 3 A5, else A4).
         const type = appSettings.salesScreenTab?.sales2InvoiceType
-        if (print && res.id) printInvoice.mutate({ invoice: { id: res.id }, as: "print", paper: type === 2 ? "roll" : type === 3 ? "a5" : "a4" })
+        const paper = type === 2 ? "roll" : type === 3 ? "a5" : "a4"
+        if (action === "pdf" && res.id) printInvoice.mutate({ invoice: { id: res.id }, as: "pdf", paper })
+        else if (print && res.id) printInvoice.mutate({ invoice: { id: res.id }, as: "print", paper })
       },
     })
   }

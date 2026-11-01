@@ -98,14 +98,15 @@ function PosScreen({ shift }: { shift: Shift }) {
   }
   const printBon = (bon: Omit<BonSale, "result" | "held">, result: SaleResult, held = false) => kitchenBon({ ...bon, result, held })
 
-  const confirmPay = (payments: PosPayment[], print: boolean) => {
+  const confirmPay = (payments: PosPayment[], print: boolean, action?: "pdf") => {
     const bon = bonOf()
     save.mutate({ sale: sale(false, payments) }, {
       onSuccess: (res) => {
         setPayOpen(false)
         defaults()
         // "Save and print" prints the saved invoice on the roll, like the Print Roll action; the preparation ticket follows it, and is printed with "save only" too.
-        if (print && res.id) printInvoice.mutate({ invoice: { id: res.id }, as: "print", paper: "roll" }, { onSettled: () => printBon(bon, res) })
+        if (action === "pdf" && res.id) printInvoice.mutate({ invoice: { id: res.id }, as: "pdf", paper: "roll" }, { onSettled: () => printBon(bon, res) })
+        else if (print && res.id) printInvoice.mutate({ invoice: { id: res.id }, as: "print", paper: "roll" }, { onSettled: () => printBon(bon, res) })
         else printBon(bon, res)
       },
     })

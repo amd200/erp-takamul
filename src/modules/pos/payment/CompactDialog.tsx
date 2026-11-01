@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react"
-import { Banknote, CalendarDays, Check, CreditCard, Delete, FileClock, Landmark, Vault, X } from "lucide-react"
+import { Banknote, CalendarDays, Check, CreditCard, Delete, FileClock, FileText, Landmark, Vault, X } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
@@ -40,7 +40,9 @@ export function CompactDialog(props: PaymentProps) {
   const { t } = useTranslation()
   const { open, onOpenChange, total, pending, onConfirm } = props
   const p = usePayment(props)
-  const beauty = useAppSettings().salonsTab?.beautyTheme === true
+  const settings = useAppSettings()
+  const showPdf = !props.requestCheckout && !props.purchase && settings.operationsTab?.allowPrintA3 === true
+  const beauty = settings.salonsTab?.beautyTheme === true
   const busy = pending
   const split = p.mode === "split"
   const difference = -p.change
@@ -136,15 +138,15 @@ export function CompactDialog(props: PaymentProps) {
                 </div>
               ))}
             </div>
-            {p.credit && !p.hasCustomer && <p role="alert" className="text-sm text-destructive">{t("pos.creditNeedsCustomer")}</p>}
-            {!p.credit && !p.canSave && p.paid > 0 && <p role="alert" className="text-sm text-destructive">{t("pos.needsFullPayment")}</p>}
+            {props.requestCheckout && !p.canSave && p.paid > 0 && <p role="alert" className="text-sm text-destructive">{t("pos.needsFullPayment")}</p>}
           </section>
         </div>
 
-        <footer className={cn("grid shrink-0 grid-cols-2 gap-2 border-t border-[var(--compact-payment-border,#e1e4ec)] bg-[var(--compact-payment-surface,#fff)] p-3 sm:gap-3 sm:ps-6 sm:pe-2 sm:py-3.5", split ? "sm:grid-cols-[2fr_1fr_1fr]" : "sm:grid-cols-[2fr_1fr]")}>
+        <footer className={cn("grid shrink-0 grid-cols-2 gap-2 border-t border-[var(--compact-payment-border,#e1e4ec)] bg-[var(--compact-payment-surface,#fff)] p-3 sm:gap-3 sm:ps-6 sm:pe-2 sm:py-3.5", ["sm:grid-cols-[2fr_1fr]", "sm:grid-cols-[2fr_1fr_1fr]", "sm:grid-cols-[2fr_1fr_1fr_1fr]"][Number(showPdf) + Number(split)])}>
           <Button type="button" className={`${actionClass} col-span-full border-[var(--compact-payment-action,#0e124d)] bg-[var(--compact-payment-action,#0e124d)] text-white hover:bg-[var(--compact-payment-ink-hover,#191e65)] sm:col-span-1`} disabled={busy || !p.canSave} onClick={() => onConfirm(p.payments(), true)}>{t("posPayment.saveAndPrint")}</Button>
-          <Button type="button" variant="outline" className={cn(actionClass, "border-[var(--compact-payment-accent,#199f50)] bg-[var(--compact-payment-surface,#fff)] text-[var(--compact-payment-accent,#199f50)] hover:bg-[var(--compact-payment-accent-soft,#eff7f2)] hover:text-[var(--compact-payment-accent,#199f50)]", !split && "col-span-full sm:col-span-1")} disabled={busy || !p.canSave} onClick={() => onConfirm(p.payments(), false)}>{t("posPayment.saveOnly")}</Button>
-          {split && <Button type="button" variant="outline" className={cn(actionClass, "border-[#ce3030] bg-[var(--compact-payment-surface,#fff)] text-[#ce3030] hover:bg-[#fff3f3] hover:text-[#ce3030]")} disabled={busy} onClick={p.toggleSplit}>{t("posPayment.stopSplit")}</Button>}
+          <Button type="button" variant="outline" className={cn(actionClass, "border-[var(--compact-payment-accent,#199f50)] bg-[var(--compact-payment-surface,#fff)] text-[var(--compact-payment-accent,#199f50)] hover:bg-[var(--compact-payment-accent-soft,#eff7f2)] hover:text-[var(--compact-payment-accent,#199f50)]", !showPdf && !split && "col-span-full sm:col-span-1")} disabled={busy || !p.canSave} onClick={() => onConfirm(p.payments(), false)}>{t("posPayment.saveOnly")}</Button>
+          {showPdf && <Button type="button" variant="outline" className={cn(actionClass, "border-[var(--compact-payment-ink,#0e124d)] bg-[var(--compact-payment-surface,#fff)] text-[var(--compact-payment-ink,#0e124d)] hover:bg-[var(--compact-payment-ink-soft,#f0f1f8)] hover:text-[var(--compact-payment-ink,#0e124d)]")} disabled={busy || !p.canSave} onClick={() => onConfirm(p.payments(), false, "pdf")}><FileText size={17} />{t("posPayment.savePdf")}</Button>}
+          {split && <Button type="button" variant="outline" className={cn(actionClass, "border-[#ce3030] bg-[var(--compact-payment-surface,#fff)] text-[#ce3030] hover:bg-[#fff3f3] hover:text-[#ce3030]", showPdf && "col-span-full sm:col-span-1")} disabled={busy} onClick={p.toggleSplit}>{t("posPayment.stopSplit")}</Button>}
         </footer>
       </DialogContent>
     </Dialog>

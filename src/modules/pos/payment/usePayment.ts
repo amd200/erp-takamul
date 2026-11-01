@@ -15,8 +15,10 @@ export type PaymentProps = {
   pending: boolean
   /** Paying a purchase: starts on the default purchases treasury instead of the sales one. */
   purchase?: boolean
-  /** `print` says whether the receipt is printed after saving ("save and print") or not ("save only"). */
-  onConfirm: (payments: PosPayment[], print: boolean) => void
+  /** Paying a request that came from the customer screen: only a full payment (or credit) can be saved, and there is no PDF button. */
+  requestCheckout?: boolean
+  /** `print` says whether the receipt is printed after saving ("save and print") or not ("save only"); `pdf` saves and downloads the invoice PDF. */
+  onConfirm: (payments: PosPayment[], print: boolean, action?: "pdf") => void
 }
 
 export type Split = { id: number; treasuryId: number; raw: string }
@@ -40,7 +42,7 @@ let seq = 0
  * The state every payment screen shares: which treasury (or treasuries) the money goes to, how much, whether the
  * sale stays on the customer's account, and what to send. Each screen only decides how this looks.
  */
-export function usePayment({ open, total, hasCustomer, purchase }: Pick<PaymentProps, "open" | "total" | "hasCustomer" | "purchase">) {
+export function usePayment({ open, total, hasCustomer, purchase, requestCheckout }: Pick<PaymentProps, "open" | "total" | "hasCustomer" | "purchase" | "requestCheckout">, strictSplit = true) {
   const treasuriesQ = useTreasuryList()
   const sales = useAppSettings().sales ?? {}
   const defaultVault = purchase ? sales.defaultPurchasesVault : sales.defaultSalesVault
@@ -68,9 +70,13 @@ export function usePayment({ open, total, hasCustomer, purchase }: Pick<PaymentP
   const remaining = round(Math.max(0, total - paid))
   const credit = mode === "credit"
 
-  // A sale can be paid in part only when a customer's account takes the rest.
-  const fullyPaid = paid + 0.001 >= total
-  const canSave = total === 0 || (credit ? hasCustomer : treasuries.length > 0 && paid > 0 && (fullyPaid || hasCustomer) && (mode !== "split" || splits.every((s) => s.treasuryId > 0)))
+  // As in the old POS: any valid treasury and non-negative amounts can be saved (the rest stays unpaid). The compact and methods
+  // screens split between exactly two treasuries with an amount each; a request checkout needs the full amount.
+  const rows = mode === "single" ? [{ treasuryId: singleId, raw: singleRaw }] : mode === "split" ? splits : []
+  const validTreasury = treasuries.some((x) => x.id === singleId) && rows.every((r) => treasuries.some((x) => x.id === r.treasuryId))
+  const validSplit = mode !== "split" || (splits.length > 0 && (!strictSplit || (splits.length === 2 && splits.every((s) => amountOf(s.raw) > 0))))
+  const fullPayment = credit || (paid + 0.001 >= total && (mode !== "split" || Math.abs(paid - total) <= 0.009))
+  const canSave = total === 0 || (validTreasury && validSplit && (!requestCheckout || fullPayment))
 
   const selectSingle = useCallback((id: number) => { setMode("single"); setSingleId(id); setFresh(true) }, [])
   const selectCredit = () => { setMode("credit"); setFresh(true) }

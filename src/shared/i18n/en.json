@@ -3361,7 +3361,9 @@
     "tendered": "Paid",
     "splitBetween": "Split between treasuries",
     "splitOn": "Stop splitting",
-    "vault": "Treasury"
+    "vault": "Treasury",
+    "printPdf": "Print PDF",
+    "savePdf": "Save invoice PDF"
   },
   "posTables": {
     "bonFailed": "Saved, but the preparation ticket could not be printed",

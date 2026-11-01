@@ -123,7 +123,7 @@ export default function OrderRequestsPage() {
       </SectionCard>
 
       <DetailsDialog id={viewing} onOpenChange={(o) => !o && setViewing(null)} />
-      <PaymentScreen open={!!paying} onOpenChange={(o) => !o && setPaying(null)} total={paying?.grandTotal ?? 0} hasCustomer={!!paying?.customerId} customerName={paying?.customerName ?? ""} pending={checkout.isPending} onConfirm={confirmPay} />
+      <PaymentScreen requestCheckout open={!!paying} onOpenChange={(o) => !o && setPaying(null)} total={paying?.grandTotal ?? 0} hasCustomer={!!paying?.customerId} customerName={paying?.customerName ?? ""} pending={checkout.isPending} onConfirm={confirmPay} />
     </>
   )
 }

@@ -1,4 +1,4 @@
-import { Loader2, Printer, Save, Vault, X } from "lucide-react"
+import { FileText, Loader2, Printer, Save, Vault, X } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
@@ -15,7 +15,8 @@ import { amountOf, usePayment, type PaymentProps } from "./usePayment"
 export function ClassicDialog(props: PaymentProps) {
   const { t } = useTranslation()
   const { open, onOpenChange, total, customerName, showCustomer = true, pending, onConfirm } = props
-  const p = usePayment(props)
+  const p = usePayment(props, false)
+  const showPdf = !props.requestCheckout && !props.purchase
   const beauty = useAppSettings().salonsTab?.beautyTheme === true
   const split = p.mode === "split"
   const diff = p.change
@@ -105,9 +106,10 @@ export function ClassicDialog(props: PaymentProps) {
             </div>
           )}
 
-          {!p.canSave && p.paid > 0 && <p role="alert" className="text-sm text-destructive">{t("pos.needsFullPayment")}</p>}
+          {props.requestCheckout && !p.canSave && p.paid > 0 && <p role="alert" className="text-sm text-destructive">{t("pos.needsFullPayment")}</p>}
           <hr />
           <div className="grid grid-cols-2 gap-2">
+            {showPdf && <Button type="button" variant="outline" size="sm" className="col-span-2 h-10 gap-1.5 text-[12px]" disabled={busy || !p.canSave} onClick={() => onConfirm(p.payments(), false, "pdf")}><FileText className="size-[13px]" />{t("posPayment.printPdf")}</Button>}
             <Button type="button" variant="outline" size="sm" className="col-span-2 h-10 gap-1.5 text-[12px]" disabled={busy || !p.canSave} onClick={() => onConfirm(p.payments(), false)}><Save className="size-[13px]" />{t("posPayment.saveOnly")}</Button>
             <Button type="button" size="sm" className={cn("col-span-2 h-10 gap-1.5 text-[12px]", beauty ? "bg-primary text-primary-foreground hover:opacity-90" : "bg-brand-navy text-white hover:bg-brand-navy/90 dark:bg-primary dark:hover:bg-primary/90")} disabled={busy || !p.canSave} onClick={() => onConfirm(p.payments(), true)}>
               {busy ? <Loader2 className="size-[13px] animate-spin" /> : <Printer className="size-[13px]" />}{t("posPayment.saveAndPrint")}

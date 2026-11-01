@@ -3361,7 +3361,9 @@
     "tendered": "المدفوع",
     "splitBetween": "تقسيم بين الخزائن",
     "splitOn": "إيقاف التقسيم",
-    "vault": "خزينة"
+    "vault": "خزينة",
+    "printPdf": "طباعة PDF",
+    "savePdf": "حفظ الفاتورة PDF"
   },
   "posTables": {
     "bonFailed": "تم الحفظ لكن تعذرت طباعة بون التجهيز",
