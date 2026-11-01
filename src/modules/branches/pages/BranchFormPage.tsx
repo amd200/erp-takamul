@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/PageHeader"
+import { SectionCard } from "@/components/SectionCard"
 import { useClassic } from "@/shared/theme/ThemeProvider"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
@@ -96,97 +97,121 @@ export default function BranchFormPage() {
   const imageUrl = form.watch("imageUrl")
   const stampImageUrl = form.watch("stampImageUrl")
 
-  const formEl = (
-      <form onSubmit={submit} noValidate className="space-y-5">
-        <Card>
-          <CardHeader><CardTitle>{t("branchForm.basicInfo")}</CardTitle></CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <FormInput control={c} name="name" readOnly={view} required label={t("branchForm.businessName")} placeholder={t("branchForm.businessNamePh")} />
-              <FormInput control={c} name="nameEn" readOnly={view} label={t("branchForm.nameEn")} placeholder={t("branchForm.nameEn")} />
-              <FormInput control={c} name="shortName" readOnly={view} label={t("branchForm.shortName")} placeholder={t("branchForm.shortName")} />
-              <FormInput control={c} name="shortNameEn" readOnly={view} label={t("branchForm.shortNameEn")} placeholder={t("branchForm.shortNameEn")} dir="ltr" />
-              <FormInput control={c} name="code" readOnly={view} required label={t("branchForm.code")} placeholder={t("branchForm.codePh")} />
-              <FormInput control={c} name="phone" readOnly={view} label={t("branchForm.phone")} placeholder={t("branchForm.phonePh")} />
-              <FormInput control={c} name="organizationUnitName" readOnly={view} required label={t("branchForm.unitName")} placeholder={t("branchForm.unitNamePh")} />
-            </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              <FormInput control={c} name="taxNumber" readOnly={view} label={t("branchForm.taxNumber")} placeholder={t("branchForm.taxNumberPh")} />
-              <FormInput control={c} name="commercialRegister" readOnly={view} label={t("branchForm.commercialRegister")} placeholder={t("branchForm.commercialRegisterPh")} />
-              <FormInput control={c} name="industryBusinessCategory" readOnly={view} required label={t("branchForm.businessCategory")} placeholder={t("branchForm.businessCategoryPh")} />
-              <FormInput control={c} name="iban" readOnly={view} label="IBAN" placeholder="SA00 0000 0000 0000 0000 0000" dir="ltr" />
-            </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
-              <FormInput control={c} name="bankAccountNumber" readOnly={view} label={t("branchForm.accountNumber")} placeholder={t("branchForm.accountNumber")} dir="ltr" />
-              <FormInput control={c} name="bankName" readOnly={view} label={t("branchForm.bankName")} placeholder={t("branchForm.bankName")} />
-              <FormInput control={c} name="bankNameEn" readOnly={view} label={t("branchForm.bankNameEn")} placeholder={t("branchForm.bankNameEnPh")} dir="ltr" />
-              <FormInput control={c} name="bankAccountName" readOnly={view} label={t("branchForm.accountName")} placeholder={t("branchForm.accountName")} />
-              <FormInput control={c} name="bankAccountNameEn" readOnly={view} label={t("branchForm.accountNameEn")} placeholder={t("branchForm.accountNameEnPh")} dir="ltr" />
-            </div>
-            <ImageDrop file="image" url="imageUrl" label={t("branchForm.logo")} current={imageUrl} rich readOnly={view} />
-            <ImageDrop file="stampImage" url="stampImageUrl" label={t("branchForm.stamp")} current={stampImageUrl} readOnly={view} />
-            <FormTextarea control={c} name="footerNote" readOnly={view} label={t("branchForm.footer")} placeholder={t("branchForm.footerPh")} />
-          </CardContent>
-        </Card>
-  
-        <Card>
-          <CardHeader><CardTitle className="text-base">{t("branchForm.addressSettings")}</CardTitle></CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
-              <Field>
-                <FieldLabel>{t("branchForm.country")}<span className="text-destructive">*</span></FieldLabel>
-                <input value="SA" disabled readOnly aria-label={t("branchForm.country")} className="h-10 w-full cursor-not-allowed rounded-md border bg-muted/40 px-3 text-sm" />
-              </Field>
-              <FormInput control={c} name="stateName" readOnly={view} required label={t("branchForm.region")} placeholder={t("branchForm.enterRegion")} />
-              <FormInput control={c} name="cityName" readOnly={view} required label={t("branchForm.city")} disabled={!state || view} placeholder={state ? t("branchForm.enterCity") : t("branchForm.selectRegionFirst")} />
-              <FormInput control={c} name="district" readOnly={view} label={t("branchForm.neighborhood")} placeholder={t("branchForm.neighborhood")} />
-              <FormInput control={c} name="street" readOnly={view} label={t("branchForm.street")} placeholder={t("branchForm.streetPh")} />
-            </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-              <FormInput control={c} name="postalCode" readOnly={view} label={`${t("branchForm.postalCode")} (ex:12345)`} placeholder="00000" />
-              <FormInput control={c} name="buildingNumber" readOnly={view} label={`${t("branchForm.buildingNumber")} (ex:1234)`} placeholder="0000" />
-              <FormInput control={c} name="subNumber" readOnly={view} label={`${t("branchForm.subNumber")} (ex:1234)`} placeholder="0000" />
-              <Controller control={c} name="locationAddress" render={({ field }) => (
-                <Field>
-                  <FieldLabel>{t("branchForm.shortAddress")}</FieldLabel>
-                  <InputOTP maxLength={8} disabled={view} value={field.value ?? ""} onChange={(v) => field.onChange(v.toUpperCase().replace(/[^A-Z0-9]/g, ""))} containerClassName="w-fit gap-1.5" dir="ltr">
-                    <InputOTPGroup className="gap-1.5">
-                      {Array.from({ length: 8 }, (_, i) => <InputOTPSlot key={i} index={i} className="size-10 rounded-md border font-mono" />)}
-                    </InputOTPGroup>
-                  </InputOTP>
-                </Field>
-              )} />
-            </div>
-          </CardContent>
-        </Card>
-  
-        {!view && <div className="form-footer flex flex-col-reverse items-stretch justify-between gap-4 sm:flex-row sm:items-center">
-          <Button type="button" variant="destructive" className="h-12 w-full px-4 sm:w-auto" asChild><Link to="/branches">{t("common.cancel")}</Link></Button>
-          <Button type="submit" disabled={save.isPending} className="h-12 w-full px-4 sm:w-auto">{editId ? t("branchForm.saveChanges") : t("branchForm.add")}</Button>
-        </div>}
-      </form>
-  )
+  const title = view ? t("branchForm.viewTitle") : editId ? t("branchForm.editTitle") : t("branchForm.addTitle")
+  const subtitle = view ? t("branchForm.details") : t("branchForm.desc")
+  const ro = view
 
-  return (
-    <FormProvider {...form}>
-      {classic ? (
+  const basic = (
+    <>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <FormInput control={c} name="name" readOnly={ro} required label={t("branchForm.businessName")} placeholder={t("branchForm.businessNamePh")} />
+        <FormInput control={c} name="nameEn" readOnly={ro} label={t("branchForm.nameEn")} placeholder={t("branchForm.nameEn")} />
+        <FormInput control={c} name="shortName" readOnly={ro} label={t("branchForm.shortName")} placeholder={t("branchForm.shortName")} />
+        <FormInput control={c} name="shortNameEn" readOnly={ro} label={t("branchForm.shortNameEn")} placeholder={t("branchForm.shortNameEn")} dir="ltr" />
+        <FormInput control={c} name="code" readOnly={ro} required label={t("branchForm.code")} placeholder={t("branchForm.codePh")} />
+        <FormInput control={c} name="phone" readOnly={ro} label={t("branchForm.phone")} placeholder={t("branchForm.phonePh")} />
+        <FormInput control={c} name="organizationUnitName" readOnly={ro} required label={t("branchForm.unitName")} placeholder={t("branchForm.unitNamePh")} />
+      </div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <FormInput control={c} name="taxNumber" readOnly={ro} label={t("branchForm.taxNumber")} placeholder={t("branchForm.taxNumberPh")} />
+        <FormInput control={c} name="commercialRegister" readOnly={ro} label={t("branchForm.commercialRegister")} placeholder={t("branchForm.commercialRegisterPh")} />
+        <FormInput control={c} name="industryBusinessCategory" readOnly={ro} required label={t("branchForm.businessCategory")} placeholder={t("branchForm.businessCategoryPh")} />
+        <FormInput control={c} name="iban" readOnly={ro} label="IBAN" placeholder="SA00 0000 0000 0000 0000 0000" dir="ltr" />
+      </div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
+        <FormInput control={c} name="bankAccountNumber" readOnly={ro} label={t("branchForm.accountNumber")} placeholder={t("branchForm.accountNumber")} dir="ltr" />
+        <FormInput control={c} name="bankName" readOnly={ro} label={t("branchForm.bankName")} placeholder={t("branchForm.bankName")} />
+        <FormInput control={c} name="bankNameEn" readOnly={ro} label={t("branchForm.bankNameEn")} placeholder={t("branchForm.bankNameEnPh")} dir="ltr" />
+        <FormInput control={c} name="bankAccountName" readOnly={ro} label={t("branchForm.accountName")} placeholder={t("branchForm.accountName")} />
+        <FormInput control={c} name="bankAccountNameEn" readOnly={ro} label={t("branchForm.accountNameEn")} placeholder={t("branchForm.accountNameEnPh")} dir="ltr" />
+      </div>
+    </>
+  )
+  const logo = <ImageDrop file="image" url="imageUrl" label={t("branchForm.logo")} current={imageUrl} rich readOnly={ro} />
+  const stamp = <ImageDrop file="stampImage" url="stampImageUrl" label={t("branchForm.stamp")} current={stampImageUrl} readOnly={ro} />
+  const footer = <FormTextarea control={c} name="footerNote" readOnly={ro} label={t("branchForm.footer")} placeholder={t("branchForm.footerPh")} />
+  const address = (
+    <>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
+        <Field>
+          <FieldLabel>{t("branchForm.country")}<span className="text-destructive">*</span></FieldLabel>
+          <input value="SA" disabled readOnly aria-label={t("branchForm.country")} className="h-10 w-full cursor-not-allowed rounded-md border bg-muted/40 px-3 text-sm" />
+        </Field>
+        <FormInput control={c} name="stateName" readOnly={ro} required label={t("branchForm.region")} placeholder={t("branchForm.enterRegion")} />
+        <FormInput control={c} name="cityName" readOnly={ro} required label={t("branchForm.city")} disabled={!state || ro} placeholder={state ? t("branchForm.enterCity") : t("branchForm.selectRegionFirst")} />
+        <FormInput control={c} name="district" readOnly={ro} label={t("branchForm.neighborhood")} placeholder={t("branchForm.neighborhood")} />
+        <FormInput control={c} name="street" readOnly={ro} label={t("branchForm.street")} placeholder={t("branchForm.streetPh")} />
+      </div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <FormInput control={c} name="postalCode" readOnly={ro} label={`${t("branchForm.postalCode")} (ex:12345)`} placeholder="00000" />
+        <FormInput control={c} name="buildingNumber" readOnly={ro} label={`${t("branchForm.buildingNumber")} (ex:1234)`} placeholder="0000" />
+        <FormInput control={c} name="subNumber" readOnly={ro} label={`${t("branchForm.subNumber")} (ex:1234)`} placeholder="0000" />
+        <Controller control={c} name="locationAddress" render={({ field }) => (
+          <Field>
+            <FieldLabel>{t("branchForm.shortAddress")}</FieldLabel>
+            <InputOTP maxLength={8} disabled={ro} value={field.value ?? ""} onChange={(v) => field.onChange(v.toUpperCase().replace(/[^A-Z0-9]/g, ""))} containerClassName="w-fit gap-1.5" dir="ltr">
+              <InputOTPGroup className="gap-1.5">
+                {Array.from({ length: 8 }, (_, i) => <InputOTPSlot key={i} index={i} className="size-10 rounded-md border font-mono" />)}
+              </InputOTPGroup>
+            </InputOTP>
+          </Field>
+        )} />
+      </div>
+    </>
+  )
+  const backLink = <Link to="/branches">{t("branchForm.back")}<BackIcon /></Link>
+
+  if (classic) {
+    return (
+      <FormProvider {...form}>
         <Card>
           <CardHeader>
-            <CardTitle><h1 className="text-xl font-bold">{view ? t("branchForm.viewTitle") : editId ? t("branchForm.editTitle") : t("branchForm.addTitle")}</h1></CardTitle>
-            <CardDescription>{view ? t("branchForm.details") : t("branchForm.desc")}</CardDescription>
-            <CardAction>
-              <Button size="xl" asChild><Link to="/branches">{t("branchForm.back")}<BackIcon /></Link></Button>
-            </CardAction>
+            <CardTitle><h1 className="text-xl font-bold">{title}</h1></CardTitle>
+            <CardDescription>{subtitle}</CardDescription>
+            <CardAction><Button size="xl" asChild>{backLink}</Button></CardAction>
           </CardHeader>
-          <CardContent>{formEl}</CardContent>
+          <CardContent>
+            <form onSubmit={submit} noValidate className="space-y-5">
+              <Card>
+                <CardHeader><CardTitle>{t("branchForm.basicInfo")}</CardTitle></CardHeader>
+                <CardContent className="space-y-4">{basic}{logo}{stamp}{footer}</CardContent>
+              </Card>
+              <Card>
+                <CardHeader><CardTitle className="text-base">{t("branchForm.addressSettings")}</CardTitle></CardHeader>
+                <CardContent className="space-y-4">{address}</CardContent>
+              </Card>
+              {!view && <div className="form-footer flex flex-col-reverse items-stretch justify-between gap-4 sm:flex-row sm:items-center">
+                <Button type="button" variant="destructive" className="h-12 w-full px-4 sm:w-auto" asChild><Link to="/branches">{t("common.cancel")}</Link></Button>
+                <Button type="submit" disabled={save.isPending} className="h-12 w-full px-4 sm:w-auto">{editId ? t("branchForm.saveChanges") : t("branchForm.add")}</Button>
+              </div>}
+            </form>
+          </CardContent>
         </Card>
-      ) : (
-        <div className="flex flex-col gap-5">
-          <PageHeader crumbs={[t("nav.branches")]} title={view ? t("branchForm.viewTitle") : editId ? t("branchForm.editTitle") : t("branchForm.addTitle")} description={view ? t("branchForm.details") : t("branchForm.desc")}
-            actions={<Button asChild variant="outline"><Link to="/branches">{t("branchForm.back")}<BackIcon /></Link></Button>} />
-          {formEl}
-        </div>
-      )}
+      </FormProvider>
+    )
+  }
+
+  // Modern (erpv2) look: page header with breadcrumb, one card per section, a sticky save bar.
+  return (
+    <FormProvider {...form}>
+      <form onSubmit={submit} noValidate className="flex flex-col gap-5">
+        <PageHeader crumbs={[t("nav.branches")]} title={title} description={subtitle} actions={<Button asChild variant="outline">{backLink}</Button>} />
+        <SectionCard title={t("branchForm.basicInfo")}><div className="space-y-4">{basic}</div></SectionCard>
+        <SectionCard title={t("branchForm.logo")}>
+          <div className="grid gap-4 sm:grid-cols-2">{logo}{stamp}</div>
+          <div className="mt-4">{footer}</div>
+        </SectionCard>
+        <SectionCard title={t("branchForm.addressSettings")}><div className="space-y-4">{address}</div></SectionCard>
+        {!view && (
+          <div className="sticky bottom-0 z-10 -mx-4 flex flex-wrap items-center justify-between gap-3 border-t bg-background/90 px-4 py-3 backdrop-blur md:-mx-6 md:px-6">
+            <span className="text-sm text-destructive" role="status">{form.formState.submitCount > 0 && Object.keys(form.formState.errors).length > 0 ? t("products.fixErrors") : ""}</span>
+            <div className="flex gap-2">
+              <Button asChild variant="outline" size="lg"><Link to="/branches">{t("common.cancel")}</Link></Button>
+              <Button type="submit" size="lg" disabled={save.isPending}>{editId ? t("branchForm.saveChanges") : t("branchForm.add")}</Button>
+            </div>
+          </div>
+        )}
+      </form>
     </FormProvider>
   )
 }
