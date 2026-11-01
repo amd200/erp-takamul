@@ -1,4 +1,5 @@
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
+import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { HandCoins, Loader2, Truck, Users } from "lucide-react"
@@ -34,12 +35,14 @@ export function VoucherDialog({ kind, open, onOpenChange, embedded = false, cust
   const { data: suppliers = [] } = useSupplierList()
   const { data: treasuries = [] } = useTreasuryList()
   const create = useCreateVoucher()
+  // One key per voucher being typed: a double click or a retry saves it once.
+  const key = useRef(newIdempotencyKey())
   // Receipts usually come from customers, payments usually go to suppliers.
   const defaults = (): VoucherForm => ({ partyType: kind === "receipt" ? "customer" : "supplier", partyId: customerId ?? 0, treasuryId: treasuries[0]?.id ?? 0, date: today(), amount: 0, description: "" })
   const form = useForm<VoucherForm>({ resolver: zodResolver(voucherSchema), defaultValues: defaults() })
   const [partyType, partyId, treasuryId, amount] = useWatch({ control: form.control, name: ["partyType", "partyId", "treasuryId", "amount"] })
 
-  useEffect(() => { if (open) form.reset(defaults()) }, [open, treasuries.length, customerId]) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (open) { form.reset(defaults()); key.current = newIdempotencyKey() } }, [open, treasuries.length, customerId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const parties = (partyType === "customer"
     ? customers.filter((p) => p.isActive !== false).map((p) => ({ id: p.id, name: p.customerName, balance: p.balance ?? 0 }))
@@ -52,7 +55,7 @@ export function VoucherDialog({ kind, open, onOpenChange, embedded = false, cust
   const balanceAfter = lowers ? balance - (amount || 0) : balance + (amount || 0)
   const overdraw = kind === "payment" && treasury?.currentBalance != null && (amount || 0) > treasury.currentBalance
 
-  const submit = form.handleSubmit((v) => !overdraw && create.mutate({ ...v, kind }, { onSuccess: () => { if (embedded) form.reset(defaults()); else onOpenChange(false) } }))
+  const submit = form.handleSubmit((v) => !overdraw && create.mutate({ ...v, kind, key: key.current }, { onSuccess: () => { key.current = newIdempotencyKey(); if (embedded) form.reset(defaults()); else onOpenChange(false) }, onError: renewIfReused(key) }))
   const Icon = kind === "receipt" ? HandCoins : Truck
   const order = kind === "receipt" ? (["customer", "supplier"] as const) : (["supplier", "customer"] as const)
 

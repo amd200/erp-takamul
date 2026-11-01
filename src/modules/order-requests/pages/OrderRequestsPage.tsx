@@ -12,7 +12,7 @@ import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
 import { PageHeader } from "@/components/PageHeader"
 import { formatMoney, formatDateTime } from "@/lib/format"
-import { newIdempotencyKey } from "@/shared/http/idempotency"
+import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
 import { useCan } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
 import { PaymentScreen } from "@/modules/pos/payment/PaymentScreen"
@@ -83,7 +83,7 @@ export default function OrderRequestsPage() {
 
   const confirmPay = (payments: PosPayment[]) => {
     if (!paying) return
-    checkout.mutate({ id: paying.id, payments, key: key.current }, { onSuccess: () => { setPaying(null); key.current = newIdempotencyKey() } })
+    checkout.mutate({ id: paying.id, payments, key: key.current }, { onSuccess: () => { setPaying(null); key.current = newIdempotencyKey() }, onError: renewIfReused(key) })
   }
 
   const columns: Column<OrderRequest>[] = [

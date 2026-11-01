@@ -1,4 +1,5 @@
 import { http } from "@/shared/http/request"
+import { idempotencyHeaders, pinnedTo, retryWhileInProgress } from "@/shared/http/idempotency"
 import type { PagedResult } from "@/shared/http/paged"
 import { lineAmounts } from "@/modules/sales/totals"
 import type { InvoiceLine } from "@/modules/sales/types"
@@ -15,11 +16,11 @@ const itemBody = (l: InvoiceLine) => ({
   taxPercentage: l.taxRate,
 })
 
-const stamp = (day: string) => `${day}T${new Date().toTimeString().slice(0, 8)}`
+const stamp = (day: string, key?: string) => `${day}T${pinnedTo(key, () => new Date().toTimeString().slice(0, 8))}`
 
-const body = (q: QuoteInput) => ({
+const body = (q: QuoteInput, key?: string) => ({
   customerId: q.customerId,
-  quotationDate: q.date.length > 10 ? q.date : stamp(q.date),
+  quotationDate: q.date.length > 10 ? q.date : stamp(q.date, key),
   globalDiscountAmount: q.globalDiscount,
   shippingCost: q.shipping,
   notes: q.notes || null,
@@ -32,10 +33,10 @@ export const quotesApi = {
     return { items: res.items, total: res.totalCount }
   },
   get: (id: number) => http<Quote>(`/Quotation/${id}`),
-  create: (q: QuoteInput) => http<unknown>("/Quotation", { method: "POST", data: body(q) }),
+  create: (q: QuoteInput, key?: string) => retryWhileInProgress(() => http<unknown>("/Quotation", { method: "POST", headers: idempotencyHeaders(key), data: body(q, key) })),
   update: (id: number, q: QuoteInput) => http<unknown>(`/Quotation/${id}`, { method: "PUT", data: body(q) }),
   remove: (id: number) => http<unknown>(`/Quotation/${id}`, { method: "DELETE" }),
-  duplicate: (id: number) => http<unknown>(`/Quotation/${id}/duplicate`, { method: "POST" }),
+  duplicate: (id: number, key?: string) => retryWhileInProgress(() => http<unknown>(`/Quotation/${id}/duplicate`, { method: "POST", headers: idempotencyHeaders(key) })),
 }
 
 /** What a line comes to, preferring the server's own figure when the line came from a saved quotation. */

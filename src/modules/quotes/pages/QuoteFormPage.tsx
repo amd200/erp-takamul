@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react"
+import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
 import { quoteGlobalDiscount, quoteLineOf } from "../form"
 import { Controller, FormProvider, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -29,6 +30,8 @@ export default function QuoteFormPage() {
   const { data: existing, isLoading } = useQuote(editId)
   const { data: customers = [] } = useCustomers()
   const save = useSaveQuote()
+  // One key per new quotation: a double click or a retry saves it once.
+  const key = useRef(newIdempotencyKey())
   const [addingCustomer, setAddingCustomer] = useState(false)
   const defaultCustomer = useAppSettings().customersTab?.defultCustomar
   const form = useForm<QuoteForm>({ resolver: zodResolver(quoteSchema), defaultValues: emptyQuote() })
@@ -55,7 +58,7 @@ export default function QuoteFormPage() {
 
   if (editId && isLoading) return <div className="h-96 animate-pulse rounded-xl bg-muted" />
 
-  const submit = form.handleSubmit((data) => save.mutate({ id: editId, data }, { onSuccess: () => nav("/quotes") }))
+  const submit = form.handleSubmit((data) => save.mutate({ id: editId, data, key: key.current }, { onSuccess: () => nav("/quotes"), onError: renewIfReused(key) }))
 
   // Laid out as in the current system: basic data, the lines, then one box with the two buttons; the summary sits at the end.
   return (

@@ -14,7 +14,7 @@ import { FormInput, FormSelect, FormTextarea } from "@/components/form/FormField
 import { PageHeader } from "@/components/PageHeader"
 import { SectionCard } from "@/components/SectionCard"
 import { formatMoney } from "@/lib/format"
-import { newIdempotencyKey } from "@/shared/http/idempotency"
+import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
 import { pickTreasury, useCustomers, useEmployees, useTreasuries, useWarehouses } from "@/modules/lookups/service"
 import { LinesEditor } from "../components/LinesEditor"
 import { PaymentFields } from "../components/PaymentFields"
@@ -74,6 +74,7 @@ export default function InvoiceFormPage() {
     if (overpaid) return
     create.mutate({ input: data, key: key.current }, {
       onSuccess: () => nav("/sales/invoices"),
+      onError: renewIfReused(key),
     })
   })
 

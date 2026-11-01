@@ -14,7 +14,7 @@ import { FormInput, FormSelect, FormTextarea } from "@/components/form/FormField
 import { PageHeader } from "@/components/PageHeader"
 import { RowActions } from "@/components/RowActions"
 import { formatMoney, formatDateTime } from "@/lib/format"
-import { newIdempotencyKey } from "@/shared/http/idempotency"
+import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
 import { Can, useCan } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
 import { useTreasuryList } from "@/modules/treasuries/queries"
@@ -45,7 +45,7 @@ function ExpenseDialog({ open, onOpenChange, expense }: { open: boolean; onOpenC
   const treasuryOptions = treasuries.map((x) => ({ value: String(x.id), label: `${x.name} — ${x.currentBalance == null ? "—" : formatMoney(x.currentBalance)}` }))
   // Stopped items stay selectable on the expense that already uses one.
   const itemOptions = items.filter((x) => x.isActive !== false || x.id === expense?.itemId).map((x) => ({ value: String(x.id), label: x.name ?? "" }))
-  const submit = form.handleSubmit((data) => !over && save.mutate({ id: expense?.id, data, key: key.current }, { onSuccess: () => onOpenChange(false) }))
+  const submit = form.handleSubmit((data) => !over && save.mutate({ id: expense?.id, data, key: key.current }, { onSuccess: () => onOpenChange(false), onError: renewIfReused(key) }))
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

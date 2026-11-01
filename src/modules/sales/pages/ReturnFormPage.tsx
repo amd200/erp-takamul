@@ -1,5 +1,5 @@
 import { PageBox } from "@/components/PageBox"
-import { useEffect, useMemo } from "react"
+import { useEffect, useRef } from "react"
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
@@ -12,7 +12,7 @@ import { Field, FieldLabel } from "@/components/ui/field"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { EmptyState } from "@/components/EmptyState"
 import { cn } from "@/lib/utils"
-import { newIdempotencyKey } from "@/shared/http/idempotency"
+import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
 import { useAppSettings } from "@/modules/settings"
 import { useTreasuries } from "@/modules/lookups/service"
 import { useCreateReturn, useInvoice } from "../queries"
@@ -38,7 +38,7 @@ export default function ReturnFormPage() {
   const showReturned = useAppSettings().generalTab?.showReturnedItemsDetails === true
   const create = useCreateReturn()
   // One key for this return, so a double click or a retry saves it once.
-  const key = useMemo(() => newIdempotencyKey(), [])
+  const key = useRef(newIdempotencyKey())
 
   const form = useForm<ReturnForm>({ resolver: zodResolver(returnSchema), defaultValues: { date: today(), reason: "", quantities: [], payments: [{ treasuryId: 1, amount: 0 }] } })
   const payments = useFieldArray({ control: form.control, name: "payments" })
@@ -69,9 +69,9 @@ export default function ReturnFormPage() {
 
   const submit = form.handleSubmit((d) => {
     if (!inv || overLimit || !hasReturn) return
-    create.mutate({ key, order: inv, date: d.date, reason: d.reason, quantities: d.quantities,
+    create.mutate({ key: key.current, order: inv, date: d.date, reason: d.reason, quantities: d.quantities,
       refunds: d.payments },
-    { onSuccess: () => nav("/sales/returns") })
+    { onSuccess: () => nav("/sales/returns"), onError: renewIfReused(key) })
   })
 
   if (!inv) return <EmptyState icon={<Undo2 />} title={t("sales.notFound")} action={<Button asChild variant="outline"><Link to="/sales/returns">{t("viewDoc.backToReturns")}</Link></Button>} />

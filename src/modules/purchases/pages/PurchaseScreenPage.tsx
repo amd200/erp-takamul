@@ -11,7 +11,7 @@ import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { formatMoney } from "@/lib/format"
 import { cn } from "@/lib/utils"
 import { activeBranchId, canManageAllBranches, useAuthStore, useBranchChoice } from "@/shared/auth/authStore"
-import { newIdempotencyKey } from "@/shared/http/idempotency"
+import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
 import { useAppSettings } from "@/modules/settings"
 import { useBranchList } from "@/modules/branches/queries"
 import { useWarehouses } from "@/modules/lookups/service"
@@ -137,7 +137,7 @@ export default function PurchaseScreenPage() {
         lines: spreadDiscount(lines, discount).map(({ key: _k, barcode: _b, lineNote: _n, ...l }) => l),
         payments: payments.map((p) => ({ amount: p.amount, method: p.method, treasuryId: p.treasuryId, notes: "" })),
       },
-    }, { onSuccess: () => { setPayOpen(false); reset(); setDate(nowLocal()) } })
+    }, { onSuccess: () => { setPayOpen(false); reset(); setDate(nowLocal()) }, onError: renewIfReused(key) })
   }
 
   const afterDiscount = totals.grandTotal - totals.tax

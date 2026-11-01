@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ArrowLeftRight, Plus } from "lucide-react"
@@ -26,13 +27,15 @@ function TransferDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (
   const { t } = useTranslation()
   const { data: treasuries = [] } = useTreasuryList()
   const run = useTransfer()
+  // One key per transfer being typed: a double click or a retry moves the money once.
+  const key = useRef(newIdempotencyKey())
   const form = useForm<TransferForm>({ resolver: zodResolver(transferSchema), defaultValues: emptyTransfer() })
   const [fromTreasuryId, amount] = useWatch({ control: form.control, name: ["fromTreasuryId", "amount"] })
   const from = treasuries.find((x) => x.id === fromTreasuryId)
   const over = from?.currentBalance != null && (amount || 0) > from.currentBalance
-  useEffect(() => { if (open) form.reset(emptyTransfer()) }, [open, form])
+  useEffect(() => { if (open) { form.reset(emptyTransfer()); key.current = newIdempotencyKey() } }, [open, form])
   const options = treasuries.map((x) => ({ value: String(x.id), label: `${x.name} — ${x.currentBalance == null ? "—" : formatMoney(x.currentBalance)}` }))
-  const submit = form.handleSubmit((v) => !over && run.mutate(v, { onSuccess: () => onOpenChange(false) }))
+  const submit = form.handleSubmit((v) => !over && run.mutate({ ...v, key: key.current }, { onSuccess: () => onOpenChange(false), onError: renewIfReused(key) }))
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

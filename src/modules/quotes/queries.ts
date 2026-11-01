@@ -20,6 +20,6 @@ function useQuoteMutation<A>(fn: (a: A) => Promise<unknown>, ok: string, fail = 
   })
 }
 
-export const useSaveQuote = () => useQuoteMutation(({ id, data }: { id?: number; data: QuoteInput }) => (id ? quotesApi.update(id, data) : quotesApi.create(data)), "common.saved")
+export const useSaveQuote = () => useQuoteMutation(({ id, data, key }: { id?: number; data: QuoteInput; key?: string }) => (id ? quotesApi.update(id, data) : quotesApi.create(data, key)), "common.saved")
 export const useDeleteQuote = () => useQuoteMutation((id: number) => quotesApi.remove(id), "common.deleted", "common.deleteFailed")
-export const useDuplicateQuote = () => useQuoteMutation((id: number) => quotesApi.duplicate(id), "quotes.duplicated")
+export const useDuplicateQuote = () => useQuoteMutation(({ id, key }: { id: number; key?: string }) => quotesApi.duplicate(id, key), "quotes.duplicated")

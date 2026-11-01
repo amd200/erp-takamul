@@ -25,7 +25,7 @@ export type TransactionDto = {
 /** A transaction with the list it came from, since receipts and payments live in different tables. */
 export type Voucher = TransactionDto & { kind: VoucherKind }
 
-export type VoucherInput = { kind: VoucherKind; partyType: PartyType; partyId: number; treasuryId: number; date: string; amount: number; description: string }
+export type VoucherInput = { kind: VoucherKind; partyType: PartyType; partyId: number; treasuryId: number; date: string; amount: number; description: string; key?: string }
 
 /** The server sends no voucher number, so it is the kind and the id. */
 export const voucherNumber = (v: Pick<Voucher, "kind" | "id">) => `${v.kind === "receipt" ? "RCV" : "PAY"}-${v.id}`

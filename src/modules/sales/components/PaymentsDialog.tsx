@@ -12,7 +12,7 @@ import { Can } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
 import { pickTreasury, useTreasuries } from "@/modules/lookups/service"
 import { useAppSettings } from "@/modules/settings"
-import { newIdempotencyKey } from "@/shared/http/idempotency"
+import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
 import { useDeletePayment, useRecordPayment } from "../queries"
 import { paymentFormSchema, type PaymentForm } from "../schema"
 import { orderTotals } from "../totals"
@@ -35,7 +35,7 @@ export function PaymentsDialog({ invoice, onOpenChange }: { invoice: SalesOrderD
 
   useEffect(() => { if (invoice) form.reset({ amount: remaining, method: "Cash", treasuryId: pickTreasury(treasuries, defaultVault)?.id ?? 0, notes: "" }) }, [invoice, remaining, form, treasuries, defaultVault])
 
-  const submit = form.handleSubmit((payment) => invoice && record.mutate({ invoiceId: invoice.id, payment, key: key.current }, { onSuccess: () => { key.current = newIdempotencyKey() } }))
+  const submit = form.handleSubmit((payment) => invoice && record.mutate({ invoiceId: invoice.id, payment, key: key.current }, { onSuccess: () => { key.current = newIdempotencyKey() }, onError: renewIfReused(key) }))
 
   return (
     <Dialog open={!!invoice} onOpenChange={onOpenChange}>

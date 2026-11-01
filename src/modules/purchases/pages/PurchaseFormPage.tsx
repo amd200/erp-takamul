@@ -13,7 +13,7 @@ import { PageHeader } from "@/components/PageHeader"
 import { SectionCard } from "@/components/SectionCard"
 import { formatMoney } from "@/lib/format"
 import { useSupplierList } from "@/modules/suppliers/queries"
-import { newIdempotencyKey } from "@/shared/http/idempotency"
+import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
 import { useAutoPayment } from "@/modules/sales/useAutoPayment"
 import { pickTreasury, useSuppliers, useTreasuries, useWarehouses } from "@/modules/lookups/service"
 import { useAppSettings } from "@/modules/settings"
@@ -76,7 +76,7 @@ export default function PurchaseFormPage() {
       const missing = data.lines.flatMap((l, i) => (l.taxId ? [] : [i]))
       if (missing.length) { missing.forEach((i) => form.setError(`lines.${i}.taxId`, { message: "pos3.taxRequired" })); return }
     }
-    save.mutate({ id: editId, data, key: key.current }, { onSuccess: () => nav("/purchases") })
+    save.mutate({ id: editId, data, key: key.current }, { onSuccess: () => nav("/purchases"), onError: renewIfReused(key) })
   })
 
   const supplier = supplierList.find((x) => x.id === supplierId)

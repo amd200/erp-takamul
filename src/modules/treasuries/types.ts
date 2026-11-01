@@ -25,6 +25,7 @@ export type Transfer = {
   notes?: string | null
 }
 export type TransferInput = {
+  key?: string
   fromTreasuryId: number
   toTreasuryId: number
   amount: number

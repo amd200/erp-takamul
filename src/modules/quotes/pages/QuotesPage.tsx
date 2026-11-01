@@ -1,5 +1,6 @@
 import { PageBox } from "@/components/PageBox"
-import { useCallback, useState } from "react"
+import { useCallback, useRef, useState } from "react"
+import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
 import { Link, useNavigate } from "react-router-dom"
 import { Copy, Loader2, Pencil, Printer, RotateCw, ShoppingCart, Trash2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
@@ -47,6 +48,7 @@ export default function QuotesPage() {
   const { data, isLoading, isFetching, isError, refetch } = useQuotePage({ page: page + 1, pageSize: PAGE_SIZE, searchTerm: search, sortBy, sortDescending })
   const del = useDeleteQuote()
   const copy = useDuplicateQuote()
+  const copyKey = useRef(newIdempotencyKey())
   const print = usePrintQuote()
   const [toDelete, setToDelete] = useState<Quote | null>(null)
   const day = (v: string) => (v ? formatDateTime(v, i18n.language) : "—")
@@ -65,7 +67,7 @@ export default function QuotesPage() {
         <IconAction label={t("quotes.print")} disabled={print.isPending} onClick={() => print.mutate(q)}>{print.isPending && print.variables?.id === q.id ? <Loader2 className="animate-spin" /> : <Printer />}</IconAction>
         {can(P.sales.pos) && <IconAction label={t("quotes.openInPos")} onClick={() => quotation.load(q)}><ShoppingCart /></IconAction>}
         {can(P.quotes.edit) && <IconAction label={t("common.edit")} to={`/quotes/${q.id}/edit`}><Pencil /></IconAction>}
-        {can(P.quotes.add) && <IconAction label={t("quotes.duplicate")} onClick={() => copy.mutate(q.id, { onSuccess: () => nav("/quotes") })}><Copy /></IconAction>}
+        {can(P.quotes.add) && <IconAction label={t("quotes.duplicate")} onClick={() => copy.mutate({ id: q.id, key: copyKey.current }, { onSuccess: () => { copyKey.current = newIdempotencyKey(); nav("/quotes") }, onError: renewIfReused(copyKey) })}><Copy /></IconAction>}
         {can(P.quotes.delete) && <IconAction label={t("common.delete")} danger onClick={() => setToDelete(q)}><Trash2 /></IconAction>}
       </div>
     ) },

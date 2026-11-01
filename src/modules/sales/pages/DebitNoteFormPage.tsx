@@ -1,5 +1,5 @@
 import { PageBox } from "@/components/PageBox"
-import { useEffect, useMemo } from "react"
+import { useEffect, useRef } from "react"
 import { Controller, FormProvider, useFieldArray, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
@@ -12,7 +12,7 @@ import { FormSelect, FormTextarea } from "@/components/form/FormFields"
 import { PageHeader } from "@/components/PageHeader"
 import { SectionCard } from "@/components/SectionCard"
 import { useClassic } from "@/shared/theme/ThemeProvider"
-import { newIdempotencyKey } from "@/shared/http/idempotency"
+import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
 import { useAppSettings } from "@/modules/settings"
 import { pickTreasury, useTreasuries } from "@/modules/lookups/service"
 import { LinesEditor } from "../components/LinesEditor"
@@ -42,7 +42,7 @@ export default function DebitNoteFormPage() {
   const vault = useAppSettings().sales?.defaultSalesVault
   const create = useCreateDebitNote()
   // One key for this note, so a double click or a retry saves it once.
-  const key = useMemo(() => newIdempotencyKey(), [])
+  const key = useRef(newIdempotencyKey())
   const form = useForm<DebitNoteForm>({
     resolver: zodResolver(debitNoteSchema),
     defaultValues: { invoiceId, date: today(), reason: "", lines: [], payments: [] },
@@ -61,7 +61,7 @@ export default function DebitNoteFormPage() {
   }, [inv, form])
   useEffect(() => { form.setValue("invoiceId", invoiceId) }, [invoiceId, form])
 
-  const submit = form.handleSubmit((d) => !overpaid && create.mutate({ ...d, key }, { onSuccess: () => nav("/sales/debit-notes") }))
+  const submit = form.handleSubmit((d) => !overpaid && create.mutate({ ...d, key: key.current }, { onSuccess: () => nav("/sales/debit-notes"), onError: renewIfReused(key) }))
   const addPayment = () => payments.append({ amount: remaining, method: "Cash", treasuryId: pickTreasury(treasuries, vault)?.id ?? 0, notes: "" })
   const locked = "cursor-not-allowed bg-muted/50 font-semibold"
 
