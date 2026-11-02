@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react"
-import { Clock, CreditCard, FileText, Plus, Printer, SaudiRiyal, Search, Trash2, User, X } from "lucide-react"
+import { Clock, CreditCard, FileText, Plus, Printer, Search, Trash2, User, X } from "lucide-react"
+import { CurrencySymbol } from "./CurrencySymbol"
 import { useQuery } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
@@ -126,7 +127,7 @@ export function OrdersDialog({ open, onOpenChange, onlySuspended = false }: { op
             </div>
             <div className="flex shrink-0 items-center gap-2 border-b border-border bg-card px-4 py-2.5">
               <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t("pos1.searchOrders")}
-                className="h-8 w-full flex-1 rounded-lg border border-border bg-input px-3 text-[11px] text-foreground outline-none placeholder:text-muted-foreground focus:border-primary" />
+                className="h-8 w-full flex-1 rounded-lg border border-border bg-background px-3 text-[11px] text-foreground outline-none placeholder:text-muted-foreground focus:border-primary" />
               <button type="button" className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-colors hover:bg-primary/80"><Search size={13} /></button>
             </div>
           </>
@@ -166,7 +167,7 @@ export function OrdersDialog({ open, onOpenChange, onlySuspended = false }: { op
                     <div className="flex w-full shrink-0 items-center justify-between gap-4 sm:w-auto sm:justify-end">
                       <div className="flex flex-col items-start sm:items-end">
                         <span className="mb-0.5 text-[9px] font-medium text-muted-foreground sm:hidden">{t("pos1.total")}</span>
-                        <span className="flex items-center gap-1 text-[12px] font-bold text-foreground">{(o.grandTotal ?? 0).toFixed(2)}<SaudiRiyal size={11} /></span>
+                        <span className="flex items-center gap-1 text-[12px] font-bold text-foreground">{(o.grandTotal ?? 0).toFixed(2)}<CurrencySymbol size={11} /></span>
                       </div>
                       <div className="flex shrink-0 items-center gap-2">
                         {!held && o.orderStatus !== "Cancelled" && (

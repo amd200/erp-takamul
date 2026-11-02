@@ -1,7 +1,7 @@
 import { branchesApi } from "@/modules/branches/service"
 import { ApiError } from "@/shared/http/ApiError"
 import { http } from "@/shared/http/request"
-import type { Shift, ShiftListResponse, ShiftQuery, ShiftReport, OpenShiftInput, ShiftEmployee, ShiftDevice } from "./types"
+import type { Shift, ShiftListResponse, ShiftReport, OpenShiftInput, ShiftEmployee, ShiftDevice } from "./types"
 
 /** Lists come back as a bare array, or wrapped as `items` / `data`, depending on the endpoint. */
 const rows = <T,>(res: T[] | { items?: T[]; data?: T[] } | null | undefined): T[] => (Array.isArray(res) ? res : res?.items ?? res?.data ?? [])
@@ -11,7 +11,7 @@ const localDay = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad
 const localTime = (d: Date) => `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
 
 export const shiftsApi = {
-  list: (q: ShiftQuery) => http<ShiftListResponse>("/Shifts", { params: { Page: q.page, PageSize: q.pageSize, SearchTerm: q.searchTerm || undefined, SortBy: q.sortBy, SortDescending: q.sortBy ? q.sortDescending : undefined } }),
+  list: () => http<ShiftListResponse>("/Shifts"),
 
   // The form's branch travels as X-Branch-Id (it wins over the header selection), not in the body.
   open: ({ branchId, ...v }: OpenShiftInput) => {

@@ -7,7 +7,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { FormInput, FormSelect, FormTextarea } from "@/components/form/FormFields"
 import { formatMoney } from "@/lib/format"
 import { useCategories } from "@/modules/categories/queries"
-import { STATIONS, useAppSettings } from "@/modules/settings"
+import { usePrinterOptions } from "@/shared/printers/usePrinters"
+import { useAppSettings } from "@/modules/settings"
 import { useExemptionReasons, useTaxes } from "@/modules/taxes/service"
 import { useUnits } from "@/modules/units/queries"
 import { priceBreakdown } from "../pricing"
@@ -173,11 +174,10 @@ export function ExtraUnitsBox() {
 export function PrinterField() {
   const { t } = useTranslation()
   const { control } = useFormContext<ProductForm>()
-  const printers = STATIONS
-  if (printers.length === 0) return null
+  const options = usePrinterOptions(useWatch({ control, name: "printerName" }))
   return (
     <div className="lg:col-span-2">
-      <FormSelect control={control} name="printerName" label={t("productForm.printer")} allowEmpty={t("productForm.noPrinter")} options={printers.map((p) => ({ value: p, label: p }))} />
+      <FormSelect control={control} name="printerName" label={t("productForm.printer")} allowEmpty={t("productForm.noPrinter")} options={options} />
     </div>
   )
 }

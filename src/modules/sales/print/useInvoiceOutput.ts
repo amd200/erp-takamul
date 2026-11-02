@@ -11,7 +11,7 @@ import { customersApi } from "@/modules/customers/service"
 import { eyeText } from "@/modules/customers/form"
 import { EYE_FIELDS, type Customer } from "@/modules/customers/types"
 import { fetchProduct } from "@/modules/products/lookup"
-import { useAppSettings } from "@/modules/settings"
+import { useAppSettings, useCurrency } from "@/modules/settings"
 import { invoicesApi } from "../service"
 import { editorLineOf, orderTotals } from "../totals"
 import type { PaymentMethod, SalesOrderDto } from "../types"
@@ -50,6 +50,7 @@ export function useInvoiceOutput() {
   const qc = useQueryClient()
   const { t } = useTranslation()
   const settings = useAppSettings()
+  const currency = useCurrency()
   const { branch } = useSession()
   return useMutation({
     mutationFn: async ({ invoice: row, as, paper = "a4", voucher }: { invoice: { id: number }; as: Output; paper?: Paper; voucher?: "stock" | "claim" }) => {
@@ -76,7 +77,7 @@ export function useInvoiceOutput() {
       const doc = paper === "a5"
         ? invoiceA5Doc(doc0, { branch: b, customer: c, isExempt, qrImage, barcodes: await barcodesOf(qc, invoice), measurement: measurementOf(c), methodLabel })
         : paper === "roll"
-        ? invoiceRollDoc(doc0, { branch: b, customer: c, isExempt, showPaymentMethods, showPaidAndRemaining, showBranchName, grid: settings.printRollTab?.invoiceDesign3 === true, showUnits: settings.itemsTab?.enablePieceAndCartonSystem === true, methodLabel })
+        ? invoiceRollDoc(doc0, { branch: b, customer: c, isExempt, showPaymentMethods, showPaidAndRemaining, showBranchName, grid: settings.printRollTab?.invoiceDesign3 === true, showUnits: settings.itemsTab?.enablePieceAndCartonSystem === true, methodLabel, currency })
         : invoiceA4Doc(doc0, { branch: b, customer: c, isExempt, qrImage, showPaymentMethods, showPaidAndRemaining, showBranchName, showHeaderAndFooter: settings.printA4Tab?.showHeaderAndFooterInPrint !== false, blue: settings.printA4Tab?.a4InvoiceType === "Design2", design: settings.printA4Tab?.a4InvoiceType === "Design3" || settings.printA4Tab?.a4InvoiceType === "Design4" ? settings.printA4Tab?.a4InvoiceType as "Design3" | "Design4" : undefined, methodLabel })
       // Preview: hand the finished document back; the caller shows it on screen instead of printing.
       if (as === "preview") return doc

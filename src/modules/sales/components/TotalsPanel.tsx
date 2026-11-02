@@ -1,12 +1,11 @@
 import { useTranslation } from "react-i18next"
 import { formatMoney } from "@/lib/format"
-import { CURRENCY, useAppSettings } from "@/modules/settings"
+import { CurrencySymbol, useAppSettings } from "@/modules/settings"
 import type { Totals } from "../types"
 
 /** Subtotal → discount → tax → total, plus paid / remaining when payments apply. */
 export function TotalsPanel({ totals, paid, returned }: { totals: Totals; paid?: number; returned?: number }) {
   const { t } = useTranslation()
-  const currency = CURRENCY
   const taxSetting = useAppSettings().taxSetting?.taxSetting
   // A tax-exempt branch has no tax to show.
   const exempt = taxSetting === "Exempt"
@@ -14,7 +13,7 @@ export function TotalsPanel({ totals, paid, returned }: { totals: Totals; paid?:
   const Row = ({ label, value, strong, tone }: { label: string; value: number; strong?: boolean; tone?: string }) => (
     <div className={`flex justify-between ${strong ? "border-t pt-2.5 text-base font-semibold" : ""}`}>
       <dt className={strong ? undefined : "text-muted-foreground"}>{label}</dt>
-      <dd className={tone}>{formatMoney(value)}{strong && <span className="ms-1 text-xs font-normal text-muted-foreground">{currency}</span>}</dd>
+      <dd className={tone}>{formatMoney(value)}{strong && <span className="ms-1 text-xs font-normal text-muted-foreground"><CurrencySymbol /></span>}</dd>
     </div>
   )
   return (

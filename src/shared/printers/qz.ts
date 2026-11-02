@@ -45,3 +45,10 @@ export async function openCashDrawer(printerName?: string | null) {
   const printer = await qz.printers.find(name)
   await qz.print(qz.configs.create(printer), [{ type: "raw", format: "command", data: DRAWER_PULSE }])
 }
+
+/** The names of the printers installed on this computer. */
+export async function listPrinters(): Promise<string[]> {
+  await connect()
+  const found = await qz.printers.find()
+  return Array.isArray(found) ? found : found ? [found] : []
+}

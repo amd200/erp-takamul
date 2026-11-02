@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react"
-import { ArrowRight, ChevronRight, SaudiRiyal, ShoppingCart } from "lucide-react"
+import { ArrowRight, ChevronRight, ShoppingCart } from "lucide-react"
+import { CurrencySymbol } from "../components/CurrencySymbol"
 import { useTranslation } from "react-i18next"
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
@@ -99,7 +100,7 @@ export default function Pos4Page() {
                 </span>
                 <span className="pos4-cart-total">
                   <span>{t("pos4.total")}</span>
-                  <strong className="flex items-center justify-center gap-1" dir="ltr"><SaudiRiyal size={14} aria-hidden="true" /> {total.toFixed(2)}</strong>
+                  <strong className="flex items-center justify-center gap-1" dir="ltr"><CurrencySymbol size={14} /> {total.toFixed(2)}</strong>
                 </span>
                 <span className="pos4-cart-count">
                   <ChevronRight size={14} aria-hidden="true" className="ltr:rotate-180" />

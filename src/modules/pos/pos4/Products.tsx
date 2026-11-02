@@ -1,5 +1,6 @@
 import { memo } from "react"
-import { Flame, Minus, Plus, SaudiRiyal, Store } from "lucide-react"
+import { Flame, Minus, Plus, Store } from "lucide-react"
+import { CurrencySymbol } from "../components/CurrencySymbol"
 import { useTranslation } from "react-i18next"
 import { cn } from "@/lib/utils"
 import type { Product } from "@/modules/products/types"
@@ -33,7 +34,7 @@ const Card = memo(function Card({ item, name, typography, quantity, onSelect }: 
       <div className="min-w-0">
         <div className="mb-0.5 leading-tight font-semibold text-foreground" style={{ fontSize: typography.productName }}>{name}</div>
         <div className="flex flex-row-reverse items-center justify-center gap-x-1 font-bold text-primary" style={{ fontSize: typography.productPrice + 2 }}>
-          <SaudiRiyal size={typography.priceIcon + 2} />
+          <CurrencySymbol size={typography.priceIcon + 2} />
           {shownPrice(item).toFixed(2)}
         </div>
       </div>
@@ -70,7 +71,7 @@ const MobileCard = memo(function MobileCard({ item, name, typography, quantity, 
         {item.description && <p className="mt-1 line-clamp-2 text-xs leading-5 text-muted-foreground">{item.description}</p>}
         <div className="pos4-product-meta mt-2 flex items-center justify-start gap-3 font-bold" dir="rtl">
           <span className="flex flex-row-reverse items-center gap-x-1 text-primary" style={{ fontSize: typography.productPrice + 2 }}>
-            <SaudiRiyal size={typography.priceIcon + 2} />
+            <CurrencySymbol size={typography.priceIcon + 2} />
             {shownPrice(item).toFixed(2)}
           </span>
           {item.calories != null && (

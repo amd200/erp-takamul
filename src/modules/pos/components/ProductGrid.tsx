@@ -1,5 +1,6 @@
 import { memo, useState } from "react"
-import { Check, PackageSearch, RotateCw, SaudiRiyal, Store } from "lucide-react"
+import { Check, PackageSearch, RotateCw, Store } from "lucide-react"
+import { CurrencySymbol } from "./CurrencySymbol"
 import { useAppSettings } from "@/modules/settings"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
@@ -33,8 +34,8 @@ const Card = memo(function Card({ product: p, inCart, onPick, nameSize, priceSiz
       <div className="relative mx-auto mb-2 flex h-16 w-full max-w-full items-center justify-center overflow-hidden rounded-xl bg-muted/30 px-2"><Thumb p={p} /></div>
       <div className="min-w-0">
         <div className="mb-0.5 leading-tight font-semibold text-foreground" style={{ fontSize: nameSize }}>{p.productNameAr}</div>
-        <div className="flex flex-row-reverse items-center justify-center gap-x-1 font-bold text-primary" style={{ fontSize: priceSize + 2 }}>
-          <SaudiRiyal size={Math.max(10, priceSize - 2) + 2} />
+        <div className="flex flex-row-reverse items-center justify-center gap-x-1 font-bold leading-none text-primary tabular-nums" style={{ fontSize: priceSize + 2 }}>
+          <CurrencySymbol size={Math.max(9, Math.round((priceSize + 2) * 0.7))} />
           {Number(p.priceAfterTax ?? p.sellingPrice ?? 0).toFixed(2)}
         </div>
       </div>

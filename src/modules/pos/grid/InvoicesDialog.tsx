@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react"
-import { ChefHat, Clock, CreditCard, FileText, Play, Plus, Printer, SaudiRiyal, Search, Trash2, User, X } from "lucide-react"
+import { ChefHat, Clock, CreditCard, FileText, Play, Plus, Printer, Search, Trash2, User, X } from "lucide-react"
+import { CurrencySymbol } from "../components/CurrencySymbol"
 import { useQuery } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
@@ -122,7 +123,7 @@ export function InvoicesDialog({ open, onOpenChange }: { open: boolean; onOpenCh
                       </div>
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
-                      <span className="flex items-center gap-1 text-[12px] font-bold text-foreground">{(o.grandTotal ?? 0).toFixed(2)}<SaudiRiyal size={11} /></span>
+                      <span className="flex items-center gap-1 text-[12px] font-bold text-foreground">{(o.grandTotal ?? 0).toFixed(2)}<CurrencySymbol size={11} /></span>
                       <button type="button" title={t("pos2.printPrepTicket")} aria-label={t("pos2.printPrepTicket")} className={icon} onClick={() => printDocument(bonDoc(o, ticketOptions(settings, "pending", "print")))}><ChefHat size={13} /></button>
                       {!pending ? (
                         <button type="button" aria-label={t("pos2.print")} className={icon} disabled={printInvoice.isPending} onClick={() => printInvoice.mutate({ invoice: { id: o.id }, as: "print", paper })}><Printer size={13} /></button>

@@ -4,7 +4,7 @@ import { branchesApi } from "@/modules/branches/service"
 import { customersApi } from "@/modules/customers/service"
 import { suppliersApi } from "@/modules/suppliers/service"
 import { treasuriesApi } from "@/modules/treasuries/service"
-import type { Warehouse } from "@/modules/warehouses/types"
+import { warehousesApi } from "@/modules/warehouses/service"
 import type { EmployeeDto } from "./types"
 
 export const useCustomers = () => useQuery({ queryKey: ["customers", "refs"], queryFn: async () => (await customersApi.list()).filter((c) => c.isActive !== false) })
@@ -15,10 +15,10 @@ export const useEmployees = () => useQuery({
   queryFn: () => fetchAllPages<EmployeeDto>("/employees"),
   staleTime: 5 * 60_000,
 })
-/** `GET /Warehouse` is paged (`{ items, totalCount, pageNumber, pageSize }`), so every page is read. */
+/** `GET /Warehouse` returns a plain array. */
 export const useWarehouses = () => useQuery({
   queryKey: ["warehouses", "refs"],
-  queryFn: () => fetchAllPages<Warehouse>("/Warehouse"),
+  queryFn: () => warehousesApi.list(),
   staleTime: 5 * 60_000,
 })
 export const useBranches = () => useQuery({ queryKey: ["branches", "refs"], queryFn: branchesApi.list, staleTime: 5 * 60_000 })

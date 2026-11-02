@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react"
-import { Handbag, Plus, SaudiRiyal, Trash2 } from "lucide-react"
+import { Handbag, Plus, Trash2 } from "lucide-react"
+import { CurrencySymbol } from "../components/CurrencySymbol"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
@@ -93,7 +94,7 @@ export function Cart({ items, onContinueShopping }: { items: Product[] | undefin
                     <h3 className="text-base leading-7 font-bold text-foreground">{l.name}</h3>
                     {l.extras.length > 0 && <p className="mt-0.5 text-xs leading-5 text-muted-foreground">+ {l.extras.map((e) => e.name).join("، ")}</p>}
                     <div className="mt-auto flex flex-row-reverse items-center gap-1 font-bold text-foreground">
-                      <SaudiRiyal size={13} />
+                      <CurrencySymbol size={13} />
                       <span>{formatMoney(unit)}</span>
                     </div>
                   </div>

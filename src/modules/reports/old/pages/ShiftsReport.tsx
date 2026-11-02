@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { shiftsApi } from "@/modules/shifts/service"
 import type { Shift } from "@/modules/shifts/types"
 import { money } from "../output"
-import { PagedReport } from "../PagedReport"
+import { PagedReport, slice } from "../PagedReport"
 
 const time12 = (v?: string | null) => {
   if (!v) return "---"
@@ -31,11 +31,12 @@ export default function ShiftsReport() {
   }
   const status = (r: Shift) => (r.status === "Open" ? t("oldReports.shift_status_open") : t("oldReports.shift_status_closed"))
   return (
-    <PagedReport<Shift, Awaited<ReturnType<typeof shiftsApi.list>>>
+    <PagedReport<Shift, { rows: Shift[]; total: number }>
       id="shifts" title={t("oldReports.shifts_report")} icon={RefreshCw} dates={false}
       filterText={() => t("oldReports.all_shifts")}
-      read={(_, page, size) => shiftsApi.list({ page, pageSize: size })}
-      rowsOf={(r) => r.items} totalOf={(r) => r.totalCount} rowKey={(r) => r.id}
+      exportAll={false}
+      read={async (_, page, size) => { const all = (await shiftsApi.list()).data; return { rows: slice(all, page, size), total: all.length } }}
+      rowsOf={(r) => r.rows} totalOf={(r) => r.total} rowKey={(r) => r.id}
       cards={() => []}
       columns={[
         { id: "id", header: t("oldReports.shift_id"), cell: (r) => <span className="font-bold">{r.id}</span> },

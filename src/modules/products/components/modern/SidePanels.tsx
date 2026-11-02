@@ -8,7 +8,8 @@ import { FieldGroup } from "@/components/ui/field"
 import { FormInput, FormSelect, FormSwitch } from "@/components/form/FormFields"
 import { SectionCard } from "@/components/SectionCard"
 import { formatMoney } from "@/lib/format"
-import { CURRENCY, STATIONS, useAppSettings } from "@/modules/settings"
+import { usePrinterOptions } from "@/shared/printers/usePrinters"
+import { CurrencySymbol, useAppSettings } from "@/modules/settings"
 import { useTaxes } from "@/modules/taxes/service"
 import { priceBreakdown } from "../../pricing"
 import { kindRules, type ProductForm } from "../../schema"
@@ -18,7 +19,6 @@ export function PriceSummary() {
   const { control } = useFormContext<ProductForm>()
   const [price, taxId, calc, cost] = useWatch({ control, name: ["sellingPrice", "taxId", "taxCalculation", "costPrice"] })
   const taxSetting = useAppSettings().taxSetting?.taxSetting
-  const currency = CURRENCY
   const { data: taxes = [] } = useTaxes()
   const rate = taxSetting === "Exempt" ? 0 : taxes.find((x) => x.id === taxId)?.amount ?? 0
   const p = priceBreakdown(price || 0, rate, calc, cost || 0)
@@ -28,7 +28,7 @@ export function PriceSummary() {
       <dl className="flex flex-col gap-2.5 tabular-nums">
         <div className="flex justify-between"><dt className="text-muted-foreground">{t("products.beforeTax")}</dt><dd>{formatMoney(p.before)}</dd></div>
         <div className="flex justify-between"><dt className="text-muted-foreground">{t("products.taxAmount", { rate })}</dt><dd>{formatMoney(p.tax)}</dd></div>
-        <div className="flex justify-between border-t pt-2.5 text-base font-semibold"><dt>{t("products.finalPrice")}</dt><dd>{formatMoney(p.after)} <span className="text-xs font-normal text-muted-foreground">{currency}</span></dd></div>
+        <div className="flex justify-between border-t pt-2.5 text-base font-semibold"><dt>{t("products.finalPrice")}</dt><dd>{formatMoney(p.after)} <span className="text-xs font-normal text-muted-foreground"><CurrencySymbol /></span></dd></div>
         <div className="flex items-center justify-between pt-1">
           <dt className="text-muted-foreground">{t("products.margin")}</dt>
           <dd><Badge variant={p.margin < 10 ? "warning" : "success"}>{p.margin.toFixed(0)}%</Badge></dd>
@@ -98,7 +98,7 @@ export function OptionsPanel() {
   const { t } = useTranslation()
   const { control } = useFormContext<ProductForm>()
   const type = useWatch({ control, name: "type" })
-  const printers = STATIONS
+  const printers = usePrinterOptions(useWatch({ control, name: "printerName" }))
   const rules = kindRules(type)
 
   return (
@@ -108,7 +108,7 @@ export function OptionsPanel() {
         {rules.sells && <FormSwitch control={control} name="showInSalesScreen" label={t("products.showInSales")} />}
         {rules.sells && (
           <FormSelect control={control} name="printerName" label={t("products.printer")} allowEmpty={t("products.printerFromCategory")}
-            options={printers.map((p) => ({ value: p, label: p }))} />
+            options={printers} />
         )}
         {rules.sells && <FormInput control={control} name="calories" type="number" label={t("products.calories")} placeholder={t("common.optional")} />}
         <FormInput control={control} name="displayOrder" type="number" label={t("common.displayOrder")} />

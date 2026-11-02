@@ -19,6 +19,8 @@ export type InvoiceRollOptions = {
   /** Shows the unit under the item name. */
   showUnits: boolean
   methodLabel: (method: string) => string
+  /** Default currency symbol; SAR when not given. */
+  currency?: string
 }
 
 const clean = (v: unknown) => {
@@ -88,7 +90,7 @@ export function invoiceRollDoc(inv: PrintInvoice, o: InvoiceRollOptions): PrintD
   const when = Number.isNaN(d.getTime()) ? clean(inv.date) : `${d.toLocaleDateString("en-GB")} ${d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}`
 
   const info = (title: string, value: string) => (value ? `<div class="info-row"><div class="title">${esc(title)}</div><div class="value">${esc(value)}</div></div>` : "")
-  const total = (label: string, value: number) => `<div class="total-row"><div class="label">${esc(label)}</div><div class="value">${money(value)} <span class="unit">SAR</span></div></div>`
+  const total = (label: string, value: number) => `<div class="total-row"><div class="label">${esc(label)}</div><div class="value">${money(value)} <span class="unit">${esc(o.currency || "SAR")}</span></div></div>`
 
   const itemRows = lines.map(({ l, total: lt, unit }) => o.grid
     ? `<div class="item-row item-row-grid">
@@ -100,7 +102,7 @@ export function invoiceRollDoc(inv: PrintInvoice, o: InvoiceRollOptions): PrintD
 <div class="item-meta">
 <span class="meta-block"><span class="meta-label">كمية</span><span class="meta-val">${l.quantity}</span></span>
 <span class="meta-block"><span class="meta-label">سعر</span><span class="meta-val">${money(unit)}</span></span>
-<span class="meta-block"><span class="meta-label">اجمالي</span><span class="meta-val">${money(lt)} <span class="sar-text">SAR</span></span></span>
+<span class="meta-block"><span class="meta-label">اجمالي</span><span class="meta-val">${money(lt)} <span class="sar-text">${esc(o.currency || "SAR")}</span></span></span>
 </div></div>`).join("")
 
   const t = inv.totals

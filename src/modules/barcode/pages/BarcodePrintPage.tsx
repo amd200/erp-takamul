@@ -9,7 +9,7 @@ import { ProductSearchPicker } from "@/modules/products/components/ProductSearch
 import type { Product } from "@/modules/products/types"
 import { PageHeader } from "@/components/PageHeader"
 import { SectionCard } from "@/components/SectionCard"
-import { CURRENCY } from "@/modules/settings"
+import { useCurrency } from "@/modules/settings"
 import { BarcodeLabel } from "../components/BarcodeLabel"
 
 const SIZES = ["50x30", "40x20", "a4"] as const
@@ -17,7 +17,7 @@ type Line = { productId: number; copies: number }
 
 export default function BarcodePrintPage() {
   const { t } = useTranslation()
-  const currency = CURRENCY
+  const currency = useCurrency()
   const [lines, setLines] = useState<Line[]>([])
   // The items picked so far; they come from the server search, so only these are ever loaded.
   const [picked, setPicked] = useState<Map<number, Product>>(new Map())

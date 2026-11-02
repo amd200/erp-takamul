@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { CURRENCY, useAppSettings } from "@/modules/settings"
+import { CurrencySymbol, useAppSettings } from "@/modules/settings"
 import { cn } from "@/lib/utils"
 import { usePayment, type PaymentProps } from "./usePayment"
 
@@ -16,7 +16,6 @@ const iconOf = (id: number) => (id === 1 ? CreditCard : id === 2 ? Banknote : Va
  */
 export function MethodsDialog(props: PaymentProps) {
   const { t } = useTranslation()
-  const currency = CURRENCY
   const { open, onOpenChange, pending, onConfirm } = props
   const p = usePayment(props)
   const busy = pending
@@ -34,7 +33,7 @@ export function MethodsDialog(props: PaymentProps) {
     on ? navy : "border-border bg-card text-foreground hover:border-primary/40 hover:bg-muted/40",
   )
   const field = (active: boolean) => cn("h-full min-h-14 w-full rounded-xl border bg-background px-4 pe-12 text-left text-lg font-black outline-none transition focus:ring-2", line, active && (beauty ? "focus:ring-primary/15" : "focus:ring-[#263e72]/15"))
-  const unit = <span className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">{currency}</span>
+  const unit = <span className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground"><CurrencySymbol /></span>
 
   return (
     <Dialog open={open} onOpenChange={(o) => !busy && onOpenChange(o)}>

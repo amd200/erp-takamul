@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { PageHeader } from "@/components/PageHeader"
-import { CURRENCY } from "@/modules/settings"
+import { CurrencySymbol } from "@/modules/settings"
 import { formatMoney } from "@/lib/format"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -79,7 +79,7 @@ export default function TreasuriesPage() {
         actions={can(P.treasuries.manage) ? <Button size="lg" onClick={() => { setEditing(null); setOpen(true) }}><Plus />{t("treasuries.add")}</Button> : undefined} />
       <div className="flex flex-col gap-1 rounded-xl border bg-card px-4 py-3 sm:w-72">
         <span className="text-xs text-muted-foreground">{t("treasuries.total")}</span>
-        <span className="text-xl font-bold tabular-nums">{formatMoney(total)} <span className="text-xs font-normal text-muted-foreground">{CURRENCY}</span></span>
+        <span className="text-xl font-bold tabular-nums">{formatMoney(total)} <span className="text-xs font-normal text-muted-foreground"><CurrencySymbol /></span></span>
       </div>
 
       {isLoading ? (

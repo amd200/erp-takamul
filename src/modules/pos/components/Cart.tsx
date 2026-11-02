@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import { CircleArrowRight, Handbag, Pause, Plus, SaudiRiyal, Trash2 } from "lucide-react"
+import { CircleArrowRight, Handbag, Pause, Plus, Trash2 } from "lucide-react"
+import { CurrencySymbol } from "./CurrencySymbol"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
@@ -210,7 +211,7 @@ export function Cart({ onPay, onHold, onSend, busy, onShift, categoryId = null }
           <div className="p-3">
             <div className="mb-3 text-sm font-bold text-foreground">{t("pos1.orderDiscount")}</div>
             <div className="mb-3 flex items-center gap-2">
-              <button type="button" onClick={() => setDiscKind("value")} className={cn("flex size-12 shrink-0 items-center justify-center rounded-xl border-2 text-base font-bold transition-all", discKind === "value" ? "border-primary bg-primary/10 text-primary" : "border-gray-200 bg-white text-gray-400")}><SaudiRiyal size={18} /></button>
+              <button type="button" onClick={() => setDiscKind("value")} className={cn("flex size-12 shrink-0 items-center justify-center rounded-xl border-2 text-base font-bold transition-all", discKind === "value" ? "border-primary bg-primary/10 text-primary" : "border-gray-200 bg-white text-gray-400")}><CurrencySymbol size={18} /></button>
               <button type="button" onClick={() => setDiscKind("percent")} className={cn("flex size-12 shrink-0 items-center justify-center rounded-xl border-2 text-base font-bold transition-all", discKind === "percent" ? "border-primary bg-primary/10 text-primary" : "border-gray-200 bg-white text-gray-400")}>%</button>
               <Input value={discInput} onChange={(e) => setDiscInput(e.target.value)} type="number" min="0" placeholder="0" className="h-12 flex-1 rounded-xl border border-gray-200 bg-white px-3 text-right text-sm font-semibold outline-none focus:border-primary/40" />
             </div>

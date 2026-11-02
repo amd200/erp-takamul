@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Pager } from "@/components/Pager"
 import { formatMoney, formatNumber } from "@/lib/format"
-import { CURRENCY } from "@/modules/settings"
+import { useCurrency, CurrencySymbol } from "@/modules/settings"
 import { useCustomers } from "@/modules/lookups/service"
 import { customerMovementApi, exportMovementExcel, movementTitle, printMovement, useCustomerMovement, type CustomerMovementItem } from "@/modules/reports/customerMovement"
 import { presetRange } from "@/modules/reports/components/ReportFilters"
@@ -25,7 +25,7 @@ export function CustomerMovementDialog({ open, onOpenChange, customerId, embedde
   /** Shown inside the optics customer-tools window instead of as its own popup. */
   embedded?: boolean }) {
   const { t } = useTranslation()
-  const currency = CURRENCY
+  const currency = useCurrency()
   const { data: customers = [] } = useCustomers()
   const [filters, setFilters] = useState<Filters>(() => initial(customerId))
   const [applied, setApplied] = useState<Filters | null>(null)
@@ -77,7 +77,7 @@ export function CustomerMovementDialog({ open, onOpenChange, customerId, embedde
           {stats.map((s) => (
             <div key={s.label} className="flex flex-col gap-1 rounded-xl border bg-card px-4 py-3">
               <span className="text-xs text-muted-foreground">{s.label}</span>
-              <span className="text-lg font-semibold tabular-nums">{formatMoney(s.value)}<span className="ms-1 text-xs font-normal text-muted-foreground">{currency}</span></span>
+              <span className="text-lg font-semibold tabular-nums">{formatMoney(s.value)}<span className="ms-1 text-xs font-normal text-muted-foreground"><CurrencySymbol /></span></span>
             </div>
           ))}
         </div>

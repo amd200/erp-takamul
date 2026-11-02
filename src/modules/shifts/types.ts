@@ -55,5 +55,5 @@ export type ShiftEmployee = { id: number; firstName: string }
 /** A point-of-sale device, as the server sends it. */
 export type ShiftDevice = { id: number; deviceName: string }
 
-export type ShiftListResponse = { items: Shift[]; totalCount: number; pageNumber: number; pageSize: number }
-export type ShiftQuery = { page: number; pageSize: number; searchTerm?: string; sortBy?: string; sortDescending?: boolean }
+/** The server sends every shift at once, wrapped as `{ success, message, data }` (no paging). */
+export type ShiftListResponse = { success: boolean; message: string; data: Shift[] }

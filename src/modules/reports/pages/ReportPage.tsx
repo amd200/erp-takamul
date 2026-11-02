@@ -10,7 +10,7 @@ import { PageHeader } from "@/components/PageHeader"
 import { formatMoney, formatNumber } from "@/lib/format"
 import { cn } from "@/lib/utils"
 import { RequirePermission } from "@/shared/permissions/RequirePermission"
-import { CURRENCY } from "@/modules/settings"
+import { CurrencySymbol } from "@/modules/settings"
 import { ReportFilters, presetRange, type Preset } from "../components/ReportFilters"
 import { ReportTable } from "../components/ReportTable"
 import { loadDataset } from "../dataset"
@@ -23,13 +23,12 @@ const TONE = { good: "text-success", warn: "text-warning", bad: "text-destructiv
 
 function StatTile({ s }: { s: Stat }) {
   const { t } = useTranslation()
-  const currency = CURRENCY
   const text = s.kind === "money" ? formatMoney(s.value) : s.kind === "percent" ? `${s.value.toFixed(1)}%` : formatNumber(s.value)
   return (
     <div className="flex flex-col gap-1 rounded-xl border bg-card px-4 py-3">
       <span className="text-xs text-muted-foreground">{t(`reports.k.${s.id}`)}</span>
       <span className={cn("text-lg font-semibold tabular-nums", s.tone && TONE[s.tone])}>
-        {text}{s.kind === "money" && <span className="ms-1 text-xs font-normal text-muted-foreground">{currency}</span>}
+        {text}{s.kind === "money" && <span className="ms-1 text-xs font-normal text-muted-foreground"><CurrencySymbol /></span>}
       </span>
     </div>
   )

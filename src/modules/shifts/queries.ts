@@ -1,14 +1,14 @@
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import i18n from "@/shared/i18n"
 import { errorToast } from "@/shared/api/crudQueries"
 import { refreshAccessToken } from "@/shared/http/client"
 import { shiftsApi } from "./service"
-import type { OpenShiftInput, ShiftQuery } from "./types"
+import type { OpenShiftInput } from "./types"
 
-export const shiftKeys = { all: ["shifts"] as const, list: ["shifts", "list"] as const, page: (q: ShiftQuery) => ["shifts", "list", q] as const, report: (id: number) => ["shifts", "report", id] as const }
+export const shiftKeys = { all: ["shifts"] as const, list: ["shifts", "list"] as const, report: (id: number) => ["shifts", "report", id] as const }
 
-export const useShifts = (q: ShiftQuery) => useQuery({ queryKey: shiftKeys.page(q), queryFn: () => shiftsApi.list(q), placeholderData: keepPreviousData })
+export const useShifts = () => useQuery({ queryKey: shiftKeys.list, queryFn: shiftsApi.list })
 export const useShiftReport = (id: number | undefined) => useQuery({ queryKey: shiftKeys.report(id ?? 0), queryFn: () => shiftsApi.report(id!), enabled: id != null })
 
 export const useShiftBranches = (enabled: boolean) => useQuery({ queryKey: ["refs", "shift-branches"], queryFn: shiftsApi.branches, enabled, staleTime: 5 * 60_000 })
