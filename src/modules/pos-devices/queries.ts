@@ -1,15 +1,36 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import i18n from "@/shared/i18n"
-import { createCrudQueries, errorToast, type ListSort } from "@/shared/api/crudQueries"
+import { errorToast, type ListSort } from "@/shared/api/errors"
 import { devicesApi } from "./service"
 
-export const {
-  keys: deviceKeys,
-  useList: useDevices,
-  useSave: useSaveDevice,
-  useDelete: useDeleteDevice,
-} = createCrudQueries("pos-devices", devicesApi)
+export const deviceKeys = { all: ["pos-devices"] as const }
+
+export const useDevices = (sort?: ListSort) => useQuery({ queryKey: sort?.SortBy ? ["pos-devices", "list", sort] : ["pos-devices", "list"], queryFn: () => devicesApi.list(sort), placeholderData: keepPreviousData })
+
+export const useSaveDevice = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, data }: { id?: number; data: Parameters<typeof devicesApi.create>[0] }) => (id ? devicesApi.update(id, data) : devicesApi.create(data)),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["pos-devices"] })
+      toast.success(i18n.t("common.saved"))
+    },
+    onError: (e) => errorToast(e, "common.saveFailed"),
+  })
+}
+
+export const useDeleteDevice = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) => devicesApi.remove(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["pos-devices"] })
+      toast.success(i18n.t("common.deleted"))
+    },
+    onError: (e) => errorToast(e, "common.deleteFailed"),
+  })
+}
 
 export const useCertificates = (sort?: ListSort) => useQuery({ queryKey: sort?.SortBy ? ["pos-devices", "certificates", sort] : ["pos-devices", "certificates"], queryFn: () => devicesApi.certificates(sort), placeholderData: keepPreviousData })
 

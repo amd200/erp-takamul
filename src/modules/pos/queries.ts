@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import i18n from "@/shared/i18n"
-import { errorToast } from "@/shared/api/crudQueries"
+import { errorToast } from "@/shared/api/errors"
 import { ApiError } from "@/shared/http/ApiError"
 import { useAuthStore } from "@/shared/auth/authStore"
 import { currentShift } from "@/modules/shifts/service"
@@ -40,6 +40,8 @@ export type SaleRequest = Omit<SaleInput, "orderDate" | "holding"> & { holding?:
  * Sends the cart. The cart locks while the request runs; a clear refusal unlocks it, an unclear failure
  * keeps it locked with the same key so pressing pay again cannot save the sale twice.
  */
+export const isSuperAdmin = () => useAuthStore.getState().session?.role === "SuperAdmin"
+
 export function useSaveSale({ message }: { message?: string } = {}) {
   const qc = useQueryClient()
   return useMutation<SaleResult, unknown, { sale: SaleRequest }>({

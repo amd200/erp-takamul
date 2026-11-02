@@ -1,5 +1,5 @@
 import { fetchAllPages, type PagedResult } from "@/shared/http/paged"
-import type { ListSort } from "@/shared/api/crudQueries"
+import type { ListSort } from "@/shared/api/errors"
 import { http } from "@/shared/http/request"
 import type { Addition, AdditionInput, AdditionQuery } from "./types"
 

@@ -1,7 +1,7 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import i18n from "@/shared/i18n"
-import { errorToast, type ListSort } from "@/shared/api/crudQueries"
+import { errorToast, type ListSort } from "@/shared/api/errors"
 import { warehousesApi } from "./service"
 import type { WarehouseInput } from "./types"
 

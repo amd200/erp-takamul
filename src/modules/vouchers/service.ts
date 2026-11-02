@@ -1,4 +1,4 @@
-import type { ListSort } from "@/shared/api/crudQueries"
+import type { ListSort } from "@/shared/api/errors"
 import { http } from "@/shared/http/request"
 import { idempotencyHeaders, pinnedTo, retryWhileInProgress } from "@/shared/http/idempotency"
 import type { VoucherKind, Voucher, VoucherInput, TransactionDto } from "./types"

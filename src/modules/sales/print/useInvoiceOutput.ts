@@ -1,7 +1,7 @@
 import QRCode from "qrcode"
 import { useMutation, useQueryClient, type QueryClient } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
-import { errorToast } from "@/shared/api/crudQueries"
+import { errorToast } from "@/shared/api/errors"
 import { downloadPdf, printDocument } from "@/shared/print"
 import { useSession } from "@/shared/session/session"
 import { branchKeys } from "@/modules/branches/queries"

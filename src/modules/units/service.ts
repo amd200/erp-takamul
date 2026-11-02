@@ -1,5 +1,5 @@
 import { useAuthStore } from "@/shared/auth/authStore"
-import type { ListSort } from "@/shared/api/crudQueries"
+import type { ListSort } from "@/shared/api/errors"
 import { http } from "@/shared/http/request"
 import { fetchAllPages } from "@/shared/http/paged"
 import type { Unit, UnitInput } from "./types"

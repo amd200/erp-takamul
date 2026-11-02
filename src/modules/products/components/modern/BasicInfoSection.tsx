@@ -25,7 +25,7 @@ export function BasicInfoSection() {
             end={<Button type="button" variant="outline" onClick={() => setValue("barcode", randomBarcode(), { shouldValidate: true })}>{t("products.generate")}</Button>} />
         )}
         <FormSelect control={control} name="categoryId" numeric label={t("products.category")} required placeholder={t("products.pickCategory")}
-          options={categories.filter((c) => c.isActive === 1).map((c) => ({ value: String(c.id), label: c.parentCategoryId ? `— ${c.categoryNameAr}` : c.categoryNameAr }))} />
+          options={categories.map((c) => ({ value: String(c.id), label: c.parentCategoryId ? `— ${c.categoryNameAr}` : c.categoryNameAr }))} />
         <FormTextarea control={control} name="description" label={t("common.description")} placeholder={t("common.optional")} className="sm:col-span-2" />
       </div>
     </SectionCard>

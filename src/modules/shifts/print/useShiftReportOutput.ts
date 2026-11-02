@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { errorToast } from "@/shared/api/crudQueries"
+import { errorToast } from "@/shared/api/errors"
 import { downloadPdf, printDocument } from "@/shared/print"
 import { useAppSettings } from "@/modules/settings"
 import { shiftKeys } from "../queries"

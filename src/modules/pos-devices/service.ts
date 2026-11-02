@@ -1,5 +1,5 @@
 import { ApiError } from "@/shared/http/ApiError"
-import type { ListSort } from "@/shared/api/crudQueries"
+import type { ListSort } from "@/shared/api/errors"
 import { http } from "@/shared/http/request"
 import type { CertificateSummary, DeviceCertificate, DeviceInput, PosDevice, Registration, Reply } from "./types"
 

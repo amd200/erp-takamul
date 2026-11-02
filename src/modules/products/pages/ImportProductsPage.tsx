@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { PageHeader } from "@/components/PageHeader"
 import { SectionCard } from "@/components/SectionCard"
 import { formatNumber } from "@/lib/format"
-import { errorToast } from "@/shared/api/crudQueries"
+import { errorToast } from "@/shared/api/errors"
 import { ApiError } from "@/shared/http/ApiError"
 import { productsApi } from "../service"
 import type { ImportResultDto } from "../dto"

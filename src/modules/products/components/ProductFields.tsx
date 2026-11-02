@@ -40,7 +40,7 @@ export function CategoryField() {
   const { data: categories = [] } = useCategories()
   return (
     <FormSelect control={control} name="categoryId" numeric required label={t("productForm.category")} placeholder={t("productForm.pickCategory")}
-      options={categories.filter((c) => c.isActive === 1).map((c) => ({ value: String(c.id), label: c.parentCategoryId ? `— ${c.categoryNameAr}` : c.categoryNameAr }))} />
+      options={categories.map((c) => ({ value: String(c.id), label: c.parentCategoryId ? `— ${c.categoryNameAr}` : c.categoryNameAr }))} />
   )
 }
 

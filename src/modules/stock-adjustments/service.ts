@@ -1,5 +1,5 @@
 import { fetchAllPages } from "@/shared/http/paged"
-import type { ListSort } from "@/shared/api/crudQueries"
+import type { ListSort } from "@/shared/api/errors"
 import { http } from "@/shared/http/request"
 import { productsApi } from "@/modules/products/service"
 import type { AdjustmentDto, AdjustmentInput } from "./types"

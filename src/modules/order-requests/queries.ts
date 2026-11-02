@@ -1,7 +1,7 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import i18n from "@/shared/i18n"
-import { errorToast } from "@/shared/api/crudQueries"
+import { errorToast } from "@/shared/api/errors"
 import type { PosPayment } from "@/modules/pos/types"
 import { orderRequestsApi } from "./service"
 

@@ -1,4 +1,4 @@
-import type { ListSort } from "@/shared/api/crudQueries"
+import type { ListSort } from "@/shared/api/errors"
 import { http } from "@/shared/http/request"
 import { currentBranchId } from "@/modules/partners/mappers"
 import type { Warehouse, WarehouseInput } from "./types"

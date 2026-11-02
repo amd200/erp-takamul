@@ -1,12 +1,35 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import i18n from "@/shared/i18n"
-import { createCrudQueries, errorToast, type ListSort } from "@/shared/api/crudQueries"
+import { errorToast, type ListSort } from "@/shared/api/errors"
 import { expenseItemsApi, expensesApi } from "./service"
 import type { ExpenseInput } from "./types"
 
-export const { keys: expenseItemKeys, useList: useExpenseItems, useSave: useSaveExpenseItem, useDelete: useDeleteExpenseItem } =
-  createCrudQueries("expense-items", expenseItemsApi)
+export const useExpenseItems = (sort?: ListSort) => useQuery({ queryKey: sort?.SortBy ? ["expense-items", "list", sort] : ["expense-items", "list"], queryFn: () => expenseItemsApi.list(sort), placeholderData: keepPreviousData })
+
+export const useSaveExpenseItem = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, data }: { id?: number; data: Parameters<typeof expenseItemsApi.create>[0] }) => (id ? expenseItemsApi.update(id, data) : expenseItemsApi.create(data)),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["expense-items"] })
+      toast.success(i18n.t("common.saved"))
+    },
+    onError: (e) => errorToast(e, "common.saveFailed"),
+  })
+}
+
+export const useDeleteExpenseItem = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) => expenseItemsApi.remove(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["expense-items"] })
+      toast.success(i18n.t("common.deleted"))
+    },
+    onError: (e) => errorToast(e, "common.deleteFailed"),
+  })
+}
 
 export const expenseKeys = { all: ["expenses"] as const, list: ["expenses", "list"] as const }
 

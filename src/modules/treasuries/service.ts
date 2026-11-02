@@ -1,4 +1,4 @@
-import type { ListSort } from "@/shared/api/crudQueries"
+import type { ListSort } from "@/shared/api/errors"
 import { http } from "@/shared/http/request"
 import { idempotencyHeaders, retryWhileInProgress } from "@/shared/http/idempotency"
 import { currentBranchId } from "@/modules/partners/mappers"

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useState } from "react"
 import { CornerDownLeft, FolderTree, Plus } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
@@ -11,25 +11,22 @@ import { RowActions } from "@/components/RowActions"
 import { Can, useCan } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
 import { CategoryDialog } from "../components/CategoryDialog"
-import { useCategoryPage, useDeleteCategory } from "../queries"
+import { useCategories, useDeleteCategory } from "../queries"
 import { SectionCard } from "@/components/SectionCard"
 import type { Category } from "../types"
 
 export default function CategoriesPage() {
   const { t } = useTranslation()
   const can = useCan()
-  const [page, setPage] = useState(0)
-  const [search, setSearch] = useState("")
-  const { sort, sortBy, sortDescending } = useTableSort(() => setPage(0))
-  const { data, isLoading, isFetching } = useCategoryPage({ page: page + 1, pageSize: 20, searchTerm: search, sortBy, sortDescending })
-  const onSearch = useCallback((value: string) => { setSearch((previous) => { if (previous !== value) setPage(0); return value }) }, [])
+  const { sort, sortBy, sortDescending } = useTableSort()
+  const { data, isLoading } = useCategories(sortBy ? { SortBy: sortBy, SortDescending: sortDescending } : undefined)
   const del = useDeleteCategory()
   const [editing, setEditing] = useState<Category | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [toDelete, setToDelete] = useState<Category | null>(null)
 
   // Keep every returned category, including children whose parent is on another page.
-  const rows = data?.items ?? []
+  const rows = data ?? []
   const open = (c: Category | null) => { setEditing(c); setDialogOpen(true) }
 
   const columns: Column<Category>[] = [
@@ -46,7 +43,7 @@ export default function CategoriesPage() {
         actions={<Can perm={P.categories.manage}><Button size="lg" onClick={() => open(null)}><Plus />{t("categories.add")}</Button></Can>} />
       <SectionCard>
           <DataTable rows={rows} loading={isLoading} columns={columns} rowKey={(c) => c.id} sort={sort}
-            server={{ total: data?.totalCount ?? 0, page, pageSize: data?.pageSize ?? 20, onPage: setPage, onSearch, fetching: isFetching }} searchPlaceholder={t("categories.search")}
+            searchText={(c) => `${c.categoryNameAr} ${c.categoryNameEn ?? ""} ${c.description ?? ""}`} searchPlaceholder={t("categories.search")}
             empty={<EmptyState icon={<FolderTree />} title={t("categories.empty")} hint={t("categories.emptyHint")} />} />
         </SectionCard>
       <CategoryDialog open={dialogOpen} onOpenChange={setDialogOpen} category={editing} />

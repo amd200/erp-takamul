@@ -1,4 +1,4 @@
-import type { ListSort } from "@/shared/api/crudQueries"
+import type { ListSort } from "@/shared/api/errors"
 import { http } from "@/shared/http/request"
 import type { CategoryDiscount, Currency, DeliveryCompany, DiningTable, ExemptionReason, PricingSystem, Tax } from "./types"
 
@@ -22,7 +22,7 @@ async function all<T>(url: string, paged: boolean, sort?: ListSort): Promise<T[]
   return rows
 }
 
-/** list/get/create/update/remove for a plain endpoint, the shape `createCrudQueries` expects. */
+/** list/get/create/update/remove for a plain endpoint, list/get/create/update/remove as the queries use them. */
 function crud<T extends { id: number }, In>(url: string, paged = false) {
   const list = (sort?: ListSort) => all<T>(url, paged, sort)
   return {

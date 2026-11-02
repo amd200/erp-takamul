@@ -1,8 +1,8 @@
 import { useAuthStore } from "@/shared/auth/authStore"
-import type { ListSort } from "@/shared/api/crudQueries"
+import type { ListSort } from "@/shared/api/errors"
 import { http } from "@/shared/http/request"
-import { fetchAllPages, toFormData, type PagedResult } from "@/shared/http/paged"
-import type { Category, CategoryInput, CategoryQuery } from "./types"
+import { toFormData } from "@/shared/http/paged"
+import type { Category, CategoryInput } from "./types"
 
 const form = (c: CategoryInput, extra: Record<string, unknown> = {}) => toFormData({
   ...extra, CategoryNameAr: c.categoryNameAr, CategoryNameEn: c.categoryNameEn, Description: c.description, ParentCategoryId: c.parentCategoryId, DisplayOrder: c.displayOrder,
@@ -13,9 +13,8 @@ const applyPrinter = (categoryId: number, printerName: string | null) =>
   printerName ? http("/Products/update-category-printer", { method: "PUT", data: { categoryId, printerName } }) : Promise.resolve()
 
 export const categoriesApi = {
-  page: (q: CategoryQuery) =>
-    http<PagedResult<Category>>("/ProductCategories", { params: { Page: q.page, PageSize: q.pageSize, SearchTerm: q.searchTerm || undefined, SortBy: q.sortBy, SortDescending: q.sortBy ? q.sortDescending : undefined } }),
-  list: (sort?: ListSort) => fetchAllPages<Category>("/ProductCategories", { params: { ...sort } }),
+  /** The endpoint answers with a plain array (not paged). */
+  list: (sort?: ListSort) => http<Category[]>("/ProductCategories", { params: { ...sort } }),
   get: async (id: number) => {
     const all = await categoriesApi.list()
     const c = all.find((x) => x.id === id)

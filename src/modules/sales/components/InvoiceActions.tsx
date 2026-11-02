@@ -6,7 +6,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { useCan } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
 import { useAppSettings } from "@/modules/settings"
-import { errorToast } from "@/shared/api/crudQueries"
+import { errorToast } from "@/shared/api/errors"
 import { invoicesApi } from "../service"
 import { useSendInvoice } from "../queries"
 import { useInvoiceOutput } from "../print/useInvoiceOutput"
