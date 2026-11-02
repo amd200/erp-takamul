@@ -75,7 +75,7 @@ export function printMovement(o: { title: string; filters: string; cards: { labe
   const body = o.items.map((r, i) => `<tr><td>${i + 1}</td><td>${esc(day(r.date))}</td><td>${esc(r.invoiceNumber)}</td><td>${esc(r.productName)}</td><td>${r.quantity}</td><td>${formatMoney(r.salesTotal)}</td></tr>`).join("")
   const cards = o.cards.map((c) => `<div class="k"><div class="s">${esc(c.label)}</div><b>${esc(c.value)}</b></div>`).join("")
   const doc = `<!doctype html><html dir="${i18n.dir()}"><head><meta charset="utf-8"><title>${esc(o.title)}</title><style>
-@page{margin:12mm}*{box-sizing:border-box}body{margin:0;font:12px/1.5 Cairo,Tahoma,sans-serif;color:#000}h1{font-size:18px;text-align:center;margin:0 0 4px}
+@page{margin:0}*{box-sizing:border-box}body{margin:0;padding:12mm;font:12px/1.5 Cairo,Tahoma,sans-serif;color:#000}h1{font-size:18px;text-align:center;margin:0 0 4px}
 .s{font-size:11px;color:#555}.f{text-align:center;margin-bottom:10px}.g{display:flex;gap:10px;margin-bottom:12px}.k{flex:1;border:1px solid #ccc;border-radius:6px;padding:8px;text-align:center}
 table{width:100%;border-collapse:collapse}th,td{border:1px solid #bbb;padding:4px 6px;text-align:start}th{background:#f1f1f1}</style></head><body>
 <h1>${esc(o.title)}</h1><div class="f s">${esc(o.filters)}</div><div class="g">${cards}</div><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></body></html>`

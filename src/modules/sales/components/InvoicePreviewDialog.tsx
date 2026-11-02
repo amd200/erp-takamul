@@ -9,6 +9,9 @@ import type { SalesOrderDto } from "../types"
 
 type Paper = "a4" | "roll"
 
+/** Preview only: the page is as tall as its content (the A4 templates force a full-sheet height for printing). */
+const FIT = "<style>html,body,.invoice-page{min-height:0!important;height:auto!important}</style>"
+
 /** On-screen preview of an invoice with the same template the print uses (the A4 design chosen in settings, or the receipt roll). */
 export function InvoicePreviewDialog({ invoice, onOpenChange }: { invoice: SalesOrderDto | null; onOpenChange: (o: boolean) => void }) {
   const { t } = useTranslation()
@@ -39,9 +42,9 @@ export function InvoicePreviewDialog({ invoice, onOpenChange }: { invoice: Sales
           {doc ? (
             <iframe
               title={t("sales.previewTitle", { number: invoice?.orderNumber })}
-              srcDoc={renderDocument(doc)}
+              srcDoc={renderDocument(doc).replace("</head>", `${FIT}</head>`)}
               scrolling="no"
-              onLoad={(e) => { const d = e.currentTarget.contentDocument; if (d) { setHeight(d.documentElement.scrollHeight); void d.fonts.ready.then(() => setHeight(d.documentElement.scrollHeight)) } }}
+              onLoad={(e) => { const d = e.currentTarget.contentDocument; if (d) { setHeight(d.documentElement.offsetHeight); void d.fonts.ready.then(() => setHeight(d.documentElement.offsetHeight)) } }}
               style={{ width: PAPERS[doc.paper].px, height, border: 0, background: "#fff", display: "block", margin: "0 auto" }}
             />
           ) : (

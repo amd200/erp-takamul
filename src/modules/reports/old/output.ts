@@ -4,7 +4,7 @@ import type { SummaryCard } from "./ReportShell"
 export type OutputColumn<T> = { header: string; value: (row: T, index: number) => string | number }
 export type ReportOutput<T> = { title: string; filters: string; cards: SummaryCard[]; columns: OutputColumn<T>[]; rows: T[] }
 
-const CSS = `body{padding:8mm 8mm}h1{font-size:16px;text-align:center;margin:0 0 6px}.f{font-size:10px;text-align:center;color:#444;margin-bottom:10px}
+const CSS = `h1{font-size:16px;text-align:center;margin:0 0 6px}.f{font-size:10px;text-align:center;color:#444;margin-bottom:10px}
 .cards{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}.card{flex:1 1 22%;border:1px solid #bbb;border-radius:6px;padding:6px 8px}.card b{display:block;font-size:13px}.card span{font-size:10px;color:#444}
 table{width:100%;border-collapse:collapse;font-size:10px}th,td{border:1px solid #999;padding:4px 6px;text-align:center}th{background:#eee}`
 

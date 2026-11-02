@@ -21,7 +21,7 @@ const money = (n: number) => (Number.isFinite(n) ? n : 0).toLocaleString("en-US"
 const CSS = `
 *{margin:0;padding:0;box-sizing:border-box}
 body{width:210mm;font-family:'Cairo',Arial,sans-serif;background:#fff;color:#000;font-size:12px;line-height:1.4}
-.voucher-page{padding:5mm}
+.voucher-page{padding:0}
 .voucher-page.many{display:grid;grid-template-columns:minmax(0,1fr);gap:4mm}
 .voucher-copy{break-inside:avoid}
 .voucher-border{border:1px solid #000;padding:10mm;width:100%;background:#fff}

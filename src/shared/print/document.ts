@@ -3,7 +3,7 @@ import i18n from "@/shared/i18n"
 /** Paper the document is laid out for. Print and PDF use the same width, so both look alike. */
 export const PAPERS = {
   roll80: { width: "80mm", px: 302, padding: "3mm" },
-  a4: { width: "210mm", px: 794, padding: "0" },
+  a4: { width: "210mm", px: 794, padding: "8mm" },
   a5: { width: "148mm", px: 559, padding: "0" },
 } as const
 export type Paper = keyof typeof PAPERS
@@ -31,6 +31,7 @@ export const esc = (v: unknown) => String(v ?? "").replace(/[&<>"']/g, (c) => en
 // `crossorigin` lets the PDF capture read the font file and embed it; without it the capture falls back to Arial.
 const fontUrl = (font: string) => `https://fonts.googleapis.com/css2?family=${font}:wght@400;500;600;700&display=swap`
 
+// Every sheet keeps its own inner padding (the @page margin is 0 and the browser ignores it when margins are set to None), so content never touches the paper edge.
 // Shared look for every printout: Cairo, black on white, a few helpers (.row, .muted, hr, table).
 const base = (paper: Paper, font: string, anySheet = false) => {
   const p = PAPERS[paper]

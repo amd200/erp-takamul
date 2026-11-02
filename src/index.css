@@ -366,3 +366,9 @@ html.beauty[data-theme] {
 input[type="number"] { appearance: textfield; -moz-appearance: textfield; }
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+/* Printing straight from a page: keep the content off the paper edge even when the browser margins are None. */
+@media print {
+  @page { margin: 0; }
+  body { padding: 10mm; }
+}
