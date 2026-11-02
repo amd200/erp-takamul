@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query"
 import { Link } from "react-router-dom"
-import { DollarSign, Download, FileDown, FileSpreadsheet, FileText, Mail, MessageCircle, MoreHorizontal, PlusCircle, Printer, RefreshCw, RotateCcw, ScrollText, Warehouse, FileCheck } from "lucide-react"
+import { DollarSign, Download, Eye, FileDown, FileSpreadsheet, FileText, Mail, MessageCircle, MoreHorizontal, PlusCircle, Printer, RefreshCw, RotateCcw, ScrollText, Warehouse, FileCheck } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useCan } from "@/shared/permissions/usePermission"
@@ -16,7 +16,7 @@ type FileKind = "xml" | "xlsx" | "pdfa3"
 const fetchFile = (kind: FileKind, id: number) => (kind === "xml" ? invoicesApi.downloadXml(id) : kind === "xlsx" ? invoicesApi.downloadExcel(id) : invoicesApi.downloadPdfA3(id))
 
 /** The invoice row menu, item for item and in the same order and conditions as the current system (A4 and POS invoice lists). */
-export function InvoiceActions({ invoice, channel, onPayments, onNotes, onZatcaResponse }: { invoice: SalesOrderDto; channel: Channel; onPayments: () => void; onNotes: () => void; onZatcaResponse: () => void }) {
+export function InvoiceActions({ invoice, channel, onPayments, onNotes, onZatcaResponse, onPreview }: { invoice: SalesOrderDto; channel: Channel; onPayments: () => void; onNotes: () => void; onZatcaResponse: () => void; onPreview: () => void }) {
   const { t } = useTranslation()
   const can = useCan()
   const settings = useAppSettings()
@@ -49,6 +49,7 @@ export function InvoiceActions({ invoice, channel, onPayments, onNotes, onZatcaR
         <button type="button" aria-label={t("common.actions")} className="btn-minimal-action btn-compact-action"><MoreHorizontal size={18} /></button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52 p-1">
+        <DropdownMenuItem className={item} onSelect={onPreview}><Eye size={14} />{t("sales.menu.preview")}</DropdownMenuItem>
         {ops?.allowPrintInvoiceA4 && <DropdownMenuItem className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "print" })}><FileText size={14} />{t("sales.menu.printA4")}</DropdownMenuItem>}
         {optics && <DropdownMenuItem className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "print", paper: "a5" })}><FileText size={14} />{t("sales.menu.printA5")}</DropdownMenuItem>}
         {ops?.allowPrintInvoiceRoll && <DropdownMenuItem className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "print", paper: "roll" })}><Printer size={14} />{t("sales.menu.printRoll")}</DropdownMenuItem>}

@@ -21,7 +21,7 @@ import { invoiceA5Doc } from "./invoiceA5Doc"
 import { invoiceRollDoc } from "./invoiceRollDoc"
 import { claimVoucherDoc, stockVoucherDoc } from "./voucherDocs"
 
-type Output = "print" | "pdf"
+type Output = "print" | "pdf" | "preview"
 
 /** Barcodes of the products on the invoice: only those items are read (by id, cached), not the whole catalog. */
 async function barcodesOf(qc: QueryClient, invoice: SalesOrderDto) {
@@ -45,7 +45,7 @@ const printInvoiceOf = (o: SalesOrderDto): PrintInvoice => ({
   paid: o.totalPaid ?? 0,
 })
 
-/** Prints an invoice on A4 or saves it as PDF. The invoice, branch and customer details it needs are fetched first. */
+/** Prints an invoice on A4 or saves it as PDF (or, with `as: "preview"`, returns the document to show on screen). The invoice, branch and customer details it needs are fetched first. */
 export function useInvoiceOutput() {
   const qc = useQueryClient()
   const { t } = useTranslation()
@@ -78,9 +78,11 @@ export function useInvoiceOutput() {
         : paper === "roll"
         ? invoiceRollDoc(doc0, { branch: b, customer: c, isExempt, showPaymentMethods, showPaidAndRemaining, showBranchName, grid: settings.printRollTab?.invoiceDesign3 === true, showUnits: settings.itemsTab?.enablePieceAndCartonSystem === true, methodLabel })
         : invoiceA4Doc(doc0, { branch: b, customer: c, isExempt, qrImage, showPaymentMethods, showPaidAndRemaining, showBranchName, showHeaderAndFooter: settings.printA4Tab?.showHeaderAndFooterInPrint !== false, blue: settings.printA4Tab?.a4InvoiceType === "Design2", design: settings.printA4Tab?.a4InvoiceType === "Design3" || settings.printA4Tab?.a4InvoiceType === "Design4" ? settings.printA4Tab?.a4InvoiceType as "Design3" | "Design4" : undefined, methodLabel })
+      // Preview: hand the finished document back; the caller shows it on screen instead of printing.
+      if (as === "preview") return doc
       if (as === "pdf") await downloadPdf(doc, doc0.number)
       else await printDocument(doc)
     },
-    onError: (e, { as }) => errorToast(e, as === "pdf" ? "sales.pdfFailed" : "sales.printFailed"),
+    onError: (e, { as }) => errorToast(e, as === "pdf" ? "sales.pdfFailed" : as === "preview" ? "sales.previewFailed" : "sales.printFailed"),
   })
 }

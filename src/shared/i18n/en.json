@@ -1192,8 +1192,13 @@
       "zatcaExcel": "Download ZATCA Response (Excel)",
       "zatcaResponse": "Zatca Response",
       "stockVoucher": "Stock Bond",
-      "claimVoucher": "Claim Bond"
-    }
+      "claimVoucher": "Claim Bond",
+      "preview": "Preview"
+    },
+    "previewTitle": "Invoice {{number}} preview",
+    "previewA4": "A4",
+    "previewRoll": "Roll",
+    "previewFailed": "Could not preview the invoice"
   },
   "users": {
     "title": "Users",

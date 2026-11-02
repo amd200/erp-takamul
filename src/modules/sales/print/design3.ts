@@ -124,7 +124,7 @@ export const renderDesign3A4 = (input: Design3Input): string => {
 <meta charset="UTF-8"/>
 <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700&display=swap" rel="stylesheet" crossorigin="anonymous"/>
 <style>
-  @page { size: A4 portrait; margin: 10mm 12mm; }
+  @page { size: A4 portrait; margin: 0; }
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Alexandria', Arial, sans-serif; font-weight: 500; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body { background: #fff; color: #111; font-size: 10px; line-height: 1.4; padding: 10mm 12mm; }
   .header-grid { display: grid; grid-template-columns: 2fr 1fr 2fr; gap: 12px; margin-bottom: 5px; }
@@ -183,7 +183,7 @@ export const renderDesign3A4 = (input: Design3Input): string => {
   .qr-box img { width: 100%; aspect-ratio: 1; object-fit: contain; }
   .qr-box div { font-size: 8px; font-weight: 700; }
   .notes-box { background: #fafafa; padding: 8px 12px; border: 1.5px solid #000; margin-top: 10px; font-size: 11px; text-align: center; break-inside: avoid; }
-  @media print { body { padding: 0; } * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }
+  @media print { * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }
 </style>
 </head>
 <body>

@@ -26,7 +26,7 @@ const { data: customers = [] } = useCustomers()
     <div className="flex items-center gap-1.5">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button type="button" variant="outline" disabled={disabled} className="h-11 flex-1 justify-between gap-2 bg-background font-normal">
+          <Button type="button" variant="outline" disabled={disabled} className="h-11 flex-1 justify-between gap-2 bg-background font-normal classic:hover:border-border! classic:hover:bg-background! classic:aria-expanded:border-border! classic:aria-expanded:bg-background! classic:focus-visible:border-border! classic:focus-visible:bg-background! classic:focus-visible:ring-0!">
             <span className="flex min-w-0 items-center gap-2"><User className="shrink-0 text-muted-foreground" /><span className={cn("truncate", !customerId && "text-muted-foreground")}>{customerId ? name : t("pos.pickCustomer")}</span></span>
             <ChevronDown className="shrink-0 text-faint" />
           </Button>

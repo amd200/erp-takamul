@@ -82,7 +82,7 @@ body{background:#fff;width:210mm;min-height:297mm;color:#1a1a1a;font-size:10px;l
 .iban-value{direction:ltr;font-size:13px;font-weight:700;letter-spacing:.35px}
 .blue .company-title,.blue .doc-type-item:nth-child(2),.blue .section-header{background:#cdebf7}
 .blue .company-title{flex-direction:column}
-@media print{@page{size:A4 portrait;margin:10mm 15mm}body{min-height:0;padding:0;width:auto}}
+@media print{body{min-height:0;width:auto}}
 `
 
 /** The A4 sales invoice, laid out like the one the Takamul web app prints. */
