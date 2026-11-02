@@ -64,7 +64,7 @@ export type PaymentDto = { id: number; amount: number; paymentMethod?: string | 
 export type SalesOrderDto = {
   id: number; warehouseId?: number | null; orderNumber?: string | null; orderDate?: string | null; customerId?: number | null; customerName?: string | null; warehouseName?: string | null
   employeeName?: string | null; createdBy?: string | null; orderStatus?: string | null; subTotal?: number | null; taxAmount?: number | null; discountAmount?: number | null
-  grandTotal?: number | null; paymentStatus?: string | null; zatcaStatus?: string | null; zatcaResponse?: string | null; notes?: string | null
+  grandTotal?: number | null; paymentStatus?: string | null; zatcaStatus?: string | null; zatcaResponse?: string | null; zatcaQRCode?: string | null; notes?: string | null
   items?: ItemDto[] | null; payments?: PaymentDto[] | null; totalPaid?: number | null
 }
 /** A sales return, as /sales-returns sends it. */

@@ -37,6 +37,17 @@ const stmt = (s: { rows: api.StatementRow[]; first: api.Statement } | undefined)
 }
 
 export const GUIDE: Record<string, (f: Filters) => Promise<ReportResult>> = {
+  "products-purchases": async (f) => {
+    const { details, summary } = await api.productsPurchases({ ...branch(), from: f.from, to: f.to, SortBy: "totalpurchases", SortDescending: true })
+    const qty = details.reduce((a, x) => a + x.purchasesCount, 0)
+    return {
+      stats: [{ id: "itemsBought", value: details.length, kind: "number" }, { id: "qtyBought", value: qty, kind: "number" }, { id: "totalPurchases", value: summary.grandTotalPurchases, kind: "money" }],
+      columns: [{ id: "barcode", kind: "text" }, { id: "item", kind: "text", strong: true }, { id: "qty", kind: "number" }, { id: "total", kind: "money", strong: true }],
+      rows: details.map((x) => ({ barcode: x.barcode, item: x.productName, qty: x.purchasesCount, total: x.totalPurchases })),
+      totals: { barcode: "", item: "", qty, total: summary.grandTotalPurchases },
+    }
+  },
+
   "purchases-by-day": async (f) => {
     const { rows, first } = await every((Page, PageSize) => api.dailyPurchases({ ...branch(), from: f.from, to: f.to, Page, PageSize }))
     const t = first?.totals

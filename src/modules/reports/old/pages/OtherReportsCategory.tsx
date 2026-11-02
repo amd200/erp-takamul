@@ -18,6 +18,7 @@ export default function OtherReportsCategory() {
     purchases: { title: o("purchase_reports"), reports: [
       { title: o("purchases_by_invoice"), icon: FileText, path: "/reports/purchases-by-invoice" },
       { title: o("purchases_by_day"), icon: Calendar, path: "/reports/purchases-by-day" },
+      { title: o("products_purchases_report"), icon: Barcode, path: "/reports/products-purchases" },
       { title: o("item_purchases_report"), icon: Barcode, path: "/reports/item-purchases" },
     ] },
     customers: { title: o("customer_reports"), reports: [

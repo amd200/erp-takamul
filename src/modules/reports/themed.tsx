@@ -13,9 +13,8 @@ export const themedReport = (id: string, old: Load) => {
   return () => Promise.resolve({ Component: Page })
 }
 
-/** A report category route, themed the same way. */
-export const themedCategory = (category: string, old: Load) => {
-  const Old = lazy(old)
-  const Page = () => (useClassic() ? <Suspense fallback={null}><Old /></Suspense> : <ReportsHome category={category as ReportCategory} />)
+/** A report category route: the same page in both looks (the classic look only adds the reports the modern engine lacks). */
+export const themedCategory = (category: string) => {
+  const Page = () => <ReportsHome category={category as ReportCategory} />
   return () => Promise.resolve({ Component: Page })
 }

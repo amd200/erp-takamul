@@ -163,7 +163,8 @@
     "shift_status_closed": "Closed",
     "all_shifts": "All shifts",
     "customer_item_sales_report": "Customer item sales report",
-    "supplier_item_purchases_report": "Supplier item purchases report"
+    "supplier_item_purchases_report": "Supplier item purchases report",
+    "products_purchases_report": "Products purchases report"
   },
   "oldReturn": {
     "serviceEmployee": "Service employee",
@@ -232,7 +233,10 @@
     "search": "Search...",
     "empty": "No data available",
     "description": "Description",
-    "selected": "Selected"
+    "selected": "Selected",
+    "all": "All",
+    "serial": "#",
+    "loading": "Loading..."
   },
   "shiftOld": {
     "dailyStatement": "Daily statement",
@@ -2022,9 +2026,11 @@
       "purchases-by-day": "Daily purchases",
       "item-purchases": "Item purchases",
       "customers-balances": "Customer balances",
+      "customer-statement": "Customer statement",
       "supplier-statement": "Supplier statement",
       "expenses-detail": "Expense details",
-      "profit": "Profit"
+      "profit": "Profit",
+      "products-purchases": "Purchases by item"
     },
     "d": {
       "net-sales": "Sales after returns, per sales channel.",
@@ -2043,9 +2049,13 @@
       "purchases-by-day": "Total purchases per day.",
       "item-purchases": "Every purchase of one item and its average cost.",
       "customers-balances": "Sales, payments and balance per customer.",
+      "customer-statement": "Sales invoices, payments and the balance due from the customer.",
       "supplier-statement": "Purchase invoices, payments and the amount owed.",
+      "customer-item-sales": "Item sales to a selected customer over the period.",
+      "supplier-item-purchases": "Item purchases from a selected supplier over the period.",
       "expenses-detail": "Every expense with its tax and treasury.",
-      "profit": "Revenue, cost, gross profit and net profit after expenses."
+      "profit": "Revenue, cost, gross profit and net profit after expenses.",
+      "products-purchases": "Total quantity and cost per purchased item in the period."
     },
     "chart": {
       "net-sales": "Net sales per day",
@@ -2176,7 +2186,8 @@
       "cogs": "Cost of sales",
       "grossProfit": "Gross profit",
       "expensesTotal": "Expenses",
-      "netProfit": "Net profit"
+      "netProfit": "Net profit",
+      "itemsBought": "Items purchased"
     },
     "v": {
       "pos": "Point of sale",
@@ -2843,7 +2854,15 @@
       "postal": "Postal code must be 5 digits"
     },
     "viewTitle": "View Branch",
-    "details": "Branch Data Details"
+    "details": "Branch Data Details",
+    "sections": {
+      "identity": "Branch details",
+      "tax": "Tax details",
+      "bank": "Bank details",
+      "address": "Address"
+    },
+    "taxHint": "Shown on the tax invoice.",
+    "imageHint": "PNG, JPG or WEBP up to 2 MB."
   },
   "reservations": {
     "title": "Reservations",
@@ -3263,7 +3282,8 @@
     "sell_if_zero": "Sell Even If Balance is Zero",
     "show_coast_price": "Show cost price in sales screen",
     "حجم خط التصنيفات": "Category font size",
-    "حجم خط اسم الصنف المتفرع": "Branched item name font size"
+    "حجم خط اسم الصنف المتفرع": "Branched item name font size",
+    "products_purchases_report": "Products Purchases Report"
   },
   "pos1": {
     "searchProducts": "Search products...",

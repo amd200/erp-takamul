@@ -44,6 +44,8 @@ export const invoicesApi = {
   deletePayment: (paymentId: number) => http<unknown>(`/sales-orders/delete-payment/${paymentId}`, { method: "DELETE" }),
   updateNotes: (invoiceId: number, notes: string) => http<unknown>(`/sales-orders/${invoiceId}/notes`, { method: "PUT", data: { notes } }),
   sendToZatca: (invoiceId: number) => http<unknown>("/zatca-invoices/sell", { method: "POST", data: { invoiceId } }),
+  /** Phase 1 QR text (TLV base64) for an invoice that has none stored. POST /zatca-invoices/generate-qr */
+  generateQr: (invoiceId: number) => http<{ qrCode?: string | null }>("/zatca-invoices/generate-qr", { method: "POST", data: { invoiceId } }),
   downloadXml: (id: number) => http<Blob>(`/sales-orders/${id}/zatca-xml`, { responseType: "blob" }),
   downloadExcel: (id: number) => http<Blob>(`/sales-orders/${id}/zatca-excel`, { responseType: "blob" }),
   downloadPdfA3: (saleId: number) => http<Blob>("/zatca-invoices/download-pdfa3", { method: "POST", data: { saleId, isSaleOrder: true }, responseType: "blob" }),

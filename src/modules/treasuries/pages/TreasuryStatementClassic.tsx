@@ -1,7 +1,7 @@
 import { PageBox } from "@/components/PageBox"
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import { useSearchParams } from "react-router-dom"
-import { FileSpreadsheet, Filter, Printer, RotateCcw, Search, WalletCards } from "lucide-react"
+import { FileSpreadsheet, FileText, Filter, Printer, RotateCcw, Search, WalletCards } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
@@ -9,8 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { DataTable, type Column } from "@/components/DataTable"
 import { useTableSort } from "@/components/useTableSort"
-import { downloadCsv } from "@/modules/reports/export"
-import type { ReportResult } from "@/modules/reports/types"
+import { excelReport, pdfReport, printReport, type ReportOutput } from "@/modules/reports/old/output"
 import { useStatement, useTreasuryList } from "../queries"
 import type { StatementRow } from "../types"
 
@@ -24,7 +23,7 @@ const day = (v?: string) => {
 
 /** The treasury statement, as in the current system: a titled box with print and Excel, a filters box, the chosen filters, and a plain table. */
 export default function TreasuryStatementClassic() {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const [params] = useSearchParams()
   const { data: treasuries = [] } = useTreasuryList()
   const first = Number(params.get("treasury")) || undefined
@@ -45,16 +44,24 @@ export default function TreasuryStatementClassic() {
     { id: "balance", sortKey: "balance", header: t("oldStatement.balance"), cell: (r) => <span className="font-semibold whitespace-nowrap text-primary">{num(r.balance)}</span> },
   ]
 
-  // The same movements in the shape the shared Excel export reads.
-  const exportable = useMemo<ReportResult>(() => {
-    const body = rows.map((m) => ({ date: m.date, type: { text: m.documentType, tone: "muted" as const }, doc: m.documentNumber, party: m.description || "—", in: m.incomingAmount > 0 ? m.incomingAmount : null, out: m.outgoingAmount > 0 ? m.outgoingAmount : null, balance: m.balance }))
-    const totalIn = body.reduce((s, r) => s + (r.in ?? 0), 0), totalOut = body.reduce((s, r) => s + (r.out ?? 0), 0)
-    return {
-      stats: [],
-      columns: [{ id: "date", kind: "date" }, { id: "type", kind: "badge" }, { id: "doc", kind: "text", strong: true }, { id: "party", kind: "text" }, { id: "in", kind: "money" }, { id: "out", kind: "money" }, { id: "balance", kind: "money", strong: true }],
-      rows: body, totals: { date: "", in: totalIn, out: totalOut, balance: body.length ? body[body.length - 1].balance : 0 },
-    }
-  }, [rows])
+  // Print, PDF and Excel read the same rows and filter line as the old system's.
+  const dateText = (v: string) => (v ? v.split("-").reverse().join("/") : "-")
+  const output: ReportOutput<StatementRow> = {
+    title: t("oldStatement.title"), cards: [], rows,
+    filters: `${t("oldStatement.treasury")}: ${treasuryName || t("oldStatement.all")} | ${t("oldStatement.from")}: ${dateText(applied.from)} | ${t("oldStatement.to")}: ${dateText(applied.to)}`,
+    columns: [
+      { header: t("oldStatement.serial"), value: (_, i) => i + 1 },
+      { header: t("oldStatement.type"), value: (r) => r.documentType },
+      { header: t("oldStatement.date"), value: (r) => day(r.date) },
+      { header: t("oldStatement.number"), value: (r) => r.documentNumber },
+      { header: t("oldStatement.party"), value: (r) => r.description || "-" },
+      { header: t("oldStatement.debit"), value: (r) => r.incomingAmount },
+      { header: t("oldStatement.credit"), value: (r) => r.outgoingAmount },
+      { header: t("oldStatement.balance"), value: (r) => r.balance },
+    ],
+  }
+  const [pdfBusy, setPdfBusy] = useState(false)
+  const pdf = async () => { setPdfBusy(true); try { await pdfReport(output) } finally { setPdfBusy(false) } }
 
   const clear = () => { const empty: Filter = { treasuryId: undefined, from: "", to: "" }; setFilters(empty); setApplied(empty) }
   const link = "flex items-center gap-1.5 text-slate-600 transition-colors hover:text-primary disabled:opacity-50"
@@ -62,8 +69,9 @@ export default function TreasuryStatementClassic() {
   return (
     <PageBox icon={WalletCards} title={t("oldStatement.title")} subtitle={t("oldStatement.subtitle")}
       action={<div className="flex items-center gap-4 text-sm font-medium">
-            <button type="button" className={link} disabled={!rows.length} onClick={() => window.print()}><Printer size={16} /><span className="hidden sm:inline">{t("oldStatement.print")}</span></button>
-            <button type="button" className={link} disabled={!rows.length} onClick={() => downloadCsv(`treasury-${applied.treasuryId}`, exportable, t, i18n.language)}><FileSpreadsheet size={16} /><span className="hidden sm:inline">Excel</span></button>
+            <button type="button" className={link} disabled={!rows.length} onClick={() => printReport(output)}><Printer size={16} /><span className="hidden sm:inline">{t("oldStatement.print")}</span></button>
+            <button type="button" className={link} disabled={!rows.length || pdfBusy} onClick={pdf}><FileText size={16} /><span className="hidden sm:inline">{pdfBusy ? t("oldStatement.loading") : "PDF"}</span></button>
+            <button type="button" className={link} disabled={!rows.length} onClick={() => excelReport(output)}><FileSpreadsheet size={16} /><span className="hidden sm:inline">Excel</span></button>
       </div>}>
 
       <div className="space-y-5">
@@ -91,15 +99,6 @@ export default function TreasuryStatementClassic() {
             </div>
           </div>
         </div>
-
-        {applied.treasuryId && (
-          <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-[#f8fafc] px-4 py-3">
-            <span className="text-xs text-muted-foreground">{t("oldStatement.selected")}:</span>
-            <span className="rounded-full bg-[rgba(49,201,110,0.12)] px-3 py-1 text-xs font-medium text-primary">{treasuryName || t("oldStatement.treasury")}</span>
-            {applied.from && <span className="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium">{t("oldStatement.fromShort")}: {applied.from}</span>}
-            {applied.to && <span className="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium">{t("oldStatement.toShort")}: {applied.to}</span>}
-          </div>
-        )}
 
         <DataTable rows={rows} loading={isFetching && !!applied.treasuryId} columns={columns} sort={sort} rowKey={(r) => `${r.documentNumber}-${r.date}-${r.balance}`} searchPlaceholder={t("oldStatement.search")}
           emptyText={t("oldStatement.empty")} empty={null} />

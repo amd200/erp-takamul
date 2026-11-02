@@ -1,4 +1,3 @@
-import { PageBox } from "@/components/PageBox"
 import { useEffect, useMemo } from "react"
 import { productFormOf, typeOf } from "../mappers"
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
@@ -9,13 +8,10 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/PageHeader"
 import { SectionCard } from "@/components/SectionCard"
-import { useClassic } from "@/shared/theme/ThemeProvider"
 import { useAppSettings } from "@/modules/settings"
 import { useTaxes } from "@/modules/taxes/service"
 import { useUnits } from "@/modules/units/queries"
 import { productsApi } from "../service"
-import { ChildrenSection } from "../components/ChildrenSection"
-import { ComponentsSection } from "../components/ComponentsSection"
 import { BasicInfoSection } from "../components/modern/BasicInfoSection"
 import { ComponentsSection as ModernComponents } from "../components/modern/ComponentsSection"
 import { ChildrenSection as ModernChildren } from "../components/modern/ChildrenSection"
@@ -23,16 +19,12 @@ import { PricingSection } from "../components/modern/PricingSection"
 import { StockUnitsSection } from "../components/modern/StockUnitsSection"
 import { ProductTypePicker as ModernTypePicker } from "../components/modern/ProductTypePicker"
 import { ImagePanel as SideImagePanel, OptionsPanel, PriceSummary } from "../components/modern/SidePanels"
-import { ProductTypePicker } from "../components/ProductTypePicker"
-import { ImagePanel } from "../components/SidePanels"
-import { BarcodeUnitFields, CategoryField, DescriptionField, ExtraUnitsBox, NamesFields, PricingFields, PrinterField, ShowInSalesBox } from "../components/ProductFields"
 import { parseProductType, useProduct, useSaveProduct } from "../queries"
 import { buildProductSchema, emptyProduct, kindRules, type ProductForm } from "../schema"
 import type { ProductType } from "../types"
 
 export default function ProductFormPage() {
   const { t } = useTranslation()
-  const classic = useClassic()
   const nav = useNavigate()
   const { id } = useParams()
   const editId = id ? Number(id) : undefined
@@ -87,8 +79,7 @@ export default function ProductFormPage() {
 
   const hasErrors = form.formState.submitCount > 0 && Object.keys(form.formState.errors).length > 0
 
-  if (!classic) {
-    return (
+  return (
       <FormProvider {...form}>
         <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
           <PageHeader crumbs={[t("nav.items"), editId ? t("common.edit") : t("common.add")]}
@@ -123,33 +114,5 @@ export default function ProductFormPage() {
         </form>
       </FormProvider>
     )
-  }
-
-
-  return (
-    <FormProvider {...form}>
-      <form onSubmit={submit} className="flex flex-col gap-6" noValidate>
-        <PageBox crumbs={[t("nav.items"), editId ? t("common.edit") : t("common.add")]}
-          title={editId ? t("productForm.editTitle") : t("productForm.addTitle")} subtitle={t("productForm.addSubtitle")}>
-          <div className="mb-8"><ProductTypePicker value={type} onChange={changeType} locked={!!editId} /></div>
-
-          {/* One two-column grid, in the order of the current system's form. */}
-          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-            <NamesFields />
-            {type !== "RawMatrial" && <CategoryField />}
-            {type === "Direct" && <><PricingFields computedCost={computedCost} /><BarcodeUnitFields /><ExtraUnitsBox /><PrinterField /><DescriptionField /><ImagePanel /><ShowInSalesBox /></>}
-            {type === "Branched" && <><DescriptionField />{rules.children && <div className="lg:col-span-2"><ChildrenSection selfId={editId} /></div>}<ImagePanel /></>}
-            {type === "Prepared" && <><PricingFields computedCost={computedCost} /><BarcodeUnitFields /><DescriptionField />{rules.components && <div className="lg:col-span-2"><ComponentsSection computedCost={computedCost} /></div>}<ImagePanel /></>}
-            {type === "RawMatrial" && <><PricingFields computedCost={computedCost} /><DescriptionField /><BarcodeUnitFields /></>}
-          </div>
-        </PageBox>
-
-        <div className="form-footer flex flex-col-reverse items-stretch justify-between gap-3 lg:flex-row lg:items-center">
-          <Button asChild variant="destructive" size="xl"><Link to="/products">{t("common.cancel")}</Link></Button>
-          <span className="text-sm text-destructive" role="status">{hasErrors ? t("products.fixErrors") : ""}</span>
-          <Button type="submit" size="xl" disabled={save.isPending}>{t("productForm.save")}</Button>
-        </div>
-      </form>
-    </FormProvider>
-  )
 }
+

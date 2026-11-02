@@ -1,35 +1,46 @@
-import { createElement, type ComponentType } from "react"
-import { Link } from "react-router-dom"
-import { BarChart3 } from "lucide-react"
+import { type ComponentType } from "react"
+import { Link, NavLink } from "react-router-dom"
 import { useTranslation } from "react-i18next"
+import { PageHeader } from "@/components/PageHeader"
+import { cn } from "@/lib/utils"
+import { useCan } from "@/shared/permissions/usePermission"
+import { P } from "@/shared/permissions/permissions"
 
 export type CategoryCard = { title: string; icon: ComponentType<{ className?: string }>; path: string }
 
-/** A report category as cards: the report's name and icon, and a button that opens it. */
+const CATEGORIES = [
+  { key: "sales", perm: P.reports.sales, label: "sales_reports" },
+  { key: "items", perm: P.reports.items, label: "item_reports" },
+  { key: "purchases", perm: P.reports.purchases, label: "purchase_reports" },
+  { key: "customers", perm: P.reports.customers, label: "customer_reports" },
+  { key: "suppliers", perm: P.reports.suppliers, label: "suppliers_reports" },
+  { key: "expenses", perm: P.reports.expenses, label: "expenses_reports" },
+  { key: "profits", perm: P.reports.profits, label: "profits_reports" },
+] as const
+
+const pill = ({ isActive }: { isActive: boolean }) =>
+  cn("shrink-0 rounded-full px-3.5 py-1.5 text-sm text-muted-foreground hover:bg-muted", isActive && "bg-secondary font-semibold text-secondary-foreground")
+
+/** A report category in the modern layout (title, category tabs, report cards) with the classic colours. */
 export function CategoryCards({ title, reports }: { title: string; reports: CategoryCard[] }) {
   const { t } = useTranslation()
+  const can = useCan()
   return (
-    <div className="flex h-full flex-col page-box-flat">
-      <div className="flex items-center justify-between border-b p-4">
-        <div className="flex items-center gap-2">
-          <div className="rounded bg-primary p-1.5 text-white"><BarChart3 size={18} /></div>
-          <h1 className="text-xl font-bold">{title}</h1>
-        </div>
+    <>
+      <PageHeader crumbs={[t("nav.reports")]} title={title} />
+      <nav className="flex gap-1 overflow-x-auto pb-1" aria-label={t("nav.reports")}>
+        {CATEGORIES.filter((c) => can(c.perm)).map((c) => (
+          <NavLink key={c.key} to={`/reports/category/${c.key}`} className={pill}>{t(`oldReports.${c.label}`)}</NavLink>
+        ))}
+      </nav>
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        {reports.map((r) => (
+          <Link key={r.path} to={r.path} className="group flex items-center gap-3 rounded-xl border bg-card p-4 transition-colors hover:border-primary">
+            <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-secondary text-secondary-foreground"><r.icon className="size-5" /></span>
+            <span className="font-semibold group-hover:text-primary">{r.title}</span>
+          </Link>
+        ))}
       </div>
-      <div className="flex-1 p-6">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {reports.map((r) => (
-            <div key={r.path} className="group flex flex-col items-center overflow-hidden rounded-xl border bg-card p-6 shadow-sm transition-all hover:border-primary hover:shadow-md">
-              <div className="mb-4 flex w-full items-center justify-between">
-                <div className="h-4 w-1 rounded-full bg-primary" />
-                <span className="text-sm font-semibold transition-colors group-hover:text-primary">{r.title}</span>
-              </div>
-              <div className="flex flex-1 items-center justify-center py-6 text-primary transition-transform duration-300 group-hover:scale-110">{createElement(r.icon, { className: "size-12" })}</div>
-              <Link to={r.path} className="mt-4 w-full rounded-lg bg-primary py-2.5 text-center text-sm font-bold text-white shadow-sm transition-all hover:opacity-90 hover:shadow-md active:scale-95">{t("oldReports.view_report")}</Link>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+    </>
   )
 }

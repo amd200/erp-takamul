@@ -1,3 +1,4 @@
+import QRCode from "qrcode"
 import { useMutation, useQueryClient, type QueryClient } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 import { errorToast } from "@/shared/api/crudQueries"
@@ -65,15 +66,18 @@ export function useInvoiceOutput() {
         return printDocument(voucher === "stock" ? stockVoucherDoc(invoice, opts) : claimVoucherDoc(invoice, opts))
       }
       const isExempt = settings.taxSetting?.taxSetting === "Exempt"
+      // Same as the old app: use the stored QR text, else ask the backend to generate it; a failure only leaves the QR box empty.
+      const qrText = isExempt ? "" : invoice.zatcaQRCode || (await invoicesApi.generateQr(row.id).then((r) => r?.qrCode ?? "").catch(() => ""))
+      const qrImage = qrText ? await QRCode.toDataURL(qrText).catch(() => null) : null
       const showPaymentMethods = settings.paymentTab?.showPaymentMethods !== false
       const showPaidAndRemaining = settings.paymentTab?.showPaidAndRemainingAmount !== false
       const showBranchName = settings.printRollTab?.showBranchNameInPrint === true
       const methodLabel = (m: string) => t(`sales.methods.${m}`)
       const doc = paper === "a5"
-        ? invoiceA5Doc(doc0, { branch: b, customer: c, isExempt, barcodes: await barcodesOf(qc, invoice), measurement: measurementOf(c), methodLabel })
+        ? invoiceA5Doc(doc0, { branch: b, customer: c, isExempt, qrImage, barcodes: await barcodesOf(qc, invoice), measurement: measurementOf(c), methodLabel })
         : paper === "roll"
         ? invoiceRollDoc(doc0, { branch: b, customer: c, isExempt, showPaymentMethods, showPaidAndRemaining, showBranchName, grid: settings.printRollTab?.invoiceDesign3 === true, showUnits: settings.itemsTab?.enablePieceAndCartonSystem === true, methodLabel })
-        : invoiceA4Doc(doc0, { branch: b, customer: c, isExempt, showPaymentMethods, showPaidAndRemaining, showBranchName, showHeaderAndFooter: settings.printA4Tab?.showHeaderAndFooterInPrint !== false, blue: settings.printA4Tab?.a4InvoiceType === "Design2", design: settings.printA4Tab?.a4InvoiceType === "Design3" || settings.printA4Tab?.a4InvoiceType === "Design4" ? settings.printA4Tab?.a4InvoiceType as "Design3" | "Design4" : undefined, methodLabel })
+        : invoiceA4Doc(doc0, { branch: b, customer: c, isExempt, qrImage, showPaymentMethods, showPaidAndRemaining, showBranchName, showHeaderAndFooter: settings.printA4Tab?.showHeaderAndFooterInPrint !== false, blue: settings.printA4Tab?.a4InvoiceType === "Design2", design: settings.printA4Tab?.a4InvoiceType === "Design3" || settings.printA4Tab?.a4InvoiceType === "Design4" ? settings.printA4Tab?.a4InvoiceType as "Design3" | "Design4" : undefined, methodLabel })
       if (as === "pdf") await downloadPdf(doc, doc0.number)
       else await printDocument(doc)
     },

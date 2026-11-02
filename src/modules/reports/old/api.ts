@@ -49,6 +49,10 @@ export type PurchaseInvoiceRow = { invoiceNumber: string; invoiceDate: string; s
 export type PurchaseInvoicesReport = Paged<PurchaseInvoiceRow> & { totals: { totalInvoices: number; totalSubTotal: number; totalDiscount: number; grandTotal: number; paidAmount: number; remainingAmount: number } }
 export const purchaseInvoices = (p: Branched & Sort & Page & { from: string; to: string }) => http<PurchaseInvoicesReport>(`${BASE}/PurchaseInvoices`, { params: p })
 
+export type ProductsPurchasesRow = { barcode: string; productName: string; purchasesCount: number; totalPurchases: number }
+export type ProductsPurchasesReport = { details: ProductsPurchasesRow[]; summary: { grandTotalPurchases: number } }
+export const productsPurchases = (p: Branched & Sort & { from: string; to: string }) => http<ProductsPurchasesReport>(`${BASE}/ProductsPurchases`, { params: p })
+
 export type ProductPurchaseRow = { productId: number; productCode: number; productName: string; supplierName: string; quantity: number; unitPrice: number; totalCost: number }
 export type ProductPurchasesReport = Paged<ProductPurchaseRow> & { summary: { totalQuantity: number; totalPurchasesCost: number } }
 export const productPurchases = (p: Branched & Page & { productID: number | string; from: string; to: string }) => http<ProductPurchasesReport>(`${BASE}/ProductPurchases`, { params: p })

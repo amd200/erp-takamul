@@ -28,7 +28,7 @@ export function PartyPicker({ parties, value, onPick, placeholder, searchPlaceho
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button type="button" variant="outline" disabled={disabled} aria-invalid={invalid || undefined} aria-label={placeholder}
-          className={cn("w-full justify-between gap-2 bg-background font-normal", plain ? "h-10 text-[11px]" : "h-11", invalid && "border-destructive")}>
+          className={cn("w-full justify-between gap-2 bg-background font-normal classic:hover:border-border classic:hover:bg-background classic:aria-expanded:border-border classic:aria-expanded:bg-background classic:focus-visible:border-border classic:focus-visible:ring-0", plain ? "h-10 text-[11px]" : "h-11", invalid && "border-destructive")}>
           <span className="flex min-w-0 items-center gap-2">{!plain && <User className="shrink-0 text-muted-foreground" />}<span className={cn("truncate", !current && "text-muted-foreground")}>{current?.name ?? placeholder}</span></span>
           <ChevronDown className="shrink-0 text-faint" />
         </Button>
@@ -41,8 +41,10 @@ export function PartyPicker({ parties, value, onPick, placeholder, searchPlaceho
             <CommandGroup>
               {parties.map((p) => (
                 <CommandItem key={p.id} value={`${p.name} ${p.phone}`} onSelect={() => { onPick(p); setOpen(false) }}>
-                  <span className="flex-1 truncate">{p.name}</span>
-                  <span className="text-xs text-muted-foreground" dir="ltr">{p.phone}</span>
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="truncate">{p.name}</span>
+                    {p.phone && <bdi className="block truncate text-xs text-muted-foreground">{p.phone}</bdi>}
+                  </span>
                   {p.id === value && <Check aria-label={t("common.active")} />}
                 </CommandItem>
               ))}

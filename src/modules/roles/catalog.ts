@@ -311,6 +311,7 @@ export const PERMISSION_CATALOG: PermissionSection[] = [
         { id: "daily", label: "purchases_by_days", value: "التقارير.مشتريات على مستوى الايام" },
         { id: "invoices", label: "purchases_by_invoices", value: "التقارير.مشتريات على مستوى ارقام الفواتير" },
         { id: "purchases", label: "purchases_by_item_report", value: "التقارير.مشتريات صنف" },
+        { id: "products_purchases", label: "products_purchases_report", value: "التقارير.مشتريات الاصناف" },
       ] },
       { id: "customer_reports", label: "customer_reports", actions: [
         { id: "list", label: "customer_statement_report", value: "التقارير.العملاء" },

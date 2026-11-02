@@ -269,6 +269,20 @@ export const REPORTS: ReportDef[] = [
     },
   },
   {
+    id: "products-purchases", category: "purchases", icon: Boxes, perm: P.reports.purchases, filters: ["period"],
+    run: (d, f) => {
+      const ls = d.purchases.filter((l) => inPeriod(l.date, f))
+      const rows = [...groupBy(ls, (l) => l.productId).entries()]
+        .map(([id, g]) => ({ item: productName(d, Number(id)), qty: sum(g, (l) => l.qty), total: sum(g, total) }))
+        .sort((a, b) => b.total - a.total)
+      return {
+        stats: [{ id: "itemsBought", value: rows.length, kind: "number" }, { id: "qtyBought", value: sum(rows, (x) => x.qty), kind: "number" }, { id: "totalPurchases", value: sum(rows, (x) => x.total), kind: "money" }],
+        columns: [{ id: "item", kind: "text", strong: true }, { id: "qty", kind: "number" }, { id: "total", kind: "money", strong: true }],
+        rows, totals: { item: "", qty: sum(rows, (x) => x.qty), total: sum(rows, (x) => x.total) },
+      }
+    },
+  },
+  {
     id: "item-purchases", category: "purchases", icon: ShoppingBag, perm: P.reports.purchases, filters: ["period", "product"], requires: ["product"],
     run: (d, f) => {
       const ls = d.purchases.filter((l) => inPeriod(l.date, f) && l.productId === f.productId)
