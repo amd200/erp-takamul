@@ -99,7 +99,7 @@ function Group({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) 
         </div>
       )}
       {open && classic && (
-        <div className="ms-4 space-y-1 overflow-hidden border-s border-gray-100 ps-2 dark:border-border">
+        <div className="ms-4 shrink-0 space-y-1 overflow-hidden border-s border-gray-100 ps-2 dark:border-border">
           {children.map((c) => {
             const Icon = CHILD_ICON[c.key] ?? List
             const current = pathname === c.to || (c.to === "/products" && pathname.startsWith("/products/edit"))
