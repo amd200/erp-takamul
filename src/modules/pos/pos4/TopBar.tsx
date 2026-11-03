@@ -4,20 +4,20 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover"
-import { showsInSales } from "@/modules/products/mappers"
+import { useDebounced } from "@/modules/products/lookup"
 import type { Product } from "@/modules/products/types"
+import { usePos4Items } from "./queries"
 
 /** The wide screen's top: a search box that lists matches to pick from, and the full-screen button. */
-export function TopBar({ items, nameOf, onPick }: { items: Product[] | undefined; nameOf: (p: Product) => string; onPick: (p: Product) => void }) {
+export function TopBar({ nameOf, onPick }: { nameOf: (p: Product) => string; onPick: (p: Product) => void }) {
   const { t } = useTranslation()
   const [search, setSearch] = useState("")
   const [open, setOpen] = useState(false)
   const [full, setFull] = useState(!!document.fullscreenElement)
 
-  const term = search.trim().toLowerCase()
-  const found = term
-    ? (items ?? []).filter((p) => showsInSales(p) && [p.productNameAr, p.productNameEn, p.barcode].some((v) => v?.toLowerCase().includes(term)))
-    : []
+  // The server searches (a name, or a barcode); an empty box lists nothing.
+  const term = useDebounced(search.trim())
+  const found = usePos4Items({ categoryId: null, term, enabled: !!term }).items
 
   const toggleFull = async () => {
     try {

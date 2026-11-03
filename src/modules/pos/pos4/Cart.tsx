@@ -7,7 +7,6 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { formatMoney } from "@/lib/format"
 import { cn } from "@/lib/utils"
 import { useAdditions } from "@/modules/additions/queries"
-import type { Product } from "@/modules/products/types"
 import { useAppSettings } from "@/modules/settings"
 import { lineAmounts } from "@/modules/sales/totals"
 import { toast } from "sonner"
@@ -26,7 +25,7 @@ const MAIN_WAREHOUSE = 1
  * The customer's order: the lines, the totals and Send. With `onContinueShopping` it is the phone's full-screen cart,
  * whose lines are cards with a picture; otherwise the wide screen's table beside the menu.
  */
-export function Cart({ items, onContinueShopping }: { items: Product[] | undefined; onContinueShopping?: () => void }) {
+export function Cart({ onContinueShopping }: { onContinueShopping?: () => void }) {
   const { t, i18n } = useTranslation()
   const sales = useAppSettings().salesScreenTab ?? {}
   const taxSetting = useAppSettings().taxSetting?.taxSetting
@@ -48,8 +47,8 @@ export function Cart({ items, onContinueShopping }: { items: Product[] | undefin
   const canEdit = sales.isQuantity !== false || sales.isAddons !== false
 
   // Which additions an item takes depends on its category.
-  const additionsFor = (productId: number) => {
-    const category = items?.find((p) => p.id === productId)?.categoryId ?? null
+  const additionsFor = (line: { categoryId?: number | null }) => {
+    const category = line.categoryId ?? null
     return additions.filter((a) => a.isActive && (a.categoryIds.length === 0 || (category != null && a.categoryIds.includes(category))))
   }
 
@@ -159,7 +158,7 @@ export function Cart({ items, onContinueShopping }: { items: Product[] | undefin
         </AlertDialogContent>
       </AlertDialog>
       <NumberPromptDialog open={tableOpen} onOpenChange={setTableOpen} title={t("pos4.selectTableNumber")} initial={null} onConfirm={send} />
-      <ItemEditor hidePrice line={editing} additions={editing ? additionsFor(editing.productId) : []} onClose={() => setEditingKey(null)} onQty={setQty} onPatch={patchLine} />
+      <ItemEditor hidePrice line={editing} additions={editing ? additionsFor(editing) : []} onClose={() => setEditingKey(null)} onQty={setQty} onPatch={patchLine} />
     </div>
   )
 }

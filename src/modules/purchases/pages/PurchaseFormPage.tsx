@@ -127,7 +127,7 @@ export default function PurchaseFormPage() {
                     <div className="mb-1 hidden grid-cols-2 gap-3 text-xs text-muted-foreground sm:grid"><span>{t("sales.amount")}</span><span>{t("sales.treasury")}</span></div>
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2"><PaymentFields control={form.control} prefix={`payments.${i}`} compact /></div>
                   </div>
-                  <Button type="button" variant="ghost" size="icon" aria-label={t("common.remove")} onClick={() => payments.remove(i)} className="text-red-500 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/40"><Trash2 /></Button>
+                  <Button type="button" variant="ghost-destructive" size="icon" aria-label={t("common.remove")} onClick={() => payments.remove(i)}><Trash2 /></Button>
                 </div>
               ))}
               {overpaid && <p className="text-sm text-destructive">{t("sales.overpaid")}</p>}

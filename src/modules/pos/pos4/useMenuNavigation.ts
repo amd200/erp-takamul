@@ -1,19 +1,17 @@
 import { startTransition, useLayoutEffect, useRef } from "react"
 import type { Dispatch, SetStateAction } from "react"
 import type { Category } from "@/modules/categories/types"
-import type { ProductGroup } from "./types"
+import { PHONE } from "./usePhone"
 
-const PHONE = "(max-width: 1023px)"
 
 /**
  * The category strip and the page it scrolls. On a wide screen picking a category swaps the grid; on a phone it
  * scrolls to that category's section, and scrolling the page moves the highlighted category the other way round.
  */
-export function useMenuNavigation({ currentCat, setCurrentCat, main, groups }: {
+export function useMenuNavigation({ currentCat, setCurrentCat, main }: {
   currentCat: number | null
   setCurrentCat: Dispatch<SetStateAction<number | null>>
   main: Category[] | undefined
-  groups: ProductGroup<unknown>[]
 }) {
   const stripRef = useRef<HTMLDivElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -26,8 +24,9 @@ export function useMenuNavigation({ currentCat, setCurrentCat, main, groups }: {
     const container = menuRef.current
     if (!container) return
 
-    const entries = Array.from(sections.current.entries())
     const update = () => {
+      // Sections come and go as they load, so they are read (and put in page order) on every scroll.
+      const entries = Array.from(sections.current.entries()).sort((a, b) => a[1].offsetTop - b[1].offsetTop)
       const line = container.scrollTop + (container.querySelector<HTMLElement>(".pos4-menu-header")?.offsetHeight ?? 108) + 4
       let active: number | undefined = entries[0]?.[0]
       for (const [id, section] of entries) {
@@ -51,7 +50,7 @@ export function useMenuNavigation({ currentCat, setCurrentCat, main, groups }: {
       container.removeEventListener("scroll", onScroll)
       if (frame !== null) window.cancelAnimationFrame(frame)
     }
-  }, [main, groups, setCurrentCat])
+  }, [main, setCurrentCat])
 
   const selectCategory = (id: number) => {
     setCurrentCat(id)

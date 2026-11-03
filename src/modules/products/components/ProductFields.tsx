@@ -161,7 +161,7 @@ export function ExtraUnitsBox() {
               <FormInput control={control} name={`units.${i}.conversionFactor`} type="number" label={t("productForm.unitQty")} labelHidden />
               <FormInput control={control} name={`units.${i}.barcode`} dir="ltr" label={t("productForm.barcode")} labelHidden placeholder={t("productForm.unitBarcode")} />
               <FormInput control={control} name={`units.${i}.sellingPrice`} type="number" label={t("productForm.price")} labelHidden placeholder={t("productForm.price")} />
-              <Button type="button" variant="ghost" size="icon" className="text-destructive" aria-label={t("common.remove")} onClick={() => rows.remove(i)}><Trash2 size={16} /></Button>
+              <Button type="button" variant="ghost-destructive" size="icon" aria-label={t("common.remove")} onClick={() => rows.remove(i)}><Trash2 size={16} /></Button>
             </div>
           ))}
         </div>

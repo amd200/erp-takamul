@@ -122,7 +122,7 @@ export function CompanionsBlock() {
         <div key={c.fieldKey} className="col-span-2 rounded-xl border border-border bg-muted/30 p-3 sm:p-4">
           <div className="mb-3 flex items-center justify-between">
             <span className="flex items-center gap-2 text-sm font-bold text-foreground"><UserRoundPlus size={16} />{t("custDialog.companion")} {i + 1}</span>
-            <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive" aria-label={t("custDialog.remove")} onClick={() => remove(i)}><Trash2 size={16} /></Button>
+            <Button type="button" variant="ghost-destructive" size="icon" aria-label={t("custDialog.remove")} onClick={() => remove(i)}><Trash2 size={16} /></Button>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <Controller control={control} name={`companions.${i}.name`} render={({ field, fieldState }) => (

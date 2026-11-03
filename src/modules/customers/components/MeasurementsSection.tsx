@@ -76,7 +76,7 @@ export function MeasurementsSection() {
 
       {fields.map((c, i) => (
         <SectionCard key={c.id} title={`${t("customers.companion")} ${i + 1}`}
-          action={<Button type="button" variant="ghost" size="icon" className="text-destructive hover:text-destructive" aria-label={t("customers.removeCompanion")} onClick={() => remove(i)}><Trash2 /></Button>}>
+          action={<Button type="button" variant="ghost-destructive" size="icon" aria-label={t("customers.removeCompanion")} onClick={() => remove(i)}><Trash2 /></Button>}>
           <div className="flex flex-col gap-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <FormInput control={control} name={`companions.${i}.name`} label={t("customers.companionName")} required />

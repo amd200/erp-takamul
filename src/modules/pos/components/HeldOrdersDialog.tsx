@@ -74,7 +74,7 @@ export function HeldOrdersDialog({ open, onOpenChange }: { open: boolean; onOpen
                   </div>
                   <span className="font-semibold tabular-nums">{formatMoney(h.grandTotal ?? 0)}</span>
                   <Button type="button" size="icon-lg" aria-label={t("pos.resume")} disabled={loading !== null || cartLocked} onClick={() => requestResume(h)}>{loading === h.id ? <Loader2 className="animate-spin" /> : <Play />}</Button>
-                  <Button type="button" variant="ghost" size="icon-lg" aria-label={t("common.delete")} onClick={() => setToDelete(h)} className="hover:bg-destructive-soft hover:text-destructive"><Trash2 /></Button>
+                  <Button type="button" variant="ghost-destructive" size="icon-lg" aria-label={t("common.delete")} onClick={() => setToDelete(h)}><Trash2 /></Button>
                 </li>
               ))}
             </ul>

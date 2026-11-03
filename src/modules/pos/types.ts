@@ -9,7 +9,7 @@ export type DineInMode = "new-order" | "add-items" | "checkout"
 export type Extra = { id: number; name: string }
 
 /** An invoice line plus what only the cashier's cart needs: a stable key, a note and the chosen additions. */
-export type CartLine = InvoiceLine & { key: string; notes: string; extras: Extra[]; imageUrl: string | null }
+export type CartLine = InvoiceLine & { key: string; notes: string; extras: Extra[]; imageUrl: string | null; /** Set by the customer screen, which picks each extra by the item's category. */ categoryId?: number | null }
 
 export type CartDiscount = { kind: DiscountKind; value: number }
 

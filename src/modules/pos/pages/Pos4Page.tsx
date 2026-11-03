@@ -17,6 +17,7 @@ import { Products } from "../pos4/Products"
 import { TopBar } from "../pos4/TopBar"
 import { usePublicBranch } from "../pos4/queries"
 import { useCatalog } from "../pos4/useCatalog"
+import { usePhone } from "../pos4/usePhone"
 import { useMenuNavigation } from "../pos4/useMenuNavigation"
 import { useOrderActions } from "../pos4/useOrderActions"
 import "../pos4/pos4.css"
@@ -34,9 +35,10 @@ export default function Pos4Page() {
   const [search, setSearch] = useState("")
   const [cartOpen, setCartOpen] = useState(false)
 
-  const catalog = useCatalog(search, currentCat)
-  const actions = useOrderActions(catalog.items, catalog.productName)
-  const nav = useMenuNavigation({ currentCat, setCurrentCat, main: catalog.main, groups: catalog.groups })
+  const phone = usePhone()
+  const catalog = useCatalog(search, currentCat, phone)
+  const actions = useOrderActions(catalog.productName)
+  const nav = useMenuNavigation({ currentCat, setCurrentCat, main: catalog.main })
   const branch = usePublicBranch().data
 
   const lines = usePosStore((s) => s.lines)
@@ -54,7 +56,7 @@ export default function Pos4Page() {
         <div className="flex flex-1 overflow-hidden">
           <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-[var(--bg-main)] lg:overflow-y-auto">
             <div className="hidden overflow-hidden bg-[var(--bg-main)] lg:block">
-              <TopBar items={catalog.items} nameOf={catalog.productName} onPick={actions.pick} />
+              <TopBar nameOf={catalog.productName} onPick={actions.pick} />
             </div>
 
             <div ref={nav.menuRef} className="pos4-menu h-full min-h-0 flex-1 overflow-y-auto">
@@ -64,12 +66,12 @@ export default function Pos4Page() {
                   categoryFont={typography.category} phoneFont={Math.max(typography.productName, 16)} />
               </Header>
               <MobileSearch search={search} onSearch={setSearch} />
-              <Products filtered={catalog.filtered} groups={catalog.groups} hasCart={itemCount > 0} typography={typography} nameOf={catalog.productName}
+              <Products phone={phone} searching={catalog.searching} main={catalog.main} categoryName={catalog.categoryName} list={catalog.list} hasCart={itemCount > 0} typography={typography} nameOf={catalog.productName}
                 quantityOf={actions.quantityOf} onSelect={actions.pick} onDecrease={actions.decrease} registerSection={nav.registerSection} />
             </div>
           </div>
 
-          <div className="hidden h-full shrink-0 lg:block"><Cart items={catalog.items} /></div>
+          <div className="hidden h-full shrink-0 lg:block"><Cart /></div>
 
           <Dialog open={cartOpen} onOpenChange={setCartOpen}>
             <DialogContent showCloseButton={false}
@@ -85,7 +87,7 @@ export default function Pos4Page() {
                     <DialogDescription className="truncate text-xs text-muted-foreground">{branchName}</DialogDescription>
                   </div>
                 </div>
-                <div className="min-h-0 flex-1 bg-background"><Cart items={catalog.items} onContinueShopping={() => setCartOpen(false)} /></div>
+                <div className="min-h-0 flex-1 bg-background"><Cart onContinueShopping={() => setCartOpen(false)} /></div>
               </div>
             </DialogContent>
           </Dialog>

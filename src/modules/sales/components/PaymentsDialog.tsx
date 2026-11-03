@@ -63,8 +63,8 @@ export function PaymentsDialog({ invoice, onOpenChange }: { invoice: SalesOrderD
                       <TableCell className="font-semibold tabular-nums">{formatMoney(p.amount)}</TableCell>
                       <TableCell className="text-end">
                         <Can perm={P.sales.payments}>
-                          <Button variant="ghost" size="icon" aria-label={t("common.delete")} disabled={remove.isPending}
-                            onClick={() => remove.mutate(p.id)} className="hover:bg-destructive-soft hover:text-destructive"><Trash2 /></Button>
+                          <Button variant="ghost-destructive" size="icon" aria-label={t("common.delete")} disabled={remove.isPending}
+                            onClick={() => remove.mutate(p.id)}><Trash2 /></Button>
                         </Can>
                       </TableCell>
                     </TableRow>

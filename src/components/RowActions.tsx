@@ -39,7 +39,7 @@ export function RowActions({ editTo, onEdit, viewTo, onDelete }: { editTo?: stri
       {onDelete && (
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" aria-label={t("common.delete")} onClick={onDelete} className={classic ? "rounded-lg border text-[var(--text-muted)] hover:border-red-100 hover:bg-[#fef2f2] hover:text-[#dc2626]" : "hover:bg-destructive-soft hover:text-destructive"}><Trash2 /></Button>
+            <Button variant="ghost-destructive" size="icon" aria-label={t("common.delete")} onClick={onDelete} className={classic ? "rounded-lg border" : ""}><Trash2 /></Button>
           </TooltipTrigger>
           <TooltipContent>{t("common.delete")}</TooltipContent>
         </Tooltip>

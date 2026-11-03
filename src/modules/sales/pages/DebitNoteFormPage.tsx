@@ -103,7 +103,7 @@ export default function DebitNoteFormPage() {
                     {payments.fields.map((f, i) => (
                       <div key={f.id} className="grid grid-cols-[1fr_1.3fr_auto] items-start gap-2">
                         <PaymentFields control={form.control} prefix={`payments.${i}`} compact />
-                        <Button type="button" variant="ghost" size="icon-lg" aria-label={t("common.remove")} onClick={() => payments.remove(i)} className="hover:bg-destructive-soft hover:text-destructive"><Trash2 /></Button>
+                        <Button type="button" variant="ghost-destructive" size="icon-lg" aria-label={t("common.remove")} onClick={() => payments.remove(i)}><Trash2 /></Button>
                       </div>
                     ))}
                     {overpaid && <p className="text-sm text-destructive">{t("sales.overpaid")}</p>}

@@ -4,18 +4,17 @@ import type { Product } from "@/modules/products/types"
 import { usePosStore } from "../store"
 import type { CartLine } from "../types"
 import { useBranchedItems } from "./queries"
-import { shownPrice } from "./useCatalog"
 
 type NewLine = Omit<CartLine, "key" | "notes" | "extras">
 
 /** An item as a cart line. The tax rate is the one the server sends with the item, so no tax list is read. */
 const lineOf = (p: Product, name: string): NewLine => ({
   productId: p.id, unitId: p.baseUnitId ?? 0, name, unitName: "", quantity: 1, unitPrice: enteredPrice(p),
-  taxRate: p.taxPercentage ?? 0, taxCalculation: taxCalcOf(p), discountKind: "value", discount: 0, imageUrl: p.imageUrl ?? null,
+  taxRate: p.taxPercentage ?? 0, taxCalculation: taxCalcOf(p), discountKind: "value", discount: 0, imageUrl: p.imageUrl ?? null, categoryId: p.categoryId ?? null,
 })
 
 /** What picking an item does: adds it, or opens the list of the items a branched item groups. */
-export function useOrderActions(items: Product[] | undefined, productName: (p: Pick<Product, "productNameAr" | "productNameEn">) => string) {
+export function useOrderActions(productName: (p: Pick<Product, "productNameAr" | "productNameEn">) => string) {
   const add = usePosStore((s) => s.add)
   const setQty = usePosStore((s) => s.setQty)
   const lines = usePosStore((s) => s.lines)
@@ -43,16 +42,10 @@ export function useOrderActions(items: Product[] | undefined, productName: (p: P
     if (last) setQty(last.key, last.quantity - 1)
   }, [setQty])
 
-  const pickChild = (child: NonNullable<Product["children"]>[number]) => {
-    const full = items?.find((p) => p.id === child.id)
-    const name = productName(child)
-    if (full) return add(lineOf(full, name))
-    add({ productId: child.id, unitId: 0, name, unitName: "", quantity: 1, unitPrice: child.sellingPrice ?? 0, taxRate: 0, taxCalculation: 1, discountKind: "value", discount: 0, imageUrl: null })
-  }
-  const childPrice = (child: NonNullable<Product["children"]>[number]) => {
-    const full = items?.find((p) => p.id === child.id)
-    return full ? shownPrice(full) : child.sellingPrice ?? 0
-  }
+  // The server sends a child with its price only; it works the tax and the unit out from the item itself.
+  const pickChild = (child: NonNullable<Product["children"]>[number]) =>
+    add({ productId: child.id, unitId: 0, name: productName(child), unitName: "", quantity: 1, unitPrice: child.sellingPrice ?? 0, taxRate: 0, taxCalculation: 2, discountKind: "value", discount: 0, imageUrl: null })
+  const childPrice = (child: NonNullable<Product["children"]>[number]) => child.sellingPrice ?? 0
 
   return { pick, decrease, quantityOf, parent, closeParent: () => setParentId(null), pickChild, childPrice }
 }

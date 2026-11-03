@@ -1,11 +1,13 @@
-import { memo } from "react"
+import { memo, useEffect, useRef, useState } from "react"
 import { Flame, Minus, Plus, Store } from "lucide-react"
 import { CurrencySymbol } from "../components/CurrencySymbol"
 import { useTranslation } from "react-i18next"
+import { Button } from "@/components/ui/button"
+import type { Category } from "@/modules/categories/types"
 import { cn } from "@/lib/utils"
 import type { Product } from "@/modules/products/types"
 import { shownPrice } from "./useCatalog"
-import type { ProductGroup } from "./types"
+import { usePos4Items } from "./queries"
 
 type Typography = { productName: number; productPrice: number; priceIcon: number }
 
@@ -86,10 +88,54 @@ const MobileCard = memo(function MobileCard({ item, name, typography, quantity, 
   )
 })
 
-/** The items: a grid of the open category on a wide screen, every category's section one under another on a phone. */
-export function Products({ filtered, groups, hasCart, typography, nameOf, quantityOf, onSelect, onDecrease, registerSection }: {
-  filtered: Product[]
-  groups: ProductGroup<Product>[]
+type Items = ReturnType<typeof usePos4Items>
+
+/** The button under a list that has more server pages. */
+function MoreButton({ list }: { list: Items }) {
+  const { t } = useTranslation()
+  if (!list.hasMore) return null
+  return (
+    <div className="flex justify-center p-3 lg:col-span-full">
+      <Button type="button" variant="outline" disabled={list.loadingMore} onClick={list.loadMore}>{list.loadingMore ? t("common.loading") : t("common.loadMore")}</Button>
+    </div>
+  )
+}
+
+/** A phone's section of one category: its items are asked for when the section comes into view; an empty category shows nothing. */
+function CategorySection({ id, name, fontSize, card, registerSection }: {
+  id: number
+  name: string
+  fontSize: number
+  card: (p: Product) => CardProps
+  registerSection: (id: number, el: HTMLElement | null) => void
+}) {
+  const el = useRef<HTMLElement | null>(null)
+  const [seen, setSeen] = useState(false)
+  useEffect(() => {
+    const node = el.current
+    if (!node) return
+    const io = new IntersectionObserver((entries) => { if (entries.some((e) => e.isIntersecting)) { setSeen(true); io.disconnect() } })
+    io.observe(node)
+    return () => io.disconnect()
+  }, [])
+  const list = usePos4Items({ categoryId: id, term: "", enabled: seen })
+  if (seen && !list.loading && list.items.length === 0) return null
+  return (
+    <section id={`pos4-category-${id}`} ref={(node) => { el.current = node; registerSection(id, node) }} className={cn("pos4-product-group scroll-mt-[108px]", list.loading || !seen ? "min-h-40" : "")}>
+      <h2 className="-mx-3 border-t-[0.5px] border-border px-3 py-3 font-extrabold text-foreground" style={{ fontSize }}>{name}</h2>
+      {list.items.map((p) => <MobileCard key={p.id} {...card(p)} />)}
+      <MoreButton list={list} />
+    </section>
+  )
+}
+
+/** The items: a grid of the open category on a wide screen; on a phone every category's section one under another (or the search results). */
+export function Products({ phone, searching, main, categoryName, list, hasCart, typography, nameOf, quantityOf, onSelect, onDecrease, registerSection }: {
+  phone: boolean
+  searching: boolean
+  main: Category[] | undefined
+  categoryName: (c: Category) => string
+  list: Items
   hasCart: boolean
   typography: Typography
   nameOf: (p: Product) => string
@@ -99,17 +145,12 @@ export function Products({ filtered, groups, hasCart, typography, nameOf, quanti
   registerSection: (id: number, el: HTMLElement | null) => void
 }) {
   const card = (p: Product) => ({ item: p, name: nameOf(p), typography, quantity: quantityOf(p.id), onSelect, onDecrease })
+  const fontSize = Math.max(typography.productName, 16)
   return (
     <div className={cn("flex flex-col px-3 lg:grid lg:grid-cols-4 lg:gap-2 lg:p-3 lg:py-2.5 2xl:grid-cols-5", hasCart && "pb-28 lg:pb-2.5")}>
-      {groups.map((g) => (
-        <section key={g.id} id={`pos4-category-${g.id}`} ref={(el) => registerSection(g.id, el)} className="pos4-product-group scroll-mt-[108px] lg:hidden">
-          <h2 className="-mx-3 border-t-[0.5px] border-border px-3 py-3 font-extrabold text-foreground" style={{ fontSize: Math.max(typography.productName, 16) }}>{g.name}</h2>
-          {g.products.map((p) => <MobileCard key={p.id} {...card(p)} />)}
-        </section>
-      ))}
-      <div className="hidden lg:contents">
-        {filtered.map((p) => <Card key={p.id} {...card(p)} />)}
-      </div>
+      {!phone && <>{list.items.map((p) => <Card key={p.id} {...card(p)} />)}<MoreButton list={list} /></>}
+      {phone && searching && <>{list.items.map((p) => <MobileCard key={p.id} {...card(p)} />)}<MoreButton list={list} /></>}
+      {phone && !searching && (main ?? []).map((c) => <CategorySection key={c.id} id={c.id} name={categoryName(c)} fontSize={fontSize} card={card} registerSection={registerSection} />)}
     </div>
   )
 }
