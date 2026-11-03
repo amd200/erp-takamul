@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react"
-import { Clock, CreditCard, FileText, Plus, Printer, Search, Trash2, User, X } from "lucide-react"
+import { Clock, CreditCard, FileText, Plus, Printer, QrCode, Search, Trash2, User, X } from "lucide-react"
 import { CurrencySymbol } from "./CurrencySymbol"
+import { InvoiceQrDialog } from "./InvoiceQrDialog"
 import { useQuery } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
@@ -68,6 +69,7 @@ export function OrdersDialog({ open, onOpenChange, onlySuspended = false }: { op
   const { t, i18n } = useTranslation()
   const [tab, setTab] = useState<Tab>("completed")
   const [search, setSearch] = useState("")
+  const [qrId, setQrId] = useState<number | null>(null)
   const held = onlySuspended || tab === "pending"
   const showTables = useAppSettings().salesScreenTab?.isTables === true
   const tables = !onlySuspended && tab === "tables"
@@ -170,6 +172,9 @@ export function OrdersDialog({ open, onOpenChange, onlySuspended = false }: { op
                         <span className="flex items-center gap-1 text-[12px] font-bold text-foreground">{(o.grandTotal ?? 0).toFixed(2)}<CurrencySymbol size={11} /></span>
                       </div>
                       <div className="flex shrink-0 items-center gap-2">
+                        {!held && o.orderStatus === "Confirmed" && !o.isHolding && (
+                          <button type="button" title={t("pos1.showQr")} aria-label={t("pos1.showQr")} className={icon} onClick={() => setQrId(o.id)}><QrCode size={15} /></button>
+                        )}
                         {!held && o.orderStatus !== "Cancelled" && (
                           <button type="button" className={icon} disabled={printInvoice.isPending} onClick={() => printInvoice.mutate({ invoice: { id: o.id }, as: "print", paper: "roll" }, { onSuccess: () => onOpenChange(false) })}><Printer size={15} /></button>
                         )}
@@ -193,6 +198,7 @@ export function OrdersDialog({ open, onOpenChange, onlySuspended = false }: { op
           <button type="button" onClick={() => onOpenChange(false)} className="rounded border border-border px-3 py-1.5 text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">{t("pos1.close")}</button>
         </div>
       </DialogContent>
+      <InvoiceQrDialog invoiceId={qrId} onClose={() => setQrId(null)} />
     </Dialog>
   )
 }

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react"
-import { ChefHat, Clock, CreditCard, FileText, Play, Plus, Printer, Search, Trash2, User, X } from "lucide-react"
+import { ChefHat, Clock, CreditCard, FileText, Play, Plus, Printer, QrCode, Search, Trash2, User, X } from "lucide-react"
 import { CurrencySymbol } from "../components/CurrencySymbol"
 import { useQuery } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
@@ -13,6 +13,7 @@ import { printDocument } from "@/shared/print"
 import { http } from "@/shared/http/request"
 import type { PagedResult } from "@/shared/http/paged"
 import { badgeOf, useOrderToCart, type Order } from "../components/OrdersDialog"
+import { InvoiceQrDialog } from "../components/InvoiceQrDialog"
 import { useDeleteHeld } from "../queries"
 
 type Tab = "all" | "completed" | "pending"
@@ -29,6 +30,7 @@ export function InvoicesDialog({ open, onOpenChange }: { open: boolean; onOpenCh
   const beauty = useAppSettings().salonsTab?.beautyTheme === true
   const [tab, setTab] = useState<Tab>("all")
   const [search, setSearch] = useState("")
+  const [qrId, setQrId] = useState<number | null>(null)
   const settings = useAppSettings()
   const invoiceType = settings.salesScreenTab?.sales2InvoiceType
   const paper = invoiceType === 2 ? "roll" : invoiceType === 3 ? "a5" : "a4"
@@ -125,6 +127,9 @@ export function InvoicesDialog({ open, onOpenChange }: { open: boolean; onOpenCh
                     <div className="flex shrink-0 items-center gap-2">
                       <span className="flex items-center gap-1 text-[12px] font-bold text-foreground">{(o.grandTotal ?? 0).toFixed(2)}<CurrencySymbol size={11} /></span>
                       <button type="button" title={t("pos2.printPrepTicket")} aria-label={t("pos2.printPrepTicket")} className={icon} onClick={() => printDocument(bonDoc(o, ticketOptions(settings, "pending", "print")))}><ChefHat size={13} /></button>
+                      {!pending && !o.isHolding && (
+                        <button type="button" title={t("pos1.showQr")} aria-label={t("pos1.showQr")} className={icon} onClick={() => setQrId(o.id)}><QrCode size={13} /></button>
+                      )}
                       {!pending ? (
                         <button type="button" aria-label={t("pos2.print")} className={icon} disabled={printInvoice.isPending} onClick={() => printInvoice.mutate({ invoice: { id: o.id }, as: "print", paper })}><Printer size={13} /></button>
                       ) : (
@@ -154,6 +159,7 @@ export function InvoicesDialog({ open, onOpenChange }: { open: boolean; onOpenCh
           <button type="button" onClick={() => onOpenChange(false)} className="rounded-lg border border-border px-4 py-1.5 text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">{t("pos1.close")}</button>
         </div>
       </DialogContent>
+      <InvoiceQrDialog invoiceId={qrId} onClose={() => setQrId(null)} />
     </Dialog>
   )
 }
