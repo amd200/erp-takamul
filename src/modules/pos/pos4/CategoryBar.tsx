@@ -40,17 +40,16 @@ export function CategoryBar({ categories, activeId, stripRef, onScroll, onSelect
       <div className="flex items-center gap-2">
         <button type="button" onClick={() => onScroll("left")} aria-label={t("pos.scrollStart")} className={arrow}><ChevronRight size={15} className="text-muted-foreground" /></button>
         <div ref={stripRef} className="flex w-full snap-x snap-proximity touch-pan-x gap-1.5 overflow-x-auto overscroll-x-contain scroll-smooth px-3 lg:px-0" style={{ scrollbarWidth: "none" }}>
-          <button type="button" className="shrink-0 lg:hidden" aria-pressed={false} onClick={onSelectAll}>{t("pos4.all")}</button>
-          {categories?.map((c) => (
-            <button key={c.id} type="button" onClick={() => onSelect(c.id)} aria-pressed={c.id === activeId}
+          {[{ id: null, label: t("pos4.all") }, ...(categories ?? []).map((c) => ({ id: c.id, label: nameOf(c) }))].map(({ id, label }) => (
+            <button key={id ?? "all"} type="button" onClick={() => (id === null ? onSelectAll() : onSelect(id))} aria-pressed={id === activeId}
               className={cn(
                 "-mb-px inline-flex h-11 shrink-0 snap-start items-center justify-center rounded-none border-0 border-b-2 px-4 text-sm whitespace-nowrap transition-colors [font-size:var(--category-font-size-mobile)] focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none lg:mb-0 lg:rounded-full lg:border lg:px-9.5 lg:[font-size:var(--category-font-size-desktop)]",
-                c.id === activeId
+                id === activeId
                   ? "border-primary bg-transparent font-semibold text-primary lg:bg-primary lg:text-primary-foreground"
                   : "border-transparent bg-transparent text-muted-foreground hover:text-foreground lg:border-border lg:bg-card lg:hover:border-primary/40",
               )}
               style={{ "--category-font-size-mobile": `${phoneFont}px`, "--category-font-size-desktop": `${categoryFont}px` } as CSSProperties}>
-              {nameOf(c)}
+              {label}
             </button>
           ))}
         </div>

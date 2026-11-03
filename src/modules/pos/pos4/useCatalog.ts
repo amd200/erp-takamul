@@ -26,8 +26,8 @@ export function useCatalog(search: string, currentCat: number | null) {
   const productName = useCallback((p: Pick<Product, "productNameAr" | "productNameEn">) => (lang === "en" ? p.productNameEn || p.productNameAr : p.productNameAr), [lang])
   const categoryName = useCallback((c: Category) => (lang === "en" ? c.categoryNameEn || c.categoryNameAr : c.categoryNameAr), [lang])
 
-  // The first category is the open one until another is picked.
-  const activeCategoryId = main?.some((c) => c.id === currentCat) ? currentCat : main?.[0]?.id ?? null
+  // No category is open (all items) until one is picked.
+  const activeCategoryId = main?.some((c) => c.id === currentCat) ? currentCat : null
 
   const matches = useCallback((p: Product) => {
     const term = search.trim().toLowerCase()
