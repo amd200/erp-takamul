@@ -1,6 +1,5 @@
-import { fetchAllPages } from "@/shared/http/paged"
 import { http } from "@/shared/http/request"
-import type { BranchRow, Branch, BranchInput, BranchPage, BranchQuery } from "./types"
+import type { BranchRow, Branch, BranchInput } from "./types"
 
 // The server takes a multipart form. Empty text is sent as empty so a cleared field is cleared on the server.
 function form(b: BranchInput, extra: Record<string, unknown>) {
@@ -24,8 +23,8 @@ function form(b: BranchInput, extra: Record<string, unknown>) {
 }
 
 export const branchesApi = {
-  page: (q: BranchQuery) => http<BranchPage>("/Branch", { params: { Page: q.page, PageSize: q.pageSize, SearchTerm: q.searchTerm || undefined, SortBy: q.sortBy, SortDescending: q.sortBy ? q.sortDescending : undefined } }),
-  list: () => fetchAllPages<BranchRow>("/Branch"),
+  /** The server sends every branch as one plain array (no paging), the same as /Branch. */
+  list: () => http<BranchRow[]>("/Branch/list"),
   get: (id: number) => http<Branch>(`/Branch/${id}`),
   create: (b: BranchInput) => http<unknown>("/Branch", { method: "POST", data: form(b, { Image: b.image, StampImage: b.stampImage }) }),
   update: (id: number, b: BranchInput, current: Branch) => http<unknown>(`/Branch/${id}`, {

@@ -39,5 +39,3 @@ export type BranchInput = {
 /** Fields used by the branch list, without replacing missing API values. */
 export type BranchRow = Pick<Branch, "id" | "code" | "name" | "shortName" | "shortNameEn" | "phone" | "isActive">
 
-export type BranchPage = { items: BranchRow[]; totalCount: number; pageNumber: number; pageSize: number }
-export type BranchQuery = { page: number; pageSize: number; searchTerm?: string; sortBy?: string; sortDescending?: boolean }

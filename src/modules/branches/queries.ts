@@ -1,13 +1,11 @@
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import i18n from "@/shared/i18n"
 import { errorToast } from "@/shared/api/errors"
 import { branchesApi } from "./service"
-import type { Branch, BranchInput, BranchQuery } from "./types"
+import type { Branch, BranchInput } from "./types"
 
-export const branchKeys = { all: ["branches"] as const, list: ["branches", "list"] as const, page: (q: BranchQuery) => ["branches", "page", q] as const, detail: (id: number) => ["branches", "detail", id] as const }
-
-export const useBranchPage = (q: BranchQuery) => useQuery({ queryKey: branchKeys.page(q), queryFn: () => branchesApi.page(q), placeholderData: keepPreviousData })
+export const branchKeys = { all: ["branches"] as const, list: ["branches", "list"] as const, detail: (id: number) => ["branches", "detail", id] as const }
 
 export const useBranchList = () => useQuery({ queryKey: branchKeys.list, queryFn: branchesApi.list })
 export const useBranch = (id: number | undefined) => useQuery({ queryKey: branchKeys.detail(id ?? 0), queryFn: () => branchesApi.get(id!), enabled: !!id })
