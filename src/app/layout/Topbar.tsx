@@ -151,7 +151,7 @@ function ClassicTopbar({ drawerOpen, onMenu, onToggleSidebar }: { drawerOpen: bo
   return (
     <header className="sticky top-0 z-40 flex h-16 items-center justify-between gap-2 border-b bg-card px-2 shadow-sm transition-colors duration-300 sm:px-4 lg:px-8 print:hidden">
       <div className="flex shrink-0 items-center gap-2 lg:gap-4">
-        <button type="button" onClick={onMenu} aria-label={drawerOpen ? t("nav.close") : t("nav.open")} className="flex size-10 items-center justify-center rounded-lg text-[var(--text-muted)] hover:bg-[var(--bg-main)] lg:hidden">
+        <button type="button" onClick={onMenu} aria-expanded={drawerOpen} aria-label={drawerOpen ? t("nav.close") : t("nav.open")} className="flex size-10 items-center justify-center rounded-lg text-[var(--text-muted)] hover:bg-[var(--bg-main)] lg:hidden">
           {drawerOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
         <button type="button" onClick={onToggleSidebar} aria-label={t("nav.toggle")} className="hidden rounded-lg p-2 text-[var(--text-muted)] hover:bg-[var(--bg-main)] lg:block"><Menu size={24} /></button>
