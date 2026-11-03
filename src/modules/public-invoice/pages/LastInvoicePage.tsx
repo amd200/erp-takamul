@@ -6,7 +6,7 @@ import { renderDocument } from "@/shared/print"
 import { usePublicBranch } from "@/modules/pos/pos4/queries"
 import { invoiceRollDoc } from "@/modules/sales/print/invoiceRollDoc"
 import { printInvoiceOf } from "@/modules/sales/print/useInvoiceOutput"
-import { enableInvoiceNotifications, isNotificationSupported, needsAddToHomeScreen, type NotifyResult } from "../pushClient"
+import { enableInvoiceNotifications, pushFailure, isNotificationSupported, needsAddToHomeScreen, type NotifyResult } from "../pushClient"
 import { followedInvoiceId, isFinalized, publicInvoiceApi } from "../service"
 
 const POLL_MS = 4000
@@ -103,7 +103,7 @@ export default function LastInvoicePage() {
           {supported && !blocked && (
             <button type="button" onClick={enable} className="mt-3 w-full rounded-lg bg-primary px-4 py-3 text-sm font-bold text-primary-foreground">{t("invTrack.enable")}</button>
           )}
-          {notify === "no-push" && <p className="mt-3 text-sm text-amber-600">{t("invTrack.noPush")}</p>}
+          {notify === "no-push" && <p className="mt-3 text-sm text-amber-600">{t("invTrack.noPush")}<span dir="ltr" className="mt-1 block text-xs opacity-80">{pushFailure()}</span></p>}
           {(blocked || (!supported && !showIosHint) || notify === "unsupported" || notify === "error") && <p className="mt-3 text-sm text-amber-600">{t("invTrack.denied")}</p>}
         </>
       )}
