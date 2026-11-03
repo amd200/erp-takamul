@@ -16,6 +16,7 @@ import { devicesApi } from "@/modules/pos-devices/service"
 export function CustomerScreenDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
   const { t } = useTranslation()
   const token = useAuthStore((s) => s.session?.accessToken)
+  const branchId = useAuthStore((s) => s.session?.branchId)
   const [copied, setCopied] = useState(false)
   const deviceId = useMemo(() => {
     if (!token) return ""
@@ -27,7 +28,7 @@ export function CustomerScreenDialog({ open, onOpenChange }: { open: boolean; on
   const devices = useQuery({ queryKey: ["pos-devices", "list"], queryFn: () => devicesApi.list(), enabled: open })
   const device = deviceId ? (devices.data ?? []).find((d) => String(d.id) === deviceId) : undefined
   const name = device?.deviceName ?? deviceId
-  const link = `${window.location.origin}/pos4?posDeviceName=${encodeURIComponent(name)}`
+  const link = `${window.location.origin}/pos4?${branchId ? `branchId=${branchId}&` : ""}posDeviceName=${encodeURIComponent(name)}`
   const shown = devices.isLoading ? t("common.loading") : device ? device.deviceName : deviceId ? `${t("pos1.device")} #${deviceId}` : t("pos1.noDevice")
 
   const copy = async () => {

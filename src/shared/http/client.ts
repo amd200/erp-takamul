@@ -8,6 +8,13 @@ export const client = axios.create({ baseURL: API_BASE_URL, withCredentials: tru
 
 client.interceptors.request.use((config) => {
   config.headers["Accept-Language"] = i18n.language === "en" ? "en" : "ar"
+  // The customer's ordering screen (/pos4) is public: no cookie, and it sends the branch id from its link as X-Branch-Id.
+  if (location.pathname.replace(/\/+$/, "") === "/pos4") {
+    config.withCredentials = false
+    const branchId = new URLSearchParams(location.search).get("branchId")
+    if (branchId) config.headers["X-Branch-Id"] = branchId
+    return config
+  }
   const token = useAuthStore.getState().session?.accessToken
   if (token) config.headers.Authorization = `Bearer ${token}`
   // A request that sets its own X-Branch-Id (creating a record for a specific branch) keeps it.

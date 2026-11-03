@@ -165,6 +165,13 @@
 }
 
 [data-theme="classic"].dark {
+  --text-main: #cbd5e1;
+  --text-muted: #94a3b8;
+  --bg-main: #0a1222;
+  --input-bg: #0f1a30;
+  --table-header-text: #94a3b8;
+  --table-header-border: #1e2a44;
+  --table-row-hover: #1b2745;
   --destructive: #e5857e;
   --destructive-soft: #3b2325;
   --warning: #dba957;
