@@ -135,12 +135,12 @@ const pill = "flex h-auto shrink-0 items-center justify-center gap-1.5 rounded-f
 const panel = "mt-2 rounded-lg border bg-card py-1 shadow-lg"
 const panelItem = "px-4 py-2 text-sm text-[var(--text-main)]"
 
-export function Topbar({ drawerOpen, onMenu, onToggleSidebar }: { drawerOpen: boolean; onMenu: () => void; onToggleSidebar: () => void }) {
+export function Topbar({ drawerOpen, onMenu }: { drawerOpen: boolean; onMenu: () => void }) {
   const classic = useClassic()
-  return classic ? <ClassicTopbar drawerOpen={drawerOpen} onMenu={onMenu} onToggleSidebar={onToggleSidebar} /> : <ModernTopbar onMenu={onMenu} />
+  return classic ? <ClassicTopbar drawerOpen={drawerOpen} onMenu={onMenu} /> : <ModernTopbar onMenu={onMenu} />
 }
 
-function ClassicTopbar({ drawerOpen, onMenu, onToggleSidebar }: { drawerOpen: boolean; onMenu: () => void; onToggleSidebar: () => void }) {
+function ClassicTopbar({ drawerOpen, onMenu }: { drawerOpen: boolean; onMenu: () => void }) {
   const { t, i18n } = useTranslation()
   const { choice, resolved, setChoice } = useTheme()
   const { user } = useSession()
@@ -151,10 +151,9 @@ function ClassicTopbar({ drawerOpen, onMenu, onToggleSidebar }: { drawerOpen: bo
   return (
     <header className="sticky top-0 z-40 flex h-16 items-center justify-between gap-2 border-b bg-card px-2 shadow-sm transition-colors duration-300 sm:px-4 lg:px-8 print:hidden">
       <div className="flex shrink-0 items-center gap-2 lg:gap-4">
-        <button type="button" onClick={onMenu} aria-expanded={drawerOpen} aria-label={drawerOpen ? t("nav.close") : t("nav.open")} className="flex size-10 items-center justify-center rounded-lg text-[var(--text-muted)] hover:bg-[var(--bg-main)] lg:hidden">
+        <button type="button" onClick={onMenu} aria-expanded={drawerOpen} aria-label={drawerOpen ? t("nav.close") : t("nav.open")} className="flex size-10 items-center justify-center rounded-lg text-[var(--text-muted)] hover:bg-[var(--bg-main)] md:hidden">
           {drawerOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
-        <button type="button" onClick={onToggleSidebar} aria-label={t("nav.toggle")} className="hidden rounded-lg p-2 text-[var(--text-muted)] hover:bg-[var(--bg-main)] lg:block"><Menu size={24} /></button>
 
         <div className="hidden w-60 items-center rounded-full border bg-[var(--input-bg)] px-3 py-1.5 transition-all focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/20 md:flex">
           <Search size={16} className="text-[var(--text-muted)]" />
