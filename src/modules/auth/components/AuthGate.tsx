@@ -3,6 +3,7 @@ import { Navigate, Outlet, useLocation } from "react-router-dom"
 import { Loader2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useAuthStore } from "@/shared/auth/authStore"
+import { useForceLogout } from "@/shared/auth/useForceLogout"
 import { authApi } from "../service"
 
 let restoring = false
@@ -16,6 +17,7 @@ export function RequireAuth() {
   const { pathname, search } = useLocation()
   const signedIn = useAuthStore((s) => !!s.session)
   const initialized = useAuthStore((s) => s.initialized)
+  useForceLogout()
 
   useEffect(() => {
     if (initialized || restoring) return

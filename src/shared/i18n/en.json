@@ -500,6 +500,9 @@
     "name": "Takamul Data"
   },
   "common": {
+    "routeErrorTitle": "Unexpected error",
+    "routeErrorChunk": "The app was updated. Reload the page to continue.",
+    "reload": "Reload",
     "active": "Active",
     "inactive": "Inactive",
     "add": "Add",

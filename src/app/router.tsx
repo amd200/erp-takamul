@@ -19,9 +19,10 @@ import { authRoutes } from "@/modules/auth/routes"
 import { RequireAuth } from "@/modules/auth/components/AuthGate"
 import { AppLayout } from "./layout/AppLayout"
 import { NotBuiltPage } from "./pages"
+import { RouteError } from "./RouteError"
 import { HomePage } from "@/modules/home/pages/HomePage"
 
-export const router = createBrowserRouter([
+export const router = createBrowserRouter([{ errorElement: <RouteError />, children: [
   ...authRoutes,
   ...pos4Routes,
   ...publicInvoiceRoutes,
@@ -49,4 +50,4 @@ export const router = createBrowserRouter([
     ],
   }],
   },
-])
+]}])
