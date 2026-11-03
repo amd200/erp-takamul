@@ -23,8 +23,8 @@ function form(b: BranchInput, extra: Record<string, unknown>) {
 }
 
 export const branchesApi = {
-  /** The server sends every branch as one plain array (no paging), the same as /Branch. */
-  list: () => http<BranchRow[]>("/Branch/list"),
+  /** The server sends every branch as one plain array (no paging), as /Branch sends it. */
+  list: () => http<BranchRow[]>("/Branch"),
   get: (id: number) => http<Branch>(`/Branch/${id}`),
   create: (b: BranchInput) => http<unknown>("/Branch", { method: "POST", data: form(b, { Image: b.image, StampImage: b.stampImage }) }),
   update: (id: number, b: BranchInput, current: Branch) => http<unknown>(`/Branch/${id}`, {
