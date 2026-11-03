@@ -17,15 +17,23 @@ type Options = {
 export async function http<T>(url: string, o: Options = {}): Promise<T> {
   try {
     const res = await client({ url, method: o.method ?? "GET", params: o.params, data: o.data, headers: o.headers, responseType: o.responseType, timeout: o.timeout, signal: o.signal })
+    if (o.responseType === "blob" && res.data instanceof Blob && res.data.type.includes("json")) {
+      const body = await readBlobJson(res.data)
+      if (body && typeof body === "object" && (body as { success?: unknown }).success === false) {
+        const errors = toErrorList((body as { errors?: unknown }).errors)
+        throw new ApiError(toErrorMessage(body, errors, i18n.t("common.unexpected")), res.status, { errors })
+      }
+    }
     return res.data as T
   } catch (e) {
-    if (axios.isCancel(e)) throw e
+    if (axios.isCancel(e) || e instanceof ApiError) throw e
     if (!axios.isAxiosError(e)) throw e
     if (!e.response) {
       const timeout = e.code === "ECONNABORTED" || e.code === "ETIMEDOUT"
       throw new ApiError(i18n.t(timeout ? "common.timeout" : "common.network"), 0, { code: timeout ? "TIMEOUT" : "NETWORK", cause: e })
     }
-    const body = e.response.data
+    // A blob request's error body arrives as a Blob; read it back to the JSON the server sent.
+    const body = e.response.data instanceof Blob ? await readBlobJson(e.response.data) : e.response.data
     const errors = toErrorList((body as { errors?: unknown } | undefined)?.errors)
     throw new ApiError(toErrorMessage(body, errors, i18n.t("common.unexpected")), e.response.status, { errors, code: (body as { code?: string } | undefined)?.code, cause: e })
   }
@@ -47,4 +55,10 @@ function toErrorMessage(data: unknown, errors: string[], fallback: string): stri
 function toErrorList(errors: unknown): string[] {
   const values = Array.isArray(errors) ? errors : errors && typeof errors === "object" ? Object.values(errors).flat() : []
   return values.filter((v): v is string => typeof v === "string" && v.trim() !== "")
+}
+
+/** A blob's text as JSON (or the plain text when it isn't JSON). */
+async function readBlobJson(blob: Blob): Promise<unknown> {
+  const text = await blob.text()
+  try { return JSON.parse(text) } catch { return text }
 }

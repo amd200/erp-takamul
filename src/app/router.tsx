@@ -14,6 +14,7 @@ import { reservationRoutes } from "@/modules/reservations/routes"
 import { orderRequestRoutes } from "@/modules/order-requests/routes"
 import { pos4Routes, posRoutes } from "@/modules/pos/routes"
 import { expenseRoutes } from "@/modules/expenses/routes"
+import { publicInvoiceRoutes } from "@/modules/public-invoice/routes"
 import { authRoutes } from "@/modules/auth/routes"
 import { RequireAuth } from "@/modules/auth/components/AuthGate"
 import { AppLayout } from "./layout/AppLayout"
@@ -23,6 +24,7 @@ import { HomePage } from "@/modules/home/pages/HomePage"
 export const router = createBrowserRouter([
   ...authRoutes,
   ...pos4Routes,
+  ...publicInvoiceRoutes,
   {
     element: <RequireAuth />,
     children: [...posRoutes, ...purchaseScreenRoutes, {

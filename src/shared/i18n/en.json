@@ -3405,5 +3405,20 @@
     "sendToKitchen": "Send to kitchen",
     "sent": "Order sent successfully",
     "cannotHold": "A table order cannot be held: pay it or leave it on the table."
+  },
+  "invTrack": {
+    "appName": "Your invoice",
+    "created": "Your order was created successfully",
+    "preparing": "Your invoice is being prepared, we will notify you when it is ready",
+    "enable": "Enable notifications",
+    "enabled": "Notifications are on, you will be notified when your invoice is ready",
+    "denied": "Notifications are off, keep this page open to follow your order",
+    "iosHint": "Add this page to the Home Screen to receive notifications",
+    "invalid": "This link is invalid or has expired",
+    "notifyBody": "We will notify you when the invoice is ready",
+    "none": "There is no pending invoice right now",
+    "ready": "Your invoice is ready",
+    "noPush": "Notifications could not be fully set up, keep this page open to follow your order",
+    "renderError": "The invoice could not be displayed"
   }
 }

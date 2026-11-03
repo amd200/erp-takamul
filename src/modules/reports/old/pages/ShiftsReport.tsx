@@ -2,6 +2,7 @@ import { useState } from "react"
 import { FileDown, Loader2, RefreshCw } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
+import { errorToast } from "@/shared/api/errors"
 import { shiftsApi } from "@/modules/shifts/service"
 import type { Shift } from "@/modules/shifts/types"
 import { money } from "../output"
@@ -27,7 +28,7 @@ export default function ShiftsReport() {
       a.download = `shift-${id}.pdf`
       a.click()
       URL.revokeObjectURL(a.href)
-    } finally { setBusyId(null) }
+    } catch (e) { errorToast(e, "sales.downloadFailed") } finally { setBusyId(null) }
   }
   const status = (r: Shift) => (r.status === "Open" ? t("oldReports.shift_status_open") : t("oldReports.shift_status_closed"))
   return (

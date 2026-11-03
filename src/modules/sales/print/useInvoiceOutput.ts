@@ -36,7 +36,7 @@ const measurementOf = (c: Customer | undefined) => (c && EYE_FIELDS.some((k) => 
 type Paper = "a4" | "a5" | "roll"
 
 /** The saved invoice as the layouts print it: the server's own totals and line amounts. */
-const printInvoiceOf = (o: SalesOrderDto): PrintInvoice => ({
+export const printInvoiceOf = (o: SalesOrderDto): PrintInvoice => ({
   id: o.id, number: o.orderNumber ?? "", date: o.orderDate ?? "", customerName: o.customerName ?? "", warehouseName: o.warehouseName ?? "",
   employeeName: o.employeeName ?? null, createdBy: o.createdBy ?? "", notes: o.notes ?? "",
   lines: (o.items ?? []).map((l) => ({ ...editorLineOf(l), amounts: { discount: l.discountValue ?? 0, tax: l.taxAmount ?? 0, total: l.lineTotal ?? 0 } })),
