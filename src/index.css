@@ -321,7 +321,10 @@ html.beauty[data-theme] {
   border: 1px solid var(--border);
   color: var(--text-muted);
   cursor: pointer;
-  padding: 8px;
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
   border-radius: 8px;
   display: inline-flex;
   align-items: center;

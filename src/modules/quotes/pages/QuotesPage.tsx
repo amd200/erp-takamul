@@ -1,3 +1,5 @@
+import { cn } from "@/lib/utils"
+import { useClassic } from "@/shared/theme/ThemeProvider"
 import { PageBox } from "@/components/PageBox"
 import { useCallback, useRef, useState } from "react"
 import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
@@ -22,10 +24,11 @@ import { usePrintQuote } from "../print/usePrintQuote"
 const PAGE_SIZE = 20
 
 function IconAction({ label, onClick, to, children, danger, disabled }: { label: string; onClick?: () => void; to?: string; children: React.ReactNode; danger?: boolean; disabled?: boolean }) {
+  const classic = useClassic()
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button asChild={!!to} type="button" variant="ghost" size="icon" aria-label={label} onClick={onClick} disabled={disabled} className={danger ? "hover:bg-destructive-soft hover:text-destructive" : undefined}>
+        <Button asChild={!!to} type="button" variant="ghost" size="icon" aria-label={label} onClick={onClick} disabled={disabled} className={cn(classic && "rounded-lg border text-[var(--text-muted)]", danger ? "hover:bg-destructive-soft hover:text-destructive" : classic && "hover:border-green-100 hover:bg-[#f0fdf4] hover:text-[#16a34a]")}>
           {to ? <Link to={to}>{children}</Link> : <span>{children}</span>}
         </Button>
       </TooltipTrigger>

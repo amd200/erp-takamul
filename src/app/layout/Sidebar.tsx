@@ -56,7 +56,7 @@ function Row({ icon: Icon, label, active, hasSubmenu, open, collapsed, to, onCli
   )
   const classes = cn(
     "flex w-full items-center justify-between rounded-xl px-4 py-3.5 text-start transition-all duration-200",
-    active ? "scale-[1.02] bg-primary text-primary-foreground shadow-md" : "text-[var(--text-main)] hover:scale-[1.02] hover:bg-[var(--bg-main)] hover:text-primary",
+    active ? (hasSubmenu ? "bg-primary/10 font-semibold text-primary" : "scale-[1.02] bg-primary text-primary-foreground shadow-md") : "text-[var(--text-main)] hover:scale-[1.02] hover:bg-[var(--bg-main)] hover:text-primary",
     collapsed && "justify-center",
   )
   return to
@@ -84,7 +84,7 @@ function Group({ item, collapsed, onNavigate, onExpand }: { item: NavItem; colla
 
   return (
     <>
-      <Row icon={item.icon} label={label} collapsed={collapsed} hasSubmenu open={open} active={!classic && active} onClick={() => {
+      <Row icon={item.icon} label={label} collapsed={collapsed} hasSubmenu open={open} active={active} onClick={() => {
         // Collapsed: widen the menu first, then open this entry, as the current system does.
         if (collapsed) { onExpand(); setTimeout(() => setOpen(true), 150) } else setOpen(!open)
       }} />
@@ -148,12 +148,12 @@ export function Sidebar({ open, collapsed, onClose, onExpand }: { open: boolean;
     <>
       {open && <button type="button" aria-label={t("nav.close")} className="fixed inset-0 z-[55] bg-black/50 lg:hidden" onClick={onClose} />}
       <aside className={cn(
-        "fixed inset-y-0 start-0 z-[60] h-dvh w-[280px] overflow-y-auto overscroll-contain hide-scrollbar border-e bg-card transition-all duration-300",
+        "fixed inset-y-0 start-0 z-[60] flex h-dvh w-[280px] flex-col border-e bg-card transition-all duration-300",
         "lg:sticky lg:top-0 lg:z-50 lg:shrink-0 print:hidden",
         collapsed ? "lg:w-20" : "lg:w-[270px]",
         open ? "translate-x-0" : "translate-x-full ltr:-translate-x-full lg:translate-x-0 lg:ltr:translate-x-0",
       )}>
-        <div className={cn("flex h-16 items-center justify-between border-b px-4", collapsed && "lg:px-2")}>
+        <div className={cn("flex h-16 shrink-0 items-center justify-between border-b px-4", collapsed && "lg:px-2")}>
           <div className="flex flex-1 items-center justify-center overflow-hidden">
             <Link to="/" onClick={onClose} className="flex w-auto items-center justify-center transition-opacity hover:opacity-80">
               <Logo className={cn("h-15", collapsed && "lg:h-auto lg:w-14")} />
@@ -161,7 +161,7 @@ export function Sidebar({ open, collapsed, onClose, onExpand }: { open: boolean;
           </div>
           <button type="button" onClick={onClose} aria-label={t("nav.close")} className="p-1 text-[var(--text-muted)] transition-colors hover:text-red-500 lg:hidden"><X size={20} /></button>
         </div>
-        <nav aria-label={t("nav.label")} className="space-y-1 p-3">
+        <nav aria-label={t("nav.label")} className="flex-1 space-y-1 overflow-y-auto overscroll-contain hide-scrollbar p-3">
           {NAV.map((i) => <Group key={i.key} item={i} collapsed={collapsed} onNavigate={onClose} onExpand={onExpand} />)}
         </nav>
       </aside>

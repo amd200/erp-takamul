@@ -38,9 +38,9 @@ export default function UsersPage() {
       </span>
     ) },
     ...(can(P.users.edit) || can(P.users.delete) ? [{ id: "actions", header: t("oldUsers.actions"), cell: (u: User) => (
-      <div className="space-x-2 rtl:space-x-reverse">
-        {can(P.users.edit) && <button type="button" onClick={() => open(u)} className="btn-minimal-action btn-compact-action" aria-label={`${t("oldUsers.edit")} ${u.userName}`}><Edit2 size={16} /></button>}
-        {can(P.users.delete) && u.userName !== me.name && <button type="button" onClick={() => setToDelete(u)} className="btn-minimal-action btn-compact-action text-red-500" aria-label={`${t("common.delete")} ${u.userName}`}><Trash2 size={16} /></button>}
+      <div className="flex items-center gap-2">
+        {can(P.users.edit) && <button type="button" onClick={() => open(u)} className="btn-minimal-action btn-edit" aria-label={`${t("oldUsers.edit")} ${u.userName}`}><Edit2 size={16} /></button>}
+        {can(P.users.delete) && u.userName !== me.name && <button type="button" onClick={() => setToDelete(u)} className="btn-minimal-action btn-delete" aria-label={`${t("common.delete")} ${u.userName}`}><Trash2 size={16} /></button>}
       </div>
     ) }] : []),
   ]
