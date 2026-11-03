@@ -6,13 +6,12 @@ import { cn } from "@/lib/utils"
 import type { Category } from "@/modules/categories/types"
 
 /** The main categories in one scrollable strip: round chips on a wide screen, an underlined tab row on a phone. */
-export function CategoryBar({ categories, activeId, stripRef, onScroll, onSelect, onSelectAll, nameOf, categoryFont, phoneFont }: {
+export function CategoryBar({ categories, activeId, stripRef, onScroll, onSelect, nameOf, categoryFont, phoneFont }: {
   categories: Category[] | undefined
   activeId: number | null
   stripRef: RefObject<HTMLDivElement | null>
   onScroll: (dir: "right" | "left") => void
   onSelect: (id: number) => void
-  onSelectAll: () => void
   nameOf: (c: Category) => string
   categoryFont: number
   phoneFont: number
@@ -40,7 +39,6 @@ export function CategoryBar({ categories, activeId, stripRef, onScroll, onSelect
       <div className="flex items-center gap-2">
         <button type="button" onClick={() => onScroll("left")} aria-label={t("pos.scrollStart")} className={arrow}><ChevronRight size={15} className="text-muted-foreground" /></button>
         <div ref={stripRef} className="flex w-full snap-x snap-proximity touch-pan-x gap-1.5 overflow-x-auto overscroll-x-contain scroll-smooth px-3 lg:px-0" style={{ scrollbarWidth: "none" }}>
-          <button type="button" className="shrink-0 lg:hidden" aria-pressed={false} onClick={onSelectAll}>{t("pos4.all")}</button>
           {categories?.map((c) => (
             <button key={c.id} type="button" onClick={() => onSelect(c.id)} aria-pressed={c.id === activeId}
               className={cn(

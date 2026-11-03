@@ -57,14 +57,10 @@ export function useMenuNavigation({ currentCat, setCurrentCat, main, groups }: {
     setCurrentCat(id)
     if (window.matchMedia(PHONE).matches) document.getElementById(`pos4-category-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })
   }
-  const selectAll = () => {
-    setCurrentCat(null)
-    menuRef.current?.scrollTo({ top: 0, behavior: "smooth" })
-  }
   const registerSection = (id: number, el: HTMLElement | null) => {
     if (el) sections.current.set(id, el)
     else sections.current.delete(id)
   }
 
-  return { menuRef, stripRef, scroll, selectCategory, selectAll, registerSection, currentCat }
+  return { menuRef, stripRef, scroll, selectCategory, registerSection, currentCat }
 }

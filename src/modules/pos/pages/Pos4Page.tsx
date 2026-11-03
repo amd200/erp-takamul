@@ -60,7 +60,7 @@ export default function Pos4Page() {
             <div ref={nav.menuRef} className="pos4-menu h-full min-h-0 flex-1 overflow-y-auto">
               <Header branch={branch} itemCount={itemCount} onOpenCart={() => setCartOpen(true)}>
                 <CategoryBar categories={catalog.main} activeId={catalog.activeCategoryId} stripRef={nav.stripRef} onScroll={nav.scroll}
-                  onSelect={nav.selectCategory} onSelectAll={nav.selectAll} nameOf={catalog.categoryName}
+                  onSelect={nav.selectCategory} nameOf={catalog.categoryName}
                   categoryFont={typography.category} phoneFont={Math.max(typography.productName, 16)} />
               </Header>
               <MobileSearch search={search} onSearch={setSearch} />
