@@ -5,15 +5,6 @@ export type NotifyResult = "enabled" | "no-push" | "denied" | "unsupported" | "e
 
 const SW_URL = "/push-sw.js"
 
-/** Which step of the subscription failed last (and why), so a "no-push" warning can say what to fix. */
-let lastFailure = ""
-export const pushFailure = () => lastFailure
-const describe = (step: string, e: unknown) => {
-  const status = (e as { response?: { status?: number } })?.response?.status
-  const msg = e instanceof Error ? e.message : String(e)
-  return `${step}: ${status ? `HTTP ${status}` : msg}`
-}
-
 export const isNotificationSupported = () => typeof window !== "undefined" && "Notification" in window && "serviceWorker" in navigator
 export const isPushSupported = () => isNotificationSupported() && "PushManager" in window
 
@@ -64,20 +55,16 @@ export async function enableInvoiceNotifications(invoiceId: number, local: { tit
       })
     }
 
-    if (!isPushSupported()) { lastFailure = "PushManager is not available in this browser"; return "no-push" }
-    let step = "GET /push/vapid-public-key"
+    if (!isPushSupported()) return "no-push"
     try {
       const publicKey = await publicInvoiceApi.vapidPublicKey()
-      step = "pushManager.subscribe"
       const existing = await registration.pushManager.getSubscription()
       const subscription = existing ?? await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(publicKey) })
       const json = subscription.toJSON()
-      if (!json.endpoint || !json.keys?.p256dh || !json.keys.auth) { lastFailure = "pushManager.subscribe: subscription has no keys"; return "no-push" }
-      step = "POST /push/subscriptions"
+      if (!json.endpoint || !json.keys?.p256dh || !json.keys.auth) return "no-push"
       await publicInvoiceApi.subscribe(invoiceId, { endpoint: json.endpoint, keys: { p256dh: json.keys.p256dh, auth: json.keys.auth } })
     } catch (error) {
-      lastFailure = describe(step, error)
-      console.warn("Push subscription failed at", lastFailure, error)
+      console.warn("Push subscription failed; only in-page tracking will work:", error)
       return "no-push"
     }
     return "enabled"
