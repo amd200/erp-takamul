@@ -1,4 +1,4 @@
-import { Banknote, BarChart3, Building2, CalendarDays, ClipboardList, Clock, Coins, Landmark, LayoutDashboard, Package, Settings, Share2, ShoppingCart, Store, Truck, Undo2, User, Users, type LucideIcon } from "lucide-react";
+import { Banknote, BarChart3, Building, CalendarDays, ClipboardList, CornerUpLeft, Coins, Landmark, LayoutDashboard, Package, RefreshCw, Settings, Share2, ShoppingCart, Store, Truck, User, Users, type LucideIcon } from "lucide-react";
 import { P, type Permission } from "@/shared/permissions/permissions";
 import type { Settings as AppSettings } from "@/modules/settings";
 
@@ -45,7 +45,7 @@ export const NAV: NavItem[] = [
   },
   {
     key: "purchases",
-    icon: Undo2,
+    icon: CornerUpLeft,
     children: [
       { key: "purchasesList", to: "/purchases", perm: P.purchases.view },
       { key: "addPurchase", to: "/purchases/create", perm: P.purchases.add, when: (s) => s.purchasesScreenTab?.posPurcherstype !== "POS2" },
@@ -63,9 +63,9 @@ export const NAV: NavItem[] = [
       { key: "employees", to: "/employees", perm: P.employees.view },
     ],
   },
-  { key: "shifts", icon: Clock, to: "/shifts", perm: P.shifts.view },
-  { key: "customers", icon: User, to: "/customers", perm: P.customers.view },
-  { key: "suppliers", icon: Truck, to: "/suppliers", perm: P.suppliers.view },
+  { key: "shifts", icon: RefreshCw, children: [{ key: "shiftsList", to: "/shifts", perm: P.shifts.view }] },
+  { key: "customers", icon: User, children: [{ key: "customersList", to: "/customers", perm: P.customers.view }] },
+  { key: "suppliers", icon: Truck, children: [{ key: "suppliersList", to: "/suppliers", perm: P.suppliers.view }] },
   {
     key: "bonds",
     icon: Coins,
@@ -83,8 +83,8 @@ export const NAV: NavItem[] = [
       { key: "transfers", to: "/treasuries/transfers", perm: P.treasuries.transfers },
     ],
   },
-  { key: "branches", icon: Building2, to: "/branches", perm: P.branches.view },
-  { key: "warehouses", icon: Store, to: "/warehouses", perm: P.warehouses.view },
+  { key: "branches", icon: Building, children: [{ key: "branchesList", to: "/branches", perm: P.branches.view }] },
+  { key: "warehouses", icon: Store, children: [{ key: "warehousesList", to: "/warehouses", perm: P.warehouses.view }] },
   { key: "reservations", icon: CalendarDays, to: "/reservations", perm: P.reservations.view },
   { key: "orders", icon: ClipboardList, to: "/orders", perm: P.orderRequests.view },
   {

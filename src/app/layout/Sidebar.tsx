@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
-import { ChevronDown, ChevronLeft, Folder, List, Plus, PlusCircle, RefreshCcw, FileText, Shield, Wrench, X, type LucideIcon } from "lucide-react"
+import { ArrowLeftRight, ArrowUpRight, Barcode, Calculator, ChevronDown, ChevronLeft, CornerUpLeft, DollarSign, FileText, Folder, HandCoins, LayoutGrid, List, Monitor, Package, Plus, PlusCircle, RefreshCcw, Settings, Shield, ShieldCheck, ShoppingCart, SlidersHorizontal, Truck, User, Users, Wrench, X, type LucideIcon } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Logo } from "@/components/Logo"
 import { cn } from "@/lib/utils"
@@ -11,9 +11,14 @@ import { NAV, type NavItem } from "./nav"
 
 /** The icon beside each sub-menu entry, as in the current system; entries not listed get the list icon. */
 const CHILD_ICON: Record<string, LucideIcon> = {
-  addItem: PlusCircle, categories: Folder, units: Wrench, additions: Folder,
+  addItem: PlusCircle, barcode: Barcode, adjustments: SlidersHorizontal, categories: Folder, units: Wrench, additions: Folder,
   invoicesA4: FileText, invoicesPos: RefreshCcw, returns: FileText, debitNotes: FileText,
-  addQuote: PlusCircle, addPurchase: Plus, addPurchaseScreen: Plus, roles: Shield,
+  addQuote: PlusCircle, addPurchase: Plus, addPurchaseScreen: Plus,
+  posDevices: Monitor, certificates: ShieldCheck, roles: Shield, employees: Users,
+  suppliersList: LayoutGrid, receipt: HandCoins, payment: Truck,
+  treasuryStatement: ArrowUpRight, transfers: ArrowLeftRight, expensesList: DollarSign,
+  repItems: Package, repSales: ShoppingCart, repPurchases: CornerUpLeft, repCustomers: User, repSuppliers: Truck, repExpenses: DollarSign, repProfits: Calculator,
+  siteSettings: Settings, salesSettings: SlidersHorizontal,
 }
 
 function isUnder(pathname: string, to: string) {
