@@ -68,7 +68,7 @@ const MobileCard = memo(function MobileCard({ item, name, typography, quantity, 
           </div>
         </div>
       </div>
-      <div className="pos4-product-content flex min-w-0 flex-1 flex-col py-0.5" dir={i18n.language === "en" ? "ltr" : "rtl"}>
+      <div className="pos4-product-content flex min-w-0 flex-1 flex-col py-0.5" dir={i18n.dir()}>
         <div className="mb-0.5 leading-tight font-bold text-foreground" style={{ fontSize: Math.max(typography.productName, 16) }}>{name}</div>
         {item.description && <p className="mt-1 line-clamp-2 text-xs leading-5 text-muted-foreground">{item.description}</p>}
         <div className="pos4-product-meta mt-2 flex items-center justify-start gap-3 font-bold" dir="rtl">

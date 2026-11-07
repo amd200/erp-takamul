@@ -18,8 +18,8 @@ export function useCatalog(search: string, currentCat: number | null, phone: boo
   const main = categories.data
   const term = useDebounced(search.trim())
 
-  const productName = useCallback((p: Pick<Product, "productNameAr" | "productNameEn">) => (lang === "en" ? p.productNameEn || p.productNameAr : p.productNameAr), [lang])
-  const categoryName = useCallback((c: Category) => (lang === "en" ? c.categoryNameEn || c.categoryNameAr : c.categoryNameAr), [lang])
+  const productName = useCallback((p: Pick<Product, "productNameAr" | "productNameEn" | "productNameUr">) => (lang === "bn" ? p.productNameUr || p.productNameEn || p.productNameAr : lang === "en" ? p.productNameEn || p.productNameAr : p.productNameAr), [lang])
+  const categoryName = useCallback((c: Category) => (lang === "bn" ? c.categoryNameUr || c.categoryNameEn || c.categoryNameAr : lang === "en" ? c.categoryNameEn || c.categoryNameAr : c.categoryNameAr), [lang])
 
   // No category is open (all items) until one is picked.
   const activeCategoryId = main?.some((c) => c.id === currentCat) ? currentCat : null

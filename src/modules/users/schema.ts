@@ -1,7 +1,8 @@
 import { z } from "zod"
 
 const base = z.object({
-  name: z.string().trim().min(1, "validation.nameRequired"),
+  // Not on the form: a new user is named after their user name (see UserDialog), and the name cannot be edited.
+  name: z.string().trim(),
   userName: z.string().trim()
     .min(3, "validation.userNameMin")
     .max(30, "validation.userNameMax")

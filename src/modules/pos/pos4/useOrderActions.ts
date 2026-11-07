@@ -14,7 +14,7 @@ const lineOf = (p: Product, name: string): NewLine => ({
 })
 
 /** What picking an item does: adds it, or opens the list of the items a branched item groups. */
-export function useOrderActions(productName: (p: Pick<Product, "productNameAr" | "productNameEn">) => string) {
+export function useOrderActions(productName: (p: Pick<Product, "productNameAr" | "productNameEn" | "productNameUr">) => string) {
   const add = usePosStore((s) => s.add)
   const setQty = usePosStore((s) => s.setQty)
   const lines = usePosStore((s) => s.lines)

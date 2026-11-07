@@ -7,7 +7,7 @@ import { API_BASE_URL } from "./config"
 export const client = axios.create({ baseURL: API_BASE_URL, withCredentials: true })
 
 client.interceptors.request.use((config) => {
-  config.headers["Accept-Language"] = i18n.language === "en" ? "en" : "ar"
+  config.headers["Accept-Language"] = i18n.language === "ar" ? "ar" : "en"
   // The customer's ordering screen (/pos4) is public: no cookie, and it sends the branch id from its link as X-Branch-Id.
   if (location.pathname.replace(/\/+$/, "") === "/pos4") {
     config.withCredentials = false

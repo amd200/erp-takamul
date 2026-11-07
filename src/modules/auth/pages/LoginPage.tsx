@@ -15,7 +15,7 @@ import { useLogin } from "../queries"
 import { loginSchema, type LoginForm } from "../schema"
 
 /** The old system's sign-in screen (takamul2 `pages/Login.tsx`): textured background, card + logos side by side. */
-const LANG_LABELS = { ar: "عربي", en: "English" } as const
+const LANG_LABELS = { ar: "عربي", en: "English", bn: "Bangla" } as const
 
 const fieldClass =
   "h-auto w-full px-4 py-4 text-base sm:text-sm rounded-xl outline-none transition-colors border focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary bg-card dark:bg-input border-border text-foreground placeholder:text-muted-foreground"
@@ -26,7 +26,7 @@ export default function LoginPage() {
   const from = (useLocation().state as { from?: string } | null)?.from ?? "/"
   const { resolved, setChoice } = useTheme()
   const isDark = resolved === "dark"
-  const lang = i18n.language === "en" ? "en" : "ar"
+  const lang = i18n.language === "en" || i18n.language === "bn" ? i18n.language : "ar"
   const [reveal, setReveal] = useState(false)
   const [error, setError] = useState("")
   const [conflict, setConflict] = useState(false)
@@ -65,7 +65,7 @@ export default function LoginPage() {
 
       <nav className="relative z-20 flex items-center justify-between px-4 py-4 sm:px-10 sm:py-5">
         <div className={cn("flex items-center gap-3 rounded-full border px-5 py-2 text-sm font-bold", isDark ? "border-white/10 bg-white/5 text-slate-400" : "border-black/10 bg-white/70 text-slate-500")}>
-          {(["ar", "en"] as const).map((l, i) => (
+          {(["ar", "en", "bn"] as const).map((l, i) => (
             <Fragment key={l}>
               {i > 0 && <span className="opacity-40">|</span>}
               <button type="button" onClick={() => i18n.changeLanguage(l)} className={cn("font-bold transition-colors", lang === l ? "text-success" : "hover:text-success")}>

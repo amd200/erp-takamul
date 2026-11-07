@@ -56,7 +56,7 @@ export function useItemLookup(lineProductIds: number[], readLines?: boolean) {
   const results = useMemo(() => (typed.trim() === "" ? [] : (found.data ?? []).filter(sellable)), [typed, found.data])
 
   const options = useMemo<SearchOption[]>(
-    () => results.map((p) => ({ id: p.id, name: i18n.language === "en" && p.productNameEn ? p.productNameEn : p.productNameAr, code: p.barcode ?? "", price: p.priceAfterTax ?? p.sellingPrice ?? 0 })),
+    () => results.map((p) => ({ id: p.id, name: i18n.language === "bn" ? p.productNameUr || p.productNameEn || p.productNameAr : i18n.language === "en" && p.productNameEn ? p.productNameEn : p.productNameAr, code: p.barcode ?? "", price: p.priceAfterTax ?? p.sellingPrice ?? 0 })),
     [results, i18n.language],
   )
 

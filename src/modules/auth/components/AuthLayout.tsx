@@ -13,7 +13,7 @@ import { useTheme } from "@/shared/theme/ThemeProvider"
 export function AuthLayout({ title, description, children, footer }: { title: string; description?: string; children: ReactNode; footer?: ReactNode }) {
   const { t, i18n } = useTranslation()
   const { resolved, setChoice } = useTheme()
-  const other = LANGUAGES.find((l) => l.code !== i18n.language) ?? LANGUAGES[0]
+  const next = LANGUAGES[(LANGUAGES.findIndex((l) => l.code === i18n.language) + 1) % LANGUAGES.length]
 
   return (
     <div className="grid min-h-svh lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
@@ -21,7 +21,7 @@ export function AuthLayout({ title, description, children, footer }: { title: st
         <div className="flex items-center justify-between">
           <Logo className="h-10 lg:invisible" />
           <div className="flex gap-1">
-            <Button variant="ghost" size="sm" onClick={() => i18n.changeLanguage(other.code)}><Globe />{other.label}</Button>
+            <Button variant="ghost" size="sm" onClick={() => i18n.changeLanguage(next.code)}><Globe />{next.label}</Button>
             <Button variant="ghost" size="icon" aria-label={t("topbar.theme")} onClick={() => setChoice(resolved === "dark" ? "light" : "dark")}>
               {resolved === "dark" ? <Sun /> : <Moon />}
             </Button>

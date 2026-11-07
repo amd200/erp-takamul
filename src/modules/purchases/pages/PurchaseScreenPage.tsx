@@ -88,7 +88,7 @@ export default function PurchaseScreenPage() {
   const [typed, setTyped] = useState("")
   const found = useProductSearch(typed, { enabled: typed.trim() !== "", size: 50 })
   const results = useMemo(() => (typed.trim() === "" ? [] : (found.data ?? []).filter(buyable)), [typed, found.data])
-  const search = useMemo(() => results.map((p) => ({ id: p.id, name: i18n.language === "en" && p.productNameEn ? p.productNameEn : p.productNameAr, code: p.barcode ?? "", price: p.costPrice ?? 0 })), [results, i18n.language])
+  const search = useMemo(() => results.map((p) => ({ id: p.id, name: i18n.language === "bn" ? p.productNameUr || p.productNameEn || p.productNameAr : i18n.language === "en" && p.productNameEn ? p.productNameEn : p.productNameAr, code: p.barcode ?? "", price: p.costPrice ?? 0 })), [results, i18n.language])
 
   const toLine = (p: Product): BuyLine => ({
     key: newBuyKey(), barcode: p.barcode ?? "", productId: p.id, unitId: p.baseUnitId ?? 0, name: p.productNameAr, unitName: units.find((u) => u.id === p.baseUnitId)?.name ?? "",

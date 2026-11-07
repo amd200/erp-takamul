@@ -9,7 +9,7 @@ import { useTheme } from "@/shared/theme/ThemeProvider"
 export function Logo({ className, onDark }: { className?: string; onDark?: boolean }) {
   const { t, i18n } = useTranslation()
   const { resolved } = useTheme()
-  const lang = i18n.language === "en" ? "en" : "ar"
+  const lang = i18n.language === "ar" ? "ar" : "en"
   const tone = onDark || resolved === "dark" ? "dark" : "light"
   return <img src={`/logo_${lang}_${tone}.png`} alt={t("app.name")} className={cn("h-10 w-auto select-none", className)} draggable={false} />
 }

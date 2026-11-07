@@ -12,7 +12,7 @@ function isUnder(pathname: string, to: string) {
   return pathname === to || (pathname.startsWith(to + "/") && to !== "/products")
 }
 
-/** A top-level entry: a rounded row, the active one tinted. Hover is the light green of the Classic theme, grey in Modern. */
+/** A top-level entry: a rounded row, the active one tinted. Hover is light green. */
 function Row({ icon: Icon, label, active, hasSubmenu, open, to, onClick }: {
   icon: LucideIcon; label: string; active?: boolean; hasSubmenu?: boolean; open?: boolean; to?: string; onClick?: () => void
 }) {

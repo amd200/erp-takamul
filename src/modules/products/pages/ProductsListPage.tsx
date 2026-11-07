@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { Link } from "react-router-dom"
 import { PackageSearch, Plus, RotateCw, Upload } from "lucide-react"
 import { useTranslation } from "react-i18next"
@@ -48,6 +48,8 @@ export default function ProductsListPage() {
   const { data: categories = [] } = useCategories()
   const del = useDeleteProduct()
   const [tab, setTab] = useState<Tab>("all")
+  const tabsRef = useRef<HTMLDivElement>(null)
+  useEffect(() => { tabsRef.current?.querySelector("[data-state=active]")?.scrollIntoView({ inline: "nearest", block: "nearest" }) }, [tab])
   const [categoryId, setCategoryId] = useState("all")
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(0)
@@ -97,7 +99,7 @@ export default function ProductsListPage() {
 
       <Card className="gap-0 pt-2">
         <Tabs value={tab} onValueChange={(v) => { setTab(v as Tab); setPage(0) }} className="border-b px-4">
-          <TabsList variant="line" className="-mb-px h-[41px] gap-4 p-0 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <TabsList ref={tabsRef} variant="line" className="-mb-px h-[41px] max-w-full gap-4 p-0 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <TabsTrigger value="all" className="h-full flex-none rounded-none px-1 font-normal data-active:font-medium group-data-horizontal/tabs:after:bottom-0 group-data-[variant=line]/tabs-list:data-active:text-primary group-data-[variant=line]/tabs-list:data-active:after:bg-primary">{t("products.tabs.all")}</TabsTrigger>
             {PRODUCT_TYPES.map((k) => <TabsTrigger key={k} value={k} className="h-full flex-none rounded-none px-1 font-normal data-active:font-medium group-data-horizontal/tabs:after:bottom-0 group-data-[variant=line]/tabs-list:data-active:text-primary group-data-[variant=line]/tabs-list:data-active:after:bg-primary">{t(`products.tabs.${k}`)}</TabsTrigger>)}
           </TabsList>
