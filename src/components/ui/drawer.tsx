@@ -29,7 +29,7 @@ function DrawerOverlay({ className, ...props }: React.ComponentProps<typeof Draw
   )
 }
 
-/** Standard shadcn bottom drawer; the handle floats over the top edge so a coloured header can fill the rounded corners. */
+/** Standard shadcn bottom drawer, with its default handle size and colour, floating over the top edge so a coloured header fills the rounded corners. */
 function DrawerContent({ className, children, ...props }: React.ComponentProps<typeof DrawerPrimitive.Content>) {
   return (
     <DrawerPortal>
@@ -42,7 +42,7 @@ function DrawerContent({ className, children, ...props }: React.ComponentProps<t
         )}
         {...props}
       >
-        <div className="pointer-events-none absolute inset-x-0 top-2 z-10 mx-auto h-1.5 w-10 rounded-full bg-muted-foreground/40" />
+        <div className="pointer-events-none absolute inset-x-0 top-2 z-10 mx-auto h-2 w-[100px] rounded-full bg-muted" />
         {children}
       </DrawerPrimitive.Content>
     </DrawerPortal>

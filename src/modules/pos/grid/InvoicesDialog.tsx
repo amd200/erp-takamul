@@ -154,7 +154,7 @@ export function InvoicesDialog({ open, onOpenChange }: { open: boolean; onOpenCh
           )}
         </div>
 
-        <div className="flex shrink-0 items-center justify-between border-t border-border bg-background px-4 py-2.5 max-sm:pe-16 max-sm:pb-4">
+        <div className="flex shrink-0 items-center justify-between border-t border-border bg-background px-4 py-2.5">
           <span className="text-[11px] text-muted-foreground">{filtered.length} {t("pos2.invoice")}</span>
           <button type="button" onClick={() => onOpenChange(false)} className="rounded-lg border border-border px-4 py-1.5 text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">{t("pos1.close")}</button>
         </div>
