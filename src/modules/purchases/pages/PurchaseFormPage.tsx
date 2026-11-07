@@ -120,7 +120,6 @@ export default function PurchaseFormPage() {
           <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-3">
             <div className="space-y-4 lg:col-span-2">
               {totals.grandTotal > 0 && pays.length === 0 && <p className="text-sm text-muted-foreground">{t("purchases.creditHint")}</p>}
-              {payments.fields.length === 0 && !(totals.grandTotal > 0) && <p className="text-muted-foreground">{t("purchases.noPayments")}</p>}
               {payments.fields.map((f, i) => (
                 <div key={f.id} className="flex flex-col items-center gap-3 rounded-lg border border-border bg-muted/30 p-3 sm:flex-row">
                   <div className="w-full flex-1">

@@ -93,9 +93,7 @@ export default function DebitNoteFormPage() {
             <div className="flex min-w-0 flex-col gap-5">
               <SectionCard title={t("oldDebit.payments")}
                 action={<Button type="button" variant="outline" disabled={remaining <= 0} onClick={addPayment}><Plus />{t("oldDebit.addPayment")}</Button>}>
-                {payments.fields.length === 0 ? (
-                  <p className="text-muted-foreground">{t("sales.noPayments")}</p>
-                ) : (
+                {payments.fields.length === 0 ? null : (
                   <div className="flex flex-col gap-2">
                     <div className="grid grid-cols-[1fr_1.3fr_auto] gap-2 text-xs font-medium text-muted-foreground">
                       <span>{t("sales.amount")}</span><span>{t("oldDebit.paymentMethod")}</span><span className="w-9" />

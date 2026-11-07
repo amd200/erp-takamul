@@ -1126,7 +1126,6 @@
     },
     "payments": "Payments",
     "addPayment": "Add payment",
-    "noPayments": "No payments. The invoice will be recorded on the customer's account.",
     "creditHint": "Leave payments empty to sell on credit.",
     "overpaid": "Payments exceed the invoice total.",
     "customerBalance": "Customer balance: {{amount}} ({{side}})",
@@ -2767,7 +2766,6 @@
     "cost": "Cost",
     "returned": "{{count}} returned",
     "creditHint": "With no payments the invoice goes on the supplier's account.",
-    "noPayments": "No payments. The invoice will be on the supplier's account.",
     "notesHint": "Notes on the invoice",
     "save": "Save purchase invoice"
   },

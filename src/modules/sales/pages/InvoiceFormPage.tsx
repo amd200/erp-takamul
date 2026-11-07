@@ -118,9 +118,7 @@ export default function InvoiceFormPage() {
             <div className="flex min-w-0 flex-col gap-5">
               <SectionCard title={t("sales.payments")} description={totals.grandTotal > 0 && pays.length === 0 ? t("sales.creditHint") : undefined}
                 action={<Button type="button" variant="outline" disabled={remaining <= 0} onClick={addPayment}><Plus />{t("sales.addPayment")}</Button>}>
-                {payments.fields.length === 0 ? (
-                  <p className="text-muted-foreground">{t("sales.noPayments")}</p>
-                ) : (
+                {payments.fields.length === 0 ? null : (
                   <div className="flex flex-col gap-2">
                     <div className="grid grid-cols-[1fr_1.3fr_auto] gap-2 text-xs font-medium text-muted-foreground">
                       <span>{t("sales.amount")}</span><span>{t("sales.treasury")}</span><span className="w-9" />
@@ -218,7 +216,6 @@ export default function InvoiceFormPage() {
           <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-3">
             <div className="space-y-4 lg:col-span-2">
               {totals.grandTotal > 0 && pays.length === 0 && <p className="text-sm text-muted-foreground">{t("sales.creditHint")}</p>}
-              {payments.fields.length === 0 && !(totals.grandTotal > 0) && <p className="text-muted-foreground">{t("sales.noPayments")}</p>}
               {payments.fields.map((f, i) => (
                 <div key={f.id} className="flex flex-col items-center gap-3 rounded-lg border border-border bg-muted/30 p-3 sm:flex-row">
                   {/* Amount and treasury side by side, each under a small grey caption. */}
