@@ -1,31 +1,16 @@
 import { CheckCircle2, Clock, XCircle } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { useClassic } from "@/shared/theme/ThemeProvider"
 import { useInvoiceStatistics } from "../queries"
-import { Stat } from "./ModernHome"
 
 /** E-invoices of the last 24 hours by their ZATCA state; shown only in tax stage two. */
 export function OperationsStats() {
   const { t } = useTranslation()
-  const classic = useClassic()
   const { data } = useInvoiceStatistics()
   const stats = [
     { title: t("home.ops.valid"), value: data?.data?.totalinvoiceValid || 0, icon: CheckCircle2, line: "bg-success", iconBox: "bg-success-soft text-success dark:bg-success/10 dark:text-emerald-400" },
     { title: t("home.ops.notSent"), value: data?.data?.totalinvoiceNotSent || 0, icon: Clock, line: "bg-amber-500", iconBox: "bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400" },
     { title: t("home.ops.rejected"), value: data?.data?.totalinvoiceRejected || 0, icon: XCircle, line: "bg-rose-500", iconBox: "bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400" },
   ]
-
-  if (!classic) {
-    const tones = ["success", "warning", "danger"] as const
-    return (
-      <div className="flex flex-col gap-3">
-        <h2 className="text-[15px] font-semibold">{t("home.ops.title")}</h2>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {stats.map((s, i) => <Stat key={s.title} icon={s.icon} tone={tones[i]} label={s.title} value={s.value} />)}
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="mt-8 space-y-4">

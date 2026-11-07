@@ -28,7 +28,7 @@ export function PartyPicker({ parties, value, onPick, placeholder, searchPlaceho
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button type="button" variant="outline" disabled={disabled} aria-invalid={invalid || undefined} aria-label={placeholder}
-          className={cn("w-full justify-between gap-2 bg-background font-normal classic:hover:border-border! classic:hover:bg-background! classic:aria-expanded:border-border! classic:aria-expanded:bg-background! classic:focus-visible:border-border! classic:focus-visible:bg-background! classic:focus-visible:ring-0!", plain ? "h-10 text-[11px]" : "h-11", invalid && "border-destructive")}>
+          className={cn("w-full justify-between gap-2 bg-background font-normal hover:border-border! hover:bg-background! aria-expanded:border-border! aria-expanded:bg-background! focus-visible:border-border! focus-visible:bg-background! focus-visible:ring-0!", plain ? "h-10 text-[11px]" : "h-11", invalid && "border-destructive")}>
           <span className="flex min-w-0 items-center gap-2">{!plain && <User className="shrink-0 text-muted-foreground" />}<span className={cn("truncate", !current && "text-muted-foreground")}>{current?.name ?? placeholder}</span></span>
           <ChevronDown className="shrink-0 text-faint" />
         </Button>

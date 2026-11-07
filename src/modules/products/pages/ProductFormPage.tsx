@@ -82,7 +82,7 @@ export default function ProductFormPage() {
   return (
       <FormProvider {...form}>
         <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
-          <PageHeader crumbs={[t("nav.items"), editId ? t("common.edit") : t("common.add")]}
+          <PageHeader
             title={editId ? t("products.editTitle", { name: existing?.productNameAr }) : t("products.addTitle")} />
 
           <SectionCard title={t("products.type")} description={editId ? t("products.typeLocked") : t("products.typePick")}>

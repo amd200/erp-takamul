@@ -110,7 +110,7 @@ export default function OrderRequestsPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.orders")]} title={t("orderRequests.title")} description={t("orderRequests.description")} />
+      <PageHeader title={t("orderRequests.title")} description={t("orderRequests.description")} />
       <SectionCard>
         <DataTable rows={data?.items} loading={isLoading} columns={columns} rowKey={(o) => o.id} sort={sort} searchPlaceholder={t("orderRequests.search")}
           server={{ total: data?.total ?? 0, page, pageSize: PAGE_SIZE, onPage: setPage, onSearch, fetching: isFetching && !isLoading }}

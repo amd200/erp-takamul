@@ -75,7 +75,7 @@ export default function TreasuriesPage() {
   const total = all.reduce((sum, x) => sum + (x.currentBalance ?? 0), 0)
   return (
     <>
-      <PageHeader crumbs={[t("nav.treasuries")]} title={t("treasuries.title")} description={t("treasuries.description")}
+      <PageHeader title={t("treasuries.title")} description={t("treasuries.description")}
         actions={can(P.treasuries.manage) ? <Button size="lg" onClick={() => { setEditing(null); setOpen(true) }}><Plus />{t("treasuries.add")}</Button> : undefined} />
       <div className="flex flex-col gap-1 rounded-xl border bg-card px-4 py-3 sm:w-72">
         <span className="text-xs text-muted-foreground">{t("treasuries.total")}</span>

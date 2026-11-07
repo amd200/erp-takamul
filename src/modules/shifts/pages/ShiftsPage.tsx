@@ -62,7 +62,7 @@ export default function ShiftsPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.shifts")]} title={t("shifts.title")} description={t("shifts.description")}
+      <PageHeader title={t("shifts.title")} description={t("shifts.description")}
         actions={<Can perm={P.shifts.open}><Button size="lg" onClick={() => setOpening(true)}><Plus />{t("shifts.open")}</Button></Can>} />
       <SectionCard>
         <DataTable rows={data?.data ?? []} loading={isLoading} columns={columns} rowKey={(s) => s.id} pageSize={20}

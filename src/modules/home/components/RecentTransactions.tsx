@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next"
 import { DataTable, type Column } from "@/components/DataTable"
 import { cn } from "@/lib/utils"
 import { formatDay, formatMoney } from "@/lib/format"
-import { useClassic } from "@/shared/theme/ThemeProvider"
 import { P } from "@/shared/permissions/permissions"
 import { useCan } from "@/shared/permissions/usePermission"
 import type { SalesOrderDto } from "@/modules/sales/types"
@@ -37,7 +36,6 @@ function PaymentState({ row }: { row: SalesOrderDto }) {
 export function RecentTransactions() {
   const { t, i18n } = useTranslation()
   const can = useCan()
-  const classic = useClassic()
   const day = (v?: string | null) => formatDay(v, i18n.language)
 
   const allowed: Record<Tab, boolean> = {
@@ -99,16 +97,14 @@ export function RecentTransactions() {
   const table = { empty: null, emptyText: t("home.noData"), pager: false } as const
 
   return (
-    <div className={cn("overflow-hidden rounded-xl bg-card", classic ? "border shadow-sm fill-mode-backwards animate-in fade-in slide-in-from-bottom-5" : "ring-1 ring-foreground/10")} style={classic ? { animationDelay: "0.5s" } : undefined}>
-      <div className={cn("border-b", classic ? "bg-(--bg-main)/50 p-3" : "p-4")}>
-        <h2 className={cn("mb-3 font-bold", classic ? "text-base text-(--text-main)" : "text-[15px]")}>{t("home.recent")}</h2>
+    <div className="overflow-hidden rounded-xl border bg-card shadow-sm fill-mode-backwards animate-in fade-in slide-in-from-bottom-5" style={{ animationDelay: "0.5s" }}>
+      <div className="border-b bg-(--bg-main)/50 p-3">
+        <h2 className="mb-3 text-base font-bold text-(--text-main)">{t("home.recent")}</h2>
         <div className="flex gap-2 overflow-x-auto [scrollbar-width:none]">
           {tabs.filter((x) => allowed[x.id]).map(({ id, icon: Icon }) => (
             <button key={id} type="button" onClick={() => setActive(id)}
               className={cn("flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors",
-                classic
-                  ? active === id ? "bg-primary text-primary-foreground shadow-sm" : "border bg-card text-(--text-main) hover:bg-(--bg-main)"
-                  : active === id ? "bg-secondary text-secondary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground")}>
+                active === id ? "bg-primary text-primary-foreground shadow-sm" : "border bg-card text-(--text-main) hover:bg-(--bg-main)")}>
               <Icon size={16} />
               {t(`home.tabs.${id}`)}
             </button>
@@ -116,7 +112,7 @@ export function RecentTransactions() {
         </div>
       </div>
 
-      <div className={classic ? "p-2" : "px-2 pb-2"}>
+      <div className="p-2">
         {active === "sales" && allowed.sales && <DataTable {...table} rows={sales.data ?? []} loading={sales.isLoading} columns={salesCols} rowKey={(r) => r.id} />}
         {active === "purchases" && allowed.purchases && <DataTable {...table} rows={purchases.data ?? []} loading={purchases.isLoading} columns={purchaseCols} rowKey={(r) => r.id} />}
         {active === "quotes" && allowed.quotes && <DataTable {...table} rows={quotes.data ?? []} loading={quotes.isLoading} columns={quoteCols} rowKey={(r) => r.id} />}

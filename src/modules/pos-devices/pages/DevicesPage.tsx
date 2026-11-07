@@ -62,7 +62,7 @@ export default function DevicesPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.users")]} title={t("devices.title")} description={t("devices.description")}
+      <PageHeader title={t("devices.title")} description={t("devices.description")}
         actions={<Can perm={P.posDevices.add}><Button size="lg" onClick={() => show(null)}><Plus />{t("devices.add")}</Button></Can>} />
       {needsAttention > 0 && (
         <div className="flex items-center gap-2 rounded-xl bg-warning-soft px-4 py-3 text-warning">

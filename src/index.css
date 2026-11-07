@@ -3,131 +3,10 @@
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
-/* Two looks share the same components: "modern" (the erpv2 look, the default) and "classic" (the current system's look).
-   <html data-theme="..."> picks one (see ThemeProvider); light / dark is the separate .dark class. Colours and the few shape
-   values live in the token blocks below; components that callers restyle read `useClassic()`, the shell uses the `classic:` variant. */
-@custom-variant classic (&:where([data-theme="classic"], [data-theme="classic"] *));
 
-/* ---------- Modern (erpv2): Takamul navy, leaf green, faint navy-tinted neutrals ---------- */
+/* ---------- The system's green palette on white (dark: deep navy with a brighter green). Light / dark is the .dark class. ---------- */
 :root {
   --radius: 0.625rem;
-  --background: #f5f6f9;
-  --foreground: #172041;
-  --card: #ffffff;
-  --card-foreground: #172041;
-  --popover: #ffffff;
-  --popover-foreground: #172041;
-  --primary: #1c2b57;
-  --primary-foreground: #ffffff;
-  --secondary: #e8ecf6;
-  --secondary-foreground: #1c2b57;
-  --muted: #eef0f5;
-  --muted-foreground: #5c6479;
-  --accent: #eef0f5;
-  --accent-foreground: #172041;
-  --destructive: #c0463f;
-  --destructive-soft: #f8e3e1;
-  --success: #2b8a39;
-  --success-soft: #e3f2e5;
-  --warning: #a8701a;
-  --warning-soft: #f7ecd6;
-  --faint: #9199ab;
-  --brand-green: #2f8f3a;
-  --brand-navy: #1c2b57;
-  --border: #e3e6ed;
-  --input: #dbe0ea;
-  --ring: #5f72a8;
-  --chart-1: #1c2b57;
-  --chart-2: #2f8f3a;
-  --chart-3: #5f72a8;
-  --chart-4: #8fc79a;
-  --chart-5: #b97d1c;
-  --sidebar: #ffffff;
-  --sidebar-foreground: #5c6479;
-  --sidebar-primary: #1c2b57;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e8ecf6;
-  --sidebar-accent-foreground: #1c2b57;
-  --sidebar-border: #e3e6ed;
-  --sidebar-ring: #5f72a8;
-  /* Names the shell and the pages use in both looks; here they follow the palette. */
-  --text-main: var(--foreground);
-  --text-muted: var(--muted-foreground);
-  --bg-main: var(--muted);
-  --input-bg: var(--card);
-  --table-header-text: var(--foreground);
-  --table-header-border: var(--border);
-  --table-row-hover: color-mix(in oklab, var(--muted) 50%, transparent);
-  /* The purchase screen's table header and delete button. */
-  --pos-purchase: #871d46;
-  --pos-purchase-foreground: #ffffff;
-  /* The home page's four "today" cards (their dark values stay the same). */
-  --dashboard-sales: #000052;
-  --dashboard-sales-text: #ffffff;
-  --dashboard-expenses: #6b7280;
-  --dashboard-expenses-text: #ffffff;
-  --dashboard-profit: #8b5cf6;
-  --dashboard-profit-text: #ffffff;
-  --dashboard-purchases: #ce2029;
-  --dashboard-purchases-text: #ffffff;
-}
-
-.dark {
-  --background: #0e1426;
-  --foreground: #e6e9f3;
-  --card: #151c33;
-  --card-foreground: #e6e9f3;
-  --popover: #18203a;
-  --popover-foreground: #e6e9f3;
-  --primary: #5a78cc;
-  --primary-foreground: #ffffff;
-  --secondary: #1d2848;
-  --secondary-foreground: #bccaf4;
-  --muted: #1d2540;
-  --muted-foreground: #98a1b8;
-  --accent: #1d2540;
-  --accent-foreground: #e6e9f3;
-  --destructive: #e5857e;
-  --destructive-soft: #3b2325;
-  --success: #6cc27a;
-  --success-soft: #1b3326;
-  --warning: #dba957;
-  --warning-soft: #382f1d;
-  --faint: #6a738d;
-  --brand-green: #5cbf6a;
-  --border: #242d49;
-  --input: #2b3554;
-  --ring: #7d93d6;
-  --chart-1: #7d93d6;
-  --chart-2: #5cbf6a;
-  --chart-3: #bccaf4;
-  --chart-4: #2f8f3a;
-  --chart-5: #dba957;
-  --sidebar: #151c33;
-  --sidebar-foreground: #98a1b8;
-  --sidebar-primary: #5a78cc;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #1d2848;
-  --sidebar-accent-foreground: #bccaf4;
-  --sidebar-border: #242d49;
-  --sidebar-ring: #7d93d6;
-}
-
-/* ---------- Classic: the current system's green palette on white (dark: deep navy with a brighter green) ---------- */
-[data-theme="classic"] {
-  --text-main: #4b5563;
-  --text-muted: #6b7280;
-  --bg-main: #ffffff;
-  --input-bg: #ffffff;
-  /* Tables: white header with grey text, a soft grey hover. */
-  --table-header-text: #9ca3af;
-  --table-header-border: #e2e8f0;
-  --table-row-hover: #f1f5f9;
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-soft: rgba(239, 68, 68, 0.1);
-  --warning: #eab308;
-  --warning-soft: rgba(234, 179, 8, 0.12);
-  --brand-navy: #000052;
   --background: #fff;
   --foreground: #1f2937;
   --card: #ffffff;
@@ -142,10 +21,15 @@
   --muted-foreground: #6b7280;
   --accent: #eafaf1;
   --accent-foreground: #1e8449;
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-soft: rgba(239, 68, 68, 0.1);
   --success: #27ae60;
   --success-soft: #e3f7ec;
+  --warning: #eab308;
+  --warning-soft: rgba(234, 179, 8, 0.12);
   --faint: #9ca3af;
   --brand-green: #2ecc71;
+  --brand-navy: #000052;
   --border: #e5e7eb;
   --input: #e5e7eb;
   --ring: #2ecc71;
@@ -162,20 +46,28 @@
   --sidebar-accent-foreground: #1e8449;
   --sidebar-border: #e5e7eb;
   --sidebar-ring: #2ecc71;
+  --text-main: #4b5563;
+  --text-muted: #6b7280;
+  --bg-main: #ffffff;
+  --input-bg: #ffffff;
+  --table-header-text: #9ca3af;
+  --table-header-border: #e2e8f0;
+  --table-row-hover: #f1f5f9;
+  /* The purchase screen's table header and delete button. */
+  --pos-purchase: #871d46;
+  --pos-purchase-foreground: #ffffff;
+  /* The home page's four "today" cards (their dark values stay the same). */
+  --dashboard-sales: #000052;
+  --dashboard-sales-text: #ffffff;
+  --dashboard-expenses: #6b7280;
+  --dashboard-expenses-text: #ffffff;
+  --dashboard-profit: #8b5cf6;
+  --dashboard-profit-text: #ffffff;
+  --dashboard-purchases: #ce2029;
+  --dashboard-purchases-text: #ffffff;
 }
 
-[data-theme="classic"].dark {
-  --text-main: #cbd5e1;
-  --text-muted: #94a3b8;
-  --bg-main: #0a1222;
-  --input-bg: #0f1a30;
-  --table-header-text: #94a3b8;
-  --table-header-border: #1e2a44;
-  --table-row-hover: #1b2745;
-  --destructive: #e5857e;
-  --destructive-soft: #3b2325;
-  --warning: #dba957;
-  --warning-soft: #382f1d;
+.dark {
   --background: #0a1222;
   --foreground: #f8fafc;
   --card: #0f1a30;
@@ -190,8 +82,12 @@
   --muted-foreground: #94a3b8;
   --accent: #1b2745;
   --accent-foreground: #86efac;
+  --destructive: #e5857e;
+  --destructive-soft: #3b2325;
   --success: #4ade80;
   --success-soft: #12301f;
+  --warning: #dba957;
+  --warning-soft: #382f1d;
   --faint: #64748b;
   --brand-green: #22c55e;
   --border: #1e2a44;
@@ -210,11 +106,19 @@
   --sidebar-accent-foreground: #86efac;
   --sidebar-border: #1e2a44;
   --sidebar-ring: #22c55e;
+  --text-main: #cbd5e1;
+  --text-muted: #94a3b8;
+  --bg-main: #0a1222;
+  --input-bg: #0f1a30;
+  --table-header-text: #94a3b8;
+  --table-header-border: #1e2a44;
+  --table-row-hover: #1b2745;
+  --brand-navy: #000052;
 }
 
 /* The salon (beauty) theme: warm rose over blush, as in the previous system. Switched on for the sales screens
    by the "beautyTheme" setting (see usePosBeauty), so it also reaches dialogs, which sit outside the page root. */
-html.beauty[data-theme] {
+html.beauty {
   --background: #fdf0ed;
   --foreground: #4a3535;
   --card: #ffffff;
@@ -319,37 +223,15 @@ html.beauty[data-theme] {
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Boxes inside pages. Classic: a thin bordered square-ish box. Modern: the erpv2 card (rounded, soft ring, card colour). */
+/* Boxes inside pages: a thin bordered square-ish box. */
 .page-box { border: 1px solid var(--border); border-radius: 0.5rem; padding: 1.5rem; }
 .page-box-flat { border: 1px solid var(--border); border-radius: 0.5rem; }
 .summary-box { border: 1px solid var(--border); border-radius: 1rem; background: color-mix(in oklab, var(--muted) 30%, transparent); padding: 1.5rem; }
 .inner-box { border: 1px solid var(--border); border-radius: 0.125rem; background: var(--card); padding: 1.5rem; }
-[data-theme="modern"] :is(.page-box, .page-box-flat, .inner-box, .summary-box) {
-  border-color: transparent;
-  border-radius: var(--radius-xl);
-  background: var(--card);
-  box-shadow: 0 0 0 1px color-mix(in oklab, var(--foreground) 10%, transparent);
-}
 
-/* The save / cancel row under an add / edit form. Classic: a bordered strip. Modern: a bar stuck to the bottom of the window
-   (`in-box`: the row sits inside the card, so it spans the card instead of the page). */
+/* The save / cancel row under an add / edit form: a bordered strip. */
 .form-footer { border: 1px solid var(--border); border-radius: 0.125rem; background: var(--background); padding: 1.25rem; }
 @media (min-width: 640px) { .form-footer { padding: 1.5rem; } }
-[data-theme="modern"] :is(.form-footer, .sticky-footer) {
-  position: sticky; bottom: 0; z-index: 10; margin-inline: -1rem; padding: 0.75rem 1rem;
-  border: 0; border-top: 1px solid var(--border); border-radius: 0;
-  background: color-mix(in oklab, var(--background) 90%, transparent); backdrop-filter: blur(8px);
-}
-@media (min-width: 768px) { [data-theme="modern"] :is(.form-footer, .sticky-footer) { margin-inline: -1.5rem; padding-inline: 1.5rem; } }
-[data-theme="modern"] .form-footer.in-box {
-  margin: 0 -1.5rem -1.5rem; padding: 0.75rem 1.5rem; border-radius: 0 0 var(--radius-xl) var(--radius-xl); background: var(--card);
-}
-/* Section titles inside a box: erpv2's small card title. */
-[data-theme="modern"] :is(.page-box, .inner-box) > h2 { margin-bottom: 1rem; font-size: 15px; font-weight: 600; }
-
-/* Dialog titles in the modern look: plain text, no brand colour or icon (the old system tints them and adds an icon). */
-[data-theme="modern"] [data-slot="dialog-title"] { color: var(--foreground); }
-[data-theme="modern"] [data-slot="dialog-title"] > svg { display: none; }
 
 /* Number boxes have no up / down arrows. */
 input[type="number"] { appearance: textfield; -moz-appearance: textfield; }

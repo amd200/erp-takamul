@@ -88,7 +88,7 @@ export default function TransfersPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.treasuries")]} title={t("treasuries.transfersTitle")} description={t("treasuries.transfersDescription")}
+      <PageHeader title={t("treasuries.transfersTitle")} description={t("treasuries.transfersDescription")}
         actions={<Can perm={P.treasuries.transfers}><Button size="lg" onClick={() => setOpen(true)}><Plus />{t("treasuries.newTransfer")}</Button></Can>} />
       <SectionCard>
         <DataTable rows={data ?? []} loading={isLoading} columns={columns} sort={sort} rowKey={(x) => x.id} searchText={(x) => `TRF-${x.id} ${x.notes ?? ""}`} searchPlaceholder={t("treasuries.searchTransfers")}

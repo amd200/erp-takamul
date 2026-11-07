@@ -65,7 +65,7 @@ export default function DebitNotesPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.sales")]} title={t("sales.debitTitle")} description={t("sales.debitDescription")}
+      <PageHeader title={t("sales.debitTitle")} description={t("sales.debitDescription")}
         actions={<Can perm={P.sales.debitAdd}><Button asChild size="lg"><Link to="/sales/debit-notes/create"><Plus />{t("sales.newDebit")}</Link></Button></Can>} />
       <SectionCard>
           <DataTable rows={data} loading={isLoading} columns={columns} sort={sort} rowKey={(d) => d.id}

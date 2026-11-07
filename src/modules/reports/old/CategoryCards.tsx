@@ -27,7 +27,7 @@ export function CategoryCards({ title, reports }: { title: string; reports: Cate
   const can = useCan()
   return (
     <>
-      <PageHeader crumbs={[t("nav.reports")]} title={title} />
+      <PageHeader title={title} />
       <nav className="flex gap-1 overflow-x-auto pb-1" aria-label={t("nav.reports")}>
         {CATEGORIES.filter((c) => can(c.perm)).map((c) => (
           <NavLink key={c.key} to={`/reports/category/${c.key}`} className={pill}>{t(`oldReports.${c.label}`)}</NavLink>

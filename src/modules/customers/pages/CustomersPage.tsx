@@ -43,7 +43,7 @@ export default function CustomersPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.customers")]} title={t("customers.title")} description={t("customers.description")}
+      <PageHeader title={t("customers.title")} description={t("customers.description")}
         actions={<Can perm={P.customers.add}><Button size="lg" onClick={() => setForm({})}><Plus />{t("customers.add")}</Button></Can>} />
       <SectionCard>
           <DataTable rows={all} loading={isLoading} columns={columns} sort={sort} rowKey={(c) => c.id}

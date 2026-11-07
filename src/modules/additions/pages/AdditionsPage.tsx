@@ -77,7 +77,7 @@ export default function AdditionsPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.items")]} title={t("additions.title")} description={t("additions.description")}
+      <PageHeader title={t("additions.title")} description={t("additions.description")}
         actions={<Can perm={P.additions.manage}><Button size="lg" onClick={() => open(null)}><Plus />{t("additions.add")}</Button></Can>} />
       <SectionCard>
           <DataTable rows={data?.items ?? []} loading={isLoading} columns={columns} rowKey={(a) => a.id} sort={sort}

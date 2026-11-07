@@ -36,7 +36,7 @@ export default function CertificatesPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.users")]} title={t("devices.certTitle")} description={t("devices.certDescription")} />
+      <PageHeader title={t("devices.certTitle")} description={t("devices.certDescription")} />
       <SectionCard>
         <DataTable rows={data} loading={isLoading} columns={columns} sort={sort} rowKey={(c) => c.deviceCertificateId} searchText={(c) => c.deviceName} searchPlaceholder={t("devices.search")}
           empty={<EmptyState icon={<ShieldCheck />} title={t("devices.empty")} hint={t("devices.emptyHint")} />} />

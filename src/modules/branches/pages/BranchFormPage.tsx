@@ -150,7 +150,7 @@ export default function BranchFormPage() {
   return (
     <FormProvider {...form}>
       <form onSubmit={submit} noValidate className="flex flex-col gap-5">
-        <PageHeader crumbs={[t("nav.branches")]} title={title} description={subtitle} actions={<Button asChild variant="outline">{backLink}</Button>} />
+        <PageHeader title={title} description={subtitle} actions={<Button asChild variant="outline">{backLink}</Button>} />
         <SectionCard title={t("branchForm.sections.identity")}>{identity}</SectionCard>
         <SectionCard title={t("branchForm.sections.tax")} description={t("branchForm.taxHint")}>{tax}</SectionCard>
         <SectionCard title={t("branchForm.sections.bank")}>{bank}</SectionCard>

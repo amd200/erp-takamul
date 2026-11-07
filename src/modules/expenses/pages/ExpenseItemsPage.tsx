@@ -67,7 +67,7 @@ export default function ExpenseItemsPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.expenses")]} title={t("expenseItems.title")} description={t("expenseItems.description")}
+      <PageHeader title={t("expenseItems.title")} description={t("expenseItems.description")}
         actions={<Can perm={P.expenseItems.manage}><Button size="lg" onClick={() => open(null)}><Plus />{t("expenseItems.add")}</Button></Can>} />
       <SectionCard>
           <DataTable rows={data} loading={isLoading} columns={columns} sort={sort} rowKey={(x) => x.id}

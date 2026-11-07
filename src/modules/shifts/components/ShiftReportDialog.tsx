@@ -8,8 +8,6 @@ import { useAppSettings } from "@/modules/settings"
 import { useShiftReport } from "../queries"
 import { useShiftReportOutput } from "../print/useShiftReportOutput"
 import type { Shift } from "../types"
-import { useClassic } from "@/shared/theme/ThemeProvider"
-import { ShiftReportModern } from "./ShiftReportModern"
 
 const fmt = (v: number | null | undefined) => (typeof v === "number" && !Number.isNaN(v) ? v.toFixed(2) : "—")
 
@@ -43,12 +41,7 @@ const Box = ({ title, children }: { title?: string; children: React.ReactNode })
  */
 type Props = { shift: Shift | null; onOpenChange: (o: boolean) => void; onClose?: (s: Shift) => void }
 
-/** The statement in the active look: the current system's, or erpv2's (see ShiftReportModern). */
-export function ShiftReportDialog(props: Props) {
-  return useClassic() ? <ClassicShiftReport {...props} /> : <ShiftReportModern {...props} />
-}
-
-function ClassicShiftReport({ shift, onOpenChange, onClose }: Props) {
+export function ShiftReportDialog({ shift, onOpenChange, onClose }: Props) {
   const { t, i18n } = useTranslation()
   const appSettings = useAppSettings()
   const withVouchers = !!appSettings.shiftsTab?.enableShiftStatement
@@ -175,7 +168,7 @@ function ClassicShiftReport({ shift, onOpenChange, onClose }: Props) {
                 </Section>
               )}
 
-              {returnTreasuries.length > 0 && (
+              {(returnTreasuries.length > 0 || (withVouchers && (r.treasuries ?? []).some((x) => (x.paymentCount ?? 0) > 0))) && (
                 <Section icon={CircleDollarSign} title={`${t("shiftOld.netSection")} (${t("shiftOld.sales")} - ${t("shiftOld.returns")})`}>
                   <div className="grid grid-cols-1 gap-3">
                     {(r.treasuries ?? []).map((x) => (

@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { Banknote, Loader2, SaudiRiyal, ShoppingBag, TrendingUp } from "lucide-react"
-import { useClassic } from "@/shared/theme/ThemeProvider"
 import { formatMoney } from "@/lib/format"
 import { P } from "@/shared/permissions/permissions"
 import { useCan } from "@/shared/permissions/usePermission"
@@ -10,13 +9,11 @@ import { useTodayExpenses, useTodayProfit, useTodayPurchases, useTodaySales } fr
 import { StatCard } from "../components/StatCard"
 import { OperationsStats } from "../components/OperationsStats"
 import { RecentTransactions } from "../components/RecentTransactions"
-import { Hero, Stat } from "../components/ModernHome"
 
 /** The dashboard, as in the current system: today's four totals, the ZATCA counts in stage two, and the latest operations. */
 export function HomePage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const classic = useClassic()
   const can = useCan()
   const taxSetting = useAppSettings().taxSetting?.taxSetting
 
@@ -39,23 +36,6 @@ export function HomePage() {
 
   // As in the current system the whole page, latest operations included, needs one of the statistics permissions.
   if (!Object.values(show).some(Boolean)) return null
-
-  if (!classic) {
-    const money = (v: unknown) => formatMoney(Number(v ?? 0))
-    return (
-      <div className="flex flex-col gap-5">
-        <Hero />
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {show.sales && <Stat icon={SaudiRiyal} label={t("home.totalSales")} value={money(sales.data?.totalSales)} />}
-          {show.purchases && <Stat icon={ShoppingBag} label={t("home.totalPurchases")} value={money(purchases.data?.totalPurchases)} />}
-          {show.expenses && <Stat icon={Banknote} tone="warning" label={t("home.totalExpenses")} value={money(expenses.data?.totalExpenses)} />}
-          {show.profit && <Stat icon={TrendingUp} label={t("home.netProfit")} value={money(profit.data?.netProfit)} to="/reports/profit" />}
-        </div>
-        {taxSetting === "SecondStage" && <OperationsStats />}
-        <RecentTransactions />
-      </div>
-    )
-  }
 
   return (
     <div className="relative space-y-4">

@@ -626,7 +626,6 @@
     "warehousesList": "Warehouses List"
   },
   "topbar": {
-    "search": "Search items or invoices",
     "quickA4": "A4 invoice",
     "quickPos": "Point of sale",
     "quickItem": "Add item",
@@ -645,12 +644,7 @@
     "logout": "Sign out",
     "selectBranch": "Select Branch",
     "allBranches": "All Branches",
-    "branchChangeFailed": "Could not change the branch, try again",
-    "style": "Look",
-    "styles": {
-      "modern": "Modern",
-      "classic": "Classic"
-    }
+    "branchChangeFailed": "Could not change the branch, try again"
   },
   "home": {
     "totalSales": "Total Sales",
@@ -697,9 +691,7 @@
     "purchase": {
       "Confirmed": "Completed",
       "UnConfirmed": "Not completed"
-    },
-    "greeting": "Welcome, {{name}}",
-    "subtitle": "A quick look at today's activity"
+    }
   },
   "soon": {
     "title": "Coming soon",
@@ -2431,7 +2423,6 @@
     "total": "Total balance",
     "balance": "Current balance",
     "statement": "Statement",
-    "statementTitle": "Treasury statement",
     "deposit": "Deposit",
     "withdraw": "Withdraw",
     "depositTitle": "Deposit to {{name}}",
@@ -2493,23 +2484,11 @@
     "device": "Device",
     "openingBalance": "Opening balance",
     "sales": "Sales",
-    "returns": "Returns",
-    "net": "Net",
-    "invoices": "Invoices",
-    "tax": "Tax",
-    "expenses": "Expenses",
-    "revenues": "Revenues",
-    "purchases": "Purchases",
-    "deferred": "{{count}} credit invoices",
     "statusOpen": "Open",
     "statusClosed": "Closed",
     "viewReport": "Shift report",
     "reportTitle": "Shift #{{id}} report",
     "stillOpen": "open",
-    "byTreasury": "By treasury",
-    "byEmployee": "By employee",
-    "soldItems": "Items sold",
-    "qty": "Qty",
     "unitPrice": "Unit price",
     "lineTotal": "Total",
     "export": "Export",
@@ -2519,8 +2498,6 @@
     "fillAll": "Pick the employee and device first.",
     "closeTitle": "Close shift",
     "closeBody": "Shift #{{id}} will be closed and no more sales can be recorded on it.",
-    "unlinkedVoucherCount": "Unlinked vouchers",
-    "voucherTotal": "Vouchers total",
     "print": "Print",
     "downloadPdf": "Download PDF",
     "pdfFailed": "Could not download the report as PDF",

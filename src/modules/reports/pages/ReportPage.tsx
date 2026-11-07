@@ -54,7 +54,7 @@ function Report({ def }: { def: ReportDef }) {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.reports"), t(`reports.cat.${def.category}`)]} title={title} description={t(`reports.d.${def.id}`)}
+      <PageHeader title={title} description={t(`reports.d.${def.id}`)}
         actions={data && missing.length === 0 && (
           <div className="flex gap-2 print:hidden">
             <Button variant="outline" size="lg" onClick={() => downloadCsv(`${def.id}-${filters.from}-${filters.to}`, data, t, i18n.language)}><FileSpreadsheet />{t("reports.excel")}</Button>
@@ -97,7 +97,7 @@ export default function ReportPage() {
   return <ReportById id={id} />
 }
 
-export function ReportById({ id }: { id?: string }) {
+function ReportById({ id }: { id?: string }) {
   const def = reportById(id)
   if (!def) return <Navigate to="/reports" replace />
   return (

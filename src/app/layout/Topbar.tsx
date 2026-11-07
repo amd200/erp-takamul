@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { Bell, Check, Globe, KeyRound, LogOut, LayoutGrid, Menu, Monitor, Moon, Package, Search, ShoppingCart, Sun } from "lucide-react"
+import { Bell, Check, Globe, KeyRound, LogOut, LayoutGrid, Menu, Monitor, Moon, Package, ShoppingCart, Sun } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -13,64 +13,36 @@ import { useAppSettings } from "@/modules/settings"
 import { useLogout } from "@/modules/auth/queries"
 import { BranchSwitcher } from "./BranchSwitcher"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { useClassic, useTheme, type ThemeChoice, type UiStyle } from "@/shared/theme/ThemeProvider"
+import { useTheme, type ThemeChoice } from "@/shared/theme/ThemeProvider"
 
 const THEMES: { id: ThemeChoice; icon: typeof Sun }[] = [
   { id: "light", icon: Sun }, { id: "dark", icon: Moon }, { id: "system", icon: Monitor },
 ]
 
-const STYLES: UiStyle[] = ["modern", "classic"]
+/** The old colours of the three quick buttons: blue, green, amber (each a soft background with matching text and icon). */
+const quickA4 = "bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50"
+const quickPos = "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 dark:hover:bg-emerald-900/50"
+const quickItem = "bg-amber-50 text-amber-700 hover:bg-amber-100 hover:text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 dark:hover:bg-amber-900/50"
 
-/** The look entries of the theme menu, shared by both bars (the mode light / dark / system comes first). */
-function StyleItems({ itemClass }: { itemClass?: string }) {
-  const { t } = useTranslation()
-  const { style, setStyle } = useTheme()
-  return (
-    <>
-      <DropdownMenuSeparator />
-      <DropdownMenuLabel className="text-xs text-muted-foreground">{t("topbar.style")}</DropdownMenuLabel>
-      {STYLES.map((id) => (
-        <DropdownMenuItem key={id} onSelect={() => setStyle(id)} className={cn(itemClass, "justify-between")}>
-          <span>{t(`topbar.styles.${id}`)}</span>{style === id && <Check size={16} className="text-primary" />}
-        </DropdownMenuItem>
-      ))}
-    </>
-  )
-}
-
-/** Classic keeps the old colours of the three quick buttons: blue, green, amber (each a soft background with matching text and icon). */
-const quickA4 = "classic:bg-blue-50 classic:text-blue-700 classic:hover:bg-blue-100 classic:hover:text-blue-700 classic:dark:bg-blue-900/30 classic:dark:text-blue-300 classic:dark:hover:bg-blue-900/50"
-const quickPos = "classic:bg-emerald-50 classic:text-emerald-700 classic:hover:bg-emerald-100 classic:hover:text-emerald-700 classic:dark:bg-emerald-900/30 classic:dark:text-emerald-300 classic:dark:hover:bg-emerald-900/50"
-const quickItem = "classic:bg-amber-50 classic:text-amber-700 classic:hover:bg-amber-100 classic:hover:text-amber-700 classic:dark:bg-amber-900/30 classic:dark:text-amber-300 classic:dark:hover:bg-amber-900/50"
-
-/** The bar: a search field, three quick-action buttons and a row of round icon buttons. */
-function ModernTopbar({ onMenu }: { onMenu: () => void }) {
+/** The bar: the branch picker, three quick-action buttons and a row of round icon buttons. */
+export function Topbar({ onMenu }: { drawerOpen?: boolean; onMenu: () => void }) {
   const { t, i18n } = useTranslation()
   const { choice, resolved, setChoice } = useTheme()
   const { user } = useSession()
   const postype = useAppSettings().salesScreenTab?.postype
   const posPath = postype === "Pos3" ? "/pos-optics" : postype === "Pos2" ? "/pos2" : "/pos"
   const logout = useLogout()
-  const classic = useClassic()
   return (
     <header className="sticky top-0 z-30 flex flex-wrap items-center gap-2 border-b bg-card px-4 py-3 md:px-6 print:hidden">
       <Button variant="ghost" size="icon-lg" className="md:hidden" aria-label={t("nav.open")} onClick={onMenu}><Menu /></Button>
-      {/* Classic: the branch picker takes the place of the search box. */}
-      {classic ? <BranchSwitcher /> : (
-        <div className="relative max-w-xs min-w-40 flex-1">
-          <Search className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-faint" />
-          <Input aria-label={t("common.search")} placeholder={t("topbar.search")} className="h-10 bg-card ps-9" />
-        </div>
-      )}
+      <BranchSwitcher />
       <div className="order-last flex w-full gap-2 lg:order-none lg:w-auto">
-        <Button asChild variant="secondary" className={cn("rounded-full max-lg:flex-1", quickA4)}><Link to="/sales/invoices/create">{classic && <LayoutGrid />}{t("topbar.quickA4")}</Link></Button>
-        <Button asChild variant="secondary" className={cn("rounded-full max-lg:flex-1", quickPos)}><Link to={posPath}>{classic && <ShoppingCart />}{t("topbar.quickPos")}</Link></Button>
-        <Can perm={P.products.add}><Button asChild variant="ghost" className={cn("rounded-full bg-muted max-lg:flex-1", quickItem)}><Link to="/products/create">{classic && <Package />}{t("topbar.quickItem")}</Link></Button></Can>
+        <Button asChild variant="secondary" className={cn("rounded-full max-lg:flex-1", quickA4)}><Link to="/sales/invoices/create"><LayoutGrid />{t("topbar.quickA4")}</Link></Button>
+        <Button asChild variant="secondary" className={cn("rounded-full max-lg:flex-1", quickPos)}><Link to={posPath}><ShoppingCart />{t("topbar.quickPos")}</Link></Button>
+        <Can perm={P.products.add}><Button asChild variant="ghost" className={cn("rounded-full bg-muted max-lg:flex-1", quickItem)}><Link to="/products/create"><Package />{t("topbar.quickItem")}</Link></Button></Can>
       </div>
 
       <div className="ms-auto flex items-center gap-1">
-        {!classic && <BranchSwitcher />}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon-lg" className="relative rounded-full" aria-label={t("topbar.notifications")}>
@@ -98,7 +70,6 @@ function ModernTopbar({ onMenu }: { onMenu: () => void }) {
                 <Icon />{t(`topbar.themes.${id}`)}{choice === id && <Check className="ms-auto" />}
               </DropdownMenuItem>
             ))}
-            <StyleItems />
           </DropdownMenuContent>
         </DropdownMenu>
 
@@ -134,9 +105,4 @@ function ModernTopbar({ onMenu }: { onMenu: () => void }) {
       </div>
     </header>
   )
-}
-
-/** One bar for both looks; Classic only changes the colours (through the theme tokens). */
-export function Topbar({ onMenu }: { drawerOpen?: boolean; onMenu: () => void }) {
-  return <ModernTopbar onMenu={onMenu} />
 }

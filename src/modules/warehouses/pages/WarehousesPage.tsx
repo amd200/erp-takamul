@@ -80,7 +80,7 @@ export default function WarehousesPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.warehouses")]} title={t("warehouses.title")} description={t("warehouses.description")}
+      <PageHeader title={t("warehouses.title")} description={t("warehouses.description")}
         actions={<Can perm={P.warehouses.add}><Button size="lg" onClick={() => { setEditing(null); setOpen(true) }}><Plus />{t("warehouses.add")}</Button></Can>} />
       <SectionCard>
         <DataTable rows={data ?? []} loading={isLoading} columns={columns} sort={sort} rowKey={(w) => w.id} searchText={(w) => [w.warehouseCode, w.warehouseName, w.address].filter(Boolean).join(" ")} searchPlaceholder={t("warehouses.search")}

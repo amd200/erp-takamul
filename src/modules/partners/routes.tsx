@@ -10,6 +10,6 @@ export const partnerRoutes: RouteObject[] = [
   { element: <RequirePermission perm={P.vouchers.receipts} />, children: [{ path: "vouchers/receipts", lazy: lazyPage(() => import("@/modules/vouchers/pages/VouchersPage"), "ReceiptsPage") }] },
   { element: <RequirePermission perm={P.vouchers.payments} />, children: [{ path: "vouchers/payments", lazy: lazyPage(() => import("@/modules/vouchers/pages/VouchersPage"), "PaymentsPage") }] },
   { element: <RequirePermission perm={P.treasuries.view} />, children: [{ path: "treasuries", lazy: lazyPage(() => import("@/modules/treasuries/pages/TreasuriesPage")) }] },
-  { element: <RequirePermission perm={P.treasuries.statement} />, children: [{ path: "treasuries/statement", lazy: lazyPage(() => import("@/modules/treasuries/pages/TreasuryStatementPage")) }] },
+  { element: <RequirePermission perm={P.treasuries.statement} />, children: [{ path: "treasuries/statement", lazy: lazyPage(() => import("@/modules/treasuries/pages/TreasuryStatementClassic")) }] },
   { element: <RequirePermission perm={P.treasuries.transfers} />, children: [{ path: "treasuries/transfers", lazy: lazyPage(() => import("@/modules/treasuries/pages/TransfersPage")) }] },
 ]

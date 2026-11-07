@@ -57,7 +57,7 @@ export default function ImportProductsPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.items")]} title={t("import.productsTitle")} description={t("import.productsDescription")} />
+      <PageHeader title={t("import.productsTitle")} description={t("import.productsDescription")} />
       <SectionCard title={t("import.step1")} description={t("import.step1Hint")}
         action={<Button variant="outline" disabled={template.isPending} onClick={() => template.mutate()}>{template.isPending ? <Loader2 className="animate-spin" /> : <Download />}{t("import.template")}</Button>}>
         <input ref={input} type="file" accept=".xlsx,.xls" className="sr-only" aria-label={t("import.drop")} onChange={(e) => { pick(e.target.files?.[0]); e.target.value = "" }} />

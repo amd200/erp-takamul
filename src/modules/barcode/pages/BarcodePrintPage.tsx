@@ -34,7 +34,7 @@ export default function BarcodePrintPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.items")]} title={t("barcode.title")} description={t("barcode.description")}
+      <PageHeader title={t("barcode.title")} description={t("barcode.description")}
         actions={<Button size="lg" disabled={!lines.length}><Printer />{t("barcode.print", { count: total })}</Button>} />
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px]">
         <SectionCard title={t("barcode.items")} description={t("barcode.itemsHint")}>

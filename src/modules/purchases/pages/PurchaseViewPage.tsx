@@ -36,7 +36,7 @@ export default function PurchaseViewPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.purchases")]} title={p.purchaseOrderNumber ?? ""} actions={
+      <PageHeader title={p.purchaseOrderNumber ?? ""} actions={
         <>
           <Button variant="outline" size="lg" className="print:hidden" onClick={() => window.print()}><Printer />{t("sales.actions.print")}</Button>
           <Can perm={P.purchases.edit}><Button asChild size="lg" className="print:hidden"><Link to={`/purchases/${p.id}/edit`}><Pencil />{t("common.edit")}</Link></Button></Can>

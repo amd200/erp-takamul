@@ -625,14 +625,12 @@
     "branchesList": "قائمة الفروع",
     "warehousesList": "قائمة المخازن"
   },
-  
   "soon": {
     "title": "قريبًا",
     "heading": "هذا القسم لم يُصمم بعد",
     "hint": "سيُبنى بنفس قوالب القوائم والنماذج المستخدمة في الأصناف."
   },
   "topbar": {
-    "search": "ابحث عن صنف أو فاتورة",
     "quickA4": "فاتورة A4",
     "quickPos": "نقطة بيع",
     "quickItem": "إضافة صنف",
@@ -651,12 +649,7 @@
     "logout": "تسجيل الخروج",
     "selectBranch": "اختر الفرع",
     "allBranches": "جميع الفروع",
-    "branchChangeFailed": "تعذر تغيير الفرع، حاول مرة أخرى",
-    "style": "المظهر",
-    "styles": {
-      "modern": "الجديد",
-      "classic": "الكلاسيكي"
-    }
+    "branchChangeFailed": "تعذر تغيير الفرع، حاول مرة أخرى"
   },
   "home": {
     "totalSales": "اجمالي المبيعات",
@@ -703,9 +696,7 @@
     "purchase": {
       "Confirmed": "مكتملة",
       "UnConfirmed": "غير مكتملة"
-    },
-    "greeting": "أهلاً {{name}}",
-    "subtitle": "ملخص سريع لنشاط اليوم"
+    }
   },
   "products": {
     "listTitle": "إدارة الاصناف",
@@ -2432,7 +2423,6 @@
     "total": "إجمالي الأرصدة",
     "balance": "الرصيد الحالي",
     "statement": "كشف الحساب",
-    "statementTitle": "كشف حساب خزينة",
     "deposit": "إيداع",
     "withdraw": "سحب",
     "depositTitle": "إيداع في {{name}}",
@@ -2494,23 +2484,11 @@
     "device": "الجهاز",
     "openingBalance": "رصيد الافتتاح",
     "sales": "المبيعات",
-    "returns": "المرتجعات",
-    "net": "الصافي",
-    "invoices": "عدد الفواتير",
-    "tax": "الضريبة",
-    "expenses": "المصروفات",
-    "revenues": "الإيرادات",
-    "purchases": "المشتريات",
-    "deferred": "{{count}} فواتير آجلة",
     "statusOpen": "مفتوحة",
     "statusClosed": "مغلقة",
     "viewReport": "تقرير الوردية",
     "reportTitle": "تقرير الوردية #{{id}}",
     "stillOpen": "مفتوحة",
-    "byTreasury": "حسب الخزينة",
-    "byEmployee": "حسب الموظف",
-    "soldItems": "الأصناف المباعة",
-    "qty": "الكمية",
     "unitPrice": "سعر الوحدة",
     "lineTotal": "الإجمالي",
     "export": "تصدير",
@@ -2520,8 +2498,6 @@
     "fillAll": "اختر الموظف والجهاز أولًا.",
     "closeTitle": "إغلاق الوردية",
     "closeBody": "هتتقفل الوردية #{{id}} ومش هتقدر تسجّل عليها مبيعات بعد كده.",
-    "unlinkedVoucherCount": "عدد السندات الغير مرتبطة بفاتورة",
-    "voucherTotal": "إجمالي السندات",
     "print": "طباعة",
     "downloadPdf": "تحميل PDF",
     "pdfFailed": "معرفناش ننزّل التقرير PDF",

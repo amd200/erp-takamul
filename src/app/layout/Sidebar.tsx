@@ -17,7 +17,7 @@ function Row({ icon: Icon, label, active, hasSubmenu, open, to, onClick }: {
   icon: LucideIcon; label: string; active?: boolean; hasSubmenu?: boolean; open?: boolean; to?: string; onClick?: () => void
 }) {
   const classes = cn(
-    "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-start text-sidebar-foreground transition-colors hover:bg-muted hover:text-foreground classic:hover:bg-accent classic:hover:text-accent-foreground",
+    "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-start text-sidebar-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
     active && "bg-sidebar-accent font-semibold text-sidebar-accent-foreground",
   )
   const content = (
@@ -57,7 +57,7 @@ function Group({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) 
             const current = pathname === c.to || (c.to === "/products" && pathname.startsWith("/products/edit"))
             return (
               <Link key={c.to} to={c.to} onClick={onNavigate}
-                className={cn("rounded-md py-1.5 ps-5 pe-3 text-[13px] text-sidebar-foreground hover:bg-muted hover:text-foreground classic:hover:bg-accent classic:hover:text-accent-foreground",
+                className={cn("rounded-md py-1.5 ps-5 pe-3 text-[13px] text-sidebar-foreground hover:bg-accent hover:text-accent-foreground",
                   current && "bg-sidebar-accent font-semibold text-sidebar-accent-foreground")}>
                 {t(`nav.${c.key}`)}
               </Link>

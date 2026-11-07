@@ -14,8 +14,8 @@ export function AppLayout() {
       <div className="flex min-w-0 flex-col">
         <Topbar onMenu={() => setDrawer((o) => !o)} />
         <main className="flex min-w-0 flex-col gap-5 px-4 py-6 md:px-6">
-          {/* Classic: a page that opens with a PageHeader sits in the bordered box the current system draws around every page. */}
-          <div className="flex min-w-0 flex-col gap-5 classic:has-[[data-page-header]]:rounded-lg classic:has-[[data-page-header]]:border classic:has-[[data-page-header]]:border-gray-200 classic:has-[[data-page-header]]:p-6 classic:dark:has-[[data-page-header]]:border-zinc-800 print:border-0 print:p-0">
+          {/* A page that opens with a PageHeader sits in the bordered box the system draws around every page. */}
+          <div className="flex min-w-0 flex-col gap-5 has-[[data-page-header]]:rounded-lg has-[[data-page-header]]:border has-[[data-page-header]]:border-gray-200 has-[[data-page-header]]:p-6 dark:has-[[data-page-header]]:border-zinc-800 print:border-0 print:p-0">
             <Outlet />
           </div>
         </main>

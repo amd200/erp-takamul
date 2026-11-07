@@ -64,7 +64,7 @@ export default function QuoteFormPage() {
   return (
     <FormProvider {...form}>
       <form onSubmit={submit} noValidate className="flex flex-col gap-6">
-        <PageHeader crumbs={[t("nav.quotes")]} title={editId ? t("quotes.editTitle", { number: existing?.quotationNumber }) : t("quotes.newTitle")}
+        <PageHeader title={editId ? t("quotes.editTitle", { number: existing?.quotationNumber }) : t("quotes.newTitle")}
           actions={<Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/5 hover:text-primary"><Link to="/quotes"><List />{t("quotes.backToList")}</Link></Button>} />
 
         <SectionCard title={t("sales.basics")}>

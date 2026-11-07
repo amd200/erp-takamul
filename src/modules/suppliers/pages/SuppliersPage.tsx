@@ -41,7 +41,7 @@ export default function SuppliersPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.suppliers")]} title={t("suppliers.title")} description={t("suppliers.description")}
+      <PageHeader title={t("suppliers.title")} description={t("suppliers.description")}
         actions={<Can perm={P.suppliers.add}><Button size="lg" onClick={() => setForm({})}><Plus />{t("suppliers.add")}</Button></Can>} />
       <SectionCard>
           <DataTable rows={all} loading={isLoading} columns={columns} sort={sort} rowKey={(s) => s.id}

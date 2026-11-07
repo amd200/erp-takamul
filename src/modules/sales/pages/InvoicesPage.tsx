@@ -47,7 +47,7 @@ export default function InvoicesPage({ channel }: { channel: Channel }) {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.sales")]} title={t(channel === "A4" ? "sales.a4Title" : "sales.posTitle")} description={t(channel === "A4" ? "sales.a4Description" : "sales.posDescription")} />
+      <PageHeader title={t(channel === "A4" ? "sales.a4Title" : "sales.posTitle")} description={t(channel === "A4" ? "sales.a4Description" : "sales.posDescription")} />
 
       <SectionCard>
           <DataTable

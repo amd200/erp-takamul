@@ -86,7 +86,7 @@ export default function PurchaseFormPage() {
   return (
     <FormProvider {...form}>
       <form onSubmit={submit} noValidate className="flex flex-col gap-6">
-        <PageHeader crumbs={[t("nav.purchases")]} title={editId ? t("purchases.editTitle", { number: existing?.purchaseOrderNumber }) : t("purchases.formTitle")}
+        <PageHeader title={editId ? t("purchases.editTitle", { number: existing?.purchaseOrderNumber }) : t("purchases.formTitle")}
           actions={<Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/5 hover:text-primary"><Link to="/purchases"><List />{t("purchases.backToPurchases")}</Link></Button>} />
 
         <SectionCard title={t("sales.basics")}>

@@ -61,7 +61,7 @@ function VouchersPage({ kind }: { kind: VoucherKind }) {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.bonds")]} title={t(`vouchers.title.${kind}`)}
+      <PageHeader title={t(`vouchers.title.${kind}`)}
         actions={<Can perm={perm}><Button size="lg" onClick={() => setOpen(true)}><Plus />{t(`vouchers.new.${kind}`)}</Button></Can>} />
       <SectionCard>
         <DataTable rows={rows} loading={isLoading} columns={columns} sort={sort} rowKey={(v) => voucherNumber(v)}

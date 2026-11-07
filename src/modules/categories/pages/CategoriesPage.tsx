@@ -39,7 +39,7 @@ export default function CategoriesPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.items")]} title={t("categories.title")} description={t("categories.description")}
+      <PageHeader title={t("categories.title")} description={t("categories.description")}
         actions={<Can perm={P.categories.manage}><Button size="lg" onClick={() => open(null)}><Plus />{t("categories.add")}</Button></Can>} />
       <SectionCard>
           <DataTable rows={rows} loading={isLoading} columns={columns} rowKey={(c) => c.id} sort={sort}

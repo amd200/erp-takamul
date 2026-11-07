@@ -196,7 +196,7 @@ export default function ReturnFormPage() {
           </div>
         </div>
 
-        <div className="form-footer in-box flex flex-col-reverse items-stretch justify-between gap-4 sm:flex-row sm:items-center">
+        <div className="form-footer flex flex-col-reverse items-stretch justify-between gap-4 sm:flex-row sm:items-center">
           <Button type="button" variant="destructive" size="xl" onClick={() => nav("/sales/returns")}>{t("oldDebit.cancel")}</Button>
           <Button type="submit" size="xl" disabled={overLimit || !hasReturn || create.isPending}>{t("oldReturn.save")}</Button>
         </div>

@@ -4,8 +4,6 @@ import { downloadPdf, printDocument } from "@/shared/print"
 import { useAppSettings } from "@/modules/settings"
 import { shiftKeys } from "../queries"
 import { shiftsApi } from "../service"
-import { useClassic } from "@/shared/theme/ThemeProvider"
-import { shiftReportDoc } from "./shiftReportDoc"
 import { shiftReportClassicDoc } from "./shiftReportClassicDoc"
 
 type Output = { id: number; as: "print" | "pdf" }
@@ -15,13 +13,12 @@ export function useShiftReportOutput() {
   const qc = useQueryClient()
   const s = useAppSettings()
   const withVouchers = !!s.shiftsTab?.enableShiftStatement
-  const classic = useClassic()
   const exempt = s.taxSetting?.taxSetting === "Exempt"
   const byEmployee = s.salonsTab?.showServiceEmployeeSales === true
   return useMutation({
     mutationFn: async ({ id, as }: Output) => {
       const report = await qc.fetchQuery({ queryKey: shiftKeys.report(id), queryFn: () => shiftsApi.report(id) })
-      const doc = classic ? shiftReportClassicDoc(report, { withVouchers, byEmployee, exempt }) : shiftReportDoc(report, { withVouchers, byEmployee })
+      const doc = shiftReportClassicDoc(report, { withVouchers, byEmployee, exempt })
       if (as === "pdf") await downloadPdf(doc, `shift-${id}`)
       else await printDocument(doc)
     },

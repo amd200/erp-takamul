@@ -9,9 +9,6 @@ import { Button } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { FormSelect, FormTextarea } from "@/components/form/FormFields"
-import { PageHeader } from "@/components/PageHeader"
-import { SectionCard } from "@/components/SectionCard"
-import { useClassic } from "@/shared/theme/ThemeProvider"
 import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
 import { useAppSettings } from "@/modules/settings"
 import { pickTreasury, useTreasuries } from "@/modules/lookups/service"
@@ -32,7 +29,6 @@ const box = "rounded-sm border border-border bg-background p-6"
  */
 export default function DebitNoteFormPage() {
   const { t } = useTranslation()
-  const classic = useClassic()
   const nav = useNavigate()
   const [params] = useSearchParams()
   const invoiceId = Number(params.get("invoice")) || 0
@@ -64,74 +60,6 @@ export default function DebitNoteFormPage() {
   const submit = form.handleSubmit((d) => !overpaid && create.mutate({ ...d, key: key.current }, { onSuccess: () => nav("/sales/debit-notes"), onError: renewIfReused(key) }))
   const addPayment = () => payments.append({ amount: remaining, method: "Cash", treasuryId: pickTreasury(treasuries, vault)?.id ?? 0, notes: "" })
   const locked = "cursor-not-allowed bg-muted/50 font-semibold"
-
-  if (!classic) {
-    const invoiceField = invoiceId ? (
-      <Field><FieldLabel>{t("oldDebit.invoiceNumber")}</FieldLabel><Input readOnly className={locked} value={inv?.orderNumber ?? ""} /></Field>
-    ) : (
-      <FormSelect control={form.control} name="invoiceId" numeric required label={t("oldDebit.invoiceNumber")} placeholder={t("sales.pickInvoice")}
-        options={invoices.map((i) => ({ value: String(i.id), label: `${i.orderNumber} · ${i.customerName}` }))} />
-    )
-    return (
-      <FormProvider {...form}>
-        <form onSubmit={submit} noValidate className="flex flex-col gap-5">
-          <PageHeader crumbs={[t("nav.sales"), t("nav.debitNotes")]} title={t("oldDebit.title")} />
-
-          <SectionCard title={t("oldDebit.basic")}>
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              {invoiceField}
-              <Field><FieldLabel>{t("oldDebit.customer")}</FieldLabel><Input readOnly className={locked} value={inv?.customerName ?? ""} /></Field>
-              <Controller control={form.control} name="date" render={({ field }) => (
-                <Field><FieldLabel>{t("oldDebit.date")}</FieldLabel><Input readOnly className={locked} value={new Date(field.value).toLocaleDateString("en-GB")} /></Field>
-              )} />
-            </div>
-          </SectionCard>
-
-          <SectionCard title={t("sales.lines")}><LinesEditor simple /></SectionCard>
-
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px]">
-            <div className="flex min-w-0 flex-col gap-5">
-              <SectionCard title={t("oldDebit.payments")}
-                action={<Button type="button" variant="outline" disabled={remaining <= 0} onClick={addPayment}><Plus />{t("oldDebit.addPayment")}</Button>}>
-                {payments.fields.length === 0 ? null : (
-                  <div className="flex flex-col gap-2">
-                    <div className="grid grid-cols-[1fr_1.3fr_auto] gap-2 text-xs font-medium text-muted-foreground">
-                      <span>{t("sales.amount")}</span><span>{t("oldDebit.paymentMethod")}</span><span className="w-9" />
-                    </div>
-                    {payments.fields.map((f, i) => (
-                      <div key={f.id} className="grid grid-cols-[1fr_1.3fr_auto] items-start gap-2">
-                        <PaymentFields control={form.control} prefix={`payments.${i}`} compact />
-                        <Button type="button" variant="ghost-destructive" size="icon-lg" aria-label={t("common.remove")} onClick={() => payments.remove(i)}><Trash2 /></Button>
-                      </div>
-                    ))}
-                    {overpaid && <p className="text-sm text-destructive">{t("sales.overpaid")}</p>}
-                  </div>
-                )}
-              </SectionCard>
-
-              <SectionCard title={t("oldDebit.notes")}>
-                <FormTextarea control={form.control} name="reason" label={t("oldDebit.notes")} placeholder={t("oldDebit.notesHint")} />
-              </SectionCard>
-            </div>
-
-            <aside className="flex min-w-0 flex-col gap-5 lg:sticky lg:top-20 lg:self-start">
-              <SectionCard title={t("oldDebit.summary")}><TotalsPanel totals={totals} paid={paid} /></SectionCard>
-            </aside>
-          </div>
-
-          <div className="sticky bottom-0 z-10 -mx-4 flex flex-wrap items-center justify-between gap-3 border-t bg-background/90 px-4 py-3 backdrop-blur md:-mx-6 md:px-6">
-            <span className="text-sm text-destructive" role="status">
-              {form.formState.submitCount > 0 && Object.keys(form.formState.errors).length > 0 ? t("products.fixErrors") : ""}
-            </span>
-            <div className="flex gap-2">
-              <Button type="button" variant="outline" size="lg" onClick={() => nav("/sales/debit-notes")}>{t("oldDebit.cancel")}</Button>
-              <Button type="submit" size="lg" disabled={create.isPending || overpaid}>{t("oldDebit.save")}</Button>
-            </div>
-          </div>
-        </form>
-      </FormProvider>
-    )
-  }
 
   return (
     <FormProvider {...form}>
@@ -183,7 +111,7 @@ export default function DebitNoteFormPage() {
             </div>
           </div>
 
-          <div className="form-footer in-box flex flex-col-reverse items-center justify-between gap-4 sm:flex-row">
+          <div className="form-footer flex flex-col-reverse items-center justify-between gap-4 sm:flex-row">
             <Button type="button" variant="destructive" size="xl" onClick={() => nav("/sales/debit-notes")}>{t("oldDebit.cancel")}</Button>
             <Button type="submit" size="xl" disabled={create.isPending || overpaid}>{t("oldDebit.save")}</Button>
           </div>

@@ -79,7 +79,7 @@ export default function EmployeesPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.users")]} title={t("employees.title")} description={t("employees.description")}
+      <PageHeader title={t("employees.title")} description={t("employees.description")}
         actions={<Can perm={P.employees.add}><Button size="lg" onClick={() => show(null)}><Plus />{t("employees.add")}</Button></Can>} />
       <SectionCard>
         <DataTable rows={data} loading={isLoading} columns={columns} sort={sort} rowKey={(e) => e.id}

@@ -67,7 +67,7 @@ export default function UnitsPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.items")]} title={t("units.title")} description={t("units.description")}
+      <PageHeader title={t("units.title")} description={t("units.description")}
         actions={<Can perm={P.units.manage}><Button size="lg" onClick={() => open(null)}><Plus />{t("units.add")}</Button></Can>} />
       <SectionCard>
           <DataTable rows={data} loading={isLoading} columns={columns} sort={sort} rowKey={(u) => u.id}

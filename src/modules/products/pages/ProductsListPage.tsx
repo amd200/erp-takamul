@@ -87,7 +87,7 @@ export default function ProductsListPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.items")]} title={t("products.listTitle")}
+      <PageHeader title={t("products.listTitle")}
         description={data ? t("products.listCount", { count: data.total, n: formatNumber(data.total) }) : t("products.listDescription")} actions={
         <>
           <Can perm={P.products.import}><Button asChild variant="outline" size="lg"><Link to="/products/import"><Upload />{t("common.import")}</Link></Button></Can>

@@ -45,7 +45,7 @@ export default function InvoiceDetailPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.sales"), t(channel === "A4" ? "nav.invoicesA4" : "nav.invoicesPos")]} title={inv.orderNumber ?? ""} actions={
+      <PageHeader title={inv.orderNumber ?? ""} actions={
         <>
           <Button variant="outline" size="lg" disabled={output.isPending} onClick={() => output.mutate({ invoice: inv, as: "print" })}>{busy("print") ? <Loader2 className="animate-spin" /> : <Printer />}{t("sales.actions.print")}</Button>
           <Button variant="outline" size="lg" disabled={output.isPending} onClick={() => output.mutate({ invoice: inv, as: "pdf" })}>{busy("pdf") ? <Loader2 className="animate-spin" /> : <FileDown />}{t("sales.actions.downloadPdf")}</Button>

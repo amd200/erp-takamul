@@ -1,5 +1,5 @@
 import { Controller, useFieldArray, useFormContext, useFormState, useWatch } from "react-hook-form"
-import { ShoppingBasket, Trash2 } from "lucide-react"
+import { Trash2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,8 +10,6 @@ import { useAppSettings } from "@/modules/settings"
 import { NumberInput } from "@/modules/pos/grid/NumberInput"
 import { costFromTotal } from "@/modules/purchases/screen/lines"
 import { cn } from "@/lib/utils"
-import { EmptyState } from "@/components/EmptyState"
-import { useClassic } from "@/shared/theme/ThemeProvider"
 import { useTaxes } from "@/modules/taxes/service"
 import { lineAmounts } from "../totals"
 import type { InvoiceLine } from "../types"
@@ -39,7 +37,6 @@ const Caption = ({ children }: { children: string }) => <span className="mb-1 bl
  */
 export function LinesEditor({ allowFreeText, purchase, simple, hideDiscount }: { allowFreeText?: boolean; purchase?: boolean; simple?: boolean; hideDiscount?: boolean }) {
   const { t } = useTranslation()
-  const classic = useClassic()
   const { control, getValues, setValue } = useFormContext<LinesForm>()
   const { errors } = useFormState({ control, name: "lines" })
   const rows = useFieldArray({ control, name: "lines" })
@@ -83,29 +80,25 @@ export function LinesEditor({ allowFreeText, purchase, simple, hideDiscount }: {
         {allowFreeText && <Button type="button" variant="ghost" size="lg" onClick={addService}>{t("sales.addService")}</Button>}
       </div>
 
-      {rows.fields.length === 0 && !classic ? (
-        <div className={rootError ? "rounded-xl border border-dashed border-destructive" : "rounded-xl border border-dashed"}>
-          <EmptyState icon={<ShoppingBasket />} title={rootError ? t(rootError) : t("sales.noLines")} hint={t("sales.noLinesHint")} />
-        </div>
-      ) : rows.fields.length === 0 ? (
+      {rows.fields.length === 0 ? (
         // As in the current system: just the header row with an empty space under it (and the reason, if saving was refused).
         <div className="w-full overflow-x-auto pb-4" style={{ "--cols": template } as React.CSSProperties}>
-          <div className={cn("hidden gap-4 border-b border-border px-2 md:grid md:[grid-template-columns:var(--cols)]", classic ? "pb-3 text-xs font-medium tracking-wide text-faint uppercase" : "pb-2 text-xs font-medium text-muted-foreground")}>
+          <div className="hidden gap-4 border-b border-border px-2 pb-3 text-xs font-medium tracking-wide text-faint uppercase md:grid md:[grid-template-columns:var(--cols)]">
             {shown.map((c, i) => <div key={c.id} className={i === 0 ? "" : "text-center"}>{L[c.id]}</div>)}
           </div>
           <div className="h-16">{rootError && <p className="pt-4 text-center text-sm text-destructive">{t(rootError)}</p>}</div>
         </div>
       ) : (
         <div className="w-full overflow-x-auto pb-4" style={{ "--cols": template } as React.CSSProperties}>
-          <div className={cn("hidden gap-4 border-b border-border px-2 md:grid md:[grid-template-columns:var(--cols)]", classic ? "pb-3 text-xs font-medium tracking-wide text-faint uppercase" : "pb-2 text-xs font-medium text-muted-foreground")}>
+          <div className="hidden gap-4 border-b border-border px-2 pb-3 text-xs font-medium tracking-wide text-faint uppercase md:grid md:[grid-template-columns:var(--cols)]">
             {shown.map((c, i) => <div key={c.id} className={i === 0 ? "" : "text-center"}>{L[c.id]}</div>)}
           </div>
-          <div className={classic ? "mt-3 space-y-3" : "mt-1"}>
+          <div className="mt-3 space-y-3">
             {rows.fields.map((f, i) => {
               const l = lines[i] ?? f
               const a = lineAmounts(l)
               return (
-                <div key={f.id} className={cn("grid grid-cols-1 items-center gap-3 rounded-xl border bg-muted/40 p-4 md:rounded-none md:border-none md:bg-transparent md:p-2 md:[grid-template-columns:var(--cols)]", !classic && "md:border-b md:py-3")}>
+                <div key={f.id} className="grid grid-cols-1 items-center gap-3 rounded-xl border bg-muted/40 p-4 md:rounded-none md:border-none md:bg-transparent md:p-2 md:[grid-template-columns:var(--cols)]">
                   <div className="min-w-0">
                     {l.productId === 0 ? (
                       <FormInput control={control} name={`lines.${i}.name`} label={t("sales.serviceName")} labelHidden placeholder={t("sales.serviceName")} />

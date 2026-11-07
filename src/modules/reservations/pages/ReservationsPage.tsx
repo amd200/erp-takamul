@@ -102,7 +102,7 @@ export default function ReservationsPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.reservations")]} title={t("reservations.title")} description={t("reservations.description")}
+      <PageHeader title={t("reservations.title")} description={t("reservations.description")}
         actions={canManage && <Button size="lg" onClick={() => { setEditing(null); setOpen(true) }}><Plus />{t("reservations.add")}</Button>} />
       <SectionCard>
         <DataTable rows={data ?? []} loading={isLoading} columns={columns} sort={sort} rowKey={(r) => r.id}

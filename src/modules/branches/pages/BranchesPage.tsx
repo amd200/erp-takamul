@@ -28,7 +28,7 @@ export default function BranchesPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.branches")]} title={t("branches.title")} description={t("branches.description")}
+      <PageHeader title={t("branches.title")} description={t("branches.description")}
         actions={<Can perm={P.branches.add}><Button asChild size="lg"><Link to="/branches/create"><Plus />{t("branches.add")}</Link></Button></Can>} />
       <SectionCard>
         <DataTable rows={data ?? []} loading={isLoading} columns={columns} rowKey={(b) => b.id}

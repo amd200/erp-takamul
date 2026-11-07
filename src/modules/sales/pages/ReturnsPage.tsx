@@ -47,7 +47,7 @@ export default function ReturnsPage() {
 
   return (
     <>
-      <PageHeader crumbs={[t("nav.sales")]} title={t("sales.returnsTitle")} description={t("sales.returnsDescription")} />
+      <PageHeader title={t("sales.returnsTitle")} description={t("sales.returnsDescription")} />
       <SectionCard>
         <DataTable rows={data} loading={isLoading} columns={columns} sort={sort} rowKey={(r) => r.id}
           searchText={(r) => `${r.returnNumber} ${r.salesOrderNumber} ${r.customerName}`} searchPlaceholder={t("sales.searchReturns")}
