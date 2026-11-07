@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import { FilePlus2, FileText, Plus, Printer, RefreshCw, ScrollText } from "lucide-react"
+import { FilePlus2, FileText, Printer, RefreshCw, ScrollText } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useAppSettings } from "@/modules/settings"
 import { Button } from "@/components/ui/button"
@@ -10,7 +10,7 @@ import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
 import { PageHeader } from "@/components/PageHeader"
 import { formatMoney, formatDateTime } from "@/lib/format"
-import { Can, useCan } from "@/shared/permissions/usePermission"
+import { useCan } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
 import { ZatcaBadge } from "../components/StatusBadges"
 import { ZatcaResponseDialog } from "../components/ZatcaResponseDialog"
@@ -65,8 +65,7 @@ export default function DebitNotesPage() {
 
   return (
     <>
-      <PageHeader title={t("sales.debitTitle")} description={t("sales.debitDescription")}
-        actions={<Can perm={P.sales.debitAdd}><Button asChild size="lg"><Link to="/sales/debit-notes/create"><Plus />{t("sales.newDebit")}</Link></Button></Can>} />
+      <PageHeader title={t("sales.debitTitle")} description={t("sales.debitDescription")} />
       <SectionCard>
           <DataTable rows={data} loading={isLoading} columns={columns} sort={sort} rowKey={(d) => d.id}
             searchText={(d) => `${d.debitNoteNumber} ${d.salesOrderNumber} ${d.customerName} ${d.reason}`} searchPlaceholder={t("sales.searchDebit")}

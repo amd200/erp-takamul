@@ -93,13 +93,13 @@ function DialogContent({
           data-slot="dialog-content"
           aria-describedby={undefined}
           className={cn(
-            "fixed inset-x-0 bottom-0 z-50 flex max-h-[92dvh] flex-col overflow-hidden rounded-t-2xl bg-popover px-4 pt-4 text-sm text-popover-foreground ring-1 ring-foreground/10 outline-none",
+            "fixed inset-x-0 bottom-0 z-50 flex max-h-[92dvh] flex-col overflow-hidden rounded-t-2xl bg-popover px-4 pt-8 text-sm text-popover-foreground ring-1 ring-foreground/10 outline-none",
             className
           )}
         >
           <div
             aria-hidden
-            className="mx-auto -mt-1 mb-4 h-1.5 w-10 shrink-0 rounded-full bg-muted-foreground/30"
+            className="pointer-events-none absolute start-1/2 top-2 z-10 h-1.5 w-10 -translate-x-1/2 rtl:translate-x-1/2 rounded-full bg-muted-foreground/40"
           />
           {/* The body scrolls on its own: dragging here must scroll, not move the drawer (only the handle drags it). */}
           <div

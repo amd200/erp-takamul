@@ -1168,7 +1168,6 @@
     "refundHint": "The customer paid {{paid}} on this invoice.",
     "debitTitle": "Debit notes",
     "debitDescription": "Extra charges on issued invoices, like delivery fees or price differences.",
-    "newDebit": "New debit note",
     "saveDebit": "Save and issue",
     "debitSaved": "Debit note issued",
     "debitNumber": "Note no.",

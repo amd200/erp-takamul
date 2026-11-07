@@ -1168,7 +1168,6 @@
     "refundHint": "Grahok ei chalane {{paid}} pement korechhen.",
     "debitTitle": "Debit not",
     "debitDescription": "Jari kora chalane obotirikto charge, jemon delivery fi ba damer partakko.",
-    "newDebit": "Notun debit note",
     "saveDebit": "Sanrakhon korun ebong jari korun",
     "debitSaved": "Debit note jari hoyeche",
     "debitNumber": "Note no.",

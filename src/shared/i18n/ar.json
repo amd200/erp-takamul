@@ -1168,7 +1168,6 @@
     "refundHint": "دفع العميل {{paid}} على هذه الفاتورة.",
     "debitTitle": "إشعارات المدين",
     "debitDescription": "",
-    "newDebit": "إشعار مدين جديد",
     "saveDebit": "حفظ وإصدار الإشعار",
     "debitSaved": "تم إصدار إشعار المدين",
     "debitNumber": "رقم الإشعار",
