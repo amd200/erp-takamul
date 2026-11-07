@@ -54,7 +54,7 @@ function ModernTopbar({ onMenu }: { onMenu: () => void }) {
   const logout = useLogout()
   const classic = useClassic()
   return (
-    <header className="sticky top-0 z-10 flex flex-wrap items-center gap-2 border-b bg-background/90 px-4 py-3 backdrop-blur md:px-6 print:hidden">
+    <header className="sticky top-0 z-30 flex flex-wrap items-center gap-2 border-b bg-card px-4 py-3 md:px-6 print:hidden">
       <Button variant="ghost" size="icon-lg" className="md:hidden" aria-label={t("nav.open")} onClick={onMenu}><Menu /></Button>
       {/* Classic: the branch picker takes the place of the search box. */}
       {classic ? <BranchSwitcher /> : (

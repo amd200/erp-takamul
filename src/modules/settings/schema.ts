@@ -30,8 +30,8 @@ export const emptySalons: z.infer<typeof salonsSchema> = {
   salonsTab: { beautyTheme: false, showServiceEmployeeSales: false, showEmployeeService: false, defaultServiceEmployeeId: null },
 }
 
-export const shiftsSchema = z.object({ shiftsTab: z.object({ showReturnsInShiftPrint: flag }) })
-export const emptyShifts: z.infer<typeof shiftsSchema> = { shiftsTab: { showReturnsInShiftPrint: true } }
+export const shiftsSchema = z.object({ shiftsTab: z.object({ enableShiftStatement: flag, showReturnsInShiftPrint: flag }) })
+export const emptyShifts: z.infer<typeof shiftsSchema> = { shiftsTab: { enableShiftStatement: false, showReturnsInShiftPrint: true } }
 
 export const saleScreenSchema = z.object({
   salesScreenTab: z.object({

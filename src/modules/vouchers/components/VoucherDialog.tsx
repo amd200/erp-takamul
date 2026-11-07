@@ -66,7 +66,7 @@ export function VoucherDialog({ kind, open, onOpenChange, embedded = false, cust
         </DialogHeader>
 
         <form id="voucher-form" onSubmit={submit} noValidate className={cn("space-y-3 overflow-x-hidden overflow-y-auto px-5 py-4", embedded ? "min-h-0 flex-1" : "max-h-[60vh]")}>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid min-h-[76px] grid-cols-2 items-start gap-3">
             <Controller control={form.control} name="date" render={({ field }) => (
               <Field><FieldLabel htmlFor="v-date">{t("common.date")}</FieldLabel><Input id="v-date" type="date" className="h-9" {...field} /></Field>
             )} />
@@ -91,7 +91,7 @@ export function VoucherDialog({ kind, open, onOpenChange, embedded = false, cust
             </div>
           </div>}
 
-          <div className="grid grid-cols-[2fr_1fr_1fr] items-end gap-3">
+          <div className="grid min-h-[76px] grid-cols-[2fr_1fr_1fr] items-start gap-3">
             <FormSelect control={form.control} name="partyId" numeric disabled={!!customerId} label={t(partyType === "customer" ? "vouchers.customerName" : "vouchers.supplierName")} placeholder={t(partyType === "customer" ? "vouchers.selectCustomer" : "vouchers.selectSupplier")}
               options={parties.map((p) => ({ value: String(p.id), label: p.name }))} />
             <Field><FieldLabel>{t("vouchers.currentBalance")}</FieldLabel><Input readOnly value={num(balance)} className="h-9 bg-gray-50 text-center" /></Field>

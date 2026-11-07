@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { RouterProvider } from "react-router-dom"
 import { Direction } from "radix-ui"
@@ -6,6 +7,9 @@ import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { ThemeProvider } from "@/shared/theme/ThemeProvider"
 import { router } from "./router"
+
+// Dev-only payment-failure simulator; the whole branch is dropped from production builds.
+const PosSimPanel = import.meta.env.DEV ? lazy(() => import("@/shared/dev/PosSimPanel").then((m) => ({ default: m.PosSimPanel }))) : null
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 30_000, refetchOnWindowFocus: false } } })
 
@@ -18,6 +22,7 @@ export function App() {
         <QueryClientProvider client={queryClient}>
           <TooltipProvider delayDuration={300}>
             <RouterProvider router={router} />
+            {PosSimPanel && <Suspense fallback={null}><PosSimPanel /></Suspense>}
             <Toaster position={dir === "rtl" ? "bottom-left" : "bottom-right"} />
           </TooltipProvider>
         </QueryClientProvider>

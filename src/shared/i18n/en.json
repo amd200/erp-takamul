@@ -2460,7 +2460,6 @@
     "from": "From",
     "to": "To",
     "route": "Transfer",
-    "transferHint": "e.g. depositing today's cash at the bank",
     "transferred": "Transferred",
     "searchTransfers": "Search transfer no. or notes",
     "noTransfers": "No transfers",
@@ -2583,6 +2582,10 @@
     "discardTitle": "Discard the pending sale?",
     "discardDesc": "Make sure the invoice is not in the list. If it was saved and you send it again, it will be recorded twice.",
     "discardConfirm": "Discard and unlock the cart",
+    "finishPending": "Invoice is there, finish the sale",
+    "finishTitle": "Finish the sale?",
+    "finishDesc": "The invoice is already in the list, so the cart will be emptied without sending the order again.",
+    "finishConfirm": "Finish and unlock the cart",
     "payTitle": "Payment",
     "payHint": "Split the amount across methods if you need to.",
     "due": "Due",
@@ -3435,5 +3438,24 @@
     "ready": "Your invoice is ready",
     "noPush": "Notifications could not be fully set up, keep this page open to follow your order",
     "renderError": "The invoice could not be displayed"
+  },
+  "posSim": {
+    "dir": "ltr",
+    "title": "Payment failure simulator (dev only)",
+    "hint": "Affects sale-saving requests only. Turn a switch on, pay, and watch the cart lock.",
+    "failBefore": "Fail before sending",
+    "failBeforeHint": "Network error; the request never reaches the server.",
+    "dropAfter": "Drop the response after sending",
+    "dropAfterHint": "The request reaches the server and is saved; the response is discarded as a network error.",
+    "http500": "Server returns 500",
+    "http500Hint": "The request reaches the server and is saved; the app receives a 500 error.",
+    "slow": "Slow response",
+    "slowHint": "The response is held for the chosen time before the app gets it.",
+    "once": "Only once",
+    "seconds": "seconds",
+    "endTimeout": "End with a timeout",
+    "log": "Log",
+    "clearLog": "Clear",
+    "reset": "Turn all off"
   }
 }

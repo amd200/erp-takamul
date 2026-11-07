@@ -39,7 +39,12 @@ export function SalonsFields({ form: { control, watch } }: FieldsProps) {
 }
 
 export function ShiftsFields({ form: { control } }: FieldsProps) {
-  return <Grid><Flag control={control} name="shiftsTab.showReturnsInShiftPrint" /></Grid>
+  return (
+    <Grid>
+      <Flag control={control} name="shiftsTab.enableShiftStatement" />
+      <Flag control={control} name="shiftsTab.showReturnsInShiftPrint" />
+    </Grid>
+  )
 }
 
 export function SaleScreenFields({ form: { control } }: FieldsProps) {

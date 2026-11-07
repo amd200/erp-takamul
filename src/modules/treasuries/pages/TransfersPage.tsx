@@ -52,7 +52,7 @@ function TransferDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (
               )} />
             </div>
             {over && <p className="text-sm text-destructive">{t("treasuries.errors.insufficient")}</p>}
-            <FormTextarea control={form.control} name="notes" label={t("common.notes")} placeholder={t("treasuries.transferHint")} />
+            <FormTextarea control={form.control} name="notes" label={t("common.notes")} />
           </FieldGroup>
         </form>
         <DialogFooter>
