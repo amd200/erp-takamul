@@ -18,6 +18,8 @@ const simEnabled = () => {
 }
 const PosSimPanel = simEnabled() ? lazy(() => import("@/shared/dev/PosSimPanel").then((m) => ({ default: m.PosSimPanel }))) : null
 
+const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 30_000, refetchOnWindowFocus: false } } })
+
 export function App() {
   const { i18n } = useTranslation()
   const dir = i18n.dir()
