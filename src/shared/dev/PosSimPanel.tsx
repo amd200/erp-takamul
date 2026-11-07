@@ -7,7 +7,7 @@ import { useSimLog, useSimStore, type SimKey } from "./posSim"
 
 const KEYS: SimKey[] = ["failBefore", "dropAfter", "http500", "slow"]
 
-/** Dev-only floating window over the cashier screens: switches that break the next sale request on purpose. */
+/** Test-only floating window over the cashier screens: switches that break the next sale request on purpose. */
 export function PosSimPanel() {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)

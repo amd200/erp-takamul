@@ -8,10 +8,15 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { ThemeProvider } from "@/shared/theme/ThemeProvider"
 import { router } from "./router"
 
-// Dev-only payment-failure simulator; the whole branch is dropped from production builds.
-const PosSimPanel = import.meta.env.DEV ? lazy(() => import("@/shared/dev/PosSimPanel").then((m) => ({ default: m.PosSimPanel }))) : null
-
-const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 30_000, refetchOnWindowFocus: false } } })
+// Payment-failure simulator for testing: always in dev; on a built app only after opening a link with ?sim=1 (remembered for the tab).
+const simEnabled = () => {
+  if (import.meta.env.DEV) return true
+  try {
+    if (new URLSearchParams(location.search).get("sim") === "1") sessionStorage.setItem("pos-sim", "1")
+    return sessionStorage.getItem("pos-sim") === "1"
+  } catch { return false }
+}
+const PosSimPanel = simEnabled() ? lazy(() => import("@/shared/dev/PosSimPanel").then((m) => ({ default: m.PosSimPanel }))) : null
 
 export function App() {
   const { i18n } = useTranslation()

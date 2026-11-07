@@ -4,8 +4,8 @@ import { persist } from "zustand/middleware"
 import { client } from "@/shared/http/client"
 
 /**
- * Dev-only: breaks the cashier's sale requests on purpose so the pending-sale / idempotency / cart-lock flow can be tried by hand.
- * Only the panel (loaded under `import.meta.env.DEV`) imports this file, so it never reaches a production build.
+ * Test-only (dev, or ?sim=1 on a built app): breaks the cashier's sale requests on purpose so the pending-sale / idempotency / cart-lock flow can be tried by hand.
+ * Only the panel (loaded only when the simulator is on) imports this file, so it never reaches a production build.
  */
 export type SimKey = "failBefore" | "dropAfter" | "http500" | "slow"
 type Toggle = { on: boolean; once: boolean }
