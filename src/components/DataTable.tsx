@@ -113,6 +113,17 @@ export function DataTable<T extends RowData>({
   const hasSearch = !!(searchText || onSearch)
   const setPage = (n: number) => setPagination((p) => ({ ...p, pageIndex: n }))
 
+  // When the current page ends up empty (its last row was deleted, or a refetch has fewer pages), step back to the last page that has rows.
+  const count = server ? server.total : filteredCount
+  const size = server ? server.pageSize : pageSize
+  const shown = server ? server.page : pagination.pageIndex
+  const settled = !loading && !server?.fetching
+  useEffect(() => {
+    if (!settled || shown <= 0) return
+    const last = Math.max(0, Math.ceil(count / size) - 1)
+    if (shown > last) { if (server) server.onPage(last); else setPagination((p) => ({ ...p, pageIndex: last })) }
+  }, [settled, shown, count, size]) // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <div className="flex flex-col gap-4">
       {(hasSearch || filters) && (

@@ -31,15 +31,16 @@ function Row({ icon: Icon, label, active, hasSubmenu, open, to, onClick }: {
     : <button type="button" aria-expanded={hasSubmenu ? open : undefined} onClick={onClick} className={classes}>{content}</button>
 }
 
-function Group({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) {
+function Group({ item, onNavigate, openKey, setOpenKey }: { item: NavItem; onNavigate: () => void; openKey: string | null; setOpenKey: (k: string | null) => void }) {
   const { t } = useTranslation()
   const { pathname } = useLocation()
   const can = useCan()
   const settings = useAppSettings()
   const children = item.children?.filter((c) => (!c.perm || can(c.perm)) && (!c.when || c.when(settings)))
   const active = !!children?.some((c) => isUnder(pathname, c.to) || (c.to === "/products" && pathname.startsWith("/products/edit")))
-  const [open, setOpen] = useState(active)
-  useEffect(() => { if (active) setOpen(true) }, [active])
+  // Only one group is open at a time: opening another one closes this one (the Sidebar holds the open key).
+  const open = openKey === item.key
+  useEffect(() => { if (active) setOpenKey(item.key) }, [active, item.key, setOpenKey])
   const label = t(`nav.${item.key}`)
 
   if (!item.children) {
@@ -50,7 +51,7 @@ function Group({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) 
 
   return (
     <>
-      <Row icon={item.icon} label={label} hasSubmenu open={open} active={active} onClick={() => setOpen(!open)} />
+      <Row icon={item.icon} label={label} hasSubmenu open={open} active={active} onClick={() => setOpenKey(open ? null : item.key)} />
       {open && (
         <div className="relative my-0.5 flex flex-col gap-px ps-[22px] before:absolute before:inset-y-1 before:start-[21px] before:w-px before:bg-sidebar-border">
           {children.map((c) => {
@@ -72,6 +73,7 @@ function Group({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) 
 /** The side menu: a 248px column with the logo on top, rounded rows and a sub-menu with a guide line; a drawer on phones. */
 export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t } = useTranslation()
+  const [openKey, setOpenKey] = useState<string | null>(null)
   return (
     <>
       <aside className={cn(
@@ -83,7 +85,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
           <Link to="/" onClick={onClose}><Logo className="h-10" /></Link>
         </div>
         <nav aria-label={t("nav.label")} className="flex flex-1 flex-col gap-px overflow-y-auto px-3 pb-4">
-          {NAV.map((i) => <Group key={i.key} item={i} onNavigate={onClose} />)}
+          {NAV.map((i) => <Group key={i.key} item={i} onNavigate={onClose} openKey={openKey} setOpenKey={setOpenKey} />)}
         </nav>
       </aside>
       {open && <button type="button" aria-label={t("nav.close")} className="fixed inset-0 z-[55] bg-black/30 md:hidden" onClick={onClose} />}
