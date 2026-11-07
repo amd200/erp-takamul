@@ -1,11 +1,12 @@
 import { useState } from "react"
-import { CheckCircle2, Loader2, Search, X } from "lucide-react"
+import { CheckCircle2, FileText, Loader2, Search, X } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { formatDay } from "@/lib/format"
+import { useIsMobile } from "@/lib/use-mobile"
 import { cn } from "@/lib/utils"
 import { useDebounced } from "@/modules/products/lookup"
 import { quotesApi } from "@/modules/quotes/service"
@@ -18,6 +19,7 @@ import { useLoadQuotation } from "../useLoadQuotation"
  */
 export function QuotationDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
   const { t, i18n } = useTranslation()
+  const mobile = useIsMobile()
   const beauty = useAppSettings().salonsTab?.beautyTheme === true
   const [number, setNumber] = useState("")
   const typed = useDebounced(number.trim())
@@ -34,10 +36,50 @@ export function QuotationDialog({ open, onOpenChange }: { open: boolean; onOpenC
   }
   const quotation = useLoadQuotation(() => close(false))
 
+  // Phone: the shared Dialog turns into the bottom drawer. The -mx-4 cancels the drawer body's own side padding.
+  const mobileBody = (
+    <div className="-mx-4 flex min-h-0 flex-1 flex-col overflow-hidden">
+      <DialogHeader className="shrink-0 p-4 text-start">
+        <DialogTitle className="flex items-center gap-2 text-base"><FileText size={16} />{t("pos2.loadQuotation")}</DialogTitle>
+        <DialogDescription className="sr-only">{t("pos2.loadQuotationHint")}</DialogDescription>
+      </DialogHeader>
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-3">
+        <label htmlFor="pos2-quotation-m" className="mb-1 block text-[12px] text-muted-foreground">{t("pos2.quotationNumber")}</label>
+        <div className="relative">
+          <Search size={14} className="absolute start-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Input id="pos2-quotation-m" className="h-11 bg-muted/50 ps-9 text-[14px] text-foreground focus:border-primary!" placeholder={t("pos2.typeQuotationNumber")} disabled={quotation.isLoading} value={number} onChange={(e) => setNumber(e.target.value)} />
+        </div>
+        {number.trim() && !settled && <div className="flex justify-center py-6"><Loader2 size={18} className="animate-spin text-muted-foreground" /></div>}
+        {number.trim() && settled && (found ? (
+          <div className="mt-3 flex flex-col gap-2.5 rounded-xl border border-border bg-card p-3">
+            <div className="flex items-start justify-between gap-2">
+              <span className="min-w-0 truncate text-[13px] font-medium text-foreground">{found.customerName ?? "—"}</span>
+              <span className="shrink-0 font-mono text-[11px] text-muted-foreground">{found.quotationNumber}</span>
+            </div>
+            <div className="flex items-center justify-between gap-2 border-t border-border pt-2.5 text-[12px]">
+              <span className="text-muted-foreground">{found.quotationDate ? formatDay(found.quotationDate, i18n.language) : "—"}</span>
+              <span className="text-[14px] font-bold text-foreground">{(found.grandTotal ?? 0).toFixed(2)} {t("pos1.sar")}</span>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-3 rounded-xl border border-dashed border-border py-8 text-center text-[12px] text-muted-foreground">{t("pos2.quotationNotFound")}</div>
+        ))}
+      </div>
+      <div className="flex shrink-0 gap-2 border-t border-border px-4 pt-3">
+        <Button variant="outline" size="lg" disabled={quotation.isLoading} onClick={() => close(false)} className="h-11 flex-1">{t("common.cancel")}</Button>
+        <Button size="lg" disabled={!found || !settled || quotation.isLoading} onClick={() => found && quotation.load(found.id)} className={cn("h-11 flex-1 text-[12px]", beauty ? "bg-primary text-primary-foreground hover:opacity-90" : "bg-[#000052] text-white hover:bg-blue-900")}>
+          {quotation.isLoading ? <Loader2 size={13} className="animate-spin" /> : <CheckCircle2 size={13} />}{t("pos2.loadItems")}
+        </Button>
+      </div>
+    </div>
+  )
+
   return (
     <>
       <Dialog open={open} onOpenChange={(o) => { if (!quotation.isLoading) close(o) }}>
-        <DialogContent showCloseButton={false} className="max-w-md gap-0 border-border bg-background p-0 text-foreground">
+        <DialogContent showCloseButton={false} className={mobile ? "text-foreground" : "max-w-md gap-0 border-border bg-background p-0 text-foreground"}>
+        {mobile ? mobileBody : (
+        <>
           <div className={cn("flex items-center justify-between px-4 py-3 dark:bg-secondary", beauty ? "bg-primary text-primary-foreground" : "bg-[#000052] text-white")}>
             <DialogTitle className={cn("text-[14px] font-medium", beauty ? "text-primary-foreground!" : "text-white!")}>{t("pos2.loadQuotation")}</DialogTitle>
             <DialogDescription className="sr-only">{t("pos2.loadQuotationHint")}</DialogDescription>
@@ -73,6 +115,8 @@ export function QuotationDialog({ open, onOpenChange }: { open: boolean; onOpenC
               </Button>
             </div>
           </div>
+        </>
+        )}
         </DialogContent>
       </Dialog>
       {quotation.confirmation}

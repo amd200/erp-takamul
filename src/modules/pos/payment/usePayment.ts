@@ -97,12 +97,19 @@ export function usePayment({ open, total, hasCustomer, purchase, requestCheckout
     if (s.id === id) return { ...s, raw }
     return all.length === 2 ? { ...s, raw: round(Math.max(0, total - amountOf(raw))).toFixed(2) } : s
   }))
-  const toggleSplitTreasury = (treasuryId: number) => setSplits((all) => {
-    const has = all.some((s) => s.treasuryId === treasuryId)
-    if (has) return all.length > 1 ? all.filter((s) => s.treasuryId !== treasuryId) : all
-    if (all.length >= 2) return all
-    return [...all, { id: seq++, treasuryId, raw: round(Math.max(0, total - all.reduce((s, x) => s + amountOf(x.raw), 0))).toFixed(2) }]
-  })
+  /** Tap a chosen treasury to drop it; tap another while two are chosen and it replaces the older one, so the pair can always be changed. */
+  const toggleSplitTreasury = (treasuryId: number) => {
+    if (splits.some((s) => s.treasuryId === treasuryId)) {
+      if (splits.length > 1) setSplits((all) => all.filter((s) => s.treasuryId !== treasuryId))
+      return
+    }
+    const id = seq++
+    setSplits((all) => {
+      const kept = all.length >= 2 ? all.slice(1) : all
+      return [...kept, { id, treasuryId, raw: round(Math.max(0, total - kept.reduce((s, x) => s + amountOf(x.raw), 0))).toFixed(2) }]
+    })
+    setActiveId(id); setFresh(true)
+  }
   const activate = (id: number) => { setActiveId(id); setFresh(true) }
 
   const pushKey = (key: string) => {

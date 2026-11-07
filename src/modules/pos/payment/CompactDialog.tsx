@@ -73,10 +73,10 @@ export function CompactDialog(props: PaymentProps) {
           </div>
         </header>
 
-        <div className="grid min-h-0 grid-cols-1 gap-2 max-sm:flex-1 max-sm:overflow-y-auto max-sm:overscroll-contain px-3 pt-2 pb-3 sm:h-[470px] sm:grid-cols-[300px_minmax(0,1fr)] sm:grid-rows-[minmax(0,1fr)] sm:gap-6 sm:overflow-hidden sm:pb-5 sm:ps-6 sm:pe-2 sm:pt-1">
-          <section className="flex min-h-0 min-w-0 flex-col sm:overflow-hidden" aria-label={t("posPayment.destination")}>
+        <div className="grid min-h-0 grid-cols-1 gap-2 max-sm:flex max-sm:flex-1 max-sm:flex-col max-sm:overflow-y-auto max-sm:overscroll-contain px-3 pt-2 pb-3 sm:h-[470px] sm:grid-cols-[300px_minmax(0,1fr)] sm:grid-rows-[minmax(0,1fr)] sm:gap-6 sm:overflow-hidden sm:pb-5 sm:ps-6 sm:pe-2 sm:pt-1">
+          <section className="flex min-h-0 min-w-0 flex-col max-sm:shrink-0 sm:overflow-hidden" aria-label={t("posPayment.destination")}>
             <p className="m-0 min-h-5 shrink-0 text-xs leading-5 sm:min-h-[25px] sm:leading-[25px] text-[var(--compact-payment-muted,#626b8a)]">{split ? t("posPayment.chooseTwo") : t("posPayment.destination")}</p>
-            <div className="grid min-h-0 min-w-0 flex-1 grid-cols-2 content-start gap-2 p-1 sm:overflow-x-hidden sm:overflow-y-auto sm:overscroll-contain sm:[scrollbar-gutter:stable] sm:flex sm:flex-col sm:gap-2.5 [&>button]:min-w-0 [&>button]:shrink-0">
+            <div className="grid min-h-0 min-w-0 grid-cols-2 content-start sm:flex-1 gap-2 p-1 sm:overflow-x-hidden sm:overflow-y-auto sm:overscroll-contain sm:[scrollbar-gutter:stable] sm:flex sm:flex-col sm:gap-2.5 [&>button]:min-w-0 [&>button]:shrink-0">
               {p.treasuries.map((x) => {
                 const raw = rows.find((r) => r.treasuryId === x.id)?.raw
                 const selected = raw !== undefined
@@ -103,7 +103,7 @@ export function CompactDialog(props: PaymentProps) {
             </div>
           </section>
 
-          <section className="flex min-w-0 flex-col gap-2 sm:pt-[18px]" aria-label={t("posPayment.tendered")}>
+          <section className="flex min-w-0 flex-col gap-2 max-sm:shrink-0 sm:pt-[18px]" aria-label={t("posPayment.tendered")}>
             <div className="grid grid-cols-2 gap-3" aria-live="polite" aria-atomic="true">
               <div className="flex min-h-12 flex-col justify-center rounded-[14px] border border-[var(--compact-payment-border,#e1e4ec)] bg-[var(--compact-payment-surface,#fff)] px-4 py-0.5 sm:min-h-14">
                 <span className="text-[11px] leading-normal text-[var(--compact-payment-muted,#626b8a)]">{t("posPayment.totalEntered")}</span>
