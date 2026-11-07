@@ -1098,10 +1098,6 @@
       "downloadPdf": "PDF download korun",
       "printA5": "A5 print korun"
     },
-    "paymentsTitle": "{{number}}-er pement",
-    "collect": "Pement sangroho korun",
-    "recordPayment": "Pement rekard korun",
-    "paymentSaved": "Pement rekard hoyeche",
     "receiptTitle": "Grahok shongroho jog korun",
     "receiptSaved": "Sangroho voucher safalvabe jog kora hayeeche",
     "customerName": "Grahker nam",

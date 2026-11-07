@@ -13,8 +13,6 @@ import { Separator } from "@/components/ui/separator"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { FormInput, FormSelect } from "@/components/form/FormFields"
 import { formatMoney, formatDateTime } from "@/lib/format"
-import { Can } from "@/shared/permissions/usePermission"
-import { P } from "@/shared/permissions/permissions"
 import { useCustomer } from "@/modules/customers/queries"
 import { pickTreasury, useTreasuries } from "@/modules/lookups/service"
 import { useAppSettings } from "@/modules/settings"
@@ -81,9 +79,7 @@ export function PaymentsDialog({ invoice, onOpenChange }: { invoice: SalesOrderD
                       <TableCell className="text-muted-foreground">{p.transactionName || "—"}</TableCell>
                       <TableCell className="font-semibold tabular-nums">{formatMoney(p.amount)}</TableCell>
                       <TableCell className="text-end">
-                        <Can perm={P.sales.payments}>
-                          <Button variant="ghost-destructive" size="icon" aria-label={t("common.delete")} onClick={() => setToDelete(p)}><Trash2 /></Button>
-                        </Can>
+                        <Button variant="ghost-destructive" size="icon" aria-label={t("common.delete")} onClick={() => setToDelete(p)}><Trash2 /></Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -94,7 +90,7 @@ export function PaymentsDialog({ invoice, onOpenChange }: { invoice: SalesOrderD
         )}
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
-          <Can perm={P.sales.payments}><Button type="submit" form="payment-form" disabled={record.isPending}>{t("sales.saveReceipt")}</Button></Can>
+          <Button type="submit" form="payment-form" disabled={record.isPending}>{t("sales.saveReceipt")}</Button>
         </DialogFooter>
       </DialogContent>
       <ConfirmDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)} title={t("sales.deleteReceiptTitle")}

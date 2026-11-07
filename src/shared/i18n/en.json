@@ -1098,10 +1098,6 @@
       "downloadPdf": "Download PDF",
       "printA5": "Print A5"
     },
-    "paymentsTitle": "Payments for {{number}}",
-    "collect": "Collect a payment",
-    "recordPayment": "Record payment",
-    "paymentSaved": "Payment recorded",
     "receiptTitle": "Add Customer Collection",
     "receiptSaved": "Collection voucher added successfully",
     "customerName": "Customer Name",

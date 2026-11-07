@@ -1098,10 +1098,6 @@
       "downloadPdf": "تحميل PDF",
       "printA5": "طباعة A5"
     },
-    "paymentsTitle": "مدفوعات {{number}}",
-    "collect": "تحصيل دفعة",
-    "recordPayment": "تسجيل الدفعة",
-    "paymentSaved": "تم تسجيل الدفعة",
     "receiptTitle": "إضافة سند قبض",
     "receiptSaved": "تم إضافة سند القبض بنجاح",
     "customerName": "اسم العميل",
