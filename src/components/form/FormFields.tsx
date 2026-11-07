@@ -61,7 +61,7 @@ function NumberText({ value, onValue, empty, placeholder, ...rest }: { value: nu
 
 export function FormInput<T extends FieldValues>({
   control, name, label, description, required, className, type = "text", dir, placeholder, disabled, end, labelHidden, autoComplete, readOnly,
-}: Base<T> & { readOnly?: boolean; type?: "text" | "number" | "password" | "email"; dir?: "ltr" | "rtl"; placeholder?: string; disabled?: boolean; end?: ReactNode; autoComplete?: string }) {
+}: Base<T> & { readOnly?: boolean; type?: "text" | "number" | "password" | "email" | "date"; dir?: "ltr" | "rtl"; placeholder?: string; disabled?: boolean; end?: ReactNode; autoComplete?: string }) {
   const err = useErrorText()
   return (
     <Controller

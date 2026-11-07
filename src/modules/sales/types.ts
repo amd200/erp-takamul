@@ -61,6 +61,8 @@ export type ItemDto = {
   priceBeforeTax?: number | null; taxPercentage?: number | null; taxAmount?: number | null; discountValue?: number | null; discountPercentage?: number | null; lineTotal?: number | null; taxCalculation?: number | null
 }
 export type PaymentDto = { id: number; amount: number; paymentMethod?: string | null; paymentDate?: string | null; notes?: string | null; treasuryId?: number | null; treasuryName?: string | null }
+/** One payment of an invoice, as /sales-orders/order/{id} sends it. */
+export type InvoicePaymentItem = { id: number; paymentNumber?: string | null; paymentDate?: string | null; amount: number; paymentMethod?: string | null; status?: string | null; notes?: string | null; transactionName?: string | null }
 export type SalesOrderDto = {
   id: number; warehouseId?: number | null; orderNumber?: string | null; orderDate?: string | null; customerId?: number | null; customerName?: string | null; warehouseName?: string | null
   employeeName?: string | null; createdBy?: string | null; orderStatus?: string | null; subTotal?: number | null; taxAmount?: number | null; discountAmount?: number | null

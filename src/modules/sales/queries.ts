@@ -10,6 +10,7 @@ import type { DebitNoteInput, InvoiceInput, Payment, ReturnInput } from "./types
 export const salesKeys = {
   invoices: ["sales", "invoices"] as const,
   invoice: (id: number) => ["sales", "invoices", id] as const,
+  invoicePayments: (id: number) => ["sales", "invoices", id, "payments"] as const,
   returns: ["sales", "returns"] as const,
   debitNotes: ["sales", "debit-notes"] as const,
 }
@@ -22,6 +23,9 @@ export const useInvoices = () => useQuery({ queryKey: [...salesKeys.invoices, "r
 /** One invoice, as the server sends it (items with what earlier returns took, payments, totals). */
 export const useInvoice = (id: number | undefined) =>
   useQuery({ queryKey: salesKeys.invoice(id ?? 0), queryFn: () => invoicesApi.get(id!), enabled: !!id })
+/** Payments (receipt vouchers) of one invoice. */
+export const useInvoicePayments = (id: number | undefined) =>
+  useQuery({ queryKey: salesKeys.invoicePayments(id ?? 0), queryFn: () => invoicesApi.payments(id!), enabled: !!id })
 export const useReturns = (sort?: ListSort) => useQuery({ queryKey: sort?.SortBy ? [...salesKeys.returns, sort] : salesKeys.returns, queryFn: () => returnsApi.list(sort), placeholderData: keepPreviousData })
 export const useDebitNotes = (sort?: ListSort) => useQuery({ queryKey: sort?.SortBy ? [...salesKeys.debitNotes, sort] : salesKeys.debitNotes, queryFn: () => debitNotesApi.list(sort), placeholderData: keepPreviousData })
 
@@ -46,7 +50,7 @@ export function useRecordPayment() {
       invoicesApi.recordPayment(invoiceId, payment, key),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["sales"] })
-      toast.success(i18n.t("sales.paymentSaved"))
+      toast.success(i18n.t("sales.receiptSaved"))
     },
     onError: (e) => errorToast(e, "common.saveFailed"),
   })

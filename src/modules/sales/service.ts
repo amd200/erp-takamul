@@ -4,7 +4,7 @@ import { http } from "@/shared/http/request"
 import { type PagedResult } from "@/shared/http/paged"
 import { idempotencyHeaders, retryWhileInProgress } from "@/shared/http/idempotency"
 import { lineAmounts } from "./totals"
-import type { DebitNoteDto, DebitNoteInput, InvoiceInput, InvoiceLine, Payment, ReturnInput, SalesOrderDto, SalesOrderRow, SalesReturnDto, InvoiceQuery } from "./types"
+import type { InvoicePaymentItem, DebitNoteDto, DebitNoteInput, InvoiceInput, InvoiceLine, Payment, ReturnInput, SalesOrderDto, SalesOrderRow, SalesReturnDto, InvoiceQuery } from "./types"
 
 
 const itemBody = (l: InvoiceLine) => ({
@@ -41,6 +41,7 @@ export const invoicesApi = {
     method: "POST", headers: idempotencyHeaders(idempotencyKey),
     data: { salesOrderId: invoiceId, treasuryId: p.treasuryId, amount: p.amount, paymentMethod: p.method, notes: p.notes || null },
   })),
+  payments: (invoiceId: number) => http<InvoicePaymentItem[]>(`/sales-orders/order/${invoiceId}`),
   deletePayment: (paymentId: number) => http<unknown>(`/sales-orders/delete-payment/${paymentId}`, { method: "DELETE" }),
   updateNotes: (invoiceId: number, notes: string) => http<unknown>(`/sales-orders/${invoiceId}/notes`, { method: "PUT", data: { notes } }),
   sendToZatca: (invoiceId: number) => http<unknown>("/zatca-invoices/sell", { method: "POST", data: { invoiceId } }),
