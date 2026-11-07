@@ -160,7 +160,7 @@ function Pos2Screen({ shift, optics }: { shift: Shift; optics: boolean }) {
             onQuotation={() => setQuoteOpen(true)}
             onHold={() => store().dineInMode ? toast.error(t("posTables.cannotHold")) : needLines(() => save.mutate({ sale: sale(true, []) }, { onSuccess: () => defaults() }))}
             onClear={() => { if (locked) return; store().clear(); defaults() }}
-            onHeld={() => setHeldOpen(true)}
+            onHeld={() => setHeldOpen(true)} onDiscarded={defaults}
             onPay={() => needLines(() => setPayOpen(true))} optics={optics} />
         </div>
       </div>

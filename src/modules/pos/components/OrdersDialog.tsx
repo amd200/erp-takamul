@@ -5,6 +5,7 @@ import { InvoiceQrDialog } from "./InvoiceQrDialog"
 import { useQuery } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
+import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { formatDateTime } from "@/lib/format"
 import { http } from "@/shared/http/request"
@@ -64,9 +65,11 @@ export function useOrderToCart(done: () => void) {
 /**
  * The orders window of the current POS: the latest invoices (print) and the held ones (back to the cart, or delete).
  * With `onlySuspended` it lists the held ones alone, as the pause button in the cart opens it.
+ * With `onDiscard` it is opened from a locked cart to check whether the unconfirmed sale was saved, and offers to drop it.
  */
-export function OrdersDialog({ open, onOpenChange, onlySuspended = false }: { open: boolean; onOpenChange: (o: boolean) => void; onlySuspended?: boolean }) {
+export function OrdersDialog({ open, onOpenChange, onlySuspended = false, onDiscard }: { open: boolean; onOpenChange: (o: boolean) => void; onlySuspended?: boolean; onDiscard?: () => void }) {
   const { t, i18n } = useTranslation()
+  const [confirmDiscard, setConfirmDiscard] = useState(false)
   const [tab, setTab] = useState<Tab>("completed")
   const [search, setSearch] = useState("")
   const [qrId, setQrId] = useState<number | null>(null)
@@ -195,10 +198,17 @@ export function OrdersDialog({ open, onOpenChange, onlySuspended = false }: { op
 
         <div className="flex shrink-0 items-center justify-between border-t border-border bg-card px-4 py-2.5">
           <span className="text-[11px] text-muted-foreground">{filtered.length} {t("pos1.order")}</span>
-          <button type="button" onClick={() => onOpenChange(false)} className="rounded border border-border px-3 py-1.5 text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">{t("pos1.close")}</button>
+          <div className="flex items-center gap-2">
+            {onDiscard && <button type="button" onClick={() => setConfirmDiscard(true)} className="rounded border border-destructive/30 px-3 py-1.5 text-[11px] text-destructive transition-colors hover:bg-destructive/10">{t("pos.discardPending")}</button>}
+            <button type="button" onClick={() => onOpenChange(false)} className="rounded border border-border px-3 py-1.5 text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">{t("pos1.close")}</button>
+          </div>
         </div>
       </DialogContent>
       <InvoiceQrDialog invoiceId={qrId} onClose={() => setQrId(null)} />
+      {onDiscard && (
+        <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard} title={t("pos.discardTitle")} description={t("pos.discardDesc")} confirmLabel={t("pos.discardConfirm")}
+          onConfirm={() => { setConfirmDiscard(false); onDiscard(); onOpenChange(false) }} />
+      )}
     </Dialog>
   )
 }

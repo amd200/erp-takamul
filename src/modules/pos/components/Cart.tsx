@@ -17,6 +17,7 @@ import { ItemEditor } from "./ItemEditor"
 import { CART_GRID, CartLineRow } from "./CartLineRow"
 import { CustomerPicker } from "./CustomerPicker"
 import { QuickCustomerDialog } from "./QuickCustomerDialog"
+import { CheckThenDiscard } from "./CheckThenDiscard"
 
 const TABS = ["add", "discount", "note"] as const
 type Tab = (typeof TABS)[number]
@@ -116,7 +117,12 @@ export function Cart({ onPay, onHold, onSend, busy, onShift, categoryId = null }
         <Button type="button" size="icon-sm" variant="outline" disabled={locked} onClick={() => setAdding(true)} className="border-primary text-primary hover:bg-primary/10 hover:text-primary"><Plus size={14} /></Button>
       </div>
 
-      {locked && s.save === "uncertain" && <p role="alert" className="border-b bg-destructive-soft px-3 py-2 text-xs text-destructive">{t("pos.lockedHint")}</p>}
+      {locked && s.save === "uncertain" && (
+        <div role="alert" className="border-b bg-destructive-soft px-3 py-2 text-xs text-destructive">
+          <p>{t("pos.lockedHint")}</p>
+          <CheckThenDiscard onDiscarded={clearInvoice} />
+        </div>
+      )}
 
       <div className="flex-1 space-y-1 overflow-y-auto px-2 py-1.5">
         {empty ? (

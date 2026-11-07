@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
+import { usePosStore } from "@/modules/pos/store"
 import { authApi } from "./service"
 
 /** Signing in or out changes who the cached data belongs to, so the cache is cleared. */
@@ -13,6 +14,7 @@ export function useLogout() {
   const nav = useNavigate()
   return useMutation({
     mutationFn: authApi.logout,
-    onSettled: () => { qc.clear(); nav("/login", { replace: true }) },
+    // The next user on this device must not get this user's unconfirmed sale.
+    onSettled: () => { qc.clear(); usePosStore.getState().clear(); nav("/login", { replace: true }) },
   })
 }

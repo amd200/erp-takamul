@@ -1,6 +1,9 @@
 import { create } from "zustand"
 import { quoteGlobalDiscount, quoteLineOf } from "@/modules/quotes/form"
 import { createJSONStorage, persist } from "zustand/middleware"
+import { toast } from "sonner"
+import i18n from "@/shared/i18n"
+import { useAuthStore } from "@/shared/auth/authStore"
 import { newIdempotencyKey } from "@/shared/http/idempotency"
 import type { SelectedMeasurement } from "@/modules/customers/types"
 import type { Quote } from "@/modules/quotes/types"
@@ -70,6 +73,8 @@ type PosState = {
   saveRejected: () => void
   /** No answer: the sale may or may not exist, so keep the key and lock the cart. */
   saveUncertain: () => void
+  /** Drops an unconfirmed sale after the cashier checked the invoices and it was not saved. */
+  discardPending: () => void
   clear: () => void
 }
 
@@ -148,6 +153,7 @@ export const usePosStore = create<PosState>()(persist((set, get) => {
     },
     saveRejected: () => set({ save: "idle", key: null, orderDate: null, ownerId: null }),
     saveUncertain: () => set({ save: "uncertain" }),
+    discardPending: () => set({ ...empty }),
     clear: () => set({ ...empty }),
   }
 }, {
@@ -168,3 +174,13 @@ export function getCustomerCompanionId(): number | undefined {
   const { selectedMeasurement: m, customerId } = usePosStore.getState()
   return m?.source === "companion" && m.customerId === customerId ? m.companionId : undefined
 }
+
+/** An unconfirmed sale belongs to the user who sent it; another user signing in on this device does not take it over. */
+const dropOthersSale = (userId: string | null | undefined) => {
+  const s = usePosStore.getState()
+  if (!userId || !s.key || !s.ownerId || s.ownerId === userId) return
+  s.discardPending()
+  toast.warning(i18n.t("pos.othersSaleDropped"))
+}
+dropOthersSale(useAuthStore.getState().session?.userId)
+useAuthStore.subscribe((a, prev) => { if (a.session?.userId !== prev.session?.userId) dropOthersSale(a.session?.userId) })

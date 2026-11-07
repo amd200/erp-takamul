@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { Totals } from "@/modules/sales/types"
 import type { CartDiscount } from "../types"
+import { CheckThenDiscard } from "../components/CheckThenDiscard"
 
 const money = (n: number) => n.toFixed(2)
 const auxTile = "border-[#dfe7f1] bg-white text-[#344766] hover:border-[#344766]/30 hover:bg-[#344766]/5 dark:border-border dark:bg-card dark:text-primary dark:hover:border-primary/30 dark:hover:bg-primary/5"
@@ -28,6 +29,8 @@ type Props = {
   onClear: () => void
   onHeld: () => void
   onPay: () => void
+  /** After the unconfirmed sale is dropped from the locked cart. */
+  onDiscarded: () => void
   /** The optics screen: no quotation or hold tiles, and a shorter pay button under the other two, as in the current POS. */
   optics?: boolean
 }
@@ -37,7 +40,7 @@ type Props = {
  * after-discount and tax totals, the quotation / hold / clear / invoices tiles, and the pay button.
  * On a phone the pay button is a bar fixed to the bottom.
  */
-export function SalesSummary({ totals, undiscounted, discount, onDiscount, exempt, locked, uncertain, busy, onQuotation, onHold, onClear, onHeld, onPay, optics = false }: Props) {
+export function SalesSummary({ totals, undiscounted, discount, onDiscount, exempt, locked, uncertain, busy, onQuotation, onHold, onClear, onHeld, onPay, onDiscarded, optics = false }: Props) {
   const { t } = useTranslation()
   const [pct, setPct] = useState("")
   const [flat, setFlat] = useState("")
@@ -64,7 +67,7 @@ export function SalesSummary({ totals, undiscounted, discount, onDiscount, exemp
 
   return (
     <>
-      {uncertain && <p role="alert" className="flex items-start gap-2 rounded-lg bg-destructive-soft px-3 py-2 text-sm text-destructive"><TriangleAlert className="mt-0.5 size-4 shrink-0" />{t("pos.lockedHint")}</p>}
+      {uncertain && <div role="alert" className="flex items-start gap-2 rounded-lg bg-destructive-soft px-3 py-2 text-sm text-destructive"><TriangleAlert className="mt-0.5 size-4 shrink-0" /><div>{t("pos.lockedHint")}<CheckThenDiscard onDiscarded={onDiscarded} /></div></div>}
       <div style={{ fontSize: 9.375 }} className="w-full shrink-0 overflow-hidden rounded-[9px] border border-[#dfe7f1] bg-white shadow-[0_8px_24px_rgba(15,46,87,0.08)] dark:border-border dark:bg-background">
         <div className="hidden min-h-[138px] xl:grid" style={{ gridTemplateColumns: optics ? "minmax(285px,1.15fr) minmax(240px,1fr) 294px" : "minmax(285px,1.15fr) minmax(240px,1fr) 210px 84px" }}>
           <div className={cn("flex flex-col border-e border-[#e4eaf1] dark:border-border", optics && "row-span-2")}>

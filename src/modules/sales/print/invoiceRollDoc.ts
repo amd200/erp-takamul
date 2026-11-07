@@ -32,9 +32,11 @@ const DEFAULT_CUSTOMERS = new Set(["العميل الافتراضي", "الاف�
 
 // The 80mm receipt as the Takamul web app prints it: centered header, dashed-free ruled rows, totals list.
 const CSS = `
-body{width:80mm;padding:0;font:inherit;line-height:1.35;text-rendering:optimizeLegibility}
+html{width:100%}body{width:100%;max-width:80mm;margin:0 auto;padding:0;overflow-x:hidden;font:inherit;line-height:1.35;text-rendering:optimizeLegibility}
 *{font-family:'Alexandria',Arial,sans-serif}
-.page{width:100%;padding:0 2mm;text-align:center}
+.page{width:100%;padding:0 3mm;text-align:center;overflow-wrap:anywhere}
+.page *{min-width:0}
+.info-row .title,.total-row .label{flex:0 0 auto;max-width:55%}.info-row .value{flex:1 1 auto;overflow-wrap:anywhere}
 .logo-box{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1px 0 4px}
 .logo-box img{max-height:65px;max-width:100%;height:auto;object-fit:contain;margin-bottom:4px}
 .branch-name{font-size:10pt;font-weight:700;margin-top:4px}
