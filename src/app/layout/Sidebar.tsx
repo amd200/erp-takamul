@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
-import { ArrowLeftRight, ArrowUpRight, Barcode, Calculator, ChevronDown, ChevronLeft, CornerUpLeft, DollarSign, FileText, Folder, HandCoins, LayoutGrid, List, Monitor, Package, Plus, PlusCircle, RefreshCcw, Settings, Shield, ShieldCheck, ShoppingCart, SlidersHorizontal, Truck, User, Users, Wrench, type LucideIcon } from "lucide-react"
+import { ArrowLeftRight, ArrowUpRight, Barcode, Calculator, ChevronDown, ChevronLeft, CornerUpLeft, DollarSign, FileText, Folder, HandCoins, LayoutGrid, List, Monitor, Package, Plus, PlusCircle, RefreshCcw, Settings, Shield, ShieldCheck, ShoppingCart, SlidersHorizontal, Truck, User, Users, Wrench, X, type LucideIcon } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Logo } from "@/components/Logo"
 import { cn } from "@/lib/utils"
@@ -26,8 +26,8 @@ function isUnder(pathname: string, to: string) {
 }
 
 /** A top-level entry: a rounded row, the active one filled with the brand colour (classic) or tinted (modern). */
-function Row({ icon: Icon, label, active, hasSubmenu, open, to, onClick }: {
-  icon: LucideIcon; label: string; active?: boolean; hasSubmenu?: boolean; open?: boolean; to?: string; onClick?: () => void
+function Row({ icon: Icon, label, active, hasSubmenu, open, collapsed, to, onClick }: {
+  icon: LucideIcon; label: string; active?: boolean; hasSubmenu?: boolean; open?: boolean; collapsed: boolean; to?: string; onClick?: () => void
 }) {
   const classic = useClassic()
   if (!classic) {
@@ -49,21 +49,22 @@ function Row({ icon: Icon, label, active, hasSubmenu, open, to, onClick }: {
     <>
       <div className="flex items-center gap-4">
         <Icon size={24} />
-        <span className="text-base font-bold tracking-wide">{label}</span>
+        {!collapsed && <span className="text-base font-bold tracking-wide">{label}</span>}
       </div>
-      {hasSubmenu && <ChevronLeft size={16} className={cn("transition-transform", open && "-rotate-90")} />}
+      {hasSubmenu && !collapsed && <ChevronLeft size={16} className={cn("transition-transform", open && "-rotate-90")} />}
     </>
   )
   const classes = cn(
     "flex w-full items-center justify-between rounded-xl px-4 py-3.5 text-start transition-all duration-200",
-    active ? (hasSubmenu ? "bg-primary/10 font-semibold text-primary" : "scale-[1.02] bg-primary text-primary-foreground shadow-md") : "text-[var(--text-main)] hover:scale-[1.02] hover:bg-[var(--bg-main)] hover:text-primary",
+    active ? "scale-[1.02] bg-primary text-primary-foreground shadow-md" : "text-[var(--text-main)] hover:scale-[1.02] hover:bg-[var(--bg-main)] hover:text-primary",
+    collapsed && "justify-center",
   )
   return to
-    ? <Link to={to} onClick={onClick} className={classes}>{content}</Link>
-    : <button type="button" aria-expanded={hasSubmenu ? open : undefined} onClick={onClick} className={classes}>{content}</button>
+    ? <Link to={to} onClick={onClick} title={collapsed ? label : undefined} className={classes}>{content}</Link>
+    : <button type="button" aria-expanded={hasSubmenu ? open : undefined} onClick={onClick} title={collapsed ? label : undefined} className={classes}>{content}</button>
 }
 
-function Group({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) {
+function Group({ item, collapsed, onNavigate, onExpand }: { item: NavItem; collapsed: boolean; onNavigate: () => void; onExpand: () => void }) {
   const { t } = useTranslation()
   const { pathname } = useLocation()
   const can = useCan()
@@ -77,14 +78,17 @@ function Group({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) 
 
   if (!item.children) {
     if (item.perm && !can(item.perm)) return null
-    return <Row icon={item.icon} label={label} to={item.to!} active={item.to === "/" ? pathname === "/" : isUnder(pathname, item.to!)} onClick={onNavigate} />
+    return <Row icon={item.icon} label={label} collapsed={collapsed} to={item.to!} active={item.to === "/" ? pathname === "/" : isUnder(pathname, item.to!)} onClick={onNavigate} />
   }
   if (!children?.length) return null
 
   return (
     <>
-      <Row icon={item.icon} label={label} hasSubmenu open={open} active={active} onClick={() => setOpen(!open)} />
-      {open && !classic && (
+      <Row icon={item.icon} label={label} collapsed={collapsed} hasSubmenu open={open} active={!classic && active} onClick={() => {
+        // Collapsed: widen the menu first, then open this entry, as the current system does.
+        if (collapsed) { onExpand(); setTimeout(() => setOpen(true), 150) } else setOpen(!open)
+      }} />
+      {open && !collapsed && !classic && (
         <div className="relative my-0.5 flex flex-col gap-px ps-[22px] before:absolute before:inset-y-1 before:start-[21px] before:w-px before:bg-sidebar-border">
           {children.map((c) => {
             const current = pathname === c.to || (c.to === "/products" && pathname.startsWith("/products/edit"))
@@ -98,8 +102,8 @@ function Group({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) 
           })}
         </div>
       )}
-      {open && classic && (
-        <div className="ms-4 shrink-0 space-y-1 overflow-hidden border-s border-gray-100 ps-2 dark:border-border">
+      {open && !collapsed && classic && (
+        <div className="ms-4 space-y-1 overflow-hidden border-s border-gray-100 ps-2 dark:border-border">
           {children.map((c) => {
             const Icon = CHILD_ICON[c.key] ?? List
             const current = pathname === c.to || (c.to === "/products" && pathname.startsWith("/products/edit"))
@@ -118,26 +122,49 @@ function Group({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) 
   )
 }
 
-/** The side menu: one structure for both looks (fixed-width column on md+, a drawer on phones); only the styling differs. */
-export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
+/** The side menu, laid out as in the current system: wide rows with big icons; 80px icon-only when collapsed; a drawer on phones. */
+export function Sidebar({ open, collapsed, onClose, onExpand }: { open: boolean; collapsed: boolean; onClose: () => void; onExpand: () => void }) {
   const { t } = useTranslation()
-  const classic = useClassic()
+  if (!useClassic()) {
+    return (
+      <>
+        <aside className={cn(
+          "z-[60] flex h-svh w-72 flex-col border-e bg-sidebar md:sticky md:top-0 md:z-30 md:w-[248px] md:shrink-0 print:hidden",
+          "max-md:fixed max-md:inset-y-0 max-md:start-0 max-md:transition-transform",
+          open ? "max-md:translate-x-0" : "max-md:translate-x-full max-md:ltr:-translate-x-full",
+        )}>
+          <div className="flex justify-center px-5 pt-5 pb-3.5">
+            <Link to="/" onClick={onClose}><Logo className="h-10" /></Link>
+          </div>
+          <nav aria-label={t("nav.label")} className="flex flex-1 flex-col gap-px overflow-y-auto px-3 pb-4">
+            {NAV.map((i) => <Group key={i.key} item={i} collapsed={false} onNavigate={onClose} onExpand={onExpand} />)}
+          </nav>
+        </aside>
+        {open && <button type="button" aria-label={t("nav.close")} className="fixed inset-0 z-[55] bg-black/30 md:hidden" onClick={onClose} />}
+      </>
+    )
+  }
   return (
     <>
+      {open && <button type="button" aria-label={t("nav.close")} className="fixed inset-0 z-[55] bg-black/50 lg:hidden" onClick={onClose} />}
       <aside className={cn(
-        "z-[60] flex h-svh w-72 flex-col border-e bg-sidebar md:sticky md:top-0 md:z-30 md:shrink-0 print:hidden",
-        classic ? "bg-card md:w-[270px]" : "md:w-[248px]",
-        "max-md:fixed max-md:inset-y-0 max-md:start-0 max-md:transition-transform",
-        open ? "max-md:translate-x-0" : "max-md:translate-x-full max-md:ltr:-translate-x-full",
+        "fixed inset-y-0 start-0 z-[60] h-dvh w-[280px] overflow-y-auto overscroll-contain hide-scrollbar border-e bg-card transition-all duration-300",
+        "lg:sticky lg:top-0 lg:z-50 lg:shrink-0 print:hidden",
+        collapsed ? "lg:w-20" : "lg:w-[270px]",
+        open ? "translate-x-0" : "translate-x-full ltr:-translate-x-full lg:translate-x-0 lg:ltr:translate-x-0",
       )}>
-        <div className={cn("flex shrink-0 justify-center", classic ? "h-16 items-center border-b px-4" : "px-5 pt-5 pb-3.5")}>
-          <Link to="/" onClick={onClose} className={classic ? "transition-opacity hover:opacity-80" : undefined}><Logo className={classic ? "h-15" : "h-10"} /></Link>
+        <div className={cn("flex h-16 items-center justify-between border-b px-4", collapsed && "lg:px-2")}>
+          <div className="flex flex-1 items-center justify-center overflow-hidden">
+            <Link to="/" onClick={onClose} className="flex w-auto items-center justify-center transition-opacity hover:opacity-80">
+              <Logo className={cn("h-15", collapsed && "lg:h-auto lg:w-14")} />
+            </Link>
+          </div>
+          <button type="button" onClick={onClose} aria-label={t("nav.close")} className="p-1 text-[var(--text-muted)] transition-colors hover:text-red-500 lg:hidden"><X size={20} /></button>
         </div>
-        <nav aria-label={t("nav.label")} className={cn("flex flex-1 flex-col overflow-y-auto overscroll-contain hide-scrollbar", classic ? "gap-1 p-3" : "gap-px px-3 pb-4")}>
-          {NAV.map((i) => <Group key={i.key} item={i} onNavigate={onClose} />)}
+        <nav aria-label={t("nav.label")} className="space-y-1 p-3">
+          {NAV.map((i) => <Group key={i.key} item={i} collapsed={collapsed} onNavigate={onClose} onExpand={onExpand} />)}
         </nav>
       </aside>
-      {open && <button type="button" aria-label={t("nav.close")} className={cn("fixed inset-0 z-[55] md:hidden", classic ? "bg-black/50" : "bg-black/30")} onClick={onClose} />}
     </>
   )
 }
