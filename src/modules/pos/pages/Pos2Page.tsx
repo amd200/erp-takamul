@@ -38,11 +38,12 @@ function Pos2Screen({ shift, optics }: { shift: Shift; optics: boolean }) {
   const appSettings = useAppSettings()
   const defaultCustomer = appSettings.customersTab?.defultCustomar
   const defaultEmployee = appSettings.salonsTab?.defaultServiceEmployeeId
+  const showEmployee = appSettings.salonsTab?.showEmployeeService === true
   usePosBeauty()
   const { data: units = [] } = useUnits()
   const { data: warehouses = [] } = useWarehouses()
   const { data: customers = [] } = useCustomers()
-  const { data: employees = [] } = useEmployees()
+  const { data: employees = [] } = useEmployees(showEmployee)
   const nextNumber = useNextInvoiceNumber()
   const save = useSaveSale()
   const printInvoice = useInvoiceOutput()
@@ -92,11 +93,11 @@ function Pos2Screen({ shift, optics }: { shift: Shift; optics: boolean }) {
   // The default service employee is picked once, when the setting is on and nobody was chosen yet.
   const employeeDefaulted = useRef(false)
   useEffect(() => {
-    if (employeeDefaulted.current || !appSettings.salonsTab?.showEmployeeService || !employees.length) return
+    if (employeeDefaulted.current || !showEmployee || !employees.length) return
     employeeDefaulted.current = true
     const e = employees.find((x) => x.id === Number(defaultEmployee))
     if (e && store().employeeId == null && store().lines.length === 0) store().setEmployee(e.id)
-  }, [employees, defaultEmployee, appSettings.salonsTab?.showEmployeeService, store])
+  }, [employees, defaultEmployee, showEmployee, store])
 
   const unitName = useCallback((id: number) => units.find((u) => u.id === id)?.name ?? "", [units])
 
@@ -146,7 +147,7 @@ function Pos2Screen({ shift, optics }: { shift: Shift; optics: boolean }) {
         <Pos2Header invoiceNumber={nextNumber.data ?? "---"} shiftId={shift.id} locked={locked}
           customerId={customerId} customerName={customerName} onCustomer={(id, name) => store().setCustomer(id, name)} onAddCustomer={() => setAddingCustomer(true)}
           balance={appSettings.customersTab?.showActualBalance ? (balance != null ? String(balance) : "") : null}
-          employees={appSettings.salonsTab?.showEmployeeService ? employees : null} employeeId={employeeId} onEmployee={(id) => store().setEmployee(id)}
+          employees={showEmployee ? employees : null} employeeId={employeeId} onEmployee={(id) => store().setEmployee(id)}
           note={note} onNote={(n) => store().setNote(n)} onShift={() => setReport(shift)}
           optics={optics} onTools={() => setToolsOpen(true)} measurement={measurement?.name ?? null} />
 

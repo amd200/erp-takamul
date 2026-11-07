@@ -316,27 +316,6 @@ html.beauty[data-theme] {
   }
 }
 
-.btn-minimal-action {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text-muted);
-  cursor: pointer;
-  padding: 0;
-  width: 36px;
-  height: 36px;
-  flex-shrink: 0;
-  border-radius: 8px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.btn-minimal-action.btn-edit:hover { background: #f0fdf4; color: #16a34a; }
-.btn-minimal-action.btn-delete:hover { background: #fef2f2; color: #dc2626; }
-
-.btn-minimal-action.btn-view:hover { background: #eff6ff; color: #2563eb; }
-
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 

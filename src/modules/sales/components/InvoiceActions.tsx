@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button"
 import { useMutation } from "@tanstack/react-query"
 import { Link } from "react-router-dom"
 import { DollarSign, Download, Eye, FileDown, FileSpreadsheet, FileText, Mail, MessageCircle, MoreHorizontal, PlusCircle, Printer, RefreshCw, RotateCcw, ScrollText, Warehouse, FileCheck } from "lucide-react"
@@ -44,12 +45,13 @@ export function InvoiceActions({ invoice, channel, onPayments, onNotes, onZatcaR
   const item = "flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground"
 
   return (
+    <div className="flex items-center justify-end gap-1">
+    <Button type="button" variant="ghost" size="icon" aria-label={t("sales.menu.preview")} onClick={onPreview}><Eye /></Button>
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button type="button" aria-label={t("common.actions")} className="btn-minimal-action btn-compact-action"><MoreHorizontal size={18} /></button>
+        <Button type="button" variant="ghost" size="icon" aria-label={t("common.actions")}><MoreHorizontal /></Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52 p-1">
-        <DropdownMenuItem className={item} onSelect={onPreview}><Eye size={14} />{t("sales.menu.preview")}</DropdownMenuItem>
         {ops?.allowPrintInvoiceA4 && <DropdownMenuItem className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "print" })}><FileText size={14} />{t("sales.menu.printA4")}</DropdownMenuItem>}
         {optics && <DropdownMenuItem className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "print", paper: "a5" })}><FileText size={14} />{t("sales.menu.printA5")}</DropdownMenuItem>}
         {ops?.allowPrintInvoiceRoll && <DropdownMenuItem className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "print", paper: "roll" })}><Printer size={14} />{t("sales.menu.printRoll")}</DropdownMenuItem>}
@@ -84,5 +86,6 @@ export function InvoiceActions({ invoice, channel, onPayments, onNotes, onZatcaR
         )}
       </DropdownMenuContent>
     </DropdownMenu>
+    </div>
   )
 }

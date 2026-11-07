@@ -10,9 +10,10 @@ import type { EmployeeDto } from "./types"
 export const useCustomers = () => useQuery({ queryKey: ["customers", "refs"], queryFn: async () => (await customersApi.list()).filter((c) => c.isActive !== false) })
 export const useSuppliers = () => useQuery({ queryKey: ["suppliers", "refs"], queryFn: async () => (await suppliersApi.list()).filter((s) => s.isActive !== false) })
 export const useTreasuries = () => useQuery({ queryKey: ["treasuries", "refs"], queryFn: () => treasuriesApi.list() })
-export const useEmployees = () => useQuery({
+export const useEmployees = (enabled = true) => useQuery({
   queryKey: ["employees", "refs"],
   queryFn: () => fetchAllPages<EmployeeDto>("/employees"),
+  enabled,
   staleTime: 5 * 60_000,
 })
 /** `GET /Warehouse` returns a plain array. */

@@ -15,6 +15,7 @@ import { formatMoney, formatDateTime } from "@/lib/format"
 import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
 import { useCan } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
+import { useAppSettings } from "@/modules/settings"
 import { PaymentScreen } from "@/modules/pos/payment/PaymentScreen"
 import type { PosPayment } from "@/modules/pos/types"
 import type { OrderRequest } from "../types"
@@ -25,6 +26,7 @@ const PAGE_SIZE = 20
 
 function DetailsDialog({ id, onOpenChange }: { id: number | null; onOpenChange: (o: boolean) => void }) {
   const { t } = useTranslation()
+  const exempt = useAppSettings().taxSetting?.taxSetting === "Exempt"
   const { data: o, isLoading } = useOrderRequest(id)
   return (
     <Dialog open={id != null} onOpenChange={onOpenChange}>
@@ -52,7 +54,7 @@ function DetailsDialog({ id, onOpenChange }: { id: number | null; onOpenChange: 
             <dl className="ms-auto flex w-full max-w-xs flex-col gap-1.5 text-sm tabular-nums">
               <div className="flex justify-between"><dt className="text-muted-foreground">{t("sales.subTotal")}</dt><dd>{formatMoney(o.subTotal ?? 0)}</dd></div>
               {(o.discountAmount ?? 0) > 0 && <div className="flex justify-between"><dt className="text-muted-foreground">{t("sales.discount")}</dt><dd>-{formatMoney(o.discountAmount ?? 0)}</dd></div>}
-              <div className="flex justify-between"><dt className="text-muted-foreground">{t("sales.tax")}</dt><dd>{formatMoney(o.taxAmount ?? 0)}</dd></div>
+              {!exempt && <div className="flex justify-between"><dt className="text-muted-foreground">{t("sales.tax")}</dt><dd>{formatMoney(o.taxAmount ?? 0)}</dd></div>}
               <div className="flex justify-between border-t pt-2 text-base font-semibold"><dt>{t("sales.grandTotal")}</dt><dd>{formatMoney(o.grandTotal ?? 0)}</dd></div>
             </dl>
           </div>

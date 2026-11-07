@@ -104,18 +104,18 @@ export function SalesSummary({ totals, undiscounted, discount, onDiscount, exemp
             </div>
           </div>
 
-          <div className={cn("grid grid-rows-3 border-e border-[#e4eaf1] bg-white dark:border-border dark:bg-background", optics && "row-span-2")}>
-            <div className="flex min-h-[45.75px] items-center justify-between border-b border-[#e8edf3] px-4.5 dark:border-border">
+          <div className={cn("grid border-e border-[#e4eaf1] bg-white dark:border-border dark:bg-background", exempt ? "content-start" : "grid-rows-3", optics && "row-span-2")}>
+            {!exempt && <div className="flex min-h-[45.75px] items-center justify-between border-b border-[#e8edf3] px-4.5 dark:border-border">
               <span className="text-[14px] font-bold text-[#496683] dark:text-foreground">{t("pos2.totalBeforeTax")}</span>
               <span className="text-[14.5px] font-extrabold text-[#58708b] tabular-nums dark:text-foreground">{money(afterDiscount)}</span>
-            </div>
-            <div className="flex min-h-[45.75px] items-center justify-between border-b border-[#e8edf3] px-4.5 dark:border-border">
+            </div>}
+            {!exempt && <div className="flex min-h-[45.75px] items-center justify-between border-b border-[#e8edf3] px-4.5 dark:border-border">
               <span className="text-[14px] font-bold text-[#496683] dark:text-foreground">{t("pos2.totalTax")}</span>
               <span className="flex items-center gap-1.5">
-                {applied && !exempt && <span className="text-[11px] text-gray-300 line-through tabular-nums">{money(undiscounted.tax)}</span>}
+                {applied && <span className="text-[11px] text-gray-300 line-through tabular-nums">{money(undiscounted.tax)}</span>}
                 <span className="text-[14.5px] font-extrabold text-[#58708b] tabular-nums dark:text-foreground">{money(totals.tax)}</span>
               </span>
-            </div>
+            </div>}
             <div className="flex min-h-[45.75px] items-center justify-between bg-[#f3f8fe] px-4.5 dark:bg-muted/20">
               <span className="text-[14.5px] font-extrabold text-[#345b86] dark:text-foreground">{t("pos2.finalTotal")}</span>
               <span className="flex items-center gap-1.5">

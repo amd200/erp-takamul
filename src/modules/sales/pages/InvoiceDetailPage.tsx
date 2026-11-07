@@ -13,12 +13,14 @@ import { P } from "@/shared/permissions/permissions"
 import { PaymentsDialog } from "../components/PaymentsDialog"
 import { PaymentBadge, ZatcaBadge } from "../components/StatusBadges"
 import { TotalsPanel } from "../components/TotalsPanel"
+import { useAppSettings } from "@/modules/settings"
 import { useInvoice } from "../queries"
 import { useInvoiceOutput } from "../print/useInvoiceOutput"
 import { orderTotals } from "../totals"
 
 export default function InvoiceDetailPage() {
   const { t, i18n } = useTranslation()
+  const exempt = useAppSettings().taxSetting?.taxSetting === "Exempt"
   const { id } = useParams()
   const [search] = useSearchParams()
   const channel = search.get("channel") === "POS" ? "POS" : "A4"
@@ -69,7 +71,7 @@ export default function InvoiceDetailPage() {
             <Table className="min-w-[560px]">
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
-                  {[t("products.item"), t("products.quantity"), t("sales.unitPrice"), t("sales.discount"), t("sales.tax"), t("sales.lineTotal")].map((h) => <TableHead key={h} className="text-xs text-muted-foreground">{h}</TableHead>)}
+                  {[t("products.item"), t("products.quantity"), t("sales.unitPrice"), t("sales.discount"), ...(exempt ? [] : [t("sales.tax")]), t("sales.lineTotal")].map((h) => <TableHead key={h} className="text-xs text-muted-foreground">{h}</TableHead>)}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -80,7 +82,7 @@ export default function InvoiceDetailPage() {
                       <TableCell className="tabular-nums">{l.quantity}</TableCell>
                       <TableCell className="tabular-nums">{formatMoney(l.unitPrice ?? 0)}</TableCell>
                       <TableCell className="tabular-nums text-muted-foreground">{l.discountValue ? formatMoney(l.discountValue) : "—"}</TableCell>
-                      <TableCell className="tabular-nums text-muted-foreground">{formatMoney(l.taxAmount ?? 0)}</TableCell>
+                      {!exempt && <TableCell className="tabular-nums text-muted-foreground">{formatMoney(l.taxAmount ?? 0)}</TableCell>}
                       <TableCell className="font-semibold tabular-nums">{formatMoney(l.lineTotal ?? 0)}</TableCell>
                     </TableRow>
                   )

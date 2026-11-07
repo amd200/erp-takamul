@@ -18,12 +18,14 @@ function useKey() {
  * needs its own fallback; nothing is requested before the user is signed in, except on the customer's own ordering
  * screen (pos4), where the server hands them out without a sign-in.
  */
-export const useAppSettings = () => {
+export const useAppSettingsQuery = () => {
   const signedIn = useAuthStore((s) => !!s.session)
   const publicScreen = location.pathname.replace(/\/+$/, "") === "/pos4"
   const key = useKey()
-  return useQuery({ queryKey: key, queryFn: settingsApi.get, placeholderData: settingsApi.snapshot, staleTime: 60_000, enabled: signedIn || publicScreen }).data ?? settingsApi.snapshot()
+  return useQuery({ queryKey: key, queryFn: settingsApi.get, placeholderData: settingsApi.snapshot, staleTime: 60_000, enabled: signedIn || publicScreen })
 }
+
+export const useAppSettings = () => useAppSettingsQuery().data ?? settingsApi.snapshot()
 
 /** Saves a form's changed fields (see `settingsApi.save`). */
 export function useSaveTab() {

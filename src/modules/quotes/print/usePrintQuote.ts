@@ -8,7 +8,7 @@ import { useAppSettings } from "@/modules/settings"
 import { errorToast } from "@/shared/api/errors"
 import { printDocument } from "@/shared/print/print"
 import { useSession } from "@/shared/session/session"
-import type { Quote } from "../types"
+import { quoteDetailOptions } from "../queries"
 import { quoteDoc } from "./quoteDoc"
 
 export function usePrintQuote() {
@@ -17,11 +17,16 @@ export function usePrintQuote() {
   const settings = useAppSettings()
   const { branch } = useSession()
   return useMutation({
-    mutationFn: async (quote: Quote) => {
-      const id = branch.id
+    mutationFn: async (id: number) => {
+      const branchId = branch.id
+      const branchDetails = branchId
+        ? qc.fetchQuery({ queryKey: branchKeys.detail(branchId), queryFn: () => branchesApi.get(branchId) }).catch(() => undefined)
+        : undefined
+      const quote = await qc.fetchQuery(quoteDetailOptions(id))
+      const customerId = quote.customerid
       const [details, customer] = await Promise.all([
-        id ? qc.fetchQuery({ queryKey: branchKeys.detail(id), queryFn: () => branchesApi.get(id) }).catch(() => undefined) : undefined,
-        quote.customerid ? qc.fetchQuery({ queryKey: customerKeys.detail(quote.customerid), queryFn: () => customersApi.get(quote.customerid!) }).catch(() => undefined) : undefined,
+        branchDetails,
+        customerId ? qc.fetchQuery({ queryKey: customerKeys.detail(customerId), queryFn: () => customersApi.get(customerId) }).catch(() => undefined) : undefined,
       ])
       await printDocument(quoteDoc(quote, {
         branch: details, customer,

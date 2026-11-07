@@ -146,17 +146,17 @@ export function Pos2Header(p: Props) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 items-end gap-2.25 px-2.25 pb-2.25 sm:grid-cols-2 sm:px-3.75 xl:grid-cols-4 xl:gap-3.75 xl:px-4.5 xl:pb-3">
+        <div className={`grid grid-cols-1 items-end gap-2.25 px-2.25 pb-2.25 sm:grid-cols-2 sm:px-3.75 xl:gap-3.75 ${p.balance != null ? "xl:grid-cols-[1fr_5rem_1fr_1fr_1fr]" : "xl:grid-cols-4"} xl:px-4.5 xl:pb-3`}>
           <div className="flex items-end gap-1.5">
 {p.optics ? (
               <Button type="button" size="icon-lg" variant="outline" disabled={p.locked} onClick={p.onTools} aria-label={t("pos.optics.tools")}
                 title={p.measurement ? `${t("pos.optics.selectedMeasurement")}: ${p.measurement}` : t("pos.optics.tools")}
-                className={cn("size-8.25 shrink-0 rounded-[9px] shadow-[0_5px_13px_rgba(8,43,102,0.12)] transition-colors", p.measurement ? "border-[#17a95c] bg-[#1db56c] text-white hover:bg-[#18a760] hover:text-white" : "border-[#082b66] bg-white text-[#082b66] hover:bg-[#082b66] hover:text-white dark:bg-background dark:text-foreground")}>
+                className={cn("size-8.25 shrink-0 rounded-[9px] shadow-[0_5px_13px_rgba(8,43,102,0.12)] transition-colors", p.measurement ? "border-[#17a95c] bg-[#1db56c] text-white hover:bg-[#18a760] hover:text-white" : "")}>
                 <Eye size={15} strokeWidth={2.2} />
               </Button>
             ) : (
             <Button type="button" size="icon-lg" variant="outline" disabled={p.locked} aria-label={t("customers.add")} onClick={p.onAddCustomer}
-              className="size-8.25 shrink-0 rounded-[9px] border-[#082b66] bg-[#082b66] text-white shadow-[0_5px_13px_rgba(8,43,102,0.20)] transition-colors hover:bg-[#0b367d] hover:text-white">
+              className="size-8.25 shrink-0 rounded-[9px]">
               <Plus size={15} strokeWidth={2.2} />
             </Button>
             )}
@@ -169,7 +169,7 @@ export function Pos2Header(p: Props) {
           </div>
 
           {p.balance != null && (
-            <div className="flex flex-col gap-0.75">
+            <div className="flex w-20 shrink-0 flex-col sm:w-full xl:w-20 gap-0.75">
               <span className={label}>{t("pos2.customerBalance")}</span>
               <div className={`${field} flex cursor-not-allowed items-center justify-center border font-extrabold tabular-nums`}>{p.balance}</div>
             </div>

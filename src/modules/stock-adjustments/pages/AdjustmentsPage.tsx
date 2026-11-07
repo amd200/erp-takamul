@@ -1,7 +1,8 @@
 import { PageBox } from "@/components/PageBox"
 import { Link } from "react-router-dom"
-import { Eye, SlidersHorizontal } from "lucide-react"
+import { SlidersHorizontal } from "lucide-react"
 import { useTranslation } from "react-i18next"
+import { RowActions } from "@/components/RowActions"
 import { Button } from "@/components/ui/button"
 import { DataTable, type Column } from "@/components/DataTable"
 import { useTableSort } from "@/components/useTableSort"
@@ -24,9 +25,7 @@ export default function AdjustmentsPage() {
     { id: "by", sortKey: "performedBy", header: t("adjForm.enteredBy"), cell: (a) => a.performedBy },
     { id: "notes", sortKey: "notes", header: t("adjForm.note"), cell: (a) => a.notes },
     { id: "actions", header: t("adjForm.actions"), cell: (a) => (
-      <div className="flex items-center justify-center gap-2">
-        <Link to={`/products/quantity-adjustments/view/${a.id}`} className="btn-minimal-action btn-view" aria-label={t("common.view")}><Eye size={16} /></Link>
-      </div>
+      <RowActions viewTo={`/products/quantity-adjustments/view/${a.id}`} />
     ) },
   ]
 

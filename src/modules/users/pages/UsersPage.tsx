@@ -1,7 +1,8 @@
 import { PageBox } from "@/components/PageBox"
 import { useState } from "react"
-import { Edit2, Trash2, UserRound } from "lucide-react"
+import { UserRound } from "lucide-react"
 import { useTranslation } from "react-i18next"
+import { RowActions } from "@/components/RowActions"
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
@@ -38,10 +39,7 @@ export default function UsersPage() {
       </span>
     ) },
     ...(can(P.users.edit) || can(P.users.delete) ? [{ id: "actions", header: t("oldUsers.actions"), cell: (u: User) => (
-      <div className="flex items-center gap-2">
-        {can(P.users.edit) && <button type="button" onClick={() => open(u)} className="btn-minimal-action btn-edit" aria-label={`${t("oldUsers.edit")} ${u.userName}`}><Edit2 size={16} /></button>}
-        {can(P.users.delete) && u.userName !== me.name && <button type="button" onClick={() => setToDelete(u)} className="btn-minimal-action btn-delete" aria-label={`${t("common.delete")} ${u.userName}`}><Trash2 size={16} /></button>}
-      </div>
+      <RowActions onEdit={can(P.users.edit) ? () => open(u) : undefined} onDelete={can(P.users.delete) && u.userName !== me.name ? () => setToDelete(u) : undefined} />
     ) }] : []),
   ]
 

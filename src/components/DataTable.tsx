@@ -1,4 +1,4 @@
-import { isValidElement, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import {
   columnFilteringFeature, createFilteredRowModel, createPaginatedRowModel, createColumnHelper, globalFilteringFeature, rowPaginationFeature, tableFeatures, useTable,
   type FilterFn, type PaginationState, type RowData,
@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { cn } from "@/lib/utils"
-import { useClassic } from "@/shared/theme/ThemeProvider"
 import { Pager } from "./Pager"
 
 export type Column<T> = {
@@ -73,7 +72,6 @@ export function DataTable<T extends RowData>({
   sort?: TableSort
 }) {
   const { t } = useTranslation()
-  const classic = useClassic()
   const [q, setQ] = useState("")
   const onSearch = server?.onSearch
   const sort = sortProp ?? server?.sort
@@ -115,24 +113,21 @@ export function DataTable<T extends RowData>({
   const hasSearch = !!(searchText || onSearch)
   const setPage = (n: number) => setPagination((p) => ({ ...p, pageIndex: n }))
 
-  // A failed load keeps its own message (and retry); an empty list is, as in the current system, the header plus one plain row.
-  const failed = isValidElement(empty) && (empty.props as { title?: string }).title === t("common.loadFailed")
-
   return (
-    <div className={cn(classic ? "overflow-hidden rounded-xl border border-border [&_[data-slot=table-container]]:rounded-none [&_[data-slot=table-container]]:border-x-0" : "flex flex-col gap-4")}>
+    <div className="flex flex-col gap-4">
       {(hasSearch || filters) && (
-        <div className={cn("flex flex-wrap items-center gap-2", classic && "p-5")}>
+        <div className={"flex flex-wrap items-center gap-2"}>
           {hasSearch && (
-            <div className={cn("relative min-w-52 flex-1", !classic && "max-w-sm")}>
-              <Search className={cn("pointer-events-none absolute top-1/2 size-4 -translate-y-1/2 text-faint", classic ? "end-3" : "start-3")} />
+            <div className={"relative min-w-52 max-w-sm flex-1"}>
+              <Search className={"pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-faint"} />
               <Input
                 value={q}
                 onChange={(e) => { setQ(e.target.value); setPage(0) }}
                 placeholder={searchPlaceholder ?? t("common.search")}
                 aria-label={searchPlaceholder ?? t("common.search")}
-                className={classic ? "h-10 rounded-[10px] ps-4 pe-10" : "h-10 ps-9"}
+                className="h-10 ps-9"
               />
-              {server?.fetching && <Loader2 className={cn("absolute top-1/2 size-4 -translate-y-1/2 animate-spin text-faint", classic ? "end-10" : "end-3")} aria-label={t("common.loading")} />}
+              {server?.fetching && <Loader2 className={"absolute end-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-faint"} aria-label={t("common.loading")} />}
             </div>
           )}
           {filters}
@@ -140,10 +135,10 @@ export function DataTable<T extends RowData>({
       )}
 
       {loading ? (
-        <div className={cn("flex flex-col gap-2", classic && "px-5 pb-5")} aria-busy="true" aria-label={t("common.loading")}>
+        <div className={"flex flex-col gap-2"} aria-busy="true" aria-label={t("common.loading")}>
           {Array.from({ length: 5 }, (_, i) => <div key={i} className="h-11 animate-pulse rounded-lg bg-muted" />)}
         </div>
-      ) : slice.length === 0 && (failed || !classic) ? (
+      ) : slice.length === 0 ? (
         empty
       ) : (
         <>
@@ -173,7 +168,7 @@ export function DataTable<T extends RowData>({
               <TableRow className="hover:bg-transparent">
                 {columns.map((c) => (
                   <TableHead key={c.id} aria-sort={c.sortKey && sort?.key === c.sortKey ? (sort.desc ? "descending" : "ascending") : undefined}
-                    className={classic ? undefined : cn("text-xs font-medium text-muted-foreground", c.align === "end" && "text-end")}>
+                    className={cn("text-xs font-medium text-muted-foreground", c.align === "end" && "text-end")}>
                     {c.sortKey && sort ? <SortButton column={c} sort={sort} onSorted={() => setPage(0)} /> : c.header}
                   </TableHead>
                 ))}
@@ -186,7 +181,7 @@ export function DataTable<T extends RowData>({
               {slice.map((row) => (
                 <TableRow key={row.id}>
                   {row.getAllCells().map((cell) => (
-                    <TableCell key={cell.id} className={cn("tabular-nums", !classic && "py-3", !classic && columns.find((c) => c.id === cell.column.id)?.align === "end" && "text-end", columns.find((c) => c.id === cell.column.id)?.className)}><table.FlexRender cell={cell} /></TableCell>
+                    <TableCell key={cell.id} className={cn("tabular-nums py-3", columns.find((c) => c.id === cell.column.id)?.align === "end" && "text-end", columns.find((c) => c.id === cell.column.id)?.className)}><table.FlexRender cell={cell} /></TableCell>
                   ))}
                 </TableRow>
               ))}
@@ -196,10 +191,10 @@ export function DataTable<T extends RowData>({
       )}
 
       {!loading && pager && (
-        <div className={cn(classic && "px-5 py-4")}>
+        <div>
           {server
-            ? <Pager always total={server.total} page={server.page} pageSize={server.pageSize} onPage={server.onPage} />
-            : <Pager always total={filteredCount} page={current} pageSize={pageSize} onPage={setPage} />}
+            ? <Pager total={server.total} page={server.page} pageSize={server.pageSize} onPage={server.onPage} />
+            : <Pager total={filteredCount} page={current} pageSize={pageSize} onPage={setPage} />}
         </div>
       )}
     </div>

@@ -1,5 +1,3 @@
-import { cn } from "@/lib/utils"
-import { useClassic } from "@/shared/theme/ThemeProvider"
 import { PageBox } from "@/components/PageBox"
 import { useCallback, useRef, useState } from "react"
 import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
@@ -24,11 +22,10 @@ import { usePrintQuote } from "../print/usePrintQuote"
 const PAGE_SIZE = 20
 
 function IconAction({ label, onClick, to, children, danger, disabled }: { label: string; onClick?: () => void; to?: string; children: React.ReactNode; danger?: boolean; disabled?: boolean }) {
-  const classic = useClassic()
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button asChild={!!to} type="button" variant="ghost" size="icon" aria-label={label} onClick={onClick} disabled={disabled} className={cn(classic && "rounded-lg border text-[var(--text-muted)]", danger ? "hover:bg-destructive-soft hover:text-destructive" : classic && "hover:border-green-100 hover:bg-[#f0fdf4] hover:text-[#16a34a]")}>
+        <Button asChild={!!to} type="button" variant="ghost" size="icon" aria-label={label} onClick={onClick} disabled={disabled} className={danger ? "hover:bg-destructive-soft hover:text-destructive" : undefined}>
           {to ? <Link to={to}>{children}</Link> : <span>{children}</span>}
         </Button>
       </TooltipTrigger>
@@ -67,8 +64,8 @@ export default function QuotesPage() {
     { id: "total", sortKey: "grandTotal", header: t("quotes.colTotal"), cell: (q) => formatMoney(q.grandTotal ?? 0) },
     { id: "actions", header: t("quotes.colActions"), cell: (q) => (
       <div className="flex justify-center gap-2">
-        <IconAction label={t("quotes.print")} disabled={print.isPending} onClick={() => print.mutate(q)}>{print.isPending && print.variables?.id === q.id ? <Loader2 className="animate-spin" /> : <Printer />}</IconAction>
-        {can(P.sales.pos) && <IconAction label={t("quotes.openInPos")} onClick={() => quotation.load(q)}><ShoppingCart /></IconAction>}
+        <IconAction label={t("quotes.print")} disabled={print.isPending} onClick={() => print.mutate(q.id)}>{print.isPending && print.variables === q.id ? <Loader2 className="animate-spin" /> : <Printer />}</IconAction>
+        {can(P.sales.pos) && <IconAction label={t("quotes.openInPos")} disabled={quotation.isLoading} onClick={() => quotation.load(q.id)}>{quotation.loadingId === q.id ? <Loader2 className="animate-spin" /> : <ShoppingCart />}</IconAction>}
         {can(P.quotes.edit) && <IconAction label={t("common.edit")} to={`/quotes/${q.id}/edit`}><Pencil /></IconAction>}
         {can(P.quotes.add) && <IconAction label={t("quotes.duplicate")} onClick={() => copy.mutate({ id: q.id, key: copyKey.current }, { onSuccess: () => { copyKey.current = newIdempotencyKey(); nav("/quotes") }, onError: renewIfReused(copyKey) })}><Copy /></IconAction>}
         {can(P.quotes.delete) && <IconAction label={t("common.delete")} danger onClick={() => setToDelete(q)}><Trash2 /></IconAction>}

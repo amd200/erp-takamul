@@ -18,11 +18,11 @@ export type SellLine = Omit<InvoiceLine, "amounts"> & { imageUrl: string | null 
 const GRID_PAGE = 100
 
 /** Turns an item into a cart line: its unit, price and the tax rate of the branch. */
-export function useSellLine() {
-  const taxes = useTaxes()
+export function useSellLine(taxesEnabled = true) {
+  const taxes = useTaxes(taxesEnabled)
   const units = useUnits()
   const unitName = useCallback((id: number) => units.data?.find((u) => u.id === id)?.name ?? "", [units.data])
-  const rateOf = useCallback((p: Product) => taxes.data?.find((x) => x.id === p.taxId)?.amount ?? 0, [taxes.data])
+  const rateOf = useCallback((p: Product) => taxesEnabled ? taxes.data?.find((x) => x.id === p.taxId)?.amount ?? 0 : 0, [taxesEnabled, taxes.data])
   const categoryDiscountOf = useCategoryDiscountOf()
 
   return useCallback((p: Product, opts: { unitId?: number; price?: number; name?: string } = {}): SellLine => {

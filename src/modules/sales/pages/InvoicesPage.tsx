@@ -1,5 +1,4 @@
 import { useCallback, useState } from "react"
-import { Link } from "react-router-dom"
 import { FileText, RotateCw } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useAppSettings } from "@/modules/settings"
@@ -35,7 +34,7 @@ export default function InvoicesPage({ channel }: { channel: Channel }) {
   const onSearch = useCallback((q: string) => { setSearch((prev) => { if (prev !== q) setPage(0); return q }) }, [])
 
   const columns: Column<SalesOrderDto>[] = [
-    { id: "number", sortKey: "orderNumber", header: t("sales.number"), cell: (i) => <Link to={`/sales/invoices/${i.id}?channel=${channel}`} className="font-semibold hover:underline">{i.orderNumber}</Link> },
+    { id: "number", sortKey: "orderNumber", header: t("sales.number"), cell: (i) => <span className="font-semibold">{i.orderNumber}</span> },
     { id: "date", sortKey: "orderDate", header: t("common.date"), cell: (i) => <span className="text-muted-foreground">{formatDateTime(i.orderDate ?? "", i18n.language)}</span> },
     { id: "customer", sortKey: "customerName", header: t("sales.customer"), cell: (i) => i.customerName },
     { id: "employee", sortKey: "employeeName", header: t("users.userName"), cell: (i) => i.employeeName || "—" },

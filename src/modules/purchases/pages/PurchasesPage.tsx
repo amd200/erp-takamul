@@ -1,8 +1,9 @@
 import { PageBox } from "@/components/PageBox"
 import { useCallback, useState } from "react"
 import { Link } from "react-router-dom"
-import { Edit2, RotateCw, Trash2 } from "lucide-react"
+import { RotateCw } from "lucide-react"
 import { useTranslation } from "react-i18next"
+import { RowActions } from "@/components/RowActions"
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
@@ -49,10 +50,7 @@ export default function PurchasesPage() {
     { id: "total", sortKey: "grandTotal", header: t("purchases.colTotal"), cell: (p) => formatMoney(p.grandTotal ?? 0) },
     { id: "paid", sortKey: "paidAmount", header: t("purchases.colPaid"), cell: (p) => formatMoney(p.paidAmount ?? 0) },
     { id: "actions", header: t("purchases.colActions"), cell: (p) => (
-      <div className="flex items-center justify-center gap-2">
-        {can(P.purchases.edit) && <Link to={`/purchases/${p.id}/edit`} className="btn-minimal-action btn-edit" aria-label={t("common.edit")}><Edit2 size={16} /></Link>}
-        {can(P.purchases.cancel) && <button type="button" className="btn-minimal-action btn-delete" aria-label={t("purchases.deleteInvoice")} onClick={() => setToCancel(p)}><Trash2 size={16} /></button>}
-      </div>
+      <RowActions editTo={can(P.purchases.edit) ? `/purchases/${p.id}/edit` : undefined} onDelete={can(P.purchases.cancel) ? () => setToCancel(p) : undefined} />
     ) },
   ]
 

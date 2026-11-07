@@ -8,5 +8,5 @@ export const taxesApi = {
 }
 
 // Rarely changes, so keep it for the session. The full taxes screen comes with Settings.
-export const useTaxes = () => useQuery({ queryKey: ["refs", "taxes"], queryFn: taxesApi.list, staleTime: 30 * 60_000 })
+export const useTaxes = (enabled = true) => useQuery({ queryKey: ["refs", "taxes"], queryFn: taxesApi.list, enabled, staleTime: 30 * 60_000 })
 export const useExemptionReasons = () => useQuery({ queryKey: ["refs", "tax-exemption-reasons"], queryFn: taxesApi.reasons, staleTime: 30 * 60_000 })

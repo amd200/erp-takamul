@@ -108,7 +108,7 @@ export function SalesLines({ lines, options: o, search, onPick, onCode, onQuery,
     { key: "code", width: 84 },
     { key: "name", width: 172.5 },
     { key: "unit", width: 96 },
-    { key: "price", width: 118.5 },
+    { key: "price", visible: !(o.exempt && o.editPrice), width: 118.5 },
     { key: "editablePrice", visible: !!o.editPrice, width: 87 },
     { key: "costPrice", visible: !!o.showCost, width: 82.5 },
     { key: "qty", width: 103.5 },
@@ -176,10 +176,12 @@ export function SalesLines({ lines, options: o, search, onPick, onCode, onQuery,
                         : <div className="flex h-9 items-center justify-center rounded-lg bg-muted/60 px-2 text-xs font-bold text-[#17375f] dark:text-foreground">{l.unitName || "--"}</div>}
                     </div>
 
-                    <div>
-                      <span className="mb-1 block text-[10px] font-bold text-muted-foreground">{t("pos2.priceBeforeTax")}</span>
-                      <div className="flex h-9 items-center justify-center rounded-lg bg-muted/60 px-2 text-xs font-extrabold tabular-nums">{money(priceBeforeTax(l))}</div>
-                    </div>
+                    {!(o.exempt && o.editPrice) && (
+                      <div>
+                        <span className="mb-1 block text-[10px] font-bold text-muted-foreground">{o.exempt ? t("pos2.unitPrice") : t("pos2.priceBeforeTax")}</span>
+                        <div className="flex h-9 items-center justify-center rounded-lg bg-muted/60 px-2 text-xs font-extrabold tabular-nums">{money(o.exempt ? l.unitPrice : priceBeforeTax(l))}</div>
+                      </div>
+                    )}
 
                     {o.editPrice && (
                       <div>
@@ -228,7 +230,7 @@ export function SalesLines({ lines, options: o, search, onPick, onCode, onQuery,
               <th>{t("pos2.productCode")}</th>
               <th className="text-start">{t("pos2.productName")}</th>
               <th>{t("pos2.unit")}</th>
-              <th>{t("pos2.priceBeforeTax")}</th>
+              {!(o.exempt && o.editPrice) && <th>{o.exempt ? t("pos2.unitPrice") : t("pos2.priceBeforeTax")}</th>}
               {o.editPrice && <th>{t("pos2.unitPrice")}</th>}
               {o.showCost && <th>{t("pos2.cost")}</th>}
               <th>{t("pos2.qty")}</th>
@@ -246,7 +248,7 @@ export function SalesLines({ lines, options: o, search, onPick, onCode, onQuery,
               <td>--</td>
               <td className="px-1.5"><ItemSearch options={search} onPick={onPick} onCode={onCode} onQuery={onQuery} searching={searching} placeholder={t("pos2.searchPlaceholder")} bare posStyle /></td>
               <td>--</td>
-              <td>--</td>
+              {!(o.exempt && o.editPrice) && <td>--</td>}
               {o.editPrice && <td>--</td>}
               {o.showCost && <td>--</td>}
               <td>--</td>
@@ -270,7 +272,7 @@ export function SalesLines({ lines, options: o, search, onPick, onCode, onQuery,
                       ? <UnitCell line={l} choices={units(l)} enabled locked={locked} className="mx-auto h-6.75! w-[84px] rounded-[6px] border-[#dfe7f1] bg-white text-[13px] font-semibold text-[#17375f] dark:border-border dark:bg-background dark:text-foreground" />
                       : <span className="inline-flex h-6.75 min-w-[66px] items-center justify-center rounded-[6px] px-2.25 font-semibold text-[#17375f] dark:text-foreground">{l.unitName || "--"}</span>}
                   </td>
-                  <td className="tabular-nums">{money(priceBeforeTax(l))}</td>
+                  {!(o.exempt && o.editPrice) && <td className="tabular-nums">{money(o.exempt ? l.unitPrice : priceBeforeTax(l))}</td>}
                   {o.editPrice && (
                     <td>
                       <NumberBox value={l.unitPrice} onChange={(n) => setPrice(l, n)} label={t("pos2.unitPrice")} disabled={locked}

@@ -14,10 +14,12 @@ import { P } from "@/shared/permissions/permissions"
 import { useTreasuries, useWarehouses } from "@/modules/lookups/service"
 import { PaymentBadge } from "@/modules/sales/components/StatusBadges"
 import { TotalsPanel } from "@/modules/sales/components/TotalsPanel"
+import { useAppSettings } from "@/modules/settings"
 import { usePurchase } from "../queries"
 
 export default function PurchaseViewPage() {
   const { t, i18n } = useTranslation()
+  const exempt = useAppSettings().taxSetting?.taxSetting === "Exempt"
   const { id } = useParams()
   const { data: p, isLoading, isError } = usePurchase(Number(id))
   const { data: warehouses = [] } = useWarehouses()
@@ -54,7 +56,7 @@ export default function PurchaseViewPage() {
             <Table className="min-w-[560px]">
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
-                  {[t("products.item"), t("products.quantity"), t("purchases.cost"), t("sales.discount"), t("sales.tax"), t("sales.lineTotal")].map((h) => <TableHead key={h} className="text-xs text-muted-foreground">{h}</TableHead>)}
+                  {[t("products.item"), t("products.quantity"), t("purchases.cost"), t("sales.discount"), ...(exempt ? [] : [t("sales.tax")]), t("sales.lineTotal")].map((h) => <TableHead key={h} className="text-xs text-muted-foreground">{h}</TableHead>)}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -70,7 +72,7 @@ export default function PurchaseViewPage() {
                       <TableCell className="tabular-nums">{l.quantity}</TableCell>
                       <TableCell className="tabular-nums">{formatMoney(l.priceBeforeTax ?? l.unitPrice ?? 0)}</TableCell>
                       <TableCell className="tabular-nums text-muted-foreground">{discount ? formatMoney(discount) : "—"}</TableCell>
-                      <TableCell className="tabular-nums text-muted-foreground">{formatMoney(l.taxAmount ?? 0)}</TableCell>
+                      {!exempt && <TableCell className="tabular-nums text-muted-foreground">{formatMoney(l.taxAmount ?? 0)}</TableCell>}
                       <TableCell className="font-semibold tabular-nums">{formatMoney(l.lineTotal ?? 0)}</TableCell>
                     </TableRow>
                   )
