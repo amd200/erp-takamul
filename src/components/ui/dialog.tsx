@@ -97,10 +97,10 @@ function DialogContent({
             className
           )}
         >
-          <div
-            aria-hidden
-            className="pointer-events-none absolute start-1/2 top-2 z-10 h-1.5 w-10 -translate-x-1/2 rtl:translate-x-1/2 rounded-full bg-muted-foreground/40"
-          />
+          {/* Drag zone over the top edge (outside the no-drag body, so it works even when the content has no padding). */}
+          <div aria-hidden className="absolute inset-x-0 top-0 z-10 flex h-8 justify-center pt-2">
+            <div className="h-1.5 w-10 rounded-full bg-muted-foreground/40" />
+          </div>
           {/* The body scrolls on its own: dragging here must scroll, not move the drawer (only the handle drags it). */}
           <div
             data-vaul-no-drag

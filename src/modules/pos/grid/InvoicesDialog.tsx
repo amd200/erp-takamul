@@ -111,21 +111,21 @@ export function InvoicesDialog({ open, onOpenChange }: { open: boolean; onOpenCh
                 const label = statusLabel(o.orderStatus)
                 const pending = o.orderStatus !== "Confirmed"
                 return (
-                  <div key={`${o.isHolding ? "h" : "o"}${o.id}`} className="flex items-center gap-3 border-b border-border bg-card px-4 py-3 transition-colors hover:bg-muted">
+                  <div key={`${o.isHolding ? "h" : "o"}${o.id}`} className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-border bg-card px-4 py-3 transition-colors hover:bg-muted">
                     <div className={`flex size-8 shrink-0 items-center justify-center rounded-lg ${badge}`}><FileText size={14} /></div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
+                    <div className="min-w-0 flex-1 basis-[55%] sm:basis-0">
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
                         <span className="flex items-center gap-1 text-[11px] text-muted-foreground"><User size={10} />{o.customerName ?? "—"}</span>
                         {label && <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${badge}`}>{label}</span>}
                       </div>
-                      <div className="mt-0.5 flex items-center gap-2">
+                      <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5">
                         <span className="font-mono text-[10px] text-muted-foreground/60">{o.orderNumber ?? "—"}</span>
                         <span className="text-[10px] text-muted-foreground/30">·</span>
-                        <span className="flex items-center gap-1 text-[10px] text-muted-foreground"><Clock size={9} />{formatDateTime(o.orderDate, i18n.language)}</span>
+                        <span className="flex items-center gap-1 whitespace-nowrap text-[10px] text-muted-foreground"><Clock size={9} />{formatDateTime(o.orderDate, i18n.language)}</span>
                       </div>
                     </div>
-                    <div className="flex shrink-0 items-center gap-2">
-                      <span className="flex items-center gap-1 text-[12px] font-bold text-foreground">{(o.grandTotal ?? 0).toFixed(2)}<CurrencySymbol size={11} /></span>
+                    <div className="flex shrink-0 items-center gap-2 max-sm:w-full max-sm:justify-between max-sm:ps-11">
+                      <span className="flex items-center gap-1 whitespace-nowrap text-[12px] font-bold text-foreground">{(o.grandTotal ?? 0).toFixed(2)}<CurrencySymbol size={11} /></span>
                       <button type="button" title={t("pos2.printPrepTicket")} aria-label={t("pos2.printPrepTicket")} className={icon} onClick={() => printDocument(bonDoc(o, ticketOptions(settings, "pending", "print")))}><ChefHat size={13} /></button>
                       {!pending && !o.isHolding && (
                         <button type="button" title={t("pos1.showQr")} aria-label={t("pos1.showQr")} className={icon} onClick={() => setQrId(o.id)}><QrCode size={13} /></button>
@@ -154,7 +154,7 @@ export function InvoicesDialog({ open, onOpenChange }: { open: boolean; onOpenCh
           )}
         </div>
 
-        <div className="flex shrink-0 items-center justify-between border-t border-border bg-background px-4 py-2.5">
+        <div className="flex shrink-0 items-center justify-between border-t border-border bg-background px-4 py-2.5 max-sm:pe-16 max-sm:pb-4">
           <span className="text-[11px] text-muted-foreground">{filtered.length} {t("pos2.invoice")}</span>
           <button type="button" onClick={() => onOpenChange(false)} className="rounded-lg border border-border px-4 py-1.5 text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">{t("pos1.close")}</button>
         </div>
