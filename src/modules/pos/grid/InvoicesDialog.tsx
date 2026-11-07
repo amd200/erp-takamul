@@ -3,8 +3,7 @@ import { ChefHat, Clock, CreditCard, FileText, Play, Plus, Printer, QrCode, Sear
 import { CurrencySymbol } from "../components/CurrencySymbol"
 import { useQuery } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
-import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useIsMobile } from "@/lib/use-mobile"
 import { formatDateTime } from "@/lib/format"
 import { cn } from "@/lib/utils"
@@ -162,32 +161,30 @@ export function InvoicesDialog({ open, onOpenChange }: { open: boolean; onOpenCh
     )
   })
 
-  if (mobile) {
-    return (
-      <Drawer open={open} onOpenChange={onOpenChange}>
-        <DrawerContent aria-describedby={undefined}>
-          <DrawerHeader className="text-start">
-            <DrawerTitle className="flex items-center gap-2 text-base"><FileText size={16} />{t("pos1.invoices")}</DrawerTitle>
-            <DrawerDescription className="sr-only">{t("pos1.invoices")}</DrawerDescription>
-          </DrawerHeader>
-          <div className="flex shrink-0 flex-wrap items-center gap-1.5 px-4 pb-3">{tabsBar}</div>
-          <div className="flex shrink-0 items-center gap-2 px-4 pb-3">{searchInput}</div>
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-muted/20 px-4 py-3">
-            {filtered.length === 0 ? empty : <div className="flex flex-col gap-2.5">{rows}</div>}
-          </div>
-          <DrawerFooter className="flex-row items-center justify-between border-t border-border pb-[max(1rem,env(safe-area-inset-bottom))]">
-            <span className="text-[12px] text-muted-foreground">{filtered.length} {t("pos2.invoice")}</span>
-            <button type="button" onClick={() => onOpenChange(false)} className="rounded-lg border border-border px-5 py-2 text-[12px] text-foreground transition-colors hover:bg-muted">{t("pos1.close")}</button>
-          </DrawerFooter>
-        </DrawerContent>
-        <InvoiceQrDialog invoiceId={qrId} onClose={() => setQrId(null)} />
-      </Drawer>
-    )
-  }
+  // Phone: the shared Dialog turns into the bottom drawer. The -mx-4 cancels the drawer body's own side padding.
+  const mobileBody = (
+    <div className="-mx-4 flex min-h-0 flex-1 flex-col overflow-hidden">
+      <DialogHeader className="shrink-0 p-4 text-start">
+        <DialogTitle className="flex items-center gap-2 text-base"><FileText size={16} />{t("pos1.invoices")}</DialogTitle>
+        <DialogDescription className="sr-only">{t("pos1.invoices")}</DialogDescription>
+      </DialogHeader>
+      <div className="flex shrink-0 flex-wrap items-center gap-1.5 px-4 pb-3">{tabsBar}</div>
+      <div className="flex shrink-0 items-center gap-2 px-4 pb-3">{searchInput}</div>
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-muted/20 px-4 py-3">
+        {filtered.length === 0 ? empty : <div className="flex flex-col gap-2.5">{rows}</div>}
+      </div>
+      <div className="flex shrink-0 items-center justify-between gap-2 border-t border-border px-4 pt-3">
+        <span className="text-[12px] text-muted-foreground">{filtered.length} {t("pos2.invoice")}</span>
+        <button type="button" onClick={() => onOpenChange(false)} className="rounded-lg border border-border px-5 py-2 text-[12px] text-foreground transition-colors hover:bg-muted">{t("pos1.close")}</button>
+      </div>
+    </div>
+  )
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent showCloseButton={false} className="flex flex-col gap-0 overflow-hidden border-border bg-background p-0 text-foreground" style={{ maxWidth: 560, width: "95vw", maxHeight: "88vh" }}>
+      <DialogContent showCloseButton={false} className={mobile ? "text-foreground" : "flex flex-col gap-0 overflow-hidden border-border bg-background p-0 text-foreground"} style={mobile ? undefined : { maxWidth: 560, width: "95vw", maxHeight: "88vh" }}>
+        {mobile ? mobileBody : (
+          <>
         <div className={cn("flex shrink-0 items-center justify-between px-4 py-3 dark:bg-secondary", navy)}>
           <div className="flex items-center gap-2">
             <FileText size={15} />
@@ -216,6 +213,8 @@ export function InvoicesDialog({ open, onOpenChange }: { open: boolean; onOpenCh
           <span className="text-[11px] text-muted-foreground">{filtered.length} {t("pos2.invoice")}</span>
           <button type="button" onClick={() => onOpenChange(false)} className="rounded-lg border border-border px-4 py-1.5 text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">{t("pos1.close")}</button>
         </div>
+          </>
+        )}
       </DialogContent>
       <InvoiceQrDialog invoiceId={qrId} onClose={() => setQrId(null)} />
     </Dialog>

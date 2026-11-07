@@ -86,9 +86,9 @@ function DialogContent({
     return (
       <DrawerContent
         aria-describedby={undefined}
-        className={cn("px-4 pt-4 text-sm", className)}
+        className={cn("px-4 text-sm", className, "pt-0")}
       >
-        <div className="-mx-4 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className="-mx-4 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pt-4 overscroll-contain px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           {children}
         </div>
       </DrawerContent>
