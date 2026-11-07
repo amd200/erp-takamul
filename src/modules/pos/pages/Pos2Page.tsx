@@ -143,7 +143,7 @@ function Pos2Screen({ shift, optics }: { shift: Shift; optics: boolean }) {
 
   return (
     <div className="relative flex h-dvh min-h-0 overflow-hidden bg-background text-foreground sm:rounded-xl sm:border sm:border-border">
-      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+      <div className="flex min-w-0 flex-1 flex-col overflow-y-auto xl:overflow-hidden">
         <Pos2Header invoiceNumber={nextNumber.data ?? "---"} shiftId={shift.id} locked={locked}
           customerId={customerId} customerName={customerName} onCustomer={(id, name) => store().setCustomer(id, name)} onAddCustomer={() => setAddingCustomer(true)}
           balance={appSettings.customersTab?.showActualBalance ? (balance != null ? String(balance) : "") : null}
@@ -151,7 +151,7 @@ function Pos2Screen({ shift, optics }: { shift: Shift; optics: boolean }) {
           note={note} onNote={(n) => store().setNote(n)} onShift={() => setReport(shift)}
           optics={optics} onTools={() => setToolsOpen(true)} measurement={measurement?.name ?? null} />
 
-        <div className="flex min-h-0 flex-1 flex-col space-y-3 overflow-y-auto px-2 pt-0 pb-24 sm:px-3 sm:pt-0 sm:pb-24 xl:space-y-5 xl:overflow-hidden xl:px-4 xl:pt-0 xl:pb-0">
+        <div className="flex flex-col space-y-3 px-2 pt-0 pb-24 sm:px-3 sm:pt-0 sm:pb-24 xl:min-h-0 xl:flex-1 xl:space-y-5 xl:overflow-hidden xl:px-4 xl:pt-0 xl:pb-0">
           <SalesLines lines={lines} search={lookup.options} onQuery={lookup.onQuery} searching={lookup.searching} onPick={pick} onCode={scan} product={lookup.productOf} unitName={unitName} locked={locked}
             options={{ exempt, editPrice: appSettings.itemsTab?.allowPriceChangeOnSale, showCost: appSettings.itemsTab?.showCoastPrice, saleUnits: appSettings.itemsTab?.enablePieceAndCartonSystem }} />
 

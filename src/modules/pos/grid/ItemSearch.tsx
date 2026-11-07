@@ -64,7 +64,7 @@ export function ItemSearch({ options, onPick, onCode, onQuery, searching, classN
     <Popover open={open}>
       <PopoverAnchor asChild>
         <div className={cn("relative", className)}>
-          <Search className={cn("pointer-events-none absolute top-1/2 -translate-y-1/2 text-muted-foreground", posStyle ? "start-1.5 size-[9px]" : bare ? "start-2 size-3" : "start-2.5 size-4")} />
+          <Search className={cn("pointer-events-none absolute top-1/2 -translate-y-1/2 text-muted-foreground", posStyle ? "start-1.5 size-[9px] max-sm:start-3 max-sm:size-4" : bare ? "start-2 size-3" : "start-2.5 size-4")} />
           <input value={q} role="combobox" aria-expanded={open} aria-controls={listId} aria-autocomplete="list" aria-invalid={missed || undefined}
             aria-label={placeholder ?? t("pos.search")} placeholder={placeholder ?? t("pos.search")}
             onChange={(e) => change(e.target.value)}
@@ -75,7 +75,7 @@ export function ItemSearch({ options, onPick, onCode, onQuery, searching, classN
               else if (e.key === "ArrowUp" && open) { e.preventDefault(); setActive((i) => Math.max(i - 1, 0)) }
             }}
             className={posStyle
-              ? "h-6 w-full border-0 bg-transparent ps-4.5 pe-1.5 text-[13px] text-foreground outline-hidden placeholder:text-muted-foreground"
+              ? "h-6 max-sm:h-10 w-full border-0 bg-transparent ps-4.5 max-sm:ps-9 pe-1.5 text-[13px] max-sm:text-sm text-foreground outline-hidden placeholder:text-muted-foreground"
               : bare
               ? "h-8 w-full border-0 bg-transparent ps-6 pe-2 text-[11px] text-foreground outline-hidden placeholder:text-muted-foreground"
               : "h-10 w-full rounded-lg border border-input bg-background ps-8 pe-2 text-sm outline-none transition-colors placeholder:text-faint focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 aria-invalid:border-destructive"} />

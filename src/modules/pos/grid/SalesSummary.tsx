@@ -153,7 +153,7 @@ export function SalesSummary({ totals, undiscounted, discount, onDiscount, exemp
           </div>
         </div>
 
-        <div className="flex flex-col xl:hidden">
+        <div className="flex flex-col text-[13px] xl:hidden">
           <div className="grid grid-cols-2 gap-2 border-b border-border bg-muted/20 p-2">
             {tiles(false).map((x) => (
               <button key={x.label} type="button" onClick={x.onClick} disabled={x.disabled} className={cn(narrowTile, x.danger ? deleteTile : auxTile)}>
@@ -173,14 +173,14 @@ export function SalesSummary({ totals, undiscounted, discount, onDiscount, exemp
           <div className="flex flex-wrap items-center gap-2 px-3 py-2">
             <span className="shrink-0 text-gray-500 dark:text-muted-foreground">{t("pos2.discount")}:</span>
             {applied ? (
-              <button type="button" disabled={locked} onClick={clear} className="flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-3 py-1 text-[12px] font-semibold text-red-500">
+              <button type="button" disabled={locked} onClick={clear} className="flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-3 py-1.5 text-[13px] font-semibold text-red-500">
                 {discount.kind === "percent" ? `${discount.value}%` : money(discount.value)} ×
               </button>
             ) : (
               <>
-                <input inputMode="decimal" dir="ltr" placeholder={t("pos2.percentage")} value={pct} disabled={locked || !!flat} onChange={typed(setPct)} aria-label={t("pos2.percentage")} className="h-7 w-16 rounded border border-gray-300 px-1 text-center text-[11px] disabled:cursor-not-allowed disabled:opacity-50 dark:border-border dark:bg-background" />
-                <input inputMode="decimal" dir="ltr" placeholder={t("pos2.value")} value={flat} disabled={locked || !!pct} onChange={typed(setFlat)} aria-label={t("pos2.value")} className="h-7 w-16 rounded border border-gray-300 px-1 text-center text-[11px] disabled:cursor-not-allowed disabled:opacity-50 dark:border-border dark:bg-background" />
-                <Button type="button" size="sm" onClick={apply} disabled={locked || (!pct && !flat)} className="mb-0.5 h-7 shrink-0 self-end rounded bg-[#1db56c] text-[11px] text-white hover:bg-[#18a760]">{t("pos2.applyDiscount")}</Button>
+                <input inputMode="decimal" dir="ltr" placeholder={t("pos2.percentage")} value={pct} disabled={locked || !!flat} onChange={typed(setPct)} aria-label={t("pos2.percentage")} className="h-9 w-20 rounded border border-gray-300 px-1 text-center text-xs disabled:cursor-not-allowed disabled:opacity-50 dark:border-border dark:bg-background" />
+                <input inputMode="decimal" dir="ltr" placeholder={t("pos2.value")} value={flat} disabled={locked || !!pct} onChange={typed(setFlat)} aria-label={t("pos2.value")} className="h-9 w-20 rounded border border-gray-300 px-1 text-center text-xs disabled:cursor-not-allowed disabled:opacity-50 dark:border-border dark:bg-background" />
+                <Button type="button" size="sm" onClick={apply} disabled={locked || (!pct && !flat)} className="h-9 shrink-0 self-end rounded bg-[#1db56c] px-4 text-xs text-white hover:bg-[#18a760]">{t("pos2.applyDiscount")}</Button>
               </>
             )}
           </div>

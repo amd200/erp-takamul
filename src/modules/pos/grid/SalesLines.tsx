@@ -142,7 +142,7 @@ export function SalesLines({ lines, options: o, search, onPick, onCode, onQuery,
             <span className="text-xs font-extrabold text-[#17375f] dark:text-foreground">{t("pos2.chooseProduct")}</span>
             <span className="rounded-full bg-[#eef5fb] px-2.5 py-1 text-[10px] font-bold text-[#496683] dark:bg-muted">{lines.length} {t("pos2.items")}</span>
           </div>
-          <ItemSearch options={search} onPick={onPick} onCode={onCode} onQuery={onQuery} searching={searching} placeholder={t("pos2.searchPlaceholder")} posStyle />
+          <ItemSearch className="rounded-lg border border-[#dfe7f1] bg-background dark:border-border" options={search} onPick={onPick} onCode={onCode} onQuery={onQuery} searching={searching} placeholder={t("pos2.searchPlaceholder")} posStyle />
         </div>
 
         {lines.length === 0 ? (

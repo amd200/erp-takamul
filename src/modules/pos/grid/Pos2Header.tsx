@@ -17,7 +17,7 @@ import { CustomerPicker } from "../components/CustomerPicker"
 const toolButton = "size-6.75 rounded-[9px] border-[#dfe8f1] bg-white text-[#17375f] shadow-[0_3px_10px_rgba(18,60,99,0.07)] transition-colors duration-200 hover:bg-[#f3f8fc] dark:bg-background dark:text-foreground"
 const greenButton = "h-6.75 min-w-0 rounded-full border border-[#0fa95a]/70 bg-gradient-to-b from-[#27c978] to-[#16ae61] px-1.5 text-[11px] font-bold text-white shadow-[0_5px_12px_rgba(22,174,97,0.30),inset_0_1px_0_rgba(255,255,255,0.28)] transition-all duration-200 hover:from-[#20bd6e] hover:to-[#119c54] hover:text-white active:scale-[0.97] sm:px-2.25 sm:text-[12px] xl:px-3 xl:text-[13px]"
 const label = "text-[13px] font-bold text-[#17375f] dark:text-foreground"
-const field = "h-8.25 rounded-[3px] border-[#dfe8f1] bg-white text-[9px] md:text-[10.5px] text-[#17375f] shadow-[0_3px_10px_rgba(18,60,99,0.05)] dark:bg-background dark:text-foreground"
+const field = "h-8.25 max-sm:h-10 rounded-[3px] border-[#dfe8f1] bg-white text-[9px] max-sm:text-xs md:text-[10.5px] text-[#17375f] shadow-[0_3px_10px_rgba(18,60,99,0.05)] dark:bg-background dark:text-foreground"
 
 type Props = {
   invoiceNumber: string
@@ -123,7 +123,7 @@ export function Pos2Header(p: Props) {
               </div>
               <div className="col-span-2 flex min-w-0 items-center justify-center gap-1.5 px-1.5 sm:col-span-1 sm:gap-2.25 sm:px-3 xl:min-w-[165px] xl:px-3.75">
                 <CalendarDays className="size-[13.5px] shrink-0 text-[#17375f] dark:text-foreground" strokeWidth={1.9} />
-                <div className="flex min-w-0 flex-col items-center gap-0.75">
+                <div className="flex min-w-0 flex-col items-center gap-0.75 max-sm:flex-row max-sm:gap-2">
                   <span className="text-[12px] text-muted-foreground">{t("pos2.invoiceDate")}</span>
                   <span className="max-w-full truncate text-[11px] font-extrabold text-[#17375f] sm:text-[12px] dark:text-foreground">{t("pos2.today")}، {date}</span>
                 </div>
@@ -146,40 +146,40 @@ export function Pos2Header(p: Props) {
           </div>
         </div>
 
-        <div className={`grid grid-cols-1 items-end gap-2.25 px-2.25 pb-2.25 sm:grid-cols-2 sm:px-3.75 xl:gap-3.75 ${p.balance != null ? "xl:grid-cols-[1fr_5rem_1fr_1fr_1fr]" : "xl:grid-cols-4"} xl:px-4.5 xl:pb-3`}>
-          <div className="flex items-end gap-1.5">
+        <div className={`grid grid-cols-2 items-end gap-2.25 px-2.25 pb-2.25 sm:grid-cols-2 sm:px-3.75 xl:gap-3.75 ${p.balance != null ? "xl:grid-cols-[1fr_5rem_1fr_1fr_1fr]" : "xl:grid-cols-4"} xl:px-4.5 xl:pb-3`}>
+          <div className="col-span-2 flex items-end gap-1.5 sm:col-span-1">
 {p.optics ? (
               <Button type="button" size="icon-lg" variant="outline" disabled={p.locked} onClick={p.onTools} aria-label={t("pos.optics.tools")}
                 title={p.measurement ? `${t("pos.optics.selectedMeasurement")}: ${p.measurement}` : t("pos.optics.tools")}
-                className={cn("size-8.25 shrink-0 rounded-[9px] shadow-[0_5px_13px_rgba(8,43,102,0.12)] transition-colors", p.measurement ? "border-[#17a95c] bg-[#1db56c] text-white hover:bg-[#18a760] hover:text-white" : "")}>
+                className={cn("size-8.25 max-sm:size-10 shrink-0 rounded-[9px] shadow-[0_5px_13px_rgba(8,43,102,0.12)] transition-colors", p.measurement ? "border-[#17a95c] bg-[#1db56c] text-white hover:bg-[#18a760] hover:text-white" : "")}>
                 <Eye size={15} strokeWidth={2.2} />
               </Button>
             ) : (
             <Button type="button" size="icon-lg" variant="outline" disabled={p.locked} aria-label={t("customers.add")} onClick={p.onAddCustomer}
-              className="size-8.25 shrink-0 rounded-[9px]">
+              className="size-8.25 max-sm:size-10 shrink-0 rounded-[9px]">
               <Plus size={15} strokeWidth={2.2} />
             </Button>
             )}
             <div className="flex flex-1 flex-col gap-0.75">
               <span className={label}>{t("pos2.chooseCustomer")}</span>
-              <div className="[&_button]:h-8.25 [&_button]:rounded-[3px] [&_button]:border-[#dfe8f1] [&_button]:bg-white [&_button]:text-[9px] md:[&_button]:text-[10.5px] [&_svg]:size-3! [&_button]:text-[#17375f] [&_button]:shadow-[0_3px_10px_rgba(18,60,99,0.05)] dark:[&_button]:bg-background dark:[&_button]:text-foreground">
+              <div className="[&_button]:h-8.25 max-sm:[&_button]:h-10 [&_button]:rounded-[3px] [&_button]:border-[#dfe8f1] [&_button]:bg-white [&_button]:text-[9px] max-sm:[&_button]:text-xs md:[&_button]:text-[10.5px] [&_svg]:size-3! [&_button]:text-[#17375f] [&_button]:shadow-[0_3px_10px_rgba(18,60,99,0.05)] dark:[&_button]:bg-background dark:[&_button]:text-foreground">
                 <CustomerPicker tools={false} clearable={false} customerId={p.customerId} name={p.customerName} disabled={p.locked} onPick={p.onCustomer} />
               </div>
             </div>
           </div>
 
           {p.balance != null && (
-            <div className="flex w-20 shrink-0 flex-col sm:w-full xl:w-20 gap-0.75">
+            <div className={cn("flex shrink-0 flex-col gap-0.75 sm:w-full xl:w-20", p.employees ? "col-span-1" : "col-span-2", "sm:col-span-1")}>
               <span className={label}>{t("pos2.customerBalance")}</span>
               <div className={`${field} flex cursor-not-allowed items-center justify-center border font-extrabold tabular-nums`}>{p.balance}</div>
             </div>
           )}
 
           {p.employees && (
-            <div className="flex flex-col gap-0.75">
+            <div className={cn("flex flex-col gap-0.75", p.balance != null ? "col-span-1" : "col-span-2", "sm:col-span-1")}>
               <span className={label}>{t("pos2.serviceEmployee")}</span>
               <Select value={p.employeeId ? String(p.employeeId) : "none"} disabled={p.locked} onValueChange={(v) => p.onEmployee(v === "none" ? null : Number(v))}>
-                <SelectTrigger className={`${field} h-8.25! w-full text-[8.25px] focus:ring-0 [&_svg]:size-3!`} aria-label={t("pos2.serviceEmployee")}><SelectValue placeholder={t("pos2.choose")} /></SelectTrigger>
+                <SelectTrigger className={`${field} h-8.25! max-sm:h-10! w-full text-[8.25px] max-sm:text-xs focus:ring-0 [&_svg]:size-3!`} aria-label={t("pos2.serviceEmployee")}><SelectValue placeholder={t("pos2.choose")} /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">{t("pos2.choose")}</SelectItem>
                   {p.employees.map((e) => <SelectItem key={e.id} value={String(e.id)}>{e.firstName}</SelectItem>)}
@@ -188,10 +188,10 @@ export function Pos2Header(p: Props) {
             </div>
           )}
 
-          <div className="flex flex-col gap-0.75">
+          <div className="col-span-2 flex flex-col gap-0.75 sm:col-span-1">
             <span className={label}>{t("pos2.notes")}</span>
             <Textarea value={p.note} disabled={p.locked} onChange={(e) => p.onNote(e.target.value)} rows={1} placeholder={t("pos2.notePlaceholder")} aria-label={t("pos2.notes")}
-              className={`${field} min-h-8.25 resize-none px-3 py-2.25`} />
+              className={`${field} min-h-8.25 max-sm:min-h-10 resize-none px-3 py-2.25`} />
           </div>
         </div>
       </div>
