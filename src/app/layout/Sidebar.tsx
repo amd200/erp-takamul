@@ -83,7 +83,7 @@ export function AppSidebar() {
         <Link to="/" onClick={() => setOpenMobile(false)}><Logo className="h-10" /></Link>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup className="px-3 pt-0 pb-4">
+        <SidebarGroup className="px-3 pt-0 pb-4 group-data-[collapsible=icon]:px-2">
           <SidebarGroupContent>
             <nav aria-label={t("nav.label")}>
               <SidebarMenu>

@@ -250,7 +250,7 @@ function SidebarMenuButton({
   const button = (
     <Comp
       data-slot="sidebar-menu-button" data-sidebar="menu-button" data-size={size} data-active={isActive || undefined}
-      className={cn(sidebarMenuButtonVariants({ variant, size }), "group-data-[collapsible=icon]:size-9! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0!", className)}
+      className={cn(sidebarMenuButtonVariants({ variant, size }), "group-data-[collapsible=icon]:size-9! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0! group-data-[collapsible=icon]:[&>span]:hidden", className)}
       {...props}
     />
   )
