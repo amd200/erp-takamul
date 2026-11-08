@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { Bell, Check, Globe, KeyRound, LogOut, LayoutGrid, Menu, Monitor, Moon, Package, ShoppingCart, Sun } from "lucide-react"
+import { Bell, Check, Globe, KeyRound, LogOut, LayoutGrid, Monitor, Moon, Package, ShoppingCart, Sun } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -13,6 +13,7 @@ import { useAppSettings } from "@/modules/settings"
 import { useLogout } from "@/modules/auth/queries"
 import { BranchSwitcher } from "./BranchSwitcher"
 import { Button } from "@/components/ui/button"
+import { SidebarTrigger } from "@/components/ui/sidebar"
 import { useTheme, type ThemeChoice } from "@/shared/theme/ThemeProvider"
 
 const THEMES: { id: ThemeChoice; icon: typeof Sun }[] = [
@@ -25,7 +26,7 @@ const quickPos = "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text
 const quickItem = "bg-amber-50 text-amber-700 hover:bg-amber-100 hover:text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 dark:hover:bg-amber-900/50"
 
 /** The bar: the branch picker, three quick-action buttons and a row of round icon buttons. */
-export function Topbar({ onMenu }: { drawerOpen?: boolean; onMenu: () => void }) {
+export function Topbar() {
   const { t, i18n } = useTranslation()
   const { choice, resolved, setChoice } = useTheme()
   const { user } = useSession()
@@ -34,7 +35,7 @@ export function Topbar({ onMenu }: { drawerOpen?: boolean; onMenu: () => void })
   const logout = useLogout()
   return (
     <header className="sticky top-0 z-30 flex flex-wrap items-center gap-2 border-b bg-card px-4 py-3 md:px-6 print:hidden">
-      <Button variant="ghost" size="icon-lg" className="md:hidden" aria-label={t("nav.open")} onClick={onMenu}><Menu /></Button>
+      <SidebarTrigger />
       <BranchSwitcher />
       <div className="order-last flex w-full gap-2 lg:order-none lg:w-auto">
         <Button asChild variant="secondary" className={cn("rounded-full max-lg:flex-1", quickA4)}><Link to="/sales/invoices/create"><LayoutGrid />{t("topbar.quickA4")}</Link></Button>
