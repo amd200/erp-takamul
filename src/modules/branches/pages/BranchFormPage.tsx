@@ -128,20 +128,22 @@ export default function BranchFormPage() {
       <FormInput control={c} name="stateName" readOnly={ro} required label={t("branchForm.region")} placeholder={t("branchForm.enterRegion")} />
       <FormInput control={c} name="cityName" readOnly={ro} required label={t("branchForm.city")} disabled={!state || ro} placeholder={state ? t("branchForm.enterCity") : t("branchForm.selectRegionFirst")} />
       <FormInput control={c} name="district" readOnly={ro} label={t("branchForm.neighborhood")} placeholder={t("branchForm.neighborhood")} />
-      <FormInput control={c} name="street" readOnly={ro} label={t("branchForm.street")} placeholder={t("branchForm.streetPh")} />
-      <FormInput control={c} name="buildingNumber" readOnly={ro} label={`${t("branchForm.buildingNumber")} (ex:1234)`} placeholder="0000" dir="ltr" />
-      <FormInput control={c} name="subNumber" readOnly={ro} label={`${t("branchForm.subNumber")} (ex:1234)`} placeholder="0000" dir="ltr" />
-      <FormInput control={c} name="postalCode" readOnly={ro} label={`${t("branchForm.postalCode")} (ex:12345)`} placeholder="00000" dir="ltr" />
+      <div className="grid gap-4 sm:col-span-2 sm:grid-cols-2 lg:col-span-4 lg:flex lg:items-start">
+      <FormInput className="lg:min-w-0 lg:flex-1" control={c} name="street" readOnly={ro} label={t("branchForm.street")} placeholder={t("branchForm.streetPh")} />
+      <FormInput className="lg:min-w-0 lg:flex-1" control={c} name="buildingNumber" readOnly={ro} label={`${t("branchForm.buildingNumber")} (ex:1234)`} placeholder="0000" dir="ltr" />
+      <FormInput className="lg:min-w-0 lg:flex-1" control={c} name="subNumber" readOnly={ro} label={`${t("branchForm.subNumber")} (ex:1234)`} placeholder="0000" dir="ltr" />
+      <FormInput className="lg:min-w-0 lg:flex-1" control={c} name="postalCode" readOnly={ro} label={`${t("branchForm.postalCode")} (ex:12345)`} placeholder="00000" dir="ltr" />
       <Controller control={c} name="locationAddress" render={({ field }) => (
-        <Field>
+        <Field className="sm:col-span-2 lg:w-fit lg:shrink-0">
           <FieldLabel>{t("branchForm.shortAddress")}</FieldLabel>
-          <InputOTP maxLength={8} disabled={ro} value={field.value ?? ""} onChange={(v) => field.onChange(v.toUpperCase().replace(/[^A-Z0-9]/g, ""))} containerClassName="w-fit gap-1.5" dir="ltr">
-            <InputOTPGroup className="gap-1.5">
+          <InputOTP maxLength={8} disabled={ro} value={field.value ?? ""} onChange={(v) => field.onChange(v.toUpperCase().replace(/[^A-Z0-9]/g, ""))} containerClassName="w-fit gap-1.5 [direction:ltr]" dir="ltr">
+            <InputOTPGroup className="gap-1.5" dir="ltr">
               {Array.from({ length: 8 }, (_, i) => <InputOTPSlot key={i} index={i} className="size-8 rounded-md border font-mono" />)}
             </InputOTPGroup>
           </InputOTP>
         </Field>
       )} />
+      </div>
     </div>
   )
   const backLink = <Link to="/branches">{t("branchForm.back")}<BackIcon /></Link>
