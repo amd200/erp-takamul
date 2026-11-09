@@ -186,6 +186,7 @@
     "payments": "المدفوعات",
     "paymentMethod": "طريقة الدفع",
     "addPayment": "إضافة دفعة أخرى",
+    "clearPayments": "إلغاء الأجل",
     "summary": "ملخص الفاتورة",
     "cancel": "إلغاء والعودة",
     "save": "حفظ وإصدار الإشعار"

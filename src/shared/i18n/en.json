@@ -186,6 +186,7 @@
     "payments": "Payments",
     "paymentMethod": "Payment method",
     "addPayment": "Add another payment",
+    "clearPayments": "Cancel credit",
     "summary": "Invoice summary",
     "cancel": "Cancel and return",
     "save": "Save and issue the note"

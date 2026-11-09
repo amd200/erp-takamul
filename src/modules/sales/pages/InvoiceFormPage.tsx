@@ -76,6 +76,7 @@ export default function InvoiceFormPage() {
     })
   })
 
+  const clearPayments = () => pays.forEach((_, i) => form.setValue(`payments.${i}.amount`, 0, { shouldValidate: true, shouldDirty: true }))
   const addPayment = () => payments.append({ amount: remaining, method: "Cash", treasuryId: pickTreasury(treasuries, appSettings.sales?.defaultSalesVault)?.id ?? 0, notes: "" })
 
   // Laid out as in the current system: basic data, invoice details, payments beside the summary, then one box with the two buttons.
@@ -136,6 +137,7 @@ export default function InvoiceFormPage() {
               ))}
               {overpaid && <p className="text-sm text-destructive">{t("sales.overpaid")}</p>}
               <Button type="button" size="lg" variant="secondary" disabled={remaining <= 0} onClick={addPayment} className="w-max rounded-lg px-4 text-sm font-medium transition-colors"><Plus size={16} strokeWidth={2} />{t("sales.addPayment")}</Button>
+              {pays.length > 0 && <Button type="button" size="lg" variant="secondary" onClick={clearPayments} className="w-max rounded-lg px-4 text-sm font-medium transition-colors">{t("sales.clearPayments")}</Button>}
             </div>
 
             <aside className="summary-box">
