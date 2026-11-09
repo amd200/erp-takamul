@@ -1127,6 +1127,7 @@
     },
     "payments": "Pement",
     "addPayment": "Pement jog korun",
+    "deferred": "Ojol",
     "clearPayments": "Ojol batil",
     "creditHint": "Dharey bikray korte pement khali rakhun.",
     "overpaid": "Pement chalaner motke chhariye geche.",
