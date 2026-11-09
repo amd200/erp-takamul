@@ -186,7 +186,6 @@
     "payments": "Pement",
     "paymentMethod": "Pement poddhoti",
     "addPayment": "Anyo payment jog karun",
-    "clearPayments": "Ojol batil",
     "summary": "Chalan sarangsh",
     "cancel": "Batil ebong fire",
     "save": "Sanrakhon korun ebong note jari korun"
@@ -1128,6 +1127,7 @@
     },
     "payments": "Pement",
     "addPayment": "Pement jog korun",
+    "clearPayments": "Ojol batil",
     "creditHint": "Dharey bikray korte pement khali rakhun.",
     "overpaid": "Pement chalaner motke chhariye geche.",
     "customerBalance": "Grahoker bharsamyo: {{amount}} ({{side}})",

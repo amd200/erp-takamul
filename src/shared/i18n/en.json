@@ -186,7 +186,6 @@
     "payments": "Payments",
     "paymentMethod": "Payment method",
     "addPayment": "Add another payment",
-    "clearPayments": "Cancel credit",
     "summary": "Invoice summary",
     "cancel": "Cancel and return",
     "save": "Save and issue the note"
@@ -1128,6 +1127,7 @@
     },
     "payments": "Payments",
     "addPayment": "Add payment",
+    "clearPayments": "Cancel credit",
     "creditHint": "Leave payments empty to sell on credit.",
     "overpaid": "Payments exceed the invoice total.",
     "customerBalance": "Customer balance: {{amount}} ({{side}})",

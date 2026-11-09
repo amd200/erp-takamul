@@ -186,7 +186,6 @@
     "payments": "المدفوعات",
     "paymentMethod": "طريقة الدفع",
     "addPayment": "إضافة دفعة أخرى",
-    "clearPayments": "إلغاء الأجل",
     "summary": "ملخص الفاتورة",
     "cancel": "إلغاء والعودة",
     "save": "حفظ وإصدار الإشعار"
@@ -1128,6 +1127,7 @@
     },
     "payments": "المدفوعات",
     "addPayment": "إضافة دفعة",
+    "clearPayments": "إلغاء الأجل",
     "creditHint": "اترك المدفوعات فارغة لتسجيل الفاتورة آجلة.",
     "overpaid": "المدفوع أكبر من إجمالي الفاتورة.",
     "customerBalance": "رصيد العميل: {{amount}} ({{side}})",
