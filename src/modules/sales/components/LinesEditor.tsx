@@ -110,14 +110,14 @@ export function LinesEditor({ allowFreeText, purchase, simple, hideDiscount }: {
                   <div className="text-center"><Caption>{L.unit}</Caption><span className="text-sm text-muted-foreground">{l.unitName}</span></div>
                   <div><Caption>{L.price}</Caption>{editTotal
                     ? <NumberInput value={l.unitPrice} decimals={2} label={t("sales.unitPrice")} className="w-full" onChange={(n) => setValue(`lines.${i}.unitPrice`, n, { shouldValidate: true })} />
-                    : <FormInput control={control} name={`lines.${i}.unitPrice`} type="number" label={t("sales.unitPrice")} labelHidden />}</div>
+                    : <FormInput control={control} name={`lines.${i}.unitPrice`} type="number" inputClassName="text-center" label={t("sales.unitPrice")} labelHidden />}</div>
                   <div><Caption>{L.qty}</Caption>{editTotal ? (
                     <NumberInput value={l.quantity} positive label={L.qty} className="w-full" onChange={(n) => {
                       // The line keeps its total and the cost moves.
                       setValue(`lines.${i}.unitPrice`, costFromTotal(a.total, n, l.taxRate), { shouldValidate: true })
                       setValue(`lines.${i}.quantity`, n, { shouldValidate: true })
                     }} />
-                  ) : <FormInput control={control} name={`lines.${i}.quantity`} type="number" label={t("products.quantity")} labelHidden />}</div>
+                  ) : <FormInput control={control} name={`lines.${i}.quantity`} type="number" inputClassName="text-center" label={t("products.quantity")} labelHidden />}</div>
                   {has("discount") && (
                     <div>
                       <Caption>{L.discount}</Caption>
@@ -129,7 +129,7 @@ export function LinesEditor({ allowFreeText, purchase, simple, hideDiscount }: {
                         </div>
                       ) : (
                       <div className="flex gap-1">
-                        <FormInput control={control} name={`lines.${i}.discount`} type="number" label={t("sales.discount")} labelHidden />
+                        <FormInput control={control} name={`lines.${i}.discount`} type="number" inputClassName="text-center" label={t("sales.discount")} labelHidden />
                         <Controller control={control} name={`lines.${i}.discountKind`} render={({ field }) => (
                           <Select value={field.value} onValueChange={field.onChange}>
                             <SelectTrigger className="h-10 w-16 shrink-0" aria-label={t("sales.discountKind")}><SelectValue /></SelectTrigger>

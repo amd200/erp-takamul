@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils"
 import { useEffect, useRef, useState, type ComponentProps, type ReactNode } from "react"
 import { Controller, type Control, type FieldPath, type FieldValues } from "react-hook-form"
 import { useTranslation } from "react-i18next"
@@ -60,8 +61,8 @@ function NumberText({ value, onValue, empty, placeholder, ...rest }: { value: nu
 }
 
 export function FormInput<T extends FieldValues>({
-  control, name, label, description, required, className, type = "text", dir, placeholder, disabled, end, labelHidden, autoComplete, readOnly,
-}: Base<T> & { readOnly?: boolean; type?: "text" | "number" | "password" | "email" | "date"; dir?: "ltr" | "rtl"; placeholder?: string; disabled?: boolean; end?: ReactNode; autoComplete?: string }) {
+  control, name, label, description, required, className, type = "text", dir, placeholder, disabled, end, labelHidden, autoComplete, readOnly, inputClassName,
+}: Base<T> & { inputClassName?: string; readOnly?: boolean; type?: "text" | "number" | "password" | "email" | "date"; dir?: "ltr" | "rtl"; placeholder?: string; disabled?: boolean; end?: ReactNode; autoComplete?: string }) {
   const err = useErrorText()
   return (
     <Controller
@@ -76,7 +77,7 @@ export function FormInput<T extends FieldValues>({
                 name={field.name} ref={field.ref} onBlur={field.onBlur}
                 value={field.value} onValue={field.onChange} empty={emptyNumber(name)}
                 id={name} step="any" inputMode="decimal" dir={dir} autoComplete={autoComplete} placeholder={placeholder}
-                disabled={disabled} readOnly={readOnly} aria-invalid={fieldState.invalid} className="h-10"
+                disabled={disabled} readOnly={readOnly} aria-invalid={fieldState.invalid} className={cn("h-10", inputClassName)}
               />
             ) : (
             <Input
@@ -91,7 +92,7 @@ export function FormInput<T extends FieldValues>({
               aria-invalid={fieldState.invalid}
               value={field.value ?? ""}
               onChange={(e) => field.onChange(e.target.value)}
-              className="h-10"
+              className={cn("h-10", inputClassName)}
             />
             )}
             {end}
