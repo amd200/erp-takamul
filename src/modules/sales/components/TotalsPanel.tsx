@@ -13,7 +13,7 @@ export function TotalsPanel({ totals, paid, returned }: { totals: Totals; paid?:
   const Row = ({ label, value, strong, tone }: { label: string; value: number; strong?: boolean; tone?: string }) => (
     <div className={`flex justify-between ${strong ? "border-t pt-2.5 text-base font-semibold" : ""}`}>
       <dt className={strong ? undefined : "text-muted-foreground"}>{label}</dt>
-      <dd className={tone}>{formatMoney(value)}{strong && <span className="ms-1 text-xs font-normal text-muted-foreground"><CurrencySymbol /></span>}</dd>
+      <dd dir="ltr" className={tone}>{formatMoney(value)}{strong && <span className="ms-1 text-xs font-normal text-muted-foreground"><CurrencySymbol /></span>}</dd>
     </div>
   )
   return (
