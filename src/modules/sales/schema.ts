@@ -19,7 +19,8 @@ export const lineSchema = z.object({
 }).refine((l) => l.discountKind !== "percent" || l.discount <= 100, { path: ["discount"], message: "validation.percentMax" })
 
 const paymentSchema = z.object({
-  amount: num().positive("validation.amountPositive"),
+  /** 0 is allowed (the "cancel credit" button zeroes payments); negatives are refused. */
+  amount: num().min(0, "validation.min0"),
   method: z.enum(PAYMENT_METHODS),
   treasuryId: num("validation.treasuryRequired").min(1, "validation.treasuryRequired"),
   notes: z.string(),
