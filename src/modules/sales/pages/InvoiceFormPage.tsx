@@ -84,7 +84,14 @@ export default function InvoiceFormPage() {
     setSaved(pays.map((p) => p.amount || 0))
     pays.forEach((_, i) => form.setValue(`payments.${i}.amount`, 0, { shouldValidate: true, shouldDirty: true }))
   }
-  const addPayment = () => payments.append({ amount: remaining, method: "Cash", treasuryId: pickTreasury(treasuries, appSettings.sales?.defaultSalesVault)?.id ?? 0, notes: "" })
+  // A new payment splits the invoice total equally over all payments (the last one takes the cents left); the user edits freely after.
+  const addPayment = () => {
+    const n = pays.length + 1
+    const cents = Math.round(totals.grandTotal * 100)
+    const share = Math.floor(cents / n)
+    pays.forEach((_, i) => form.setValue(`payments.${i}.amount`, share / 100, { shouldValidate: true, shouldDirty: true }))
+    payments.append({ amount: (cents - share * (n - 1)) / 100, method: "Cash", treasuryId: pickTreasury(treasuries, appSettings.sales?.defaultSalesVault)?.id ?? 0, notes: "" })
+  }
 
   // Laid out as in the current system: basic data, invoice details, payments beside the summary, then one box with the two buttons.
   return (
@@ -144,7 +151,7 @@ export default function InvoiceFormPage() {
               ))}
               {overpaid && <p className="text-sm text-destructive">{t("sales.overpaid")}</p>}
               <div className="flex flex-wrap items-center gap-3">
-                <Button type="button" size="lg" variant="secondary" disabled={remaining <= 0} onClick={addPayment} className="w-max rounded-lg px-4 text-sm font-medium transition-colors"><Plus size={16} strokeWidth={2} />{t("sales.addPayment")}</Button>
+                <Button type="button" size="lg" variant="secondary" onClick={addPayment} className="w-max rounded-lg px-4 text-sm font-medium transition-colors"><Plus size={16} strokeWidth={2} />{t("sales.addPayment")}</Button>
                 {pays.length > 0 && <Button type="button" size="lg" variant={saved ? "destructive" : "secondary"} onClick={toggleCredit} className="w-max rounded-lg px-4 text-sm font-medium transition-colors">{t(saved ? "sales.clearPayments" : "sales.deferred")}</Button>}
               </div>
             </div>
