@@ -33,6 +33,7 @@ export function TopBar({ onPick }: { onPick: (p: Product) => void }) {
           <div className="relative w-full">
             <Input value={search} placeholder={t("pos1.searchProducts")} aria-label={t("pos1.searchProducts")}
               onChange={(e) => { setSearch(e.target.value); setOpen(true) }}
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); const hit = found.find((p) => p.barcode === term) ?? (found.length === 1 ? found[0] : undefined); if (hit) { setOpen(false); setSearch(""); onPick(hit) } } }}
               onFocus={() => setOpen(true)} onBlur={() => setTimeout(() => setOpen(false), 200)}
               className="h-10 w-full bg-[#f6f6f6] ps-12 pe-5 focus:border-primary/40 dark:bg-input/30" />
             <span className="pointer-events-none absolute inset-y-0 start-3 flex items-center text-gray-400">

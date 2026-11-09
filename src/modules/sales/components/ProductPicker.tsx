@@ -37,9 +37,10 @@ export function ProductPicker({ onAdd, purchase, noCategoryDiscount }: { onAdd: 
   const sellable = (p: Product) => p.isActive !== false && p.productType !== "Branched" && (purchase ? p.productType !== "Prepared" : p.productType !== "RawMatrial")
   const lineOf = (p: Product): InvoiceLine => ({ ...base(p), name: p.productNameAr, unitName: unitName(p.baseUnitId ?? 0), unitPrice: priceOf(p) })
 
-  // Only a name drops the list down; digits are a barcode, looked up on Enter.
+  // Whatever is typed or scanned drops the list down (the server searches names and barcodes); Enter on an exact barcode adds it.
   const query = q.trim()
-  const byName = query !== "" && !/^\d+$/.test(query)
+  const byName = query !== ""
+  const isCode = /^\d+$/.test(query)
   const { data, isFetching } = useProductSearch(query, { enabled: byName })
   const matches = useMemo(() => (byName ? (data ?? []).filter(sellable) : []), [byName, data, purchase])
 
@@ -48,10 +49,10 @@ export function ProductPicker({ onAdd, purchase, noCategoryDiscount }: { onAdd: 
 
   const enter = async () => {
     if (!query) return
-    if (byName && matches[active]) return pick(matches[active])
+    if (!isCode && matches[active]) return pick(matches[active])
     // The server looks the code up; the exact barcode (or sale-unit barcode) is picked from what it returns.
     const hit = await findByBarcode(qc, query, sellable)
-    if (!hit) return setNotFound(true)
+    if (!hit) return matches[active] ? pick(matches[active]) : setNotFound(true)
     const { product: p, unit: u } = hit
     onAdd(u
       ? { ...base(p, u.unitId), name: p.productNameAr, unitName: unitName(u.unitId), unitPrice: purchase ? priceOf(p, u.conversionFactor) : u.sellingPrice ?? 0 }

@@ -8,8 +8,8 @@ import { cn } from "@/lib/utils"
 export type SearchOption = { id: number; name: string; code: string; price: number }
 
 /**
- * The search cell of the first table row. Typing a name lists matches; a code (digits only, what a
- * scanner types) is looked up on Enter, so scanning never opens the list.
+ * The search cell of the first table row. Whatever is typed or scanned lists matches (the server searches names and
+ * barcodes); Enter on an exact code adds that item, else picks the highlighted or only match.
  */
 export function ItemSearch({ options, onPick, onCode, onQuery, searching, className, placeholder, bare, posStyle }: {
   options: SearchOption[]
@@ -35,7 +35,8 @@ export function ItemSearch({ options, onPick, onCode, onQuery, searching, classN
   const [missed, setMissed] = useState(false)
 
   const query = q.trim().toLowerCase()
-  const open = !!query && !/^\d+$/.test(query)
+  const open = !!query
+  const isCode = /^\d+$/.test(query)
   const matches = useMemo(() => {
     if (!open) return []
     return (onQuery ? options : options.filter((o) => o.name.toLowerCase().includes(query) || o.code.toLowerCase().includes(query))).slice(0, 50)
@@ -45,15 +46,15 @@ export function ItemSearch({ options, onPick, onCode, onQuery, searching, classN
   const pick = (id: number) => { onPick(id); reset() }
   const change = (value: string) => {
     setQ(value); setActive(start); setMissed(false)
-    // Only names are searched on the server; a code waits for Enter.
-    const text = value.trim()
-    onQuery?.(text && !/^\d+$/.test(text) ? text : "")
+    onQuery?.(value.trim())
   }
 
   const enter = async () => {
     if (!query) return
-    if (open && matches[active]) return pick(matches[active].id)
+    // A typed name picks the highlighted row; digits are a code first (a scanner ends with Enter before the list is read).
+    if (!isCode && matches[active]) return pick(matches[active].id)
     if (await onCode(q.trim())) return reset()
+    if (isCode && matches[active]) return pick(matches[active].id)
     const exact = posStyle ? matches.find((o) => o.name.toLowerCase() === query) : undefined
     if (exact) return pick(exact.id)
     if (matches.length === 1) return pick(matches[0].id)

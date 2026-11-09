@@ -34,7 +34,8 @@ export function TopBar({ nameOf, onPick }: { nameOf: (p: Product) => string; onP
           <div className="relative w-full">
             <Search className="pointer-events-none absolute start-3 top-1/2 size-[18px] -translate-y-1/2 text-faint" />
             <Input value={search} aria-label={t("pos4.searchProducts")} placeholder={t("pos4.searchProducts")}
-              onChange={(e) => { setSearch(e.target.value); setOpen(true) }} onFocus={() => setOpen(true)} onBlur={() => setTimeout(() => setOpen(false), 200)}
+              onChange={(e) => { setSearch(e.target.value); setOpen(true) }}
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); const hit = found.find((p) => p.barcode === term) ?? (found.length === 1 ? found[0] : undefined); if (hit) { setOpen(false); setSearch(""); onPick(hit) } } }} onFocus={() => setOpen(true)} onBlur={() => setTimeout(() => setOpen(false), 200)}
               className="h-10 w-full rounded-sm bg-[#f6f6f6] ps-10 pe-5 text-sm font-normal focus:border-primary/40 dark:bg-input/30" />
           </div>
         </PopoverAnchor>
