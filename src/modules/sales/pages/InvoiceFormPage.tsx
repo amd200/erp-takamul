@@ -136,8 +136,10 @@ export default function InvoiceFormPage() {
                 </div>
               ))}
               {overpaid && <p className="text-sm text-destructive">{t("sales.overpaid")}</p>}
-              <Button type="button" size="lg" variant="secondary" disabled={remaining <= 0} onClick={addPayment} className="w-max rounded-lg px-4 text-sm font-medium transition-colors"><Plus size={16} strokeWidth={2} />{t("sales.addPayment")}</Button>
-              {pays.length > 0 && <Button type="button" size="lg" variant="secondary" onClick={clearPayments} className="w-max rounded-lg px-4 text-sm font-medium transition-colors">{t("sales.clearPayments")}</Button>}
+              <div className="flex flex-wrap items-center gap-3">
+                <Button type="button" size="lg" variant="secondary" disabled={remaining <= 0} onClick={addPayment} className="w-max rounded-lg px-4 text-sm font-medium transition-colors"><Plus size={16} strokeWidth={2} />{t("sales.addPayment")}</Button>
+                {pays.length > 0 && <Button type="button" size="lg" variant="secondary" onClick={clearPayments} className="w-max rounded-lg px-4 text-sm font-medium transition-colors">{t("sales.clearPayments")}</Button>}
+              </div>
             </div>
 
             <aside className="summary-box">
