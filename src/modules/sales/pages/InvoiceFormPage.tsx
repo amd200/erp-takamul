@@ -47,7 +47,6 @@ export default function InvoiceFormPage() {
   const [lines, gKind, gValue, pays, customerId] = useWatch({ control: form.control, name: ["lines", "globalDiscountKind", "globalDiscount", "payments", "customerId"] })
   const totals = invoiceTotals(lines, gKind, gValue)
   const paid = paidOf(pays.map((p) => ({ amount: p.amount || 0 })))
-  const remaining = Math.max(0, Math.round((totals.grandTotal - paid) * 100) / 100)
   const customer = customers.find((c) => c.id === customerId)
   useAutoPayment({ form, payments, pays, total: totals.grandTotal, treasuryId: pickTreasury(treasuries, appSettings.sales?.defaultSalesVault)?.id ?? 0, enabled: true })
   const overpaid = paid > totals.grandTotal + 0.005
