@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom"
-import { Eye, Pencil, Trash2 } from "lucide-react"
+import { Eye, FileDown, Pencil, Printer, Trash2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 
 /** Edit / view / delete icons at the end of a table row. Pass `editTo` for a page, `onEdit` for a dialog. */
-export function RowActions({ editTo, onEdit, viewTo, onDelete }: { editTo?: string; onEdit?: () => void; viewTo?: string; onDelete?: () => void }) {
+export function RowActions({ editTo, onEdit, viewTo, onPrint, onPdf, onDelete }: { editTo?: string; onEdit?: () => void; viewTo?: string; onPrint?: () => void; onPdf?: () => void; onDelete?: () => void }) {
   const { t } = useTranslation()
   return (
     <div className="flex justify-end gap-0.5">
@@ -27,6 +27,18 @@ export function RowActions({ editTo, onEdit, viewTo, onDelete }: { editTo?: stri
             <Button asChild variant="ghost" size="icon" aria-label={t("common.view")}><Link to={viewTo}><Eye /></Link></Button>
           </TooltipTrigger>
           <TooltipContent>{t("common.view")}</TooltipContent>
+        </Tooltip>
+      )}
+      {onPrint && (
+        <Tooltip>
+          <TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label={t("common.print")} onClick={onPrint}><Printer /></Button></TooltipTrigger>
+          <TooltipContent>{t("common.print")}</TooltipContent>
+        </Tooltip>
+      )}
+      {onPdf && (
+        <Tooltip>
+          <TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label="PDF" onClick={onPdf}><FileDown /></Button></TooltipTrigger>
+          <TooltipContent>PDF</TooltipContent>
         </Tooltip>
       )}
       {onDelete && (

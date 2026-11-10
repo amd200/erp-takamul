@@ -28,8 +28,7 @@ function body(p: PurchaseInput) {
 
 export const purchasesApi = {
   page: async (p: { page: number; pageSize: number; searchTerm?: string; sortBy?: string; sortDescending?: boolean }) => {
-    const res = await http<PagedResult<Purchase>>("/PurchaseOrder", { params: { Page: p.page, PageSize: p.pageSize, SearchTerm: p.searchTerm || undefined, SortBy: p.sortBy, SortDescending: p.sortBy ? p.sortDescending : undefined } })
-    return { items: res.items, total: res.totalCount }
+    return http<PagedResult<Purchase>>("/PurchaseOrder", { params: { Page: p.page, PageSize: p.pageSize, SearchTerm: p.searchTerm || undefined, SortBy: p.sortBy, SortDescending: p.sortBy ? p.sortDescending : undefined } })
   },
   get: (id: number) => http<Purchase>(`/PurchaseOrder/${id}`),
   create: (p: PurchaseInput, key?: string) => retryWhileInProgress(() => http<{ data?: Purchase; message?: string }>("/PurchaseOrder", { method: "POST", headers: idempotencyHeaders(key), data: body(p) })),

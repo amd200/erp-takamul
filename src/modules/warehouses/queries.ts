@@ -4,11 +4,7 @@ import i18n from "@/shared/i18n"
 import { errorToast, type ListSort } from "@/shared/api/errors"
 import { warehousesApi } from "./service"
 import type { WarehouseInput } from "./types"
-
-export const warehouseKeys = {
-  all: ["warehouses"] as const,
-  list: ["warehouses", "list"] as const,
-}
+import { warehouseKeys } from "./keys"
 
 export const useWarehouseList = (sort?: ListSort) =>
   useQuery({ queryKey: sort?.SortBy ? [...warehouseKeys.list, sort] : warehouseKeys.list, queryFn: () => warehousesApi.list(sort), placeholderData: keepPreviousData })

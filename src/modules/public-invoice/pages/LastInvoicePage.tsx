@@ -8,6 +8,7 @@ import { invoiceRollDoc } from "@/modules/sales/print/invoiceRollDoc"
 import { printInvoiceOf } from "@/modules/sales/print/useInvoiceOutput"
 import { enableInvoiceNotifications, isNotificationSupported, needsAddToHomeScreen, type NotifyResult } from "../pushClient"
 import { followedInvoiceId, isFinalized, publicInvoiceApi } from "../service"
+import { publicInvoiceKeys } from "../keys"
 
 const POLL_MS = 4000
 
@@ -35,7 +36,7 @@ export default function LastInvoicePage() {
   useEffect(() => { if (urlInvoiceId) lock(urlInvoiceId) }, [urlInvoiceId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const last = useQuery({
-    queryKey: ["public-last-invoice", branchId, lockedId],
+    queryKey: publicInvoiceKeys.last(branchId, lockedId),
     queryFn: () => publicInvoiceApi.last(branchId, lockedId || undefined),
     retry: false,
     placeholderData: keepPreviousData,

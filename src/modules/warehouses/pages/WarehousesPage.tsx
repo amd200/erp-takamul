@@ -17,6 +17,8 @@ import { RowActions } from "@/components/RowActions"
 import { formatNumber } from "@/lib/format"
 import { Can, useCan } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
+import { BranchSection } from "@/modules/branches/BranchSection"
+import { useFormBranch } from "@/modules/branches/useFormBranch"
 import type { Warehouse } from "../types"
 import { useDeleteWarehouse, useSaveWarehouse, useWarehouseList } from "../queries"
 import { SectionCard } from "@/components/SectionCard"
@@ -25,6 +27,7 @@ import { emptyWarehouse, warehouseFormValues, warehouseSchema, type WarehouseFor
 function WarehouseDialog({ open, onOpenChange, warehouse }: { open: boolean; onOpenChange: (o: boolean) => void; warehouse: Warehouse | null }) {
   const { t } = useTranslation()
   const save = useSaveWarehouse()
+  const formBranch = useFormBranch(open && !warehouse)
   const form = useForm<WarehouseForm>({ resolver: zodResolver(warehouseSchema), defaultValues: emptyWarehouse })
   useEffect(() => { if (open) form.reset(warehouse ? warehouseFormValues(warehouse) : emptyWarehouse) }, [open, warehouse, form])
   const submit = form.handleSubmit((data) => save.mutate({ id: warehouse?.id, data }, { onSuccess: () => onOpenChange(false) }))
@@ -35,6 +38,7 @@ function WarehouseDialog({ open, onOpenChange, warehouse }: { open: boolean; onO
         <DialogHeader><DialogTitle>{warehouse ? t("warehouses.edit") : t("warehouses.add")}</DialogTitle></DialogHeader>
         <form id="warehouse-form" onSubmit={submit} noValidate>
           <FieldGroup className="gap-4">
+            {formBranch.show && <BranchSection value={formBranch.branchId} onChange={formBranch.pick} />}
             <div className="grid gap-3 sm:grid-cols-2">
               <FormInput control={form.control} name="warehouseCode" required label={t("warehouses.code")} dir="ltr" disabled={!!warehouse} />
               <FormInput control={form.control} name="warehouseName" required label={t("warehouses.name")} />

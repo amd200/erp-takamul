@@ -9,7 +9,7 @@ import { FormInput, FormSelect, FormSwitch } from "@/components/form/FormFields"
 import { SectionCard } from "@/components/SectionCard"
 import { formatMoney } from "@/lib/format"
 import { usePrinterOptions } from "@/shared/printers/usePrinters"
-import { CurrencySymbol, useAppSettings } from "@/modules/settings"
+import { CurrencySymbol } from "@/modules/settings"
 import { useTaxes } from "@/modules/taxes/service"
 import { priceBreakdown } from "../../pricing"
 import { kindRules, type ProductForm } from "../../schema"
@@ -18,9 +18,8 @@ export function PriceSummary() {
   const { t } = useTranslation()
   const { control } = useFormContext<ProductForm>()
   const [price, taxId, calc, cost] = useWatch({ control, name: ["sellingPrice", "taxId", "taxCalculation", "costPrice"] })
-  const taxSetting = useAppSettings().taxSetting?.taxSetting
   const { data: taxes = [] } = useTaxes()
-  const rate = taxSetting === "Exempt" ? 0 : taxes.find((x) => x.id === taxId)?.amount ?? 0
+  const rate = taxes.find((x) => x.id === taxId)?.amount ?? 0
   const p = priceBreakdown(price || 0, rate, calc, cost || 0)
 
   return (

@@ -12,6 +12,7 @@ import { useDebounced } from "@/modules/products/lookup"
 import { quotesApi } from "@/modules/quotes/service"
 import { useAppSettings } from "@/modules/settings"
 import { useLoadQuotation } from "../useLoadQuotation"
+import { quoteKeys } from "@/modules/quotes/keys"
 
 /**
  * The current POS's "load quotation" window: as the number is typed, the quotation with exactly that number is found and
@@ -24,7 +25,7 @@ export function QuotationDialog({ open, onOpenChange }: { open: boolean; onOpenC
   const [number, setNumber] = useState("")
   const typed = useDebounced(number.trim())
   const { data: found = null, isFetching } = useQuery({
-    queryKey: ["quotations", "by-number", typed],
+    queryKey: quoteKeys.byNumber(typed),
     queryFn: async () => (await quotesApi.page({ page: 1, pageSize: 20, searchTerm: typed })).items.find((x) => x.quotationNumber === typed) ?? null,
     enabled: open && typed !== "",
   })

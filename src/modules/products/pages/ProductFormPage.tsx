@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react"
+import { useEffect, useRef } from "react"
 import { productFormOf, typeOf } from "../mappers"
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { FormProvider, useForm, useWatch } from "react-hook-form"
@@ -8,10 +8,11 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/PageHeader"
 import { SectionCard } from "@/components/SectionCard"
-import { useAppSettings } from "@/modules/settings"
+import { useFormBranch } from "@/modules/branches/useFormBranch"
 import { useTaxes } from "@/modules/taxes/service"
 import { useUnits } from "@/modules/units/queries"
 import { productsApi } from "../service"
+import { BranchSection } from "@/modules/branches/BranchSection"
 import { BasicInfoSection } from "../components/modern/BasicInfoSection"
 import { ComponentsSection as ModernComponents } from "../components/modern/ComponentsSection"
 import { ChildrenSection as ModernChildren } from "../components/modern/ChildrenSection"
@@ -20,8 +21,9 @@ import { StockUnitsSection } from "../components/modern/StockUnitsSection"
 import { ProductTypePicker as ModernTypePicker } from "../components/modern/ProductTypePicker"
 import { ImagePanel as SideImagePanel, OptionsPanel, PriceSummary } from "../components/modern/SidePanels"
 import { parseProductType, useProduct, useSaveProduct } from "../queries"
-import { buildProductSchema, emptyProduct, kindRules, type ProductForm } from "../schema"
+import { emptyProduct, kindRules, productSchema, type ProductForm } from "../schema"
 import type { ProductType } from "../types"
+import { productKeys } from "../keys"
 
 export default function ProductFormPage() {
   const { t } = useTranslation()
@@ -29,17 +31,13 @@ export default function ProductFormPage() {
   const { id } = useParams()
   const editId = id ? Number(id) : undefined
   const [search] = useSearchParams()
+  const formBranch = useFormBranch(!editId)
   const { data: existing, isLoading } = useProduct(editId, parseProductType(search.get("type")))
   const { data: taxes = [] } = useTaxes()
   const { data: units = [] } = useUnits()
-  const taxSetting = useAppSettings().taxSetting?.taxSetting
   const save = useSaveProduct()
 
-  const schema = useMemo(
-    () => buildProductSchema({ taxExempt: taxSetting === "Exempt", zeroRateTaxIds: taxes.filter((x) => x.amount === 0).map((x) => x.id) }),
-    [taxSetting, taxes],
-  )
-  const form = useForm<ProductForm>({ resolver: zodResolver(schema), defaultValues: emptyProduct() })
+  const form = useForm<ProductForm>({ resolver: zodResolver(productSchema), defaultValues: emptyProduct() })
   const [type, components, baseUnitId, taxId] = useWatch({ control: form.control, name: ["type", "components", "baseUnitId", "taxId"] })
   const rules = kindRules(type)
 
@@ -57,21 +55,43 @@ export default function ProductFormPage() {
   // The server prices the recipe: it knows each material's unit costs.
   const valid = components.filter((c) => c.productId && c.unitId && c.quantity > 0)
   const { data: serverCost } = useQuery({
-    queryKey: ["products", "prepared-cost", valid],
+    queryKey: productKeys.preparedCost(valid),
     queryFn: () => productsApi.preparedCost(valid),
     enabled: rules.components && valid.length > 0,
     placeholderData: keepPreviousData,
   })
   const computedCost = valid.length ? serverCost ?? 0 : 0
 
+  // The lists belong to the branch (picked here or moved by the header), so what was picked from the old branch's lists is cleared; names, prices and image stay.
+  const lastBranch = useRef(formBranch.branchId)
+  useEffect(() => {
+    if (lastBranch.current === formBranch.branchId) return
+    lastBranch.current = formBranch.branchId
+    const empty = emptyProduct(form.getValues("type"))
+    for (const k of ["categoryId", "baseUnitId", "taxId", "taxExemptionReasonId", "purchaseUnitId", "units", "components", "children"] as const) form.setValue(k, empty[k] as never)
+  }, [formBranch.branchId, form])
+
   const changeType = (next: ProductType) => {
     const keep = form.getValues()
     form.reset({ ...emptyProduct(next), nameAr: keep.nameAr, nameEn: keep.nameEn, categoryId: keep.categoryId, description: keep.description })
   }
 
-  const submit = form.handleSubmit((data) => {
-    save.mutate({ id: editId, data: { ...data, calories: data.calories ?? null }, opts: { exempt: taxSetting === "Exempt" } }, { onSuccess: () => nav("/products") })
-  })
+  // Tax rules: a tax is required, and a 0% tax needs an exemption reason.
+  const checkTax = (data: ProductForm) => {
+    if (!kindRules(data.type).sells) return true
+    if (!data.taxId) form.setError("taxId", { message: "validation.taxRequired" })
+    else if (taxes.find((x) => x.id === data.taxId)?.amount === 0 && !data.taxExemptionReasonId) form.setError("taxExemptionReasonId", { message: "validation.exemptionRequired" })
+    else return true
+    return false
+  }
+
+  const submit = form.handleSubmit(
+    (data) => {
+      if (!checkTax(data)) return
+      save.mutate({ id: editId, data: { ...data, calories: data.calories ?? null } }, { onSuccess: () => nav("/products") })
+    },
+    () => { checkTax(form.getValues()) },
+  )
 
   if (editId && isLoading) {
     return <div className="flex flex-col gap-4">{[1, 2, 3].map((i) => <div key={i} className="h-40 animate-pulse rounded-xl bg-muted" />)}</div>
@@ -91,7 +111,7 @@ export default function ProductFormPage() {
 
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
             <div className="flex min-w-0 flex-col gap-5">
-              <BasicInfoSection />
+              <BasicInfoSection branchField={formBranch.show ? <BranchSection className="sm:col-span-2" value={formBranch.branchId} onChange={formBranch.pick} hint={t("products.branchHint")} /> : undefined} />
               {rules.components && <ModernComponents computedCost={computedCost} />}
               {rules.children && <ModernChildren selfId={editId} />}
               <PricingSection computedCost={computedCost} />

@@ -4,8 +4,9 @@ import { useIsMutating, useQueryClient } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { activeBranchId, canManageAllBranches, useAuthStore, useBranchChoice } from "@/shared/auth/authStore"
+import { canManageAllBranches, headerBranchId, useAuthStore, useBranchChoice } from "@/shared/auth/authStore"
 import { useBranches } from "@/modules/lookups/service"
+import { settingsKeys } from "@/modules/settings/keys"
 
 /**
  * The branch picker of the top bar, for SuperAdmin / multi-branch users. The choice goes out as X-Branch-Id on every
@@ -22,13 +23,13 @@ export function BranchSwitcher() {
   const saving = useIsMutating({ mutationKey: ["settings"] }) > 0
   if (!canManage) return null
 
-  const current = activeBranchId()
+  const current = headerBranchId()
   const change = async (value: string) => {
     const next = value === "all" ? null : Number(value)
     if (next === current || changing || saving) return
     setChanging(true)
     try {
-      const data = { predicate: (q: { queryKey: readonly unknown[] }) => q.queryKey[0] !== "settings" }
+      const data = { predicate: (q: { queryKey: readonly unknown[] }) => q.queryKey[0] !== settingsKeys.all[0] }
       await qc.cancelQueries(data)
       useBranchChoice.getState().select(session?.userId ?? null, next)
       await qc.resetQueries(data)

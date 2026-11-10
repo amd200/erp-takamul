@@ -13,6 +13,7 @@ import { netSales, type NetSalesRow } from "../api"
 import { dayText, excelReport, money, pdfReport, printReport, type ReportOutput } from "../output"
 import { ReportShell, SummaryCards, type SummaryCard } from "../ReportShell"
 import { ReportTable } from "../ReportTable"
+import { reportKeys } from "../../keys"
 
 type DocType = "all" | "Sales" | "SalesReturn"
 const day = (d: Date) => d.toLocaleDateString("en-CA")
@@ -29,7 +30,7 @@ export default function NetSalesReport() {
   const [error, setError] = useState("")
   const [busy, setBusy] = useState(false)
   const query = (Page: number, PageSize: number) => netSales({ BranchId: currentBranchId(), From: params!.from, To: params!.to, Type: params!.type === "all" ? undefined : params!.type, Page, PageSize, SortBy: sort.key, SortDescending: sort.desc })
-  const { data, isFetching, isError } = useQuery({ queryKey: ["old-reports", "net-sales", params, sort, page, size], queryFn: () => query(page + 1, size), enabled: !!params, placeholderData: (p) => p })
+  const { data, isFetching, isError } = useQuery({ queryKey: reportKeys.netSales(params, sort, page, size), queryFn: () => query(page + 1, size), enabled: !!params, placeholderData: (p) => p })
   const rows = params ? data?.items ?? [] : []
   const sar = t("oldReports.sar")
   const typeLabel = (v?: string) => (v === "Sales" ? t("oldReports.sales_invoice") : v === "SalesReturn" ? t("oldReports.sales_return") : t("oldReports.all_documents"))

@@ -17,22 +17,25 @@ import { SectionCard } from "@/components/SectionCard"
 import { canManageAllBranches, useAuthStore } from "@/shared/auth/authStore"
 import { Can, useCan } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
+import { BranchSection } from "@/modules/branches/BranchSection"
+import { useFormBranch } from "@/modules/branches/useFormBranch"
 import { useBranches } from "@/modules/lookups/service"
 import { useDeleteEmployee, useEmployeeList, useSaveEmployee } from "../queries"
 import { emptyEmployee, employeeSchema, type EmployeeForm } from "../schema"
 import type { Employee } from "../types"
 
-/** Name and mobile; a user who may work across branches also picks the employee's branch. */
+/** Name and mobile; a user who may work across branches also picks the employee's branch (a new employee in a box at the top, a saved one in a field below). */
 function EmployeeDialog({ open, onOpenChange, employee }: { open: boolean; onOpenChange: (o: boolean) => void; employee: Employee | null }) {
   const { t } = useTranslation()
   const canPickBranch = useAuthStore((s) => canManageAllBranches(s.session))
   const { data: branches = [] } = useBranches()
   const save = useSaveEmployee()
+  const formBranch = useFormBranch(open && !employee)
   const form = useForm<EmployeeForm>({ resolver: zodResolver(employeeSchema), defaultValues: emptyEmployee })
   useEffect(() => {
     if (open) form.reset(employee ? { firstName: employee.firstName ?? "", mobile: employee.mobile ?? "", branchId: employee.branchId ?? undefined } : emptyEmployee)
   }, [open, employee, form])
-  const submit = form.handleSubmit((data) => save.mutate({ id: employee?.id, data: { ...data, branchId: canPickBranch ? data.branchId : undefined } }, { onSuccess: () => onOpenChange(false) }))
+  const submit = form.handleSubmit((data) => save.mutate({ id: employee?.id, data: { ...data, branchId: canPickBranch ? (employee ? data.branchId : formBranch.branchId ?? undefined) : undefined } }, { onSuccess: () => onOpenChange(false) }))
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -40,9 +43,10 @@ function EmployeeDialog({ open, onOpenChange, employee }: { open: boolean; onOpe
         <DialogHeader><DialogTitle>{employee ? t("employees.edit") : t("employees.add")}</DialogTitle></DialogHeader>
         <form id="employee-form" onSubmit={submit} noValidate>
           <FieldGroup className="gap-4">
+            {formBranch.show && <BranchSection value={formBranch.branchId} onChange={formBranch.pick} />}
             <FormInput control={form.control} name="firstName" required label={t("employees.name")} />
             <FormInput control={form.control} name="mobile" label={t("users.mobile")} dir="ltr" placeholder="05XXXXXXXX" />
-            {canPickBranch && <FormSelect control={form.control} name="branchId" numeric label={t("users.branch")} options={branches.map((b) => ({ value: String(b.id), label: b.name ?? "" }))} />}
+            {canPickBranch && !!employee && <FormSelect control={form.control} name="branchId" numeric label={t("users.branch")} options={branches.map((b) => ({ value: String(b.id), label: b.name ?? "" }))} />}
           </FieldGroup>
         </form>
         <DialogFooter>

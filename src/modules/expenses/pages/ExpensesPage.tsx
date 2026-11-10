@@ -19,12 +19,15 @@ import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
 import { Can, useCan } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
 import { useTreasuryList } from "@/modules/treasuries/queries"
+import { BranchSection } from "@/modules/branches/BranchSection"
+import { useFormBranch } from "@/modules/branches/useFormBranch"
 import { emptyExpense, expenseSchema, type ExpenseForm } from "../schema"
 import { useDeleteExpense, useExpenseItems, useExpenses, useSaveExpense } from "../queries"
 import type { Expense } from "../types"
 
 function ExpenseDialog({ open, onOpenChange, expense }: { open: boolean; onOpenChange: (o: boolean) => void; expense: Expense | null }) {
   const { t } = useTranslation()
+  const formBranch = useFormBranch(open && !expense)
   const { data: treasuries = [] } = useTreasuryList()
   const { data: items = [] } = useExpenseItems()
   const save = useSaveExpense()
@@ -40,6 +43,13 @@ function ExpenseDialog({ open, onOpenChange, expense }: { open: boolean; onOpenC
       : emptyExpense())
   }, [open, expense, form])
 
+  // The treasuries and items belong to the branch, so the ones picked from the old branch are cleared.
+  const changeBranch = async (next: number) => {
+    await formBranch.pick(next)
+    form.setValue("treasuryId", 0)
+    form.setValue("itemId", null)
+  }
+
   // Only a new expense is checked against the balance: an edited one is already counted in it.
   const treasury = treasuries.find((x) => x.id === treasuryId)
   const over = !expense && treasury?.currentBalance != null && (amount || 0) > treasury.currentBalance
@@ -54,6 +64,7 @@ function ExpenseDialog({ open, onOpenChange, expense }: { open: boolean; onOpenC
         <DialogHeader><DialogTitle>{expense ? t("expenses.edit") : t("expenses.add")}</DialogTitle></DialogHeader>
         <form id="expense-form" onSubmit={submit} noValidate>
           <FieldGroup className="gap-4">
+            {formBranch.show && <BranchSection value={formBranch.branchId} onChange={changeBranch} />}
             <FormInput control={form.control} name="name" label={t("expenses.name")} placeholder={t("expenses.namePlaceholder")} required />
             <div className="grid gap-3 sm:grid-cols-2">
               <FormInput control={form.control} name="amount" type="number" required label={t("expenses.amount")} />

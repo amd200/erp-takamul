@@ -1,8 +1,8 @@
 import { PageBox } from "@/components/PageBox"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Link, useNavigate, useParams } from "react-router-dom"
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import { ArrowLeft, Trash2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
@@ -12,11 +12,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FormTextarea } from "@/components/form/FormFields"
 import { formatDateTime } from "@/lib/format"
 import { cn } from "@/lib/utils"
-import { ProductSearchInput } from "@/modules/products/components/ProductSearchInput"
-import type { Product } from "@/modules/products/types"
-import { useUnits } from "@/modules/units/queries"
+import { BranchSection } from "@/modules/branches/BranchSection"
+import { useFormBranch } from "@/modules/branches/useFormBranch"
 import { adjustmentSchema, type AdjustmentForm } from "../schema"
-import { useAdjustments, useCreateAdjustment } from "../queries"
+import { useAdjustments, useCreateAdjustment, useUpdateAdjustment } from "../queries"
+import { StockSearchInput } from "../StockSearchInput"
+import type { StockRowDto } from "../types"
 
 const cols = "md:grid-cols-8"
 const box = "rounded-sm border border-border p-6"
@@ -31,43 +32,65 @@ export default function AdjustmentFormPage() {
   const nav = useNavigate()
   const { id } = useParams()
   const viewId = id ? Number(id) : undefined
-  const isView = !!viewId
+  const isEdit = useLocation().pathname.includes("/edit/")
+  const isView = !!viewId && !isEdit
+  const formBranch = useFormBranch(!viewId)
   const create = useCreateAdjustment()
+  const update = useUpdateAdjustment()
   const { data: saved = [] } = useAdjustments()
-  const adjustment = isView ? saved.find((a) => a.id === viewId) : undefined
-  const { data: units = [] } = useUnits()
+  const adjustment = viewId ? saved.find((a) => a.id === viewId) : undefined
   const form = useForm<AdjustmentForm>({ resolver: zodResolver(adjustmentSchema), defaultValues: { notes: "", lines: [] } })
   const lines = useFieldArray({ control: form.control, name: "lines" })
   const values = useWatch({ control: form.control, name: "lines" })
-  // The items picked so far; they come from the server search, so only these are ever loaded.
-  const [picked, setPicked] = useState<Map<number, Product>>(new Map())
+  // The stock rows picked so far; they come from the server search, so only these are ever loaded.
+  const [picked, setPicked] = useState<Map<number, StockRowDto>>(new Map())
 
-  // Only items that keep a stock balance can be adjusted, and each once.
-  const available = (p: Product) => p.balance != null && !values.some((l) => l.productId === p.id)
-  const add = (p: Product) => {
-    setPicked((all) => new Map(all).set(p.id, p))
-    lines.append({ productId: p.id, operation: "Add", quantity: 1 })
+  // Editing starts from the saved adjustment: each saved line is the stock row it changed (the line's id), with the quantity it started from.
+  useEffect(() => {
+    if (!isEdit || !adjustment) return
+    const items = adjustment.items ?? []
+    form.reset({ notes: adjustment.notes ?? "", lines: items.map((l) => ({ stockInventoryId: l.id ?? 0, unitId: l.unitId ?? null, operation: l.operationType ?? "Add", quantity: l.quantityChanged ?? 0 })) })
+    setPicked(new Map(items.map((l) => [l.id ?? 0, {
+      id: l.id ?? 0, productId: l.productId ?? 0, productName: l.productName ?? "", barcode: l.barcode, warehouseId: 0, quantityAvailable: l.quantityBefore ?? 0,
+      productUnits: l.unitId ? [{ unitId: l.unitId, unitName: l.unitName, isBaseUnit: true }] : [],
+    }])))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEdit, adjustment?.id])
+
+  // The items belong to the branch, so the ones picked from the old branch are cleared.
+  const changeBranch = async (next: number) => {
+    await formBranch.pick(next)
+    lines.replace([])
+    setPicked(new Map())
+  }
+
+  // Each item in a warehouse once.
+  const available = (r: StockRowDto) => !values.some((l) => l.stockInventoryId === r.id)
+  const add = (r: StockRowDto) => {
+    setPicked((all) => new Map(all).set(r.id, r))
+    lines.append({ stockInventoryId: r.id, unitId: r.productUnits?.find((u) => u.isBaseUnit)?.unitId ?? null, operation: "Add", quantity: 1 })
   }
   const linesError = form.formState.errors.lines?.message ?? form.formState.errors.lines?.root?.message
-  const unitOf = (p?: Product) => units.find((u) => u.id === p?.baseUnitId)?.name ?? ""
-  const submit = form.handleSubmit((data) => create.mutate(data, { onSuccess: () => nav("/products/quantity-adjustments") }))
+  const done = { onSuccess: () => nav("/products/quantity-adjustments") }
+  const submit = form.handleSubmit((data) => isEdit && viewId ? update.mutate({ id: viewId, input: data }, done) : create.mutate(data, done))
 
   // One row per line, the same for a new adjustment and a saved one.
   const rows = isView
     ? (adjustment?.items ?? []).map((l) => ({ key: l.productId ?? 0, name: l.productName ?? "", barcode: l.barcode ?? "", unit: l.unitName ?? "", before: l.quantityBefore ?? 0, operation: l.operationType ?? "Add", quantity: l.quantityChanged ?? 0 }))
     : lines.fields.map((f, i) => {
-        const product = picked.get(values[i]?.productId)
-        return { key: f.id, name: product?.productNameAr ?? "", barcode: product?.barcode ?? "", unit: unitOf(product), before: product?.balance ?? 0, operation: values[i]?.operation ?? "Add", quantity: values[i]?.quantity || 0 }
+        const row = picked.get(values[i]?.stockInventoryId)
+        return { key: f.id, name: row ? `${row.productName}${row.warehouseName ? ` - ${row.warehouseName}` : ""}` : "", barcode: row?.barcode ?? "", unit: row?.productUnits?.find((u) => u.isBaseUnit)?.unitName ?? "", before: row?.quantityAvailable ?? 0, operation: values[i]?.operation ?? "Add", quantity: values[i]?.quantity || 0 }
       })
 
   return (
-    <PageBox title={t("adjForm.add")}
+    <PageBox title={t(isEdit ? "adjForm.edit" : "adjForm.add")}
       action={<Button asChild variant="outline"><Link to="/products/quantity-adjustments">{t("adjForm.back")}<ArrowLeft size={16} /></Link></Button>}>
 
       <form onSubmit={submit} noValidate className="space-y-6">
         <div className={box}>
           <h2 className="mb-6 text-lg font-bold text-foreground">{t("adjForm.basic")}</h2>
           <div className="space-y-6">
+            {formBranch.show && <BranchSection value={formBranch.branchId} onChange={changeBranch} />}
             <Field>
               <FieldLabel>{t("adjForm.date")}</FieldLabel>
               <Input readOnly className="cursor-not-allowed text-center" value={adjustment ? formatDateTime(adjustment.operationDate ?? "", i18n.language) : new Date().toLocaleString("en-GB").replace(",", "")} />
@@ -83,7 +106,7 @@ export default function AdjustmentFormPage() {
           {!isView && (
             <div className="mb-6">
               <FieldLabel className="mb-2 text-sm font-semibold">{t("adjForm.chooseProduct")}</FieldLabel>
-              <ProductSearchInput accept={available} onPick={add} placeholder={t("adjForm.chooseProduct")} />
+              <StockSearchInput accept={available} onPick={add} placeholder={t("adjForm.chooseProduct")} />
             </div>
           )}
 
@@ -143,7 +166,7 @@ export default function AdjustmentFormPage() {
           <Button type="button" variant="destructive" size="xl" onClick={() => nav("/products/quantity-adjustments")}>{t("adjForm.cancelBack")}</Button>
           {isView
             ? null
-            : <Button type="submit" size="xl" disabled={create.isPending}>{t("adjForm.add")}</Button>}
+            : <Button type="submit" size="xl" disabled={create.isPending || update.isPending}>{t(isEdit ? "adjForm.edit" : "adjForm.add")}</Button>}
         </div>
       </form>
     </PageBox>

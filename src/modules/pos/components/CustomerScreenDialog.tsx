@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useAuthStore } from "@/shared/auth/authStore"
 import { devicesApi } from "@/modules/pos-devices/service"
+import { deviceKeys } from "@/modules/pos-devices/keys"
 
 /**
  * The link to the customer's own ordering screen (/pos4) for this cashier's device, as in the current POS: the device
@@ -25,7 +26,7 @@ export function CustomerScreenDialog({ open, onOpenChange }: { open: boolean; on
       return String(c.DeviceId ?? c.deviceId ?? "")
     } catch { return "" }
   }, [token])
-  const devices = useQuery({ queryKey: ["pos-devices", "list"], queryFn: () => devicesApi.list(), enabled: open })
+  const devices = useQuery({ queryKey: deviceKeys.list(), queryFn: () => devicesApi.list(), enabled: open })
   const device = deviceId ? (devices.data ?? []).find((d) => String(d.id) === deviceId) : undefined
   const name = device?.deviceName ?? deviceId
   const link = `${window.location.origin}/pos4?${branchId ? `branchId=${branchId}&` : ""}posDeviceName=${encodeURIComponent(name)}`

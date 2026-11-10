@@ -17,8 +17,10 @@ import type { SalesOrderDto } from "@/modules/sales/types"
 import { useInvoiceOutput } from "@/modules/sales/print/useInvoiceOutput"
 import { useAppSettings } from "@/modules/settings"
 import { dineInLineOf, newLineKey } from "../cart"
-import { posKeys, useDeleteHeld } from "../queries"
+import { useDeleteHeld } from "../queries"
 import { usePosStore } from "../store"
+import { posKeys } from "../keys"
+import { salesKeys } from "@/modules/sales/keys"
 
 export type Order = SalesOrderDto & { isHolding?: boolean | null; orderType?: string | null; orderDeviceNumber?: number | string | null; employeeId?: number | null; tableId?: number | null }
 type Tab = "completed" | "pending" | "tables"
@@ -78,7 +80,7 @@ export function OrdersDialog({ open, onOpenChange, onlySuspended = false, onDisc
   const showTables = useAppSettings().salesScreenTab?.isTables === true
   const tables = !onlySuspended && tab === "tables"
   const { data = [] } = useQuery({
-    queryKey: held ? posKeys.held : tables ? ["sales", "pos-tables"] : ["sales", "pos-latest"],
+    queryKey: held ? posKeys.held : tables ? salesKeys.posTables : salesKeys.posLatest,
     queryFn: () => fetchOrders(held, tables ? 100 : undefined),
     enabled: open,
     refetchInterval: held ? 5000 : undefined,

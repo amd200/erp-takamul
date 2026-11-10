@@ -3,7 +3,8 @@ import { useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
 import { Input } from "@/components/ui/input"
-import { findByBarcode, rememberProduct, useProductSearch } from "../lookup"
+import { rememberProduct, useProductSearch } from "../lookup"
+import { useFindByBarcode } from "../queries"
 import type { Product, ProductType } from "../types"
 
 /**
@@ -19,6 +20,7 @@ export function ProductSearchInput({ onPick, accept, type, placeholder }: {
 }) {
   const { t } = useTranslation()
   const qc = useQueryClient()
+  const { mutateAsync: findByBarcode } = useFindByBarcode()
   const [term, setTerm] = useState("")
   const [open, setOpen] = useState(false)
   const box = useRef<HTMLDivElement>(null)
@@ -29,7 +31,7 @@ export function ProductSearchInput({ onPick, accept, type, placeholder }: {
   const onEnter = async () => {
     const code = term.trim()
     if (!code) return
-    const found = await findByBarcode(qc, code, accept)
+    const found = await findByBarcode({ code, accept })
     if (found) pick(found.product)
     else if (!items.length) toast.error(t("sales.noItemFound"))
   }

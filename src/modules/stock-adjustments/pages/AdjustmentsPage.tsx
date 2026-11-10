@@ -1,21 +1,27 @@
 import { PageBox } from "@/components/PageBox"
+import { useState } from "react"
 import { Link } from "react-router-dom"
 import { SlidersHorizontal } from "lucide-react"
 import { useTranslation } from "react-i18next"
+import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { RowActions } from "@/components/RowActions"
 import { Button } from "@/components/ui/button"
 import { DataTable, type Column } from "@/components/DataTable"
 import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
 import { formatDateTime } from "@/lib/format"
-import { Can } from "@/shared/permissions/usePermission"
+import { Can, useCan } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
-import { useAdjustments } from "../queries"
+import { useAdjustmentOutput, useAdjustments, useDeleteAdjustment } from "../queries"
 import type { AdjustmentDto } from "../types"
 
 /** Quantity adjustments, laid out as in the current system: a titled box with an add button, and a plain table. */
 export default function AdjustmentsPage() {
   const { t, i18n } = useTranslation()
+  const can = useCan()
+  const del = useDeleteAdjustment()
+  const output = useAdjustmentOutput()
+  const [toDelete, setToDelete] = useState<AdjustmentDto | null>(null)
   const { sort, sortBy, sortDescending } = useTableSort()
   const { data, isLoading } = useAdjustments({ SortBy: sortBy, SortDescending: sortDescending })
 
@@ -25,7 +31,8 @@ export default function AdjustmentsPage() {
     { id: "by", sortKey: "performedBy", header: t("adjForm.enteredBy"), cell: (a) => a.performedBy },
     { id: "notes", sortKey: "notes", header: t("adjForm.note"), cell: (a) => a.notes },
     { id: "actions", header: t("adjForm.actions"), cell: (a) => (
-      <RowActions viewTo={`/products/quantity-adjustments/view/${a.id}`} />
+      <RowActions viewTo={`/products/quantity-adjustments/view/${a.id}`} editTo={can(P.stock.adjust) ? `/products/quantity-adjustments/edit/${a.id}` : undefined}
+        onPrint={() => output.mutate({ adjustment: a, as: "print" })} onPdf={() => output.mutate({ adjustment: a, as: "pdf" })} onDelete={can(P.stock.delete) ? () => setToDelete(a) : undefined} />
     ) },
   ]
 
@@ -35,6 +42,9 @@ export default function AdjustmentsPage() {
       <DataTable rows={data} loading={isLoading} columns={columns} sort={sort} rowKey={(a) => a.id}
         searchText={(a) => `${a.id} ${a.performedBy} ${a.notes}`} searchPlaceholder={t("adjForm.search")}
         empty={<EmptyState icon={<SlidersHorizontal />} title={t("adjForm.empty")} />} />
+      <ConfirmDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)} pending={del.isPending}
+        title={t("adjForm.deleteTitle")} description={t("adjForm.deleteBody")}
+        onConfirm={() => toDelete && del.mutate(toDelete.id, { onSuccess: () => setToDelete(null) })} />
     </PageBox>
   )
 }

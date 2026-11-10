@@ -3,7 +3,6 @@ import { useFormContext, useWatch } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { FormInput, FormSelect } from "@/components/form/FormFields"
 import { SectionCard } from "@/components/SectionCard"
-import { useAppSettings } from "@/modules/settings"
 import { useExemptionReasons, useTaxes } from "@/modules/taxes/service"
 import { kindRules, type ProductForm } from "../../schema"
 
@@ -11,11 +10,9 @@ export function PricingSection({ computedCost }: { computedCost: number }) {
   const { t } = useTranslation()
   const { control, setValue, getValues } = useFormContext<ProductForm>()
   const [type, taxId] = useWatch({ control, name: ["type", "taxId"] })
-  const taxSetting = useAppSettings().taxSetting?.taxSetting
   const { data: taxes = [] } = useTaxes()
   const { data: reasons = [] } = useExemptionReasons()
   const rules = kindRules(type)
-  const exempt = taxSetting === "Exempt"
   const zeroRate = taxes.find((x) => x.id === taxId)?.amount === 0
   const taxReasons = reasons.filter((r) => r.taxId === taxId)
 
@@ -35,7 +32,7 @@ export function PricingSection({ computedCost }: { computedCost: number }) {
         <FormInput control={control} name="costPrice" type="number" label={t("products.cost")}
           disabled={rules.costIsComputed} description={rules.costIsComputed ? t("products.costComputed") : undefined} />
         {rules.ownBarcodeAndPrice && <FormInput control={control} name="sellingPrice" type="number" label={t("products.sellingPrice")} required />}
-        {rules.sells && !exempt && (
+        {rules.sells && (
           <>
             <FormSelect control={control} name="taxId" numeric required label={t("products.tax")}
               options={taxes.map((x) => ({ value: String(x.id), label: `${x.name} (${x.amount}%)` }))} />

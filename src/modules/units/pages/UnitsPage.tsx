@@ -15,6 +15,8 @@ import { PageHeader } from "@/components/PageHeader"
 import { RowActions } from "@/components/RowActions"
 import { Can, useCan } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
+import { BranchSection } from "@/modules/branches/BranchSection"
+import { useFormBranch } from "@/modules/branches/useFormBranch"
 import { emptyUnit, unitSchema, type UnitForm } from "../schema"
 import { useDeleteUnit, useSaveUnit, useUnits } from "../queries"
 import { SectionCard } from "@/components/SectionCard"
@@ -23,6 +25,7 @@ import type { Unit } from "../types"
 function UnitDialog({ open, onOpenChange, unit }: { open: boolean; onOpenChange: (o: boolean) => void; unit: Unit | null }) {
   const { t } = useTranslation()
   const save = useSaveUnit()
+  const formBranch = useFormBranch(open && !unit)
   const form = useForm<UnitForm>({ resolver: zodResolver(unitSchema), defaultValues: emptyUnit })
   useEffect(() => { if (open) form.reset(unit ? { name: unit.name, taxCode: unit.taxCode ?? "", description: unit.description ?? "" } : emptyUnit) }, [open, unit, form])
   const submit = form.handleSubmit((data) => save.mutate({ id: unit?.id, data }, { onSuccess: () => onOpenChange(false) }))
@@ -33,6 +36,7 @@ function UnitDialog({ open, onOpenChange, unit }: { open: boolean; onOpenChange:
         <DialogHeader><DialogTitle>{unit ? t("units.edit") : t("units.add")}</DialogTitle></DialogHeader>
         <form id="unit-form" onSubmit={submit}>
           <FieldGroup className="gap-4">
+            {formBranch.show && <BranchSection value={formBranch.branchId} onChange={formBranch.pick} />}
             <FormInput control={form.control} name="name" label={t("units.name")} required />
             <FormInput control={form.control} name="taxCode" label={t("units.taxCode")} dir="ltr" />
             <FormInput control={form.control} name="description" label={t("common.description")} />

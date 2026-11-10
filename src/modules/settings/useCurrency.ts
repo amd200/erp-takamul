@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { currencyKeys } from "./lists/queries"
+import { currencyKeys } from "./lists/keys"
 import { currenciesApi } from "./lists/service"
 import { CURRENCY } from "./constants"
 

@@ -2,7 +2,7 @@
 export const P = {
   products: { view: "products.view", add: "products.add", edit: "products.edit", delete: "products.delete", import: "products.import", export: "products.export" },
   barcode: { print: "barcode.print" },
-  stock: { view: "stock.view", adjust: "stock.adjust" },
+  stock: { view: "stock.view", adjust: "stock.adjust", delete: "stock.delete" },
   categories: { view: "categories.view", manage: "categories.manage" },
   units: { view: "units.view", manage: "units.manage" },
   additions: { view: "additions.view", manage: "additions.manage" },

@@ -4,13 +4,14 @@ import i18n from "@/shared/i18n"
 import { errorToast } from "@/shared/api/errors"
 import { useAuthStore, useBranchChoice } from "@/shared/auth/authStore"
 import { settingsApi, type Values } from "./service"
+import { settingsKeys } from "./keys"
+import { salesKeys } from "@/modules/sales/keys"
 
-/** Settings belong to a branch, so the chosen branch is part of the key. */
 export const settingsKey = (branchId: number | null) => ["settings", branchId] as const
 
 function useKey() {
   const branch = useBranchChoice((s) => s.branchId)
-  return settingsKey(branch)
+  return settingsKeys.app(branch)
 }
 
 /**
@@ -46,6 +47,6 @@ export function useResendUnsent() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: settingsApi.resendUnsent,
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["sales"] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: salesKeys.all }),
   })
 }

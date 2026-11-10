@@ -8,7 +8,9 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { EmptyState } from "@/components/EmptyState"
 import { formatMoney } from "@/lib/format"
 import { cn } from "@/lib/utils"
+import { listedPrice } from "@/modules/products/mappers"
 import type { Product } from "@/modules/products/types"
+import { useTaxesEnabled } from "../hooks"
 
 /** Two columns on a phone, four from tablet width, five on very wide screens, as in the current POS. */
 const GRID = "grid grid-cols-2 content-start gap-2 p-3 py-2.5 sm:grid-cols-4 2xl:grid-cols-5"
@@ -22,8 +24,9 @@ function Thumb({ p }: { p: Product }) {
 
 type CardProps = { product: Product; inCart: number; onPick: (p: Product) => void; nameSize: number; priceSize: number }
 
-/** One item, as in the current POS: picture panel, name and the price with tax, a count badge once it is in the cart. */
+/** One item, as in the current POS: picture panel, name and the price with tax (before it when the branch is tax-exempt), a count badge once it is in the cart. */
 const Card = memo(function Card({ product: p, inCart, onPick, nameSize, priceSize }: CardProps) {
+  const exempt = !useTaxesEnabled()
   return (
     <div role="button" tabIndex={0} onClick={() => onPick(p)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick(p) } }}
       className={cn(
@@ -36,7 +39,7 @@ const Card = memo(function Card({ product: p, inCart, onPick, nameSize, priceSiz
         <div className="mb-0.5 leading-tight font-semibold text-foreground" style={{ fontSize: nameSize }}>{p.productNameAr}</div>
         <div className="flex flex-row-reverse items-center justify-center gap-x-1 font-bold leading-none text-primary tabular-nums" style={{ fontSize: priceSize + 2 }}>
           <CurrencySymbol size={Math.max(9, Math.round((priceSize + 2) * 0.7))} />
-          {Number(p.priceAfterTax ?? p.sellingPrice ?? 0).toFixed(2)}
+          {listedPrice(p, exempt).toFixed(2)}
         </div>
       </div>
     </div>

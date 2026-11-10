@@ -392,7 +392,14 @@
     "opAdd": "Jog korun",
     "opRemove": "Saran",
     "chooseOperation": "Operation type nirbachon korun",
-    "cancelBack": "Batil ebong fire"
+    "cancelBack": "Batil ebong fire",
+    "deleteTitle": "Somonnoy muchun",
+    "deleteBody": "Ei poriman somonnoy ti ki muchte chan? Eti talika theke soriye deya hobe.",
+    "edit": "Poriman somonnoy sampadona",
+    "serial": "Kr.",
+    "total": "Mot poriman",
+    "printFailed": "Print kora gelo na. Abar chesta korun.",
+    "nameCode": "Barcode / Nam"
   },
   "productForm": {
     "addTitle": "Notun item jog korun",
@@ -535,6 +542,7 @@
     "saveFailed": "Sanrakhon kora jayni. Abar chesta korun.",
     "deleted": "Muche fela hayeeche",
     "deleteFailed": "Muchte para jayni. Abar chesta korun.",
+    "print": "Print",
     "noAccess": "Ei page-e apnar access nei",
     "noAccessHint": "Apnar role-e anumoti jog korte admin-ke bolun.",
     "actions": "Korm",
@@ -735,6 +743,8 @@
     },
     "typePick": "Age dhoron beche nin; milano field dekha jabe.",
     "typeLocked": "Item toiri hole dhoron bodlano jay na.",
+    "branch": "Sakha",
+    "branchHint": "Niche categories, unit ar tax ei sakha theke ashe.",
     "searchPlaceholder": "Nam ba barcod diye anusandhan korun",
     "allCategories": "Sob shreni",
     "exportExcel": "Exele roptani korun",
@@ -1421,7 +1431,8 @@
     },
     "stock": {
       "view": "Dekhun",
-      "adjust": "Somonnoy rekard"
+      "adjust": "Somonnoy rekard",
+      "delete": "Somonnoy muchun"
     },
     "categories": {
       "view": "Dekhun",
@@ -2789,6 +2800,8 @@
     "deleteBody": "Gudam \"{{name}}\" nirikkriyo kora hobe."
   },
   "branches": {
+    "formLabel": "Sakha",
+    "formHint": "Ei record nirbachito sakhay save hobe.",
     "name": "Sakhar nam",
     "code": "Sakha cod",
     "title": "Sakha",

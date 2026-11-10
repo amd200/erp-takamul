@@ -4,15 +4,17 @@ import i18n from "@/shared/i18n"
 import { errorToast, type ListSort } from "@/shared/api/errors"
 import { expenseItemsApi, expensesApi } from "./service"
 import type { ExpenseInput } from "./types"
+import { treasuryKeys } from "@/modules/treasuries/keys"
+import { expenseItemKeys, expenseKeys } from "./keys"
 
-export const useExpenseItems = (sort?: ListSort) => useQuery({ queryKey: sort?.SortBy ? ["expense-items", "list", sort] : ["expense-items", "list"], queryFn: () => expenseItemsApi.list(sort), placeholderData: keepPreviousData })
+export const useExpenseItems = (sort?: ListSort) => useQuery({ queryKey: expenseItemKeys.list(sort), queryFn: () => expenseItemsApi.list(sort), placeholderData: keepPreviousData })
 
 export const useSaveExpenseItem = () => {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({ id, data }: { id?: number; data: Parameters<typeof expenseItemsApi.create>[0] }) => (id ? expenseItemsApi.update(id, data) : expenseItemsApi.create(data)),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["expense-items"] })
+      qc.invalidateQueries({ queryKey: expenseItemKeys.all })
       toast.success(i18n.t("common.saved"))
     },
     onError: (e) => errorToast(e, "common.saveFailed"),
@@ -24,14 +26,12 @@ export const useDeleteExpenseItem = () => {
   return useMutation({
     mutationFn: (id: number) => expenseItemsApi.remove(id),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["expense-items"] })
+      qc.invalidateQueries({ queryKey: expenseItemKeys.all })
       toast.success(i18n.t("common.deleted"))
     },
     onError: (e) => errorToast(e, "common.deleteFailed"),
   })
 }
-
-export const expenseKeys = { all: ["expenses"] as const, list: ["expenses", "list"] as const }
 
 export const useExpenses = (sort?: ListSort) => useQuery({ queryKey: sort?.SortBy ? [...expenseKeys.list, sort] : expenseKeys.list, queryFn: () => expensesApi.list(sort), placeholderData: keepPreviousData })
 
@@ -42,7 +42,7 @@ function useExpenseMutation<A>(fn: (a: A) => Promise<unknown>, ok: string, faile
     mutationFn: fn,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: expenseKeys.all })
-      qc.invalidateQueries({ queryKey: ["treasuries"] })
+      qc.invalidateQueries({ queryKey: treasuryKeys.all })
       toast.success(i18n.t(ok))
     },
     onError: (e) => errorToast(e, failed),

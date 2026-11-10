@@ -14,6 +14,15 @@ const num = (v: number | null | undefined, d = 0) => (typeof v === "number" && N
 /** The price as it is entered and sold: with tax when the item is priced with tax, otherwise before it. */
 export const enteredPrice = (d: Pick<Product, "taxCalculation" | "priceAfterTax" | "priceBeforeTax" | "sellingPrice">) =>
   num(toCalc(d.taxCalculation) === 1 ? d.priceAfterTax ?? d.sellingPrice : d.priceBeforeTax ?? d.sellingPrice)
+/**
+ * The price when the branch is tax-exempt: an item that carries tax is sold without it (the server uses the price before tax and adds none).
+ * `u` is a sale unit's own prices, when the item is sold in one.
+ */
+export const priceBeforeTaxOf = (d: Pick<Product, "priceBeforeTax" | "sellingPrice">, u?: { priceBeforeTax?: number | null; sellingPrice?: number | null }) =>
+  num(u ? u.priceBeforeTax ?? u.sellingPrice : d.priceBeforeTax ?? d.sellingPrice)
+/** The price a card or search result shows: before tax in an exempt branch, otherwise with tax. */
+export const listedPrice = (d: Pick<Product, "priceBeforeTax" | "priceAfterTax" | "sellingPrice">, exempt: boolean) =>
+  exempt ? priceBeforeTaxOf(d) : num(d.priceAfterTax ?? d.sellingPrice)
 /** 1 = the price includes tax, 2 = tax is added on top. */
 export const taxCalcOf = (d: Pick<Product, "taxCalculation">): TaxCalculation => toCalc(d.taxCalculation)
 /** Items shown on the sales screen: switched on, and never raw materials unless the server says so. */
@@ -56,30 +65,29 @@ export function productFormOf(d: Product): ProductInput {
 const imageFields = (image: ProductInput["image"], editing: boolean) =>
   image instanceof File ? { Image: image } : editing && typeof image === "string" && image ? { ImageUrl: image } : {}
 
-const taxFields = (p: ProductInput, exempt: boolean) =>
-  // Exempt branches still need a tax on the record; the server's convention is the zero tax with tax added on top.
-  exempt ? { TaxId: 2, TaxCalculation: 3 } : { TaxId: p.taxId || undefined, TaxCalculation: calcToServer(p.taxCalculation), TaxExemptionReasonId: p.taxExemptionReasonId ?? undefined }
+const taxFields = (p: ProductInput) =>
+  ({ TaxId: p.taxId || undefined, TaxCalculation: calcToServer(p.taxCalculation), TaxExemptionReasonId: p.taxExemptionReasonId ?? undefined })
 
 const common = (p: ProductInput) => ({
   ProductNameAr: p.nameAr, ProductNameEn: p.nameEn, ProductNameUr: p.nameUr, Description: p.description, CategoryId: p.categoryId,
   PrinterName: p.printerName, DisplayOrder: p.displayOrder, Calories: p.calories,
 })
 
-export function toDirectForm(p: ProductInput, { editing, exempt, branchId }: { editing: boolean; exempt: boolean; branchId?: number | null }) {
+export function toDirectForm(p: ProductInput, { editing, branchId }: { editing: boolean; branchId?: number | null }) {
   return toFormData({
     ...(editing ? {} : { BranchId: branchId }),
     ...common(p), Barcode: p.barcode, BaseUnitId: p.baseUnitId, CostPrice: p.costPrice, SellingPrice: p.sellingPrice,
-    MinStockLevel: p.minStockLevel, ShowInSalesScreen: p.showInSalesScreen, ...taxFields(p, exempt), ...imageFields(p.image, editing),
+    MinStockLevel: p.minStockLevel, ShowInSalesScreen: p.showInSalesScreen, ...taxFields(p), ...imageFields(p.image, editing),
     // Units travel as one JSON field; the server also accepts Units[0].UnitId style, but JSON is simpler.
     Units: JSON.stringify(p.units.map((u) => ({ ...(u.id ? { id: u.id } : {}), unitId: u.unitId, isBaseUnit: false, conversionFactor: u.conversionFactor, barcode: u.barcode, sellingPrice: u.sellingPrice }))),
   })
 }
 
-export function toPreparedForm(p: ProductInput, { editing, exempt, branchId }: { editing: boolean; exempt: boolean; branchId?: number | null }) {
+export function toPreparedForm(p: ProductInput, { editing, branchId }: { editing: boolean; branchId?: number | null }) {
   return toFormData({
     ...(editing ? {} : { BranchId: branchId }),
     ...common(p), Barcode: p.barcode, BaseUnitId: p.baseUnitId, SellingPrice: p.sellingPrice, ShowInSalesScreen: p.showInSalesScreen,
-    ...taxFields(p, exempt), ...imageFields(p.image, editing),
+    ...taxFields(p), ...imageFields(p.image, editing),
     Components: JSON.stringify(p.components.map((c) => ({ componentProductId: c.productId, unitId: c.unitId, quantity: c.quantity }))),
   })
 }

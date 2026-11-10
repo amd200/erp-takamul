@@ -5,13 +5,15 @@ import { errorToast } from "@/shared/api/errors"
 import { ApiError } from "@/shared/http/ApiError"
 import { useAuthStore } from "@/shared/auth/authStore"
 import { currentShift } from "@/modules/shifts/service"
-import { tableKeys } from "@/modules/tables/queries"
+import { tableKeys } from "@/modules/tables/keys"
 import { invoicesApi } from "@/modules/sales/service"
 import { posApi } from "./service"
 import type { SaleInput, SaleResult } from "./types"
 import { usePosStore } from "./store"
-
-export const posKeys = { shift: ["shifts", "current"] as const, held: ["pos", "held"] as const, delivery: ["pos", "delivery"] as const }
+import { posKeys } from "./keys"
+import { salesKeys } from "@/modules/sales/keys"
+import { customerKeys } from "@/modules/customers/keys"
+import { treasuryKeys } from "@/modules/treasuries/keys"
 
 export const useCurrentShift = () => useQuery({ queryKey: posKeys.shift, queryFn: currentShift })
 export const useHeldOrders = (enabled = true) => useQuery({ queryKey: posKeys.held, queryFn: posApi.held, enabled })
@@ -23,7 +25,7 @@ const nextNumber = (last?: string) => {
 }
 /** What the next cashier invoice will most likely be numbered; the server assigns the real number on saving. */
 export const useNextInvoiceNumber = () => useQuery({
-  queryKey: ["sales", "invoices", "next-pos"],
+  queryKey: salesKeys.nextPosNumber,
   queryFn: async () => nextNumber((await invoicesApi.page({ page: 1, pageSize: 1, channel: "POS" })).items[0]?.orderNumber ?? undefined),
   refetchOnWindowFocus: true,
 })
@@ -62,9 +64,9 @@ export function useSaveSale({ message }: { message?: string } = {}) {
     onSuccess: (_r, { sale }) => {
       usePosStore.getState().clear()
       qc.invalidateQueries({ queryKey: posKeys.held })
-      qc.invalidateQueries({ queryKey: ["sales"] })
-      qc.invalidateQueries({ queryKey: ["customers"] })
-      qc.invalidateQueries({ queryKey: ["treasuries"] })
+      qc.invalidateQueries({ queryKey: salesKeys.all })
+      qc.invalidateQueries({ queryKey: customerKeys.all })
+      qc.invalidateQueries({ queryKey: treasuryKeys.all })
       qc.invalidateQueries({ queryKey: tableKeys.all })
       const sentToKitchen = sale.orderType === "InDine" && sale.dineInMode !== "checkout"
       toast.success(message ?? i18n.t(sale.holding ? "pos.held" : sentToKitchen ? "posTables.sent" : "pos.saved"))

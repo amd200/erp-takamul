@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input"
 import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 import { useQueryClient } from "@tanstack/react-query"
-import { findByBarcode, rememberProduct, useProductSearch } from "@/modules/products/lookup"
+import { rememberProduct, useProductSearch } from "@/modules/products/lookup"
+import { useFindByBarcode } from "@/modules/products/queries"
 import { useUnits } from "@/modules/units/queries"
 import { useTaxes } from "@/modules/taxes/service"
 import type { Product } from "@/modules/products/types"
@@ -20,6 +21,7 @@ import type { InvoiceLine } from "../types"
 export function ProductPicker({ onAdd, purchase, noCategoryDiscount }: { onAdd: (line: InvoiceLine) => void; /** Lines that do not show a discount (quotations) do not take the category one either. */ noCategoryDiscount?: boolean; /** Buying: lines carry the cost, before tax, and raw materials can be picked. */ purchase?: boolean }) {
   const { t } = useTranslation()
   const qc = useQueryClient()
+  const { mutateAsync: findByBarcode } = useFindByBarcode()
   const { data: units = [] } = useUnits()
   const { data: taxes = [] } = useTaxes()
   const categoryDiscountOf = useCategoryDiscountOf()
@@ -51,7 +53,7 @@ export function ProductPicker({ onAdd, purchase, noCategoryDiscount }: { onAdd: 
     if (!query) return
     if (!isCode && matches[active]) return pick(matches[active])
     // The server looks the code up; the exact barcode (or sale-unit barcode) is picked from what it returns.
-    const hit = await findByBarcode(qc, query, sellable)
+    const hit = await findByBarcode({ code: query, accept: sellable })
     if (!hit) return matches[active] ? pick(matches[active]) : setNotFound(true)
     const { product: p, unit: u } = hit
     onAdd(u

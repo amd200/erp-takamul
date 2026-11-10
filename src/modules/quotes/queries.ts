@@ -4,8 +4,8 @@ import i18n from "@/shared/i18n"
 import { errorToast } from "@/shared/api/errors"
 import { quotesApi } from "./service"
 import type { QuoteInput } from "./types"
+import { quoteKeys } from "./keys"
 
-export const quoteKeys = { all: ["quotes"] as const, page: (q: object) => ["quotes", "page", q] as const, detail: (id: number) => ["quotes", "detail", id] as const }
 export const quoteDetailOptions = (id: number) => queryOptions({ queryKey: quoteKeys.detail(id), queryFn: () => quotesApi.get(id) })
 
 export const useQuotePage = (q: { page: number; pageSize: number; searchTerm?: string; sortBy?: string; sortDescending?: boolean }) =>

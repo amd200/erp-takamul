@@ -5,15 +5,14 @@ import { errorToast } from "@/shared/api/errors"
 import { refreshAccessToken } from "@/shared/http/client"
 import { shiftsApi } from "./service"
 import type { OpenShiftInput } from "./types"
-
-export const shiftKeys = { all: ["shifts"] as const, list: ["shifts", "list"] as const, report: (id: number) => ["shifts", "report", id] as const }
+import { shiftKeys } from "./keys"
 
 export const useShifts = () => useQuery({ queryKey: shiftKeys.list, queryFn: shiftsApi.list })
 export const useShiftReport = (id: number | undefined) => useQuery({ queryKey: shiftKeys.report(id ?? 0), queryFn: () => shiftsApi.report(id!), enabled: id != null })
 
-export const useShiftBranches = (enabled: boolean) => useQuery({ queryKey: ["refs", "shift-branches"], queryFn: shiftsApi.branches, enabled, staleTime: 5 * 60_000 })
-export const useShiftEmployees = (branchId: number) => useQuery({ queryKey: ["refs", "shift-employees", branchId], queryFn: () => shiftsApi.employees(branchId), enabled: branchId > 0 })
-export const useShiftDevices = (enabled: boolean) => useQuery({ queryKey: ["refs", "shift-devices"], queryFn: shiftsApi.devices, enabled })
+export const useShiftBranches = (enabled: boolean) => useQuery({ queryKey: shiftKeys.branches, queryFn: shiftsApi.branches, enabled, staleTime: 5 * 60_000 })
+export const useShiftEmployees = (branchId: number) => useQuery({ queryKey: shiftKeys.employees(branchId), queryFn: () => shiftsApi.employees(branchId), enabled: branchId > 0 })
+export const useShiftDevices = (enabled: boolean) => useQuery({ queryKey: shiftKeys.devices, queryFn: shiftsApi.devices, enabled })
 
 /** The access token carries the open shift's id, so it is renewed after every open or close. */
 const renewToken = () => refreshAccessToken().catch(() => undefined)

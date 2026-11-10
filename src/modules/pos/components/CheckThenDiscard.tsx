@@ -4,6 +4,9 @@ import { useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { usePosStore } from "../store"
 import { OrdersDialog } from "./OrdersDialog"
+import { salesKeys } from "@/modules/sales/keys"
+import { customerKeys } from "@/modules/customers/keys"
+import { treasuryKeys } from "@/modules/treasuries/keys"
 
 /** On a locked cart: opens the latest invoices to check whether the unconfirmed sale was saved, and drops it once the cashier confirms it was not, or finishes it (clears the cart, no re-save) when it was. */
 export function CheckThenDiscard({ onDiscarded }: { onDiscarded?: () => void }) {
@@ -13,7 +16,7 @@ export function CheckThenDiscard({ onDiscarded }: { onDiscarded?: () => void }) 
   /** The invoice is in the list: the sale already went through, so just empty the cart like a successful sale does (no re-save). */
   const finish = () => {
     usePosStore.getState().clear()
-    for (const k of ["sales", "customers", "treasuries"]) qc.invalidateQueries({ queryKey: [k] })
+    for (const queryKey of [salesKeys.all, customerKeys.all, treasuryKeys.all]) qc.invalidateQueries({ queryKey })
     toast.success(t("pos.saved"))
     onDiscarded?.()
   }

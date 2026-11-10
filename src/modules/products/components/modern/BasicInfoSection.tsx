@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import { useFormContext, useWatch } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
@@ -8,7 +9,7 @@ import { kindRules, type ProductForm } from "../../schema"
 
 const randomBarcode = () => String(6221100000000 + Math.floor(Math.random() * 99999))
 
-export function BasicInfoSection() {
+export function BasicInfoSection({ branchField }: { branchField?: ReactNode }) {
   const { t } = useTranslation()
   const { control, setValue } = useFormContext<ProductForm>()
   const type = useWatch({ control, name: "type" })
@@ -18,6 +19,7 @@ export function BasicInfoSection() {
   return (
     <SectionCard title={t("products.sections.basic")}>
       <div className="grid gap-4 sm:grid-cols-2">
+        {branchField}
         <FormInput control={control} name="nameAr" label={t("common.nameAr")} required />
         <FormInput control={control} name="nameEn" label={t("common.nameEn")} dir="ltr" />
         <FormInput control={control} name="nameUr" label={t("common.nameUr")} dir="ltr" className={rules.ownBarcodeAndPrice ? undefined : "sm:col-span-2"} />

@@ -1,24 +1,34 @@
 import { useCallback, useEffect, useMemo } from "react"
-import { enteredPrice, showsInSales, taxCalcOf } from "@/modules/products/mappers"
+import { enteredPrice, priceBeforeTaxOf, showsInSales, taxCalcOf } from "@/modules/products/mappers"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { useCategories } from "@/modules/categories/queries"
 import { useDebounced } from "@/modules/products/lookup"
-import { productKeys } from "@/modules/products/queries"
+import { productKeys } from "@/modules/products/keys"
 import { productsApi } from "@/modules/products/service"
 import type { Product } from "@/modules/products/types"
 import { useTaxes } from "@/modules/taxes/service"
 import { useUnits } from "@/modules/units/queries"
 import { useCategoryDiscountOf } from "@/modules/sales/categoryDiscount"
 import type { InvoiceLine } from "@/modules/sales/types"
-import { useAppSettings } from "@/modules/settings"
+import { useAppSettings, useAppSettingsQuery } from "@/modules/settings"
 
 export type SellLine = Omit<InvoiceLine, "amounts"> & { imageUrl: string | null }
 
 /** Items asked per page for the product grid. */
 const GRID_PAGE = 100
 
-/** Turns an item into a cart line: its unit, price and the tax rate of the branch. */
-export function useSellLine(taxesEnabled = true) {
+/** False while the branch is tax-exempt. The placeholder can belong to another branch, so this waits for the current branch's settings. */
+export function useTaxesEnabled() {
+  const settings = useAppSettingsQuery()
+  return settings.data != null && !settings.isPlaceholderData && settings.data.taxSetting?.taxSetting !== "Exempt"
+}
+
+/**
+ * Turns an item into a cart line: its unit, price and the tax rate of the branch. In a tax-exempt branch an item that carries tax
+ * is sold without it: the price before tax and a rate of 0.
+ */
+export function useSellLine() {
+  const taxesEnabled = useTaxesEnabled()
   const taxes = useTaxes(taxesEnabled)
   const units = useUnits()
   const unitName = useCallback((id: number) => units.data?.find((u) => u.id === id)?.name ?? "", [units.data])
@@ -28,11 +38,11 @@ export function useSellLine(taxesEnabled = true) {
   return useCallback((p: Product, opts: { unitId?: number; price?: number; name?: string } = {}): SellLine => {
     const unitId = opts.unitId ?? p.baseUnitId ?? 0
     return {
-      productId: p.id, unitId, name: opts.name ?? p.productNameAr, unitName: unitName(unitId), quantity: 1, unitPrice: opts.price ?? enteredPrice(p),
-      taxRate: rateOf(p), taxCalculation: taxCalcOf(p), discountKind: "value", discount: 0, imageUrl: p.imageUrl ?? null,
+      productId: p.id, unitId, name: opts.name ?? p.productNameAr, unitName: unitName(unitId), quantity: 1, unitPrice: opts.price ?? (taxesEnabled ? enteredPrice(p) : priceBeforeTaxOf(p)),
+      taxRate: rateOf(p), taxCalculation: taxesEnabled ? taxCalcOf(p) : 2, discountKind: "value", discount: 0, imageUrl: p.imageUrl ?? null,
       ...categoryDiscountOf(p.categoryId),
     }
-  }, [unitName, rateOf, categoryDiscountOf])
+  }, [unitName, rateOf, categoryDiscountOf, taxesEnabled])
 }
 
 /**
@@ -47,11 +57,11 @@ export function usePosGrid(search: string, categoryId: number | null) {
 
   // As in the current POS, a category shows the items filed under it (not under its sub-categories).
   const grid = useInfiniteQuery({
-    queryKey: [...productKeys.all, "pos-grid", term, categoryId ?? undefined] as const,
+    queryKey: productKeys.posGrid(term, categoryId),
     initialPageParam: 1,
     queryFn: async ({ pageParam }) => {
       const p = await productsApi.page({ page: pageParam, pageSize: GRID_PAGE, searchTerm: term || undefined, categoryId: categoryId ?? undefined })
-      return { items: p.items, more: p.total > pageParam * GRID_PAGE }
+      return { items: p.items, more: p.totalCount > pageParam * GRID_PAGE }
     },
     getNextPageParam: (last, _all, lastParam) => (last.more ? lastParam + 1 : undefined),
     staleTime: 60_000,

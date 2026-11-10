@@ -6,14 +6,7 @@ import { errorToast, type ListSort } from "@/shared/api/errors"
 import { debitNotesApi, invoicesApi, returnsApi } from "./service"
 import type { InvoiceQuery } from "./types"
 import type { DebitNoteInput, InvoiceInput, Payment, ReturnInput } from "./types"
-
-export const salesKeys = {
-  invoices: ["sales", "invoices"] as const,
-  invoice: (id: number) => ["sales", "invoices", id] as const,
-  invoicePayments: (id: number) => ["sales", "invoices", id, "payments"] as const,
-  returns: ["sales", "returns"] as const,
-  debitNotes: ["sales", "debit-notes"] as const,
-}
+import { salesKeys } from "./keys"
 
 /** One page of an invoice list; the previous page stays on screen while the next loads. */
 export const useInvoicePage = (q: InvoiceQuery) =>
@@ -36,7 +29,7 @@ export function useCreateInvoice() {
   return useMutation({
     mutationFn: ({ input, key }: { input: InvoiceInput; key: string }) => invoicesApi.create(input, key),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["sales"] })
+      qc.invalidateQueries({ queryKey: salesKeys.all })
       toast.success(i18n.t("sales.invoiceSaved"))
     },
     onError: (e) => errorToast(e, "common.saveFailed"),
@@ -49,7 +42,7 @@ export function useRecordPayment() {
     mutationFn: ({ invoiceId, payment, key }: { invoiceId: number; payment: Omit<Payment, "id" | "date">; key: string }) =>
       invoicesApi.recordPayment(invoiceId, payment, key),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["sales"] })
+      qc.invalidateQueries({ queryKey: salesKeys.all })
       toast.success(i18n.t("sales.receiptSaved"))
     },
     onError: (e) => errorToast(e, "common.saveFailed"),
@@ -61,7 +54,7 @@ export function useDeletePayment() {
   return useMutation({
     mutationFn: (paymentId: number) => invoicesApi.deletePayment(paymentId),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["sales"] })
+      qc.invalidateQueries({ queryKey: salesKeys.all })
       toast.success(i18n.t("common.deleted"))
     },
     onError: (e) => errorToast(e, "common.saveFailed"),
@@ -73,7 +66,7 @@ export function useUpdateNotes() {
   return useMutation({
     mutationFn: ({ invoiceId, notes }: { invoiceId: number; notes: string }) => invoicesApi.updateNotes(invoiceId, notes),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["sales"] })
+      qc.invalidateQueries({ queryKey: salesKeys.all })
       toast.success(i18n.t("common.saved"))
     },
     onError: (e) => errorToast(e, "common.saveFailed"),
@@ -85,7 +78,7 @@ export function useSendInvoice() {
   return useMutation({
     mutationFn: (id: number) => invoicesApi.sendToZatca(id),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["sales"] })
+      qc.invalidateQueries({ queryKey: salesKeys.all })
       toast.success(i18n.t("sales.zatcaSent"))
     },
     onError: (e) => errorToast(e, "common.saveFailed"),
@@ -97,7 +90,7 @@ export function useCreateReturn() {
   return useMutation({
     mutationFn: (data: ReturnInput) => returnsApi.create(data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["sales"] })
+      qc.invalidateQueries({ queryKey: salesKeys.all })
       toast.success(i18n.t("sales.returnSaved"))
     },
     onError: (e) => errorToast(e, "common.saveFailed"),
@@ -109,7 +102,7 @@ export function useSendReturn() {
   return useMutation({
     mutationFn: (id: number) => returnsApi.sendToZatca(id),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["sales"] })
+      qc.invalidateQueries({ queryKey: salesKeys.all })
       toast.success(i18n.t("sales.zatcaSent"))
     },
     onError: (e) => errorToast(e, "common.saveFailed"),
@@ -121,7 +114,7 @@ export function useCreateDebitNote() {
   return useMutation({
     mutationFn: (data: DebitNoteInput) => debitNotesApi.create(data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["sales"] })
+      qc.invalidateQueries({ queryKey: salesKeys.all })
       toast.success(i18n.t("sales.debitSaved"))
     },
     onError: (e) => errorToast(e, "common.saveFailed"),
@@ -133,7 +126,7 @@ export function useSendDebitNote() {
   return useMutation({
     mutationFn: (id: number) => debitNotesApi.sendToZatca(id),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["sales"] })
+      qc.invalidateQueries({ queryKey: salesKeys.all })
       toast.success(i18n.t("sales.zatcaSent"))
     },
     onError: (e) => errorToast(e, "common.saveFailed"),

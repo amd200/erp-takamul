@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { keepPreviousData, useQueries, useQuery, type QueryClient } from "@tanstack/react-query"
-import { productKeys } from "./queries"
+import { productKeys } from "./keys"
 import { productsApi } from "./service"
 import type { Product, ProductType } from "./types"
 
@@ -17,7 +17,7 @@ const DEBOUNCE_MS = 250
 
 type SearchOptions = { type?: ProductType; size?: number }
 
-const searchKey = (term: string, type: ProductType | undefined, size: number) => [...productKeys.all, "search", term, type ?? null, size] as const
+const searchKey = productKeys.search
 const searchItems = async (term: string, type: ProductType | undefined, size: number) =>
   (await productsApi.page({ page: 1, pageSize: size, searchTerm: term || undefined, productType: type })).items
 
@@ -47,22 +47,7 @@ export function useProductSearch(term: string, { type, size = SEARCH_SIZE, enabl
 export const searchProducts = (qc: QueryClient, term: string, { type, size = CODE_SIZE }: SearchOptions = {}) =>
   qc.fetchQuery({ queryKey: searchKey(term, type, size), queryFn: () => searchItems(term, type, size), staleTime: 60_000 })
 
-/**
- * The item a scanned barcode belongs to. The server matches it exactly, on the item or on one of its sale units
- * (`Barcode` param of GET /Products); `unit` is that sale unit, or null when it is the item's own barcode.
- */
-export async function findByBarcode(qc: QueryClient, code: string, accept: (p: Product) => boolean = () => true) {
-  const items = await qc.fetchQuery({
-    queryKey: [...productKeys.all, "barcode", code] as const,
-    queryFn: async () => (await productsApi.page({ page: 1, pageSize: 5, barcode: code })).items,
-    staleTime: 30_000,
-  })
-  const product = items.find(accept)
-  if (!product) return null
-  return { product, unit: product.barcode === code ? null : (product.units ?? []).find((u) => u.barcode === code) ?? null }
-}
-
-const byIdKey = (id: number) => [...productKeys.all, "by-id", id] as const
+const byIdKey = productKeys.byId
 
 /** Keeps an item that was just found, so reading it by id later needs no request. */
 export const rememberProduct = (qc: QueryClient, p: Product) => qc.setQueryData(byIdKey(p.id), p)
@@ -84,4 +69,4 @@ export function useProductsByIds(ids: number[], enabled = true) {
 }
 
 /** How many items there are, from the total of a one-row page. */
-export const countProducts = async () => (await productsApi.page({ page: 1, pageSize: 1 })).total
+export const countProducts = async () => (await productsApi.page({ page: 1, pageSize: 1 })).totalCount

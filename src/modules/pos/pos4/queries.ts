@@ -4,10 +4,9 @@ import { showsInSales } from "@/modules/products/mappers"
 import { productsApi } from "@/modules/products/service"
 import type { Product } from "@/modules/products/types"
 import { pos4Api } from "./service"
+import { pos4Keys } from "./keys"
 
 const PAGE = 100
-
-export const pos4Keys = { branch: ["pos4", "branch"] as const, categories: ["pos4", "categories"] as const, items: ["pos4", "items"] as const, branched: (id: number | null) => ["pos4", "branched", id] as const }
 
 export const usePublicBranch = () => useQuery({ queryKey: pos4Keys.branch, queryFn: pos4Api.branch, staleTime: 30 * 60_000 })
 export const usePos4Categories = () => useQuery({ queryKey: pos4Keys.categories, queryFn: pos4Api.categories, staleTime: 60_000 })
@@ -28,7 +27,7 @@ export function usePos4Items({ categoryId, term, enabled = true }: { categoryId:
     initialPageParam: 1,
     queryFn: async ({ pageParam }): Promise<Page> => {
       const p = await productsApi.page({ page: pageParam, pageSize: PAGE, searchTerm: term || undefined, categoryId: categoryId ?? undefined })
-      return { items: p.items, more: p.total > pageParam * PAGE }
+      return { items: p.items, more: p.totalCount > pageParam * PAGE }
     },
     getNextPageParam: (last, _all, lastParam) => (last.more ? lastParam + 1 : undefined),
     staleTime: 60_000,

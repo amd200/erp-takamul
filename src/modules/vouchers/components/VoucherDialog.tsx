@@ -14,6 +14,8 @@ import { FormSelect } from "@/components/form/FormFields"
 import { useCustomerList } from "@/modules/customers/queries"
 import { useSupplierList } from "@/modules/suppliers/queries"
 import { useTreasuryList } from "@/modules/treasuries/queries"
+import { BranchSection } from "@/modules/branches/BranchSection"
+import { useFormBranch } from "@/modules/branches/useFormBranch"
 import type { VoucherKind } from "../types"
 import { useCreateVoucher } from "../queries"
 import { voucherSchema, type VoucherForm } from "../schema"
@@ -31,6 +33,8 @@ export function VoucherDialog({ kind, open, onOpenChange, embedded = false, cust
   /** The optics receipt tab: a customer receipt only, fixed on the sale's customer when one is chosen. */
   customerId?: number | null }) {
   const { t } = useTranslation()
+  // The optics tools take the voucher on the branch they work on; elsewhere a multi-branch user picks it.
+  const formBranch = useFormBranch(open && !embedded)
   const { data: customers = [] } = useCustomerList()
   const { data: suppliers = [] } = useSupplierList()
   const { data: treasuries = [] } = useTreasuryList()
@@ -66,6 +70,8 @@ export function VoucherDialog({ kind, open, onOpenChange, embedded = false, cust
         </DialogHeader>
 
         <form id="voucher-form" onSubmit={submit} noValidate className={cn("space-y-3 overflow-x-hidden overflow-y-auto px-5 py-4", embedded ? "min-h-0 flex-1" : "max-h-[60vh]")}>
+          {/* The treasuries and accounts reload with the branch and the form starts over (its effect runs when the treasuries change). */}
+          {formBranch.show && <BranchSection value={formBranch.branchId} onChange={formBranch.pick} />}
           <div className="grid min-h-[76px] grid-cols-2 items-start gap-3">
             <Controller control={form.control} name="date" render={({ field }) => (
               <Field><FieldLabel htmlFor="v-date">{t("common.date")}</FieldLabel><Input id="v-date" type="date" className="h-9" {...field} /></Field>

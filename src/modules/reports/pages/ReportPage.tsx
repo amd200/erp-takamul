@@ -18,6 +18,7 @@ import { LIVE } from "../live"
 import { reportById } from "../definitions"
 import { downloadCsv } from "../export"
 import type { Filters, ReportDef, Stat } from "../types"
+import { reportKeys } from "../keys"
 
 const TONE = { good: "text-success", warn: "text-warning", bad: "text-destructive", muted: "text-muted-foreground" } as const
 
@@ -43,7 +44,7 @@ function Report({ def }: { def: ReportDef }) {
   const [filters, setFilters] = useState<Filters>({ ...presetRange("thisMonth"), top: 10, customerId: fromUrl("customer"), supplierId: fromUrl("supplier"), productId: fromUrl("product") })
   const missing = (def.requires ?? []).filter((r) => !filters[`${r}Id` as const])
   const { data, isLoading } = useQuery({
-    queryKey: ["reports", def.id, filters],
+    queryKey: reportKeys.report(def.id, filters),
     // Reports the server serves are read from it; the rest still run on the sample data.
     queryFn: async () => (LIVE[def.id] ? LIVE[def.id](filters) : def.run(await loadDataset(), filters)),
     enabled: missing.length === 0,

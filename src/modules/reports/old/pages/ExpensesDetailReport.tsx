@@ -9,11 +9,12 @@ import { expensesReport, type ExpenseRow } from "../api"
 import { dayText, money } from "../output"
 import { PagedReport } from "../PagedReport"
 import { ALL, SelectFilter } from "../SelectFilter"
+import { expenseItemKeys } from "@/modules/expenses/keys"
 
 /** Expenses between two dates, by item and treasury, laid out as in the current system. */
 export default function ExpensesDetailReport() {
   const { t } = useTranslation()
-  const { data: items = [] } = useQuery({ queryKey: ["expense-items", "refs"], queryFn: () => expenseItemsApi.list() })
+  const { data: items = [] } = useQuery({ queryKey: expenseItemKeys.refs, queryFn: () => expenseItemsApi.list() })
   const { data: treasuries = [] } = useTreasuries()
   const [item, setItem] = useState(ALL)
   const [treasury, setTreasury] = useState(ALL)

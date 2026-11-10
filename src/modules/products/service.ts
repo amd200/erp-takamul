@@ -1,20 +1,22 @@
-import { useAuthStore } from "@/shared/auth/authStore"
+import { activeBranchId, canManageAllBranches, useAuthStore } from "@/shared/auth/authStore"
 import { http } from "@/shared/http/request"
 import { fetchAllPages, toFormData, type PagedResult } from "@/shared/http/paged"
 import type { ImportResultDto } from "./dto"
 import { toBranchedForm, toDirectForm, toPreparedForm, toRawJson, typeOf } from "./mappers"
-import type { Product, ProductInput, ProductQuery, ProductType, SaveOptions } from "./types"
+import type { Product, ProductInput, ProductQuery, ProductType } from "./types"
 
 const PATH: Record<ProductType, string> = { Direct: "direct", Prepared: "prepared", Branched: "branched", RawMatrial: "raw-material" }
 
 export const productsApi = {
   /** One page for the list screen; search, type and category are filtered on the server. */
   page: async (q: ProductQuery) => {
-    const res = await http<PagedResult<Product>>("/Products", {
+    return http<PagedResult<Product>>("/Products", {
       params: { Page: q.page, PageSize: q.pageSize, SearchTerm: q.searchTerm || undefined, Barcode: q.barcode || undefined, ProductType: q.productType, CategoryId: q.categoryId, SortBy: q.sortBy, SortDescending: q.sortBy ? q.sortDescending : undefined },
     })
-    return { items: res.items, total: res.totalCount }
   },
+
+  /** The items a scanned barcode belongs to: the server matches it exactly, on the item or on one of its sale units (a few rows at most). */
+  byBarcode: async (code: string) => (await productsApi.page({ page: 1, pageSize: 5, barcode: code })).items,
 
   /** Every item. Only the demo reports still need the whole catalog; screens search (`page`) or read by id (`get`). */
   list: () => fetchAllPages<Product>("/Products"),
@@ -27,17 +29,19 @@ export const productsApi = {
     return type === "Prepared" || type === "Direct" ? { ...item, productType: type } : item
   },
 
-  save: (input: ProductInput, id: number | undefined, { exempt }: SaveOptions) => {
+  save: (input: ProductInput, id: number | undefined) => {
     const editing = id != null
     const url = `/Products/${PATH[input.type]}${editing ? `/${id}` : ""}`
     const method = editing ? "PUT" : "POST"
-    // A new item lands in the branch picked in the header (multi-branch users); others get their own.
-    const branchId = editing ? null : useAuthStore.getState().session?.branchId
+    // A new item lands in the branch picked in its form (multi-branch users; the header's branch until they pick), others get their own.
+    // The server lets the X-Branch-Id header beat the BranchId in the body, so the same branch goes out as the header too.
+    const branchId = editing ? null : activeBranchId() ?? useAuthStore.getState().session?.branchId
+    const headers = branchId && canManageAllBranches(useAuthStore.getState().session) ? { "X-Branch-Id": String(branchId) } : undefined
     switch (input.type) {
-      case "RawMatrial": return http(url, { method, data: toRawJson(input, branchId) })
-      case "Branched": return http(url, { method, data: toBranchedForm(input, { editing, branchId }) })
-      case "Prepared": return http(url, { method, data: toPreparedForm(input, { editing, exempt, branchId }) })
-      default: return http(url, { method, data: toDirectForm(input, { editing, exempt, branchId }) })
+      case "RawMatrial": return http(url, { method, headers, data: toRawJson(input, branchId) })
+      case "Branched": return http(url, { method, headers, data: toBranchedForm(input, { editing, branchId }) })
+      case "Prepared": return http(url, { method, headers, data: toPreparedForm(input, { editing, branchId }) })
+      default: return http(url, { method, headers, data: toDirectForm(input, { editing, branchId }) })
     }
   },
 

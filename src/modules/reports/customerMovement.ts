@@ -5,6 +5,7 @@ import { http } from "@/shared/http/request"
 import { formatMoney } from "@/lib/format"
 import { downloadCsv } from "./export"
 import type { Column, Row } from "./types"
+import { reportKeys } from "./keys"
 
 /** GET /reports/CustomerMovement: what a customer bought, product by product, with their running totals. */
 export type CustomerMovementItem = {
@@ -46,7 +47,7 @@ export const customerMovementApi = {
 }
 
 export const useCustomerMovement = (p: CustomerMovementParams | null) => useQuery({
-  queryKey: ["reports", "customer-movement", p],
+  queryKey: reportKeys.customerMovement(p),
   queryFn: () => customerMovementApi.get(p!),
   enabled: p != null,
   placeholderData: (prev) => prev,

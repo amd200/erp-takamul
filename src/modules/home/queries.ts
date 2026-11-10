@@ -1,11 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { homeApi } from "./service"
-
-export const homeKeys = {
-  all: ["home"] as const,
-  stat: (name: string) => ["home", "stat", name] as const,
-  recent: (list: string, ...rest: unknown[]) => ["home", "recent", list, ...rest] as const,
-}
+import { homeKeys } from "./keys"
 
 // Each figure is asked for only when the user holds its permission (the server answers 403 otherwise).
 export const useTodaySales = (enabled: boolean) => useQuery({ queryKey: homeKeys.stat("sales"), queryFn: homeApi.todaySales, enabled })

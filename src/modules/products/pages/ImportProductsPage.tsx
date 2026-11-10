@@ -12,7 +12,7 @@ import { errorToast } from "@/shared/api/errors"
 import { ApiError } from "@/shared/http/ApiError"
 import { productsApi } from "../service"
 import type { ImportResultDto } from "../dto"
-import { productKeys } from "../queries"
+import { productKeys } from "../keys"
 
 const MAX_FILE = 5 * 1024 * 1024
 

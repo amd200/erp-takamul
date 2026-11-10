@@ -27,6 +27,7 @@ export const itemRoutes: RouteObject[] = [
   ] },
   { element: <RequirePermission perm={P.stock.adjust} />, children: [
     { path: "products/quantity-adjustments/create", lazy: page(() => import("@/modules/stock-adjustments/pages/AdjustmentFormPage")) },
+    { path: "products/quantity-adjustments/edit/:id", lazy: page(() => import("@/modules/stock-adjustments/pages/AdjustmentFormPage")) },
   ] },
   { element: <RequirePermission perm={P.categories.view} />, children: [
     { path: "products/groups", lazy: page(() => import("@/modules/categories/pages/CategoriesPage")) },

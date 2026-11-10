@@ -54,7 +54,6 @@ export type ProductInput = Omit<ProductFields, "id" | "code" | "balance" | "cate
 export type ProductQuery = { page: number; pageSize: number; searchTerm?: string; barcode?: string; productType?: ProductType; categoryId?: number; sortBy?: string; sortDescending?: boolean }
 
 /** Options the form passes along: the branch's tax mode decides which tax fields are sent. */
-export type SaveOptions = { exempt: boolean }
 
 /**
  * An item as the server sends it. Each kind has its own endpoint with a few fields of its own, so this is the union of them:

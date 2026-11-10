@@ -17,6 +17,8 @@ import { useCustomers } from "@/modules/lookups/service"
 import { LinesEditor } from "@/modules/sales/components/LinesEditor"
 import { invoiceTotals } from "@/modules/sales/totals"
 import { TotalsPanel } from "@/modules/sales/components/TotalsPanel"
+import { BranchSection } from "@/modules/branches/BranchSection"
+import { useFormBranch } from "@/modules/branches/useFormBranch"
 import { useQuote, useSaveQuote } from "../queries"
 import { useAppSettings } from "@/modules/settings"
 import { emptyQuote, quoteSchema, type QuoteForm } from "../schema"
@@ -27,6 +29,7 @@ export default function QuoteFormPage() {
   const nav = useNavigate()
   const { id } = useParams()
   const editId = id ? Number(id) : undefined
+  const formBranch = useFormBranch(!editId)
   const { data: existing, isLoading } = useQuote(editId)
   const { data: customers = [] } = useCustomers()
   const save = useSaveQuote()
@@ -44,6 +47,15 @@ export default function QuoteFormPage() {
     const c = customers.find((x) => x.id === Number(defaultCustomer))
     if (c && !form.getValues("customerId")) form.setValue("customerId", c.id)
   }, [editId, customers, defaultCustomer, form])
+
+  // The customers and items belong to the branch, so what was picked from the old branch is cleared and the default customer is picked again.
+  const changeBranch = async (next: number) => {
+    await formBranch.pick(next)
+    const empty = emptyQuote()
+    defaulted.current = false
+    form.setValue("customerId", empty.customerId)
+    form.setValue("lines", empty.lines)
+  }
 
   useEffect(() => {
     if (!existing) return
@@ -68,6 +80,7 @@ export default function QuoteFormPage() {
           actions={<Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/5 hover:text-primary"><Link to="/quotes"><List />{t("quotes.backToList")}</Link></Button>} />
 
         <SectionCard title={t("sales.basics")}>
+          {formBranch.show && <BranchSection className="mb-6" value={formBranch.branchId} onChange={changeBranch} />}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             <Controller control={form.control} name="date" render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>

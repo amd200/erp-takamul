@@ -8,7 +8,6 @@ import { FormInput, FormSelect, FormTextarea } from "@/components/form/FormField
 import { formatMoney } from "@/lib/format"
 import { useCategories } from "@/modules/categories/queries"
 import { usePrinterOptions } from "@/shared/printers/usePrinters"
-import { useAppSettings } from "@/modules/settings"
 import { useExemptionReasons, useTaxes } from "@/modules/taxes/service"
 import { useUnits } from "@/modules/units/queries"
 import { priceBreakdown } from "../pricing"
@@ -49,14 +48,12 @@ export function PricingFields({ computedCost }: { computedCost: number }) {
   const { t } = useTranslation()
   const { control, setValue, getValues } = useFormContext<ProductForm>()
   const [type, taxId, price, calc] = useWatch({ control, name: ["type", "taxId", "sellingPrice", "taxCalculation"] })
-  const taxSetting = useAppSettings().taxSetting?.taxSetting
   const { data: taxes = [] } = useTaxes()
   const { data: reasons = [] } = useExemptionReasons()
   const rules = kindRules(type)
-  const exempt = taxSetting === "Exempt"
   const tax = taxes.find((x) => x.id === taxId)
   const zeroRate = tax?.amount === 0
-  const rate = exempt ? 0 : tax?.amount ?? 0
+  const rate = tax?.amount ?? 0
   const p = priceBreakdown(price || 0, rate, calc, 0)
 
   // A prepared item's cost always follows its components.
@@ -73,7 +70,7 @@ export function PricingFields({ computedCost }: { computedCost: number }) {
       <FormInput control={control} name="costPrice" type="number" label={t("productForm.cost")} placeholder={t("productForm.costHint")}
         disabled={rules.costIsComputed} description={rules.costIsComputed ? t("productForm.autoCost") : undefined} />
       {rules.ownBarcodeAndPrice && <FormInput control={control} name="sellingPrice" type="number" required label={t("productForm.price")} placeholder={t("productForm.priceHint")} />}
-      {rules.sells && !exempt && (
+      {rules.sells && (
         <>
           <FormSelect control={control} name="taxId" numeric required label={t("productForm.tax")} placeholder={t("productForm.pickTax")}
             options={taxes.map((x) => ({ value: String(x.id), label: x.name }))} />

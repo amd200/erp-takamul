@@ -8,6 +8,7 @@ import { excelReport, pdfReport, printReport, type OutputColumn, type ReportOutp
 import { FiscalFilters, ReportShell, SummaryCards, type SummaryCard } from "./ReportShell"
 import { ReportTable } from "./ReportTable"
 import { useFiscalFilters, type Fiscal } from "./useFiscalFilters"
+import { reportKeys } from "../keys"
 
 export type Sort = { key?: string; desc: boolean }
 
@@ -48,7 +49,7 @@ export function PagedReport<T extends object, R>({ id, title, icon, extra, withF
   const [page, setPage] = useState(0)
   const [busy, setBusy] = useState(false)
   const { data, isFetching } = useQuery({
-    queryKey: ["old-reports", id, f.applied, dep, sort, page, size],
+    queryKey: reportKeys.oldReport(id, f.applied, dep, sort, page, size),
     queryFn: () => read(f.applied, page + 1, size, sort),
     enabled: f.searched && enabled,
     placeholderData: (p) => p,

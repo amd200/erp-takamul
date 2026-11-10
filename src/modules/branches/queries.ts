@@ -4,8 +4,8 @@ import i18n from "@/shared/i18n"
 import { errorToast } from "@/shared/api/errors"
 import { branchesApi } from "./service"
 import type { Branch, BranchInput } from "./types"
-
-export const branchKeys = { all: ["branches"] as const, list: ["branches", "list"] as const, detail: (id: number) => ["branches", "detail", id] as const }
+import { branchKeys } from "./keys"
+import { refKeys } from "@/shared/api/keys"
 
 export const useBranchList = () => useQuery({ queryKey: branchKeys.list, queryFn: branchesApi.list })
 export const useBranch = (id: number | undefined) => useQuery({ queryKey: branchKeys.detail(id ?? 0), queryFn: () => branchesApi.get(id!), enabled: !!id })
@@ -16,7 +16,7 @@ export function useSaveBranch() {
     mutationFn: ({ id, data, current }: { id?: number; data: BranchInput; current?: Branch }) => (id && current ? branchesApi.update(id, data, current) : branchesApi.create(data)),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: branchKeys.all })
-      qc.invalidateQueries({ queryKey: ["refs"] })
+      qc.invalidateQueries({ queryKey: refKeys.all })
       toast.success(i18n.t("common.saved"))
     },
     onError: (e) => errorToast(e, "common.saveFailed"),

@@ -392,7 +392,14 @@
     "opAdd": "Add",
     "opRemove": "Remove",
     "chooseOperation": "Choose Operation Type",
-    "cancelBack": "Cancel and Return"
+    "cancelBack": "Cancel and Return",
+    "deleteTitle": "Delete adjustment",
+    "deleteBody": "Delete this quantity adjustment? It will be removed from the list.",
+    "edit": "Edit Quantity Adjustment",
+    "serial": "No",
+    "total": "Total quantities",
+    "printFailed": "Couldn't print. Try again.",
+    "nameCode": "Barcode / Name"
   },
   "productForm": {
     "addTitle": "Add New Item",
@@ -535,6 +542,7 @@
     "saveFailed": "Couldn't save. Try again.",
     "deleted": "Deleted",
     "deleteFailed": "Couldn't delete. Try again.",
+    "print": "Print",
     "noAccess": "You don't have access to this page",
     "noAccessHint": "Ask your administrator to add the permission to your role.",
     "actions": "Actions",
@@ -735,6 +743,8 @@
     },
     "typePick": "Pick the type first; the matching fields will appear.",
     "typeLocked": "The type can't change after the item is created.",
+    "branch": "Branch",
+    "branchHint": "The categories, units and taxes below load from this branch.",
     "searchPlaceholder": "Search by name or barcode",
     "allCategories": "All categories",
     "exportExcel": "Export to Excel",
@@ -1421,7 +1431,8 @@
     },
     "stock": {
       "view": "View",
-      "adjust": "Record adjustment"
+      "adjust": "Record adjustment",
+      "delete": "Delete adjustment"
     },
     "categories": {
       "view": "View",
@@ -2789,6 +2800,8 @@
     "deleteBody": "Warehouse \"{{name}}\" will be deactivated."
   },
   "branches": {
+    "formLabel": "Branch",
+    "formHint": "This record is saved on the selected branch.",
     "name": "Branch name",
     "code": "Branch code",
     "title": "Branches",

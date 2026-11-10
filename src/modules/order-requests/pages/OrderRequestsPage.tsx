@@ -113,7 +113,7 @@ export default function OrderRequestsPage() {
       <PageHeader title={t("orderRequests.title")} description={t("orderRequests.description")} />
       <SectionCard>
         <DataTable rows={data?.items} loading={isLoading} columns={columns} rowKey={(o) => o.id} sort={sort} searchPlaceholder={t("orderRequests.search")}
-          server={{ total: data?.total ?? 0, page, pageSize: PAGE_SIZE, onPage: setPage, onSearch, fetching: isFetching && !isLoading }}
+          server={{ total: data?.totalCount ?? 0, page, pageSize: PAGE_SIZE, onPage: setPage, onSearch, fetching: isFetching && !isLoading }}
           filters={
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Input type="date" value={from} onChange={(e) => { setFrom(e.target.value); setPage(0) }} aria-label={t("sales.from")} className="h-10 w-36" />

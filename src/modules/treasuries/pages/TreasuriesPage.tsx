@@ -20,6 +20,8 @@ import { EmptyState } from "@/components/EmptyState"
 import { FormInput } from "@/components/form/FormFields"
 import { useCan } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
+import { BranchSection } from "@/modules/branches/BranchSection"
+import { useFormBranch } from "@/modules/branches/useFormBranch"
 import type { Treasury } from "../types"
 import { useDeleteTreasury, useSaveTreasury, useTreasuryList } from "../queries"
 import { emptyTreasury, treasuryFormValues, treasurySchema, type TreasuryForm } from "../schema"
@@ -28,6 +30,7 @@ import { emptyTreasury, treasuryFormValues, treasurySchema, type TreasuryForm } 
 function TreasuryDialog({ open, onOpenChange, treasury }: { open: boolean; onOpenChange: (o: boolean) => void; treasury: Treasury | null }) {
   const { t } = useTranslation()
   const save = useSaveTreasury()
+  const formBranch = useFormBranch(open && !treasury)
   const form = useForm<TreasuryForm>({ resolver: zodResolver(treasurySchema), defaultValues: emptyTreasury() })
   useEffect(() => { if (open) form.reset(treasury ? treasuryFormValues(treasury) : emptyTreasury()) }, [open, treasury, form])
   const submit = form.handleSubmit((data) => save.mutate({ id: treasury?.id, data }, { onSuccess: () => onOpenChange(false) }))
@@ -39,6 +42,7 @@ function TreasuryDialog({ open, onOpenChange, treasury }: { open: boolean; onOpe
         <DialogHeader className="py-3"><DialogTitle className="flex items-center gap-2 text-[#2ecc71]"><Wallet size={18} />{title}</DialogTitle></DialogHeader>
         <form id="treasury-form" onSubmit={submit} noValidate className="no-scrollbar -mx-4 max-h-[50vh] overflow-y-auto px-4">
           <div className="grid grid-cols-1 gap-5 p-2 md:grid-cols-2">
+            {formBranch.show && <BranchSection className="md:col-span-2" value={formBranch.branchId} onChange={formBranch.pick} />}
             <FormInput control={form.control} name="name" required label={t("oldTreasuries.nameLabel")} placeholder={t("oldTreasuries.nameHint")} />
             <FormInput control={form.control} name="openingBalance" type="number" label={t("oldTreasuries.opening")} placeholder="0" />
             <div className="md:col-span-2">

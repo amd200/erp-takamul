@@ -8,4 +8,11 @@ export type AdjustmentItemDto = {
 }
 export type AdjustmentDto = { id: number; notes?: string | null; performedBy?: string | null; operationDate?: string | null; items?: AdjustmentItemDto[] | null }
 
-export type AdjustmentInput = { notes: string; lines: { productId: number; operation: Operation; quantity: number }[] }
+/** One item in one warehouse, as GET /StockInventory sends it. */
+export type StockRowDto = {
+  id: number; productId: number; productName: string; barcode?: string | null
+  warehouseId: number; warehouseName?: string | null; quantityAvailable: number
+  productUnits?: { unitId: number; unitName?: string | null; isBaseUnit: boolean; barcode?: string | null }[] | null
+}
+
+export type AdjustmentInput = { notes: string; lines: { stockInventoryId: number; unitId: number | null; operation: Operation; quantity: number }[] }

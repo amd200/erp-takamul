@@ -12,11 +12,14 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Switch } from "@/components/ui/switch"
 import { FormInput } from "@/components/form/FormFields"
 import { useAppSettings } from "@/modules/settings"
+import { BranchSection } from "@/modules/branches/BranchSection"
+import { useFormBranch } from "@/modules/branches/useFormBranch"
 import { customersApi } from "../service"
 import { useSaveCustomer } from "../queries"
 import { customerSchema, emptyCustomer, type CustomerForm } from "../schema"
 import type { Customer } from "../types"
 import { CompanionsBlock, EyePrescriptionBox } from "./EyePrescriptionBox"
+import { customerKeys } from "../keys"
 
 /**
  * Add or edit a customer, as in the current system: a pop-up with name and phone, the address fields, the national
@@ -53,6 +56,8 @@ export function CustomerDialog({ open, onOpenChange, customer, onCreated, withMe
   const collapsible = withMeasurements && !nameAndPhoneOnly
   const hideDetails = nameAndPhoneOnly || (collapsible && !showFull)
   const editing = !!customer
+  // Only the customers list picks the branch; the sales screens and the optics tools add to the branch they are working on.
+  const formBranch = useFormBranch(open && !editing && !embedded && !onCreated)
 
   useEffect(() => {
     if (!open) return
@@ -62,7 +67,7 @@ export function CustomerDialog({ open, onOpenChange, customer, onCreated, withMe
 
   const submit = form.handleSubmit((data) => save.mutate({ id: customer?.id, data }, {
     onSuccess: async () => {
-      qc.invalidateQueries({ queryKey: ["customers"] })
+      qc.invalidateQueries({ queryKey: customerKeys.all })
       if (!editing && onCreated) {
         // The server answers with a message only, so the new customer is found by name and phone.
         const created = (await customersApi.list()).filter((c) => c.customerName === data.name && (c.phone ?? "") === data.phone).sort((a, b) => b.id - a.id)[0]
@@ -87,6 +92,7 @@ export function CustomerDialog({ open, onOpenChange, customer, onCreated, withMe
           <form id="customer-form" onSubmit={submit} noValidate className={cn("min-h-0 flex-1 overflow-x-hidden overflow-y-auto", !embedded && "-mx-1 px-1 sm:-mx-4 sm:px-4")}>
             <div className="grid grid-cols-2 gap-4 p-1 sm:gap-5 sm:p-2">
               {part !== "companions" && <>
+              {formBranch.show && <BranchSection className="col-span-2" value={formBranch.branchId} onChange={formBranch.pick} />}
               {/* In the optics tools the file number, name and mobile share one row, as in the current POS. */}
               <div className={cn("col-span-2 grid gap-4 sm:gap-5", embedded && withMeasurements ? "sm:grid-cols-3" : "grid-cols-2")}>
                 {withMeasurements && <div className={cn(!(embedded && withMeasurements) && "col-span-2")}><FormInput control={c} name="fileNumber" label={t("custDialog.fileNumber")} placeholder={t("custDialog.fileNumber")} /></div>}

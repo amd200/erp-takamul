@@ -4,14 +4,16 @@ import i18n from "@/shared/i18n"
 import { errorToast } from "@/shared/api/errors"
 import { purchasesApi } from "./service"
 import type { PurchaseInput } from "./types"
-
-export const purchaseKeys = { all: ["purchases"] as const, page: (q: object) => ["purchases", "page", q] as const, detail: (id: number) => ["purchases", "detail", id] as const }
+import { purchaseKeys } from "./keys"
+import { supplierKeys } from "@/modules/suppliers/keys"
+import { treasuryKeys } from "@/modules/treasuries/keys"
+import { productKeys } from "@/modules/products/keys"
 
 export const usePurchasePage = (q: { page: number; pageSize: number; searchTerm?: string; sortBy?: string; sortDescending?: boolean }) =>
   useQuery({ queryKey: purchaseKeys.page(q), queryFn: () => purchasesApi.page(q), placeholderData: keepPreviousData })
 /** The latest purchase number plus one, keeping its prefix ("PO-B1-000041" → "PO-B1-000042"); the server gives the real number on saving. */
 export const useNextPurchaseNumber = () => useQuery({
-  queryKey: ["purchases", "next-number"],
+  queryKey: purchaseKeys.nextNumber,
   queryFn: async () => {
     const numbers = (await purchasesApi.page({ page: 1, pageSize: 20 })).items.map((p) => p.purchaseOrderNumber ?? "").filter(Boolean)
     const last = numbers.sort((a, b) => b.localeCompare(a))[0]
@@ -26,7 +28,7 @@ export const usePurchase = (id: number | undefined) => useQuery({ queryKey: purc
 /** A purchase moves stock, supplier balances and treasuries, so all of those refresh with it. */
 function useRefresh() {
   const qc = useQueryClient()
-  return () => { for (const k of ["purchases", "suppliers", "treasuries", "products"]) qc.invalidateQueries({ queryKey: [k] }) }
+  return () => { for (const queryKey of [purchaseKeys.all, supplierKeys.all, treasuryKeys.all, productKeys.all]) qc.invalidateQueries({ queryKey }) }
 }
 
 export function useSavePurchase() {

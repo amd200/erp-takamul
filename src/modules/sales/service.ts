@@ -15,8 +15,7 @@ const itemBody = (l: InvoiceLine) => ({
 export const invoicesApi = {
   /** One page of the A4 or POS list; search is done by the server. */
   page: async (q: InvoiceQuery) => {
-    const res = await http<PagedResult<SalesOrderDto>>("/sales-orders", { params: { Page: q.page, PageSize: q.pageSize, SearchTerm: q.searchTerm || undefined, OrderType: q.channel, IsHold: false, SortBy: q.sortBy, SortDescending: q.sortBy ? q.sortDescending : undefined } })
-    return { items: res.items, total: res.totalCount }
+    return http<PagedResult<SalesOrderDto>>("/sales-orders", { params: { Page: q.page, PageSize: q.pageSize, SearchTerm: q.searchTerm || undefined, OrderType: q.channel, IsHold: false, SortBy: q.sortBy, SortDescending: q.sortBy ? q.sortDescending : undefined } })
   },
   /** Recent invoices of both kinds, for the screens that pick one (returns, debit notes). */
   list: async (): Promise<SalesOrderRow[]> => {

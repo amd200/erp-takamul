@@ -4,15 +4,16 @@ import i18n from "@/shared/i18n"
 import { errorToast, type ListSort } from "@/shared/api/errors"
 import { treasuriesApi } from "./service"
 import type { TransferInput } from "./types"
+import { treasuryKeys } from "./keys"
 
-export const useTreasuryList = (sort?: ListSort) => useQuery({ queryKey: sort?.SortBy ? ["treasuries", "list", sort] : ["treasuries", "list"], queryFn: () => treasuriesApi.list(sort), placeholderData: keepPreviousData })
+export const useTreasuryList = (sort?: ListSort) => useQuery({ queryKey: treasuryKeys.list(sort), queryFn: () => treasuriesApi.list(sort), placeholderData: keepPreviousData })
 
 export const useSaveTreasury = () => {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({ id, data }: { id?: number; data: Parameters<typeof treasuriesApi.create>[0] }) => (id ? treasuriesApi.update(id, data) : treasuriesApi.create(data)),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["treasuries"] })
+      qc.invalidateQueries({ queryKey: treasuryKeys.all })
       toast.success(i18n.t("common.saved"))
     },
     onError: (e) => errorToast(e, "common.saveFailed"),
@@ -24,7 +25,7 @@ export const useDeleteTreasury = () => {
   return useMutation({
     mutationFn: (id: number) => treasuriesApi.remove(id),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["treasuries"] })
+      qc.invalidateQueries({ queryKey: treasuryKeys.all })
       toast.success(i18n.t("common.deleted"))
     },
     onError: (e) => errorToast(e, "common.deleteFailed"),
@@ -32,14 +33,14 @@ export const useDeleteTreasury = () => {
 }
 
 export const useStatement = (treasuryId: number | undefined, from: string, to: string, sort?: ListSort) =>
-  useQuery({ queryKey: ["treasuries", "statement", treasuryId, from, to, sort?.SortBy, sort?.SortDescending], queryFn: () => treasuriesApi.statement(treasuryId!, from, to, sort), enabled: !!treasuryId })
-export const useTransferList = (sort?: ListSort) => useQuery({ queryKey: sort?.SortBy ? ["treasuries", "transfers", sort] : ["treasuries", "transfers"], queryFn: () => treasuriesApi.transfers(sort), placeholderData: keepPreviousData })
+  useQuery({ queryKey: treasuryKeys.statement(treasuryId, from, to, sort), queryFn: () => treasuriesApi.statement(treasuryId!, from, to, sort), enabled: !!treasuryId })
+export const useTransferList = (sort?: ListSort) => useQuery({ queryKey: treasuryKeys.transfers(sort), queryFn: () => treasuriesApi.transfers(sort), placeholderData: keepPreviousData })
 
 function useTreasuryMutation<A>(fn: (a: A) => Promise<unknown>, ok: string) {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: fn,
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["treasuries"] }); toast.success(i18n.t(ok)) },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: treasuryKeys.all }); toast.success(i18n.t(ok)) },
     onError: (e) => errorToast(e, "common.saveFailed"),
   })
 }

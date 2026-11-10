@@ -2,6 +2,7 @@ import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import type { Category } from "@/modules/categories/types"
 import { useDebounced } from "@/modules/products/lookup"
+import { listedPrice } from "@/modules/products/mappers"
 import type { Product } from "@/modules/products/types"
 import { useAppSettings } from "@/modules/settings"
 import { usePos4Categories, usePos4Items } from "./queries"
@@ -44,5 +45,5 @@ export function useCatalog(search: string, currentCat: number | null, phone: boo
   }
 }
 
-/** What a card shows: the price with tax, as the server sends it. */
-export const shownPrice = (p: Pick<Product, "priceAfterTax" | "sellingPrice">) => p.priceAfterTax ?? p.sellingPrice ?? 0
+/** What a card shows: the price with tax, or before it in a tax-exempt branch. */
+export const shownPrice = (p: Pick<Product, "priceBeforeTax" | "priceAfterTax" | "sellingPrice">, exempt: boolean) => listedPrice(p, exempt)

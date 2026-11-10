@@ -15,11 +15,12 @@ import { FormInput, FormSwitch } from "@/components/form/FormFields"
 import { RowActions } from "@/components/RowActions"
 import { SectionCard } from "@/components/SectionCard"
 import { errorToast } from "@/shared/api/errors"
-import { currencyKeys, useCurrencies, useDeleteCurrency, useSaveCurrency } from "../queries"
+import { useCurrencies, useDeleteCurrency, useSaveCurrency } from "../queries"
 import { currencySchema } from "../schema"
 import { currenciesApi } from "../service"
 import type { Currency } from "../types"
 import { FormDialog } from "./FormDialog"
+import { currencyKeys } from "../keys"
 
 type Form = { code: string; name: string; symbol: string; isDefault: boolean }
 const empty: Form = { code: "", name: "", symbol: "", isDefault: false }

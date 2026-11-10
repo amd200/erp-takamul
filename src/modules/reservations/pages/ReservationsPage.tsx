@@ -19,6 +19,8 @@ import { PageHeader } from "@/components/PageHeader"
 import { RowActions } from "@/components/RowActions"
 import { useCan } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
+import { BranchSection } from "@/modules/branches/BranchSection"
+import { useFormBranch } from "@/modules/branches/useFormBranch"
 import { BOOKING_STATUSES } from "../types"
 import type { BookingStatus, Reservation } from "../types"
 import { useDeleteReservation, useReservations, useSaveReservation, useSetReservationStatus } from "../queries"
@@ -30,6 +32,7 @@ const STATUS_TONE: Record<BookingStatus, string> = { Confirmed: "text-success", 
 function ReservationDialog({ open, onOpenChange, reservation }: { open: boolean; onOpenChange: (o: boolean) => void; reservation: Reservation | null }) {
   const { t } = useTranslation()
   const save = useSaveReservation()
+  const formBranch = useFormBranch(open && !reservation)
   const form = useForm<ReservationForm>({ resolver: zodResolver(reservationSchema), defaultValues: emptyReservation() })
   useEffect(() => {
     if (!open) return
@@ -45,6 +48,7 @@ function ReservationDialog({ open, onOpenChange, reservation }: { open: boolean;
         <DialogHeader><DialogTitle>{reservation ? t("reservations.edit") : t("reservations.add")}</DialogTitle></DialogHeader>
         <form id="reservation-form" onSubmit={submit} noValidate>
           <FieldGroup className="gap-4">
+            {formBranch.show && <BranchSection value={formBranch.branchId} onChange={formBranch.pick} />}
             <FormInput control={form.control} name="customerName" required label={t("reservations.customerName")} />
             <FormInput control={form.control} name="customerPhone" required label={t("users.mobile")} dir="ltr" />
             <div className="grid grid-cols-2 gap-3">

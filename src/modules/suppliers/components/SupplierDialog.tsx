@@ -9,6 +9,8 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Switch } from "@/components/ui/switch"
 import { FormInput } from "@/components/form/FormFields"
 import { useAppSettings } from "@/modules/settings"
+import { BranchSection } from "@/modules/branches/BranchSection"
+import { useFormBranch } from "@/modules/branches/useFormBranch"
 import { useSaveSupplier } from "../queries"
 import { emptySupplier, supplierSchema, type SupplierForm } from "../schema"
 import type { Supplier } from "../types"
@@ -25,6 +27,8 @@ export function SupplierDialog({ open, onOpenChange, supplier, onSaved }: { open
   // With the name-and-phone setting only those two show.
   const nameAndPhoneOnly = useAppSettings().suppliersTab?.showSupplierNameAndPhoneOnlyInPurchases === true
   const editing = !!supplier
+  // The purchase screen adds to the branch it is working on; only the suppliers list picks one.
+  const formBranch = useFormBranch(open && !editing && !onSaved)
 
   useEffect(() => { if (open) form.reset(supplier ? supplierFormOf(supplier) : emptySupplier) }, [open, supplier, form])
 
@@ -42,6 +46,7 @@ export function SupplierDialog({ open, onOpenChange, supplier, onSaved }: { open
         <FormProvider {...form}>
           <form id="supplier-form" onSubmit={submit} noValidate className="-mx-1 min-h-0 flex-1 overflow-y-auto px-1 sm:-mx-4 sm:px-4">
             <div className="grid grid-cols-2 gap-4 p-1 sm:gap-5 sm:p-2">
+              {formBranch.show && <BranchSection className="col-span-2" value={formBranch.branchId} onChange={formBranch.pick} />}
               <FormInput control={c} name="name" required label={t("supDialog.name")} placeholder={t("supDialog.nameHint")} />
               <FormInput control={c} name="phone" label={t("custDialog.mobile")} placeholder={t("custDialog.mobileHint")} />
 

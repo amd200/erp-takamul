@@ -5,8 +5,8 @@ import { errorToast, type ListSort } from "@/shared/api/errors"
 import { refreshAccessToken } from "@/shared/http/client"
 import { rolesApi } from "./service"
 import type { RoleInput } from "./types"
-
-export const roleKeys = { all: ["roles"] as const, list: ["roles", "list"] as const, detail: (id: string) => ["roles", "detail", id] as const }
+import { roleKeys } from "./keys"
+import { userKeys } from "@/modules/users/keys"
 
 export const useRoles = (sort?: ListSort) => useQuery({ queryKey: sort?.SortBy ? [...roleKeys.list, sort] : roleKeys.list, queryFn: () => rolesApi.list(sort), placeholderData: keepPreviousData })
 export const useRole = (roleId: string | undefined) => useQuery({ queryKey: roleKeys.detail(roleId ?? ""), queryFn: () => rolesApi.get(roleId!), enabled: !!roleId })
@@ -22,7 +22,7 @@ export function useSaveRole() {
       await (roleId ? rolesApi.update(roleId, data.permissions) : rolesApi.create(data.roleName ?? "", data.permissions))
       await refreshAccessToken().catch(() => undefined)
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: roleKeys.all }); qc.invalidateQueries({ queryKey: ["users"] }); toast.success(i18n.t("common.saved")) },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: roleKeys.all }); qc.invalidateQueries({ queryKey: userKeys.all }); toast.success(i18n.t("common.saved")) },
     onError: (e) => errorToast(e, "common.saveFailed"),
   })
 }

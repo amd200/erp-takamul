@@ -16,6 +16,7 @@ import type { PagedResult } from "@/shared/http/paged"
 import { badgeOf, useOrderToCart, type Order } from "../components/OrdersDialog"
 import { InvoiceQrDialog } from "../components/InvoiceQrDialog"
 import { useDeleteHeld } from "../queries"
+import { salesKeys } from "@/modules/sales/keys"
 
 type Tab = "all" | "completed" | "pending"
 const STATUS: Record<Tab, string | null> = { all: null, completed: "Confirmed", pending: "UnConfirmed" }
@@ -38,7 +39,7 @@ export function InvoicesDialog({ open, onOpenChange }: { open: boolean; onOpenCh
   const paper = invoiceType === 2 ? "roll" : invoiceType === 3 ? "a5" : "a4"
   const isHold = tab === "pending" ? true : tab === "completed" ? false : undefined
   const { data = [], refetch } = useQuery({
-    queryKey: ["sales", "pos2-invoices", tab],
+    queryKey: salesKeys.posInvoices(tab),
     queryFn: async () => (await http<PagedResult<Order>>("/sales-orders", { params: { Page: 1, PageSize: 10, OrderType: "POS", ...(isHold === undefined ? {} : { IsHold: isHold }) } })).items ?? [],
     enabled: open,
     refetchInterval: open && tab === "pending" ? 5000 : undefined,

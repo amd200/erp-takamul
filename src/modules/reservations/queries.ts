@@ -4,8 +4,7 @@ import i18n from "@/shared/i18n"
 import { errorToast } from "@/shared/api/errors"
 import { reservationsApi } from "./service"
 import type { BookingStatus, ReservationInput, ReservationQuery } from "./types"
-
-export const reservationKeys = { all: ["reservations"] as const, list: (q: ReservationQuery) => ["reservations", "list", q] as const }
+import { reservationKeys } from "./keys"
 
 export const useReservations = (q: ReservationQuery) => useQuery({ queryKey: reservationKeys.list(q), queryFn: () => reservationsApi.list(q), placeholderData: keepPreviousData })
 

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { enteredPrice } from "@/modules/products/mappers"
+import { enteredPrice, priceBeforeTaxOf } from "@/modules/products/mappers"
 import { Handbag, Plus, Trash2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
@@ -19,10 +19,10 @@ type UnitChoice = { unitId: number; name: string; price: number }
 const money = (n: number) => n.toFixed(2)
 const noSpin = "[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
 
-/** The units an item sells in: its base unit at the item price, then its extra sale units. */
-function unitChoices(p: Product | undefined, unitName: (id: number) => string): UnitChoice[] {
+/** The units an item sells in: its base unit at the item price, then its extra sale units. A tax-exempt branch sells without tax, so prices are the ones before tax. */
+function unitChoices(p: Product | undefined, unitName: (id: number) => string, exempt: boolean): UnitChoice[] {
   if (!p) return []
-  return [{ unitId: p.baseUnitId ?? 0, name: unitName(p.baseUnitId ?? 0), price: enteredPrice(p) }, ...(p.units ?? []).filter((u) => !u.isBaseUnit).map((u) => ({ unitId: u.unitId, name: unitName(u.unitId), price: u.sellingPrice ?? 0 }))]
+  return [{ unitId: p.baseUnitId ?? 0, name: unitName(p.baseUnitId ?? 0), price: exempt ? priceBeforeTaxOf(p) : enteredPrice(p) }, ...(p.units ?? []).filter((u) => !u.isBaseUnit).map((u) => ({ unitId: u.unitId, name: unitName(u.unitId), price: (exempt ? priceBeforeTaxOf(p, u) : u.sellingPrice) ?? 0 }))]
 }
 
 /** The unit price before tax, whichever way the item's price is entered. */
@@ -124,7 +124,7 @@ export function SalesLines({ lines, options: o, search, onPick, onCode, onQuery,
     return (p?.units ?? []).find((u) => u.unitId === l.unitId)?.barcode || p?.barcode || String(l.productId)
   }
   const setPrice = (l: CartLine, n: number) => patch(l.key, { unitPrice: Math.round(n * 100) / 100 })
-  const units = (l: CartLine) => unitChoices(product(l.productId), unitName)
+  const units = (l: CartLine) => unitChoices(product(l.productId), unitName, o.exempt)
   const canSwitch = (l: CartLine) => o.saleUnits && units(l).length > 1
 
   const emptyMessage = (

@@ -90,7 +90,7 @@ export default function ProductsListPage() {
   return (
     <>
       <PageHeader title={t("products.listTitle")}
-        description={data ? t("products.listCount", { count: data.total, n: formatNumber(data.total) }) : t("products.listDescription")} actions={
+        description={data ? t("products.listCount", { count: data.totalCount, n: formatNumber(data.totalCount) }) : t("products.listDescription")} actions={
         <>
           <Can perm={P.products.import}><Button asChild variant="outline" size="lg"><Link to="/products/import"><Upload />{t("common.import")}</Link></Button></Can>
           <Can perm={P.products.add}><Button asChild size="lg"><Link to="/products/create"><Plus />{t("products.add")}</Link></Button></Can>
@@ -111,7 +111,7 @@ export default function ProductsListPage() {
             columns={columns}
             rowKey={(p) => p.id}
             searchPlaceholder={t("products.searchPlaceholder")}
-            server={{ total: data?.total ?? 0, page, pageSize: PAGE_SIZE, onPage: setPage, onSearch, fetching: isFetching && !isLoading,
+            server={{ total: data?.totalCount ?? 0, page, pageSize: PAGE_SIZE, onPage: setPage, onSearch, fetching: isFetching && !isLoading,
               sort: { key: sort.key, desc: sort.desc, onSort: (key, desc) => { setSort({ key, desc }); setPage(0) } } }}
             filters={
               <Select value={categoryId} onValueChange={(v) => { setCategoryId(v); setPage(0) }}>

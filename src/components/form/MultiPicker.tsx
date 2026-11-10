@@ -10,7 +10,7 @@ export type PickerOption = { value: number; label: string }
  * Pick several items from a list that can be long: a search box, a fixed-height scrolling list of checkboxes,
  * and a count with "all" / "none". Stays the same size whether there are 5 options or 500.
  */
-export function MultiPicker({ options, value, onChange }: { options: PickerOption[]; value: number[]; onChange: (value: number[]) => void }) {
+export function MultiPicker({ options, value, onChange, listClassName = "max-h-48" }: { options: PickerOption[]; value: number[]; onChange: (value: number[]) => void; /** Height of the scrolling list. */ listClassName?: string }) {
   const { t } = useTranslation()
   const [q, setQ] = useState("")
   const shown = useMemo(() => options.filter((o) => !q.trim() || o.label.toLowerCase().includes(q.trim().toLowerCase())), [options, q])
@@ -30,7 +30,7 @@ export function MultiPicker({ options, value, onChange }: { options: PickerOptio
           <button type="button" className="text-primary hover:underline" onClick={() => onChange([])}>{t("common.selectNone")}</button>
         </span>
       </div>
-      <div className="max-h-48 overflow-y-auto">
+      <div className={`${listClassName} overflow-y-auto`}>
         {shown.length === 0 && <p className="px-2 py-3 text-center text-sm text-muted-foreground">{t("common.noResults")}</p>}
         {shown.map((o) => (
           <label key={o.value} className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm hover:bg-muted">

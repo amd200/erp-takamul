@@ -22,7 +22,7 @@ const component = z.object({
 /** A branched item's children are existing items, picked from the list. */
 const child = z.object({ id: z.number(), nameAr: z.string(), barcode: z.string(), sellingPrice: z.number() })
 
-const productObject = z.object({
+const productShape = z.object({
   type: z.enum(PRODUCT_TYPES),
   nameAr: z.string().trim().min(1, "validation.nameArRequired"),
   nameEn: z.string().trim(),
@@ -51,7 +51,7 @@ const productObject = z.object({
   image: z.union([z.instanceof(File), z.string()]).nullable(),
 })
 
-export type ProductForm = z.infer<typeof productObject>
+export type ProductForm = z.infer<typeof productShape>
 
 /** Which sections and rules apply to each kind. */
 export const kindRules = (type: ProductType) => ({
@@ -65,37 +65,28 @@ export const kindRules = (type: ProductType) => ({
   costIsComputed: type === "Prepared",
 })
 
-/**
- * Rules that depend on the item kind and the branch tax settings, mirroring the current system:
- * a 0% tax needs an exemption reason in tax stages 1 and 2; "Exempt" branches skip tax entirely.
- */
-export function buildProductSchema(opts: { taxExempt: boolean; zeroRateTaxIds: number[] }) {
-  return productObject.superRefine((v, ctx) => {
-    const r = kindRules(v.type)
-    const issue = (path: (string | number)[], message: string) => ctx.addIssue({ code: "custom", path, message })
+/** Rules that depend on the item kind. Tax rules need branch settings, so the form checks them. */
+export const productSchema = productShape.superRefine((v, ctx) => {
+  const r = kindRules(v.type)
+  const issue = (path: (string | number)[], message: string) => ctx.addIssue({ code: "custom", path, message })
 
-    if (!v.categoryId && v.type !== "RawMatrial") issue(["categoryId"], "validation.categoryRequired")
-    if (!v.baseUnitId && v.type !== "Branched") issue(["baseUnitId"], "validation.unitRequired")
-    if (r.ownBarcodeAndPrice) {
-      if (!v.barcode) issue(["barcode"], "validation.barcodeRequired")
-      if (!(v.sellingPrice > 0)) issue(["sellingPrice"], "validation.pricePositive")
-    }
-    if (!opts.taxExempt && r.sells) {
-      if (!v.taxId) issue(["taxId"], "validation.taxRequired")
-      else if (opts.zeroRateTaxIds.includes(v.taxId) && !v.taxExemptionReasonId) issue(["taxExemptionReasonId"], "validation.exemptionRequired")
-    }
-    if (r.components && v.components.length === 0) issue(["components"], "validation.componentsRequired")
-    if (r.children && v.children.length === 0) issue(["children"], "validation.childrenRequired")
-    if (r.purchaseUnit) {
-      if (!v.purchaseUnitId) issue(["purchaseUnitId"], "validation.unitRequired")
-      if (!(Number(v.purchaseConversionFactor) > 0)) issue(["purchaseConversionFactor"], "validation.factorPositive")
-    }
-  })
-}
+  if (!v.categoryId && v.type !== "RawMatrial") issue(["categoryId"], "validation.categoryRequired")
+  if (!v.baseUnitId && v.type !== "Branched") issue(["baseUnitId"], "validation.unitRequired")
+  if (r.ownBarcodeAndPrice) {
+    if (!v.barcode) issue(["barcode"], "validation.barcodeRequired")
+    if (!(v.sellingPrice > 0)) issue(["sellingPrice"], "validation.pricePositive")
+  }
+  if (r.components && v.components.length === 0) issue(["components"], "validation.componentsRequired")
+  if (r.children && v.children.length === 0) issue(["children"], "validation.childrenRequired")
+  if (r.purchaseUnit) {
+    if (!v.purchaseUnitId) issue(["purchaseUnitId"], "validation.unitRequired")
+    if (!(Number(v.purchaseConversionFactor) > 0)) issue(["purchaseConversionFactor"], "validation.factorPositive")
+  }
+})
 
-export const emptyProduct = (type: ProductType = "Direct", defaults?: { baseUnitId?: number; taxId?: number }): ProductForm => ({
-  type, nameAr: "", nameEn: "", nameUr: "", description: "", barcode: "", categoryId: null, baseUnitId: defaults?.baseUnitId ?? 0,
-  costPrice: 0, sellingPrice: 0, taxId: defaults?.taxId ?? 0, taxCalculation: 1, taxExemptionReasonId: null, minStockLevel: 1,
+export const emptyProduct = (type: ProductType = "Direct"): ProductForm => ({
+  type, nameAr: "", nameEn: "", nameUr: "", description: "", barcode: "", categoryId: null, baseUnitId: 0,
+  costPrice: 0, sellingPrice: 0, taxId: 0, taxCalculation: 1, taxExemptionReasonId: null, minStockLevel: 1,
   isActive: true, showInSalesScreen: type !== "RawMatrial", printerName: null, displayOrder: 0, calories: null,
   units: [], components: [], children: [], purchaseUnitId: null, purchaseConversionFactor: null, image: null,
 })

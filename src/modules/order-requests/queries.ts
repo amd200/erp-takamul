@@ -4,8 +4,10 @@ import i18n from "@/shared/i18n"
 import { errorToast } from "@/shared/api/errors"
 import type { PosPayment } from "@/modules/pos/types"
 import { orderRequestsApi } from "./service"
-
-export const orderRequestKeys = { all: ["order-requests"] as const, page: (q: object) => ["order-requests", "page", q] as const, detail: (id: number) => ["order-requests", "detail", id] as const }
+import { orderRequestKeys } from "./keys"
+import { salesKeys } from "@/modules/sales/keys"
+import { treasuryKeys } from "@/modules/treasuries/keys"
+import { customerKeys } from "@/modules/customers/keys"
 
 export const useOrderRequestPage = (q: { page: number; pageSize: number; searchTerm?: string; from?: string; to?: string; sortBy?: string; sortDescending?: boolean }) =>
   useQuery({ queryKey: orderRequestKeys.page(q), queryFn: () => orderRequestsApi.page(q), placeholderData: keepPreviousData })
@@ -25,7 +27,7 @@ export function useCheckoutOrderRequest() {
   return useMutation({
     mutationFn: ({ id, payments, key }: { id: number; payments: PosPayment[]; key: string }) => orderRequestsApi.checkout(id, payments, key),
     onSuccess: () => {
-      for (const k of ["order-requests", "sales", "treasuries", "customers"]) qc.invalidateQueries({ queryKey: [k] })
+      for (const queryKey of [orderRequestKeys.all, salesKeys.all, treasuryKeys.all, customerKeys.all]) qc.invalidateQueries({ queryKey })
       toast.success(i18n.t("orderRequests.checkedOut"))
     },
     onError: (e) => errorToast(e, "common.saveFailed"),

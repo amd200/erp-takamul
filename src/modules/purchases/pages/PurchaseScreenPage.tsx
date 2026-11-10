@@ -21,7 +21,8 @@ import { useScanner } from "@/modules/pos/grid/useScanner"
 import { PaymentScreen } from "@/modules/pos/payment/PaymentScreen"
 import { useCurrentShift } from "@/modules/pos/queries"
 import type { CartDiscount, PosPayment } from "@/modules/pos/types"
-import { findByBarcode, rememberProduct, useProductSearch } from "@/modules/products/lookup"
+import { rememberProduct, useProductSearch } from "@/modules/products/lookup"
+import { useFindByBarcode } from "@/modules/products/queries"
 import type { Product } from "@/modules/products/types"
 import { SupplierDialog } from "@/modules/suppliers/components/SupplierDialog"
 import { useSupplierList } from "@/modules/suppliers/queries"
@@ -48,6 +49,7 @@ export default function PurchaseScreenPage() {
   const settings = useAppSettings()
   const session = useAuthStore((s) => s.session)
   const qc = useQueryClient()
+  const { mutateAsync: findByBarcode } = useFindByBarcode()
   const { data: units = [] } = useUnits()
   const { data: taxes = [] } = useTaxes()
   const { data: suppliers = [] } = useSupplierList()
@@ -101,7 +103,7 @@ export default function PurchaseScreenPage() {
   })
   const pick = (id: number) => { const p = results.find((x) => x.id === id); if (p) { rememberProduct(qc, p); add(p) } }
   const scan = async (code: string) => {
-    const hit = await findByBarcode(qc, code.trim(), buyable)
+    const hit = await findByBarcode({ code: code.trim(), accept: buyable })
     if (!hit || hit.unit) return false
     rememberProduct(qc, hit.product)
     add(hit.product)

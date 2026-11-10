@@ -18,6 +18,7 @@ export const BACKEND_PERMISSIONS: Record<Permission, string[]> = {
   "barcode.print": g("المنتجات", "طباعه باركود"),
   "stock.view": g("المخزون", "عرض", "عرض التسويات"),
   "stock.adjust": g("المخزون", "تعديل جماعي", "تعديل تسوية"),
+  "stock.delete": g("المخزون", "حذف تسوية"),
   "categories.view": g("تصنيفات المنتجات", "عرض"),
   "categories.manage": g("تصنيفات المنتجات", "إضافة", "تعديل", "حذف"),
   "units.view": g("وحدات القياس", "عرض"),

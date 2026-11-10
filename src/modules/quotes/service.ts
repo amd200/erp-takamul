@@ -29,8 +29,7 @@ const body = (q: QuoteInput, key?: string) => ({
 
 export const quotesApi = {
   page: async (p: { page: number; pageSize: number; searchTerm?: string; sortBy?: string; sortDescending?: boolean }) => {
-    const res = await http<PagedResult<Quote>>("/Quotation", { params: { Page: p.page, PageSize: p.pageSize, SearchTerm: p.searchTerm || undefined, SortBy: p.sortBy, SortDescending: p.sortBy ? p.sortDescending : undefined } })
-    return { items: res.items, total: res.totalCount }
+    return http<PagedResult<Quote>>("/Quotation", { params: { Page: p.page, PageSize: p.pageSize, SearchTerm: p.searchTerm || undefined, SortBy: p.sortBy, SortDescending: p.sortBy ? p.sortDescending : undefined } })
   },
   get: (id: number) => http<Quote>(`/Quotation/${id}`),
   create: (q: QuoteInput, key?: string) => retryWhileInProgress(() => http<unknown>("/Quotation", { method: "POST", headers: idempotencyHeaders(key), data: body(q, key) })),

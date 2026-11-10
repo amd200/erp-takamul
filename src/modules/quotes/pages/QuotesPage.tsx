@@ -77,7 +77,7 @@ export default function QuotesPage() {
     <>
       <PageBox title={t("quotes.listTitle")} subtitle={t("quotes.listSubtitle")}>
         <DataTable rows={data?.items} loading={isLoading} columns={columns} rowKey={(q) => q.id} sort={sort} searchPlaceholder={t("quotes.searchOld")}
-          server={{ total: data?.total ?? 0, page, pageSize: PAGE_SIZE, onPage: setPage, onSearch, fetching: isFetching && !isLoading }}
+          server={{ total: data?.totalCount ?? 0, page, pageSize: PAGE_SIZE, onPage: setPage, onSearch, fetching: isFetching && !isLoading }}
           emptyText={isError ? undefined : t("quotes.noData")}
           empty={<EmptyState icon={<RotateCw />} title={t("common.loadFailed")} hint={t("common.loadFailedHint")} action={<Button variant="outline" onClick={() => refetch()}>{t("common.retry")}</Button>} />} />
       </PageBox>
