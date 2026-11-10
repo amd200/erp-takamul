@@ -108,9 +108,9 @@ export function voucherDoc(v: Voucher, o: VoucherOptions): PrintDoc {
 </div>
 
 <div class="sub-header" dir="rtl">
-  <div style="width:30%;display:flex;justify-content:flex-start"><table class="voucher-meta-table">
-    <tr><td class="meta-lbl-en">Date :</td><td class="meta-val">${esc(dateText)}</td><td class="meta-lbl-ar">: التاريخ</td></tr>
-    <tr><td class="meta-lbl-en">No :</td><td class="meta-val">${dash(voucherNumber(v))}</td><td class="meta-lbl-ar">: رقم</td></tr>
+  <div style="width:30%;display:flex;justify-content:flex-start"><table class="voucher-meta-table" dir="ltr">
+    <tr><td class="meta-lbl-en">Date :</td><td class="meta-val">${esc(dateText)}</td><td class="meta-lbl-ar" dir="rtl">التاريخ :</td></tr>
+    <tr><td class="meta-lbl-en">No :</td><td class="meta-val">${dash(voucherNumber(v))}</td><td class="meta-lbl-ar" dir="rtl">رقم :</td></tr>
   </table></div>
   <div style="width:40%;display:flex;justify-content:center"><div class="voucher-title-box">
     <h1 class="voucher-title-ar">${receipt ? "سند قبض" : "سند صرف"}</h1>
