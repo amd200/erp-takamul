@@ -91,6 +91,7 @@ export default function AdjustmentFormPage() {
           <h2 className="mb-6 text-lg font-bold text-foreground">{t("adjForm.basic")}</h2>
           <div className="space-y-6">
             {formBranch.show && <BranchSection value={formBranch.branchId} onChange={changeBranch} />}
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <Field>
               <FieldLabel>{t("adjForm.date")}</FieldLabel>
               <Input readOnly className="cursor-not-allowed text-center" value={adjustment ? formatDateTime(adjustment.operationDate ?? "", i18n.language) : new Date().toLocaleString("en-GB").replace(",", "")} />
@@ -98,6 +99,7 @@ export default function AdjustmentFormPage() {
             {isView
               ? <Field><FieldLabel>{t("adjForm.notes")}</FieldLabel><Input readOnly value={adjustment?.notes ?? ""} /></Field>
               : <FormTextarea control={form.control} name="notes" label={t("adjForm.notes")} placeholder={t("adjForm.notesHint")} />}
+            </div>
           </div>
         </div>
 
