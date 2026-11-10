@@ -20,7 +20,7 @@ export function useVoucherOutput() {
   return useMutation({
     mutationFn: async ({ voucher, treasuryName, as }: Output) => {
       const b = branch.id ? await qc.fetchQuery({ queryKey: branchKeys.detail(branch.id), queryFn: () => branchesApi.get(branch.id!) }).catch(() => undefined) : undefined
-      const doc = voucherDoc(voucher, { branch: b, treasuryName, copies, lang: i18n.language === "ar" ? "ar" : "en" })
+      const doc = voucherDoc(voucher, { branch: b, treasuryName, copies, lang: i18n.language === "ar" || i18n.language === "bn" ? i18n.language : "en" })
       if (as === "pdf") await downloadPdf(doc, voucherNumber(voucher))
       else await printDocument(doc)
     },

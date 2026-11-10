@@ -43,7 +43,7 @@ export default function CategoriesPage() {
         actions={<Can perm={P.categories.manage}><Button size="lg" onClick={() => open(null)}><Plus />{t("categories.add")}</Button></Can>} />
       <SectionCard>
           <DataTable rows={rows} loading={isLoading} columns={columns} rowKey={(c) => c.id} sort={sort}
-            searchText={(c) => `${c.categoryNameAr} ${c.categoryNameEn ?? ""} ${c.description ?? ""}`} searchPlaceholder={t("categories.search")}
+            searchText={(c) => `${c.categoryNameAr} ${c.categoryNameEn ?? ""} ${c.categoryNameUr ?? ""} ${c.description ?? ""}`} searchPlaceholder={t("categories.search")}
             empty={<EmptyState icon={<FolderTree />} title={t("categories.empty")} hint={t("categories.emptyHint")} />} />
         </SectionCard>
       <CategoryDialog open={dialogOpen} onOpenChange={setDialogOpen} category={editing} />

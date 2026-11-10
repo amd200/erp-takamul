@@ -98,7 +98,7 @@ export function LinesEditor({ allowFreeText, purchase, simple, hideDiscount }: {
               const l = lines[i] ?? f
               const a = lineAmounts(l)
               return (
-                <div key={f.id} className="grid grid-cols-1 items-center gap-3 rounded-xl border bg-muted/40 p-4 md:rounded-none md:border-none md:bg-transparent md:p-2 md:[grid-template-columns:var(--cols)]">
+                <div key={f.id} className="grid grid-cols-1 items-center gap-3 rounded-xl border bg-muted/40 p-4 md:rounded-none md:border-none md:bg-transparent md:p-2 md:[grid-template-columns:var(--cols)] md:[&_[data-slot=field]]:relative md:[&_[data-slot=field-error]]:absolute md:[&_[data-slot=field-error]]:top-full md:[&_[data-slot=field-error]]:start-0 md:[&_[data-slot=field-error]]:text-xs md:[&_[data-slot=field-error]]:whitespace-nowrap">
                   <div className="min-w-0">
                     {l.productId === 0 ? (
                       <FormInput control={control} name={`lines.${i}.name`} label={t("sales.serviceName")} labelHidden placeholder={t("sales.serviceName")} />

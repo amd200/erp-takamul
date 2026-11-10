@@ -27,7 +27,7 @@ function AdditionDialog({ open, onOpenChange, addition }: { open: boolean; onOpe
   const save = useSaveAddition()
   const { data: categories = [] } = useCategories()
   const form = useForm<AdditionForm>({ resolver: zodResolver(additionSchema), defaultValues: emptyAddition })
-  useEffect(() => { if (open) form.reset(addition ? { nameAr: addition.additionNameAr, nameEn: addition.additionNameEn ?? "", categoryIds: addition.categoryIds } : emptyAddition) }, [open, addition, form])
+  useEffect(() => { if (open) form.reset(addition ? { nameAr: addition.additionNameAr, nameEn: addition.additionNameEn ?? "", nameUr: addition.additionNameUr ?? "", categoryIds: addition.categoryIds } : emptyAddition) }, [open, addition, form])
   const submit = form.handleSubmit((data) => save.mutate({ id: addition?.id, data }, { onSuccess: () => onOpenChange(false) }))
 
   return (
@@ -38,6 +38,7 @@ function AdditionDialog({ open, onOpenChange, addition }: { open: boolean; onOpe
           <FieldGroup className="gap-4">
             <FormInput control={form.control} name="nameAr" label={t("common.nameAr")} required />
             <FormInput control={form.control} name="nameEn" label={t("common.nameEn")} dir="ltr" />
+            <FormInput control={form.control} name="nameUr" label={t("common.nameUr")} dir="ltr" />
             <Controller control={form.control} name="categoryIds" render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel>{t("additions.showWith")}<span className="text-destructive">*</span></FieldLabel>

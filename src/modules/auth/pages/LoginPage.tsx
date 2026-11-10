@@ -124,7 +124,7 @@ export default function LoginPage() {
         </div>
 
         <div className="mb-12 hidden flex-1 shrink-0 flex-col items-center justify-center gap-4 lg:flex">
-          <img src={`/logo_${lang}_${isDark ? "dark" : "light"}.png`} alt="Takamul logo" className="ms-12 mb-8 object-contain drop-shadow-2xl transition-all duration-500" style={{ height: 170, width: "auto", maxWidth: "100%" }} />
+          <img src={`/logo_${lang === "ar" ? "ar" : "en"}_${isDark ? "dark" : "light"}.png`} alt="Takamul logo" className="ms-12 mb-8 object-contain drop-shadow-2xl transition-all duration-500" style={{ height: 170, width: "auto", maxWidth: "100%" }} />
           <img src={isDark ? "/zakat_en_dark.png" : "/zakat_en_light.png"} alt={t("login.zatcaName")} className="object-contain drop-shadow-xl transition-all duration-500" style={{ height: 90, width: "auto", maxWidth: "100%" }} />
           <div className="flex flex-col items-center gap-4">
             <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">{t("login.download")}</p>

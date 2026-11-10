@@ -3,7 +3,7 @@ import type { ListSort } from "@/shared/api/errors"
 import { http } from "@/shared/http/request"
 import type { Addition, AdditionInput, AdditionQuery } from "./types"
 
-const body = (a: AdditionInput) => ({ additionNameAr: a.nameAr, additionNameEn: a.nameEn || null, categoryIds: a.categoryIds })
+const body = (a: AdditionInput) => ({ additionNameAr: a.nameAr, additionNameEn: a.nameEn || null, additionNameUr: a.nameUr || null, categoryIds: a.categoryIds })
 
 export const additionsApi = {
   page: (q: AdditionQuery) => {

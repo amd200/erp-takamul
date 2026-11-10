@@ -49,7 +49,7 @@ export function Pos2Header(p: Props) {
   const { t, i18n } = useTranslation()
   const { resolved, setChoice } = useTheme()
   const beauty = useAppSettings().salonsTab?.beautyTheme === true
-  const date = new Intl.DateTimeFormat(i18n.language, { weekday: "long", day: "numeric", month: "long", year: "numeric", numberingSystem: "latn" }).format(new Date())
+  const date = new Intl.DateTimeFormat(i18n.language === "bn" ? "en" : i18n.language, { weekday: "long", day: "numeric", month: "long", year: "numeric", numberingSystem: "latn" }).format(new Date())
   const [, rerender] = useState(0)
 
   const toggleFull = async () => {

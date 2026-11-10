@@ -48,6 +48,6 @@ th:not(:first-child),td:not(:first-child){text-align:end;white-space:nowrap;padd
 export function renderDocument(doc: PrintDoc, mode: "print" | "pdf" = "print") {
   if (doc.html) return doc.html
   const font = doc.font ?? "Cairo"
-  return `<!doctype html><html lang="${i18n.language}" dir="${i18n.dir()}"><head><meta charset="utf-8"><title>${esc(doc.title)}</title>
+  return `<!doctype html><html lang="${document.documentElement.lang || i18n.language}" dir="${i18n.dir()}"><head><meta charset="utf-8"><title>${esc(doc.title)}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="${fontUrl(font)}" rel="stylesheet" crossorigin="anonymous"><style>${base(doc.paper, font, doc.anySheet)}${doc.css ?? ""}${mode === "pdf" ? doc.pdfCss ?? "" : ""}</style></head><body>${doc.body}</body></html>`
 }

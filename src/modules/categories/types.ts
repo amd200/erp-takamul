@@ -17,6 +17,7 @@ export type Category = {
 export type CategoryInput = {
   categoryNameAr: string
   categoryNameEn: string
+  categoryNameUr: string
   description: string
   parentCategoryId: number | null
   displayOrder: number

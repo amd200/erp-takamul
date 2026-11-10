@@ -4,6 +4,7 @@ import type { Category } from "./types"
 export const categorySchema = z.object({
   categoryNameAr: z.string().trim().min(1, "validation.nameArRequired"),
   categoryNameEn: z.string().trim(),
+  categoryNameUr: z.string().trim(),
   description: z.string().trim(),
   parentCategoryId: z.number().nullable(),
   displayOrder: z.number({ error: "validation.number" }).int("validation.wholeNumber").min(0, "validation.min0"),
@@ -12,12 +13,13 @@ export const categorySchema = z.object({
 
 export type CategoryForm = z.infer<typeof categorySchema>
 
-export const emptyCategory: CategoryForm = { categoryNameAr: "", categoryNameEn: "", description: "", parentCategoryId: null, displayOrder: 0, printerName: null }
+export const emptyCategory: CategoryForm = { categoryNameAr: "", categoryNameEn: "", categoryNameUr: "", description: "", parentCategoryId: null, displayOrder: 0, printerName: null }
 
 /** Empty text belongs to form controls; API records remain unchanged. */
 export const categoryFormValues = (category: Category): CategoryForm => ({
   categoryNameAr: category.categoryNameAr ?? "",
   categoryNameEn: category.categoryNameEn ?? "",
+  categoryNameUr: category.categoryNameUr ?? "",
   description: category.description ?? "",
   parentCategoryId: category.parentCategoryId,
   displayOrder: category.displayOrder,

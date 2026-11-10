@@ -14,10 +14,13 @@ export const formatQty = (n: number) => qtyFmt.format(n)
 const LRI = String.fromCharCode(0x2066), PDI = String.fromCharCode(0x2069)
 
 /** A time of day ("13:05" or "13:05:30") in the shared style, or "" when it is empty. */
+/** Bangla is written in Latin script here, so dates/times use an English locale (Intl "bn" would print Bengali script). */
+const intlLocale = (lang: string) => (lang === "bn" ? "en" : lang)
+
 export function formatClock(value: string | null | undefined, lang: string): string {
   const m = value?.match(/(\d{1,2}):(\d{2})(?::(\d{2}))?/)
   if (!m) return ""
-  return new Intl.DateTimeFormat(lang, { hour: "numeric", minute: "2-digit", second: "2-digit" }).format(new Date(2000, 0, 1, Number(m[1]), Number(m[2]), Number(m[3] ?? 0)))
+  return new Intl.DateTimeFormat(intlLocale(lang), { hour: "numeric", minute: "2-digit", second: "2-digit" }).format(new Date(2000, 0, 1, Number(m[1]), Number(m[2]), Number(m[3] ?? 0)))
 }
 
 /** The time of day in a server date ("2026-10-26T13:05:00"), or "" when it carries none (a bare day or midnight). */
@@ -31,7 +34,7 @@ export function timeOf(value: string | null | undefined, lang: string): string {
 export function formatDay(value: string | Date | null | undefined, lang: string): string {
   if (!value) return ""
   const d = typeof value === "string" ? new Date(/^\d{4}-\d{2}-\d{2}$/.test(value) ? `${value}T12:00:00` : value) : value
-  return Number.isNaN(d.getTime()) ? "" : new Intl.DateTimeFormat(lang, { day: "numeric", month: "short", year: "numeric" }).format(d)
+  return Number.isNaN(d.getTime()) ? "" : new Intl.DateTimeFormat(intlLocale(lang), { day: "numeric", month: "short", year: "numeric" }).format(d)
 }
 
 /**
@@ -41,6 +44,6 @@ export function formatDay(value: string | Date | null | undefined, lang: string)
 export function formatDateTime(value: string | Date | null | undefined, lang: string, time?: string | null): string {
   const day = formatDay(value, lang)
   if (!day) return "—"
-  const clock = time ? formatClock(time, lang) : typeof value === "string" ? timeOf(value, lang) : new Intl.DateTimeFormat(lang, { hour: "numeric", minute: "2-digit", second: "2-digit" }).format(value as Date)
+  const clock = time ? formatClock(time, lang) : typeof value === "string" ? timeOf(value, lang) : new Intl.DateTimeFormat(intlLocale(lang), { hour: "numeric", minute: "2-digit", second: "2-digit" }).format(value as Date)
   return clock ? `${day} · ${LRI}${clock}${PDI}` : day
 }

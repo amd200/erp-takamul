@@ -5,7 +5,7 @@ import { toFormData } from "@/shared/http/paged"
 import type { Category, CategoryInput } from "./types"
 
 const form = (c: CategoryInput, extra: Record<string, unknown> = {}) => toFormData({
-  ...extra, CategoryNameAr: c.categoryNameAr, CategoryNameEn: c.categoryNameEn, Description: c.description, ParentCategoryId: c.parentCategoryId, DisplayOrder: c.displayOrder,
+  ...extra, CategoryNameAr: c.categoryNameAr, CategoryNameEn: c.categoryNameEn, CategoryNameUr: c.categoryNameUr, Description: c.description, ParentCategoryId: c.parentCategoryId, DisplayOrder: c.displayOrder,
 })
 
 /** Applies the printer to the category's items; nothing to do when none was picked. */

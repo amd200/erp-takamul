@@ -20,6 +20,7 @@ export function BasicInfoSection() {
       <div className="grid gap-4 sm:grid-cols-2">
         <FormInput control={control} name="nameAr" label={t("common.nameAr")} required />
         <FormInput control={control} name="nameEn" label={t("common.nameEn")} dir="ltr" />
+        <FormInput control={control} name="nameUr" label={t("common.nameUr")} dir="ltr" />
         {rules.ownBarcodeAndPrice && (
           <FormInput control={control} name="barcode" label={t("products.barcode")} dir="ltr" required
             end={<Button type="button" variant="outline" onClick={() => setValue("barcode", randomBarcode(), { shouldValidate: true })}>{t("products.generate")}</Button>} />

@@ -11,7 +11,7 @@ export type VoucherOptions = {
   /** Copies on the page (setting "voucherPrintCount"); two or more share an A4 sheet. */
   copies: number
   /** The language of the amount in words. */
-  lang: "ar" | "en"
+  lang: "ar" | "en" | "bn"
 }
 
 const dash = (v: unknown) => (String(v ?? "").trim() === "" ? "-" : esc(String(v).trim()))

@@ -29,6 +29,7 @@ export function CategoryDialog({ open, onOpenChange, category }: { open: boolean
           <FieldGroup className="gap-4">
             <FormInput control={form.control} name="categoryNameAr" label={t("common.nameAr")} required />
             <FormInput control={form.control} name="categoryNameEn" label={t("common.nameEn")} dir="ltr" />
+            <FormInput control={form.control} name="categoryNameUr" label={t("common.nameUr")} dir="ltr" />
             <FormInput control={form.control} name="displayOrder" type="number" label={t("common.displayOrder")} />
             <FormTextarea control={form.control} name="description" label={t("common.description")} placeholder={t("common.optional")} />
             {/* The server keeps printers per item; this sets it on every item already in the category. */}
