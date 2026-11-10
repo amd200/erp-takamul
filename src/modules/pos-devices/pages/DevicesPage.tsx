@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Monitor, Plus, ShieldCheck } from "lucide-react"
+import { Link2, Monitor, Plus, ShieldCheck } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { StatusBadge } from "@/components/StatusBadge"
 import { Button } from "@/components/ui/button"
@@ -13,6 +13,7 @@ import { Can, useCan } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
 import { useAppSettings } from "@/modules/settings"
 import { DeviceStatusBadge, ExpiryBadge } from "../components/DeviceBadges"
+import { ChainDialog } from "../components/ChainDialog"
 import { DeviceWizard } from "../components/DeviceWizard"
 import { useDeleteDevice, useDevices } from "../queries"
 import { SectionCard } from "@/components/SectionCard"
@@ -29,6 +30,7 @@ export default function DevicesPage() {
   const del = useDeleteDevice()
   const [editing, setEditing] = useState<PosDevice | null>(null)
   const [open, setOpen] = useState(false)
+  const [chainFor, setChainFor] = useState<PosDevice | null>(null)
   const [toDelete, setToDelete] = useState<PosDevice | null>(null)
   const show = (d: PosDevice | null) => { setEditing(d); setOpen(true) }
   const onboarding = taxSetting === "SecondStage"
@@ -54,7 +56,12 @@ export default function DevicesPage() {
     ] : []),
     { id: "icv", sortKey: "currentICV", header: t("devices.lastIcv"), cell: (d) => (d.currentICV ? <span className="tabular-nums">{d.currentICV}</span> : <span className="text-faint">—</span>) },
     { id: "actions", header: "", align: "end", cell: (d) => (
-      <RowActions onEdit={can(P.posDevices.edit) ? () => show(d) : undefined} onDelete={can(P.posDevices.delete) ? () => setToDelete(d) : undefined} />
+      <div className="flex items-center justify-end gap-1">
+        {onboarding && can(P.posDevices.edit) && (
+          <Button variant="ghost" size="icon" aria-label={t("devices.chain")} title={t("devices.chain")} onClick={() => setChainFor(d)}><Link2 /></Button>
+        )}
+        <RowActions onEdit={can(P.posDevices.edit) ? () => show(d) : undefined} onDelete={can(P.posDevices.delete) ? () => setToDelete(d) : undefined} />
+      </div>
     ) },
   ]
 
@@ -75,6 +82,7 @@ export default function DevicesPage() {
             empty={<EmptyState icon={<Monitor />} title={t("devices.empty")} hint={t("devices.emptyHint")} />} />
         </SectionCard>
       <DeviceWizard open={open} onOpenChange={setOpen} device={editing} />
+      <ChainDialog device={chainFor} onClose={() => setChainFor(null)} />
       <ConfirmDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)} pending={del.isPending}
         title={t("devices.deleteTitle")} description={t("devices.deleteBody", { name: toDelete?.deviceName })}
         onConfirm={() => toDelete && del.mutate(toDelete.id, { onSuccess: () => setToDelete(null) })} />

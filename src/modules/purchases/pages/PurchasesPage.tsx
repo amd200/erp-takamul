@@ -1,7 +1,7 @@
 import { PageBox } from "@/components/PageBox"
 import { useCallback, useState } from "react"
 import { Link } from "react-router-dom"
-import { RotateCw } from "lucide-react"
+import { RotateCw, ShoppingCart } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { RowActions } from "@/components/RowActions"
 import { Button } from "@/components/ui/button"
@@ -59,7 +59,7 @@ export default function PurchasesPage() {
       <PageBox title={t("purchases.listTitle")} subtitle={t("purchases.listSubtitle")}>
         <DataTable rows={data?.items} loading={isLoading} columns={columns} rowKey={(p) => p.id} sort={sort} searchPlaceholder={t("purchases.searchOld")}
           server={{ total: data?.total ?? 0, page, pageSize: PAGE_SIZE, onPage: setPage, onSearch, fetching: isFetching && !isLoading }}
-          empty={isError ? <EmptyState icon={<RotateCw />} title={t("common.loadFailed")} hint={t("common.loadFailedHint")} action={<Button variant="outline" onClick={() => refetch()}>{t("common.retry")}</Button>} /> : null} />
+          empty={isError ? <EmptyState icon={<RotateCw />} title={t("common.loadFailed")} hint={t("common.loadFailedHint")} action={<Button variant="outline" onClick={() => refetch()}>{t("common.retry")}</Button>} /> : <EmptyState icon={<ShoppingCart />} title={t("purchases.empty")} hint={t("purchases.emptyHint")} />} />
       </PageBox>
       <ConfirmDialog open={!!toCancel} onOpenChange={(o) => !o && setToCancel(null)} pending={cancel.isPending}
         title={`${t("purchases.deleteInvoice")} ${toCancel?.purchaseOrderNumber ?? ""}`} description={t("purchases.deleteConfirm")} confirmLabel={t("purchases.confirmDelete")}

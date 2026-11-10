@@ -44,6 +44,21 @@ export const useGenerateCsr = () => useStep((deviceId: number) => devicesApi.gen
 export const useRegisterCcsid = () => useStep(({ certificateId, otp }: { certificateId: number; otp: string }) => devicesApi.registerCcsid(certificateId, otp))
 export const useRegisterPcsid = () => useStep((certificateId: number) => devicesApi.registerPcsid(certificateId))
 
+export const useExpiringCertificates = () => useQuery({ queryKey: ["pos-devices", "expiring"], queryFn: () => devicesApi.expiring() })
+export const useRenewCertificate = () => useStep(({ certificateId, otp }: { certificateId: number; otp: string }) => devicesApi.renewCertificate(certificateId, otp))
+
+export const useUpdateChain = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ deviceId, newICV, newPIH }: { deviceId: number; newICV: number; newPIH: string }) => devicesApi.updateChain(deviceId, newICV, newPIH),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: deviceKeys.all })
+      toast.success(i18n.t("common.saved"))
+    },
+    onError: (e) => errorToast(e, "common.saveFailed"),
+  })
+}
+
 /** Deleting a certificate sends the device back to "not registered", so both lists refresh. */
 export function useRevokeCertificate() {
   const qc = useQueryClient()

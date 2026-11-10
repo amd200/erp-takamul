@@ -1,7 +1,7 @@
 import { ApiError } from "@/shared/http/ApiError"
 import type { ListSort } from "@/shared/api/errors"
 import { http } from "@/shared/http/request"
-import type { CertificateSummary, DeviceCertificate, DeviceInput, PosDevice, Registration, Reply } from "./types"
+import type { CertificateSummary, DeviceCertificate, DeviceInput, ExpiringCertificate, PosDevice, Registration, Reply } from "./types"
 
 const data = async <T,>(call: Promise<Reply<T>>) => (await call).data
 
@@ -21,11 +21,14 @@ export const devicesApi = {
   update: (id: number, { deviceName, branchId, invoiceSequence, deviceTypeId, isActive }: DeviceInput) =>
     data(http<Reply<PosDevice>>(`/pos-devices/${id}`, { method: "PUT", data: { deviceName, branchId, invoiceSequence, deviceTypeId, isActive: isActive ?? true, allowOnlineInvoicing: true } })),
   remove: (id: number) => http<Reply<boolean>>(`/pos-devices/${id}`, { method: "DELETE" }),
+  updateChain: (deviceId: number, newICV: number, newPIH: string) =>
+    http<Reply<boolean>>(`/pos-devices/${deviceId}/update-chain`, { method: "POST", data: { deviceId, newICV, newPIH } }),
   generateSerial: () => data(http<Reply<string>>("/pos-devices/generate-serial")),
 
   generateCsr: (deviceId: number) => step("/zatca-integration/generate-csr", { deviceId }),
   /** The OTP comes from the Fatoora portal and is valid for one hour. */
   registerCcsid: (certificateId: number, otp: string) => step("/zatca-integration/register-ccsid", { certificateId, otp }),
+  renewCertificate: (certificateId: number, otp: string) => step("/zatca-integration/renew-certificate", { certificateId, otp }),
   registerPcsid: (certificateId: number) => step("/zatca-integration/upgrade-to-pcsid", { certificateId }),
 
   /** The newest certificate of a device, for resuming an onboarding that was left half way. */
@@ -36,6 +39,10 @@ export const devicesApi = {
   certificates: async (sort?: ListSort) => {
     try { return await data(http<Reply<CertificateSummary[]>>("/certificates/all-certificates/summary", { params: { ...sort } })) }
     // The server answers 404 when no device has a certificate yet.
+    catch (e) { if (e instanceof ApiError && e.status === 404) return [] ; throw e }
+  },
+  expiring: async (days = 30) => {
+    try { return (await data(http<Reply<ExpiringCertificate[]>>("/certificates/expiring", { params: { daysBeforeExpiry: days } }))) ?? [] }
     catch (e) { if (e instanceof ApiError && e.status === 404) return [] ; throw e }
   },
   deleteCertificate: (id: number) => http<Reply<boolean>>(`/certificates/${id}`, { method: "DELETE" }),

@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Plus } from "lucide-react"
+import { Plus, Wallet } from "lucide-react"
+import { EmptyState } from "@/components/EmptyState"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -108,8 +109,7 @@ export default function ExpensesPage() {
     <>
       <PageHeader title={t("expenses.title")} description={t("expenses.subtitle")}
         actions={<Can perm={P.expenses.add}><Button size="lg" onClick={() => open(null)}><Plus />{t("expenses.add")}</Button></Can>} />
-      <DataTable rows={data} loading={isLoading} columns={columns} sort={sort} rowKey={(x) => x.id} emptyText={t("expenses.noData")}
-        empty={null} />
+      <DataTable rows={data} loading={isLoading} columns={columns} sort={sort} rowKey={(x) => x.id} empty={<EmptyState icon={<Wallet />} title={t("expenses.empty")} hint={t("expenses.emptyHint")} />} />
       <ExpenseDialog open={dialogOpen} onOpenChange={setDialogOpen} expense={editing} />
       <ConfirmDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)} pending={del.isPending}
         title={t("expenses.deleteTitle")} description={t("expenses.deleteBody", { name: toDelete?.name })}

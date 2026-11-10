@@ -54,3 +54,6 @@ export type CertificateSummary = {
 
 /** A certificate of one device (/certificates/device/{id}/history). */
 export type DeviceCertificate = { id: number; posDeviceId: number; certificateType: string; isActive: boolean; createdAt: string }
+
+/** A certificate that expires soon, from /certificates/expiring. */
+export type ExpiringCertificate = DeviceCertificate & { deviceName: string; expiresAt: string; isExpired: boolean; daysUntilExpiry: number }

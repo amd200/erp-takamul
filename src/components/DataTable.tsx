@@ -111,6 +111,8 @@ export function DataTable<T extends RowData>({
   const current = server ? server.page : Math.min(pagination.pageIndex, Math.max(0, Math.ceil(filteredCount / pageSize) - 1))
   const slice = table.getRowModel().rows
   const hasSearch = !!(searchText || onSearch)
+  // No rows: a custom `empty` block replaces the table; with `emptyText` (or no `empty` at all) the header stays and one row says there is nothing.
+  const showEmptyRow = slice.length === 0 && (!!emptyText || empty == null)
   const setPage = (n: number) => setPagination((p) => ({ ...p, pageIndex: n }))
 
   // When the current page ends up empty (its last row was deleted, or a refetch has fewer pages), step back to the last page that has rows.
@@ -149,7 +151,7 @@ export function DataTable<T extends RowData>({
         <div className={"flex flex-col gap-2"} aria-busy="true" aria-label={t("common.loading")}>
           {Array.from({ length: 5 }, (_, i) => <div key={i} className="h-11 animate-pulse rounded-lg bg-muted" />)}
         </div>
-      ) : slice.length === 0 ? (
+      ) : slice.length === 0 && !showEmptyRow ? (
         empty
       ) : (
         <>
@@ -174,7 +176,7 @@ export function DataTable<T extends RowData>({
               )
             })}
           </ul>
-          <Table className={cn("min-w-[640px] transition-opacity max-sm:hidden", server?.fetching && "opacity-60")}>
+          <Table className={cn("min-w-[640px] transition-opacity", slice.length > 0 && "max-sm:hidden", server?.fetching && "opacity-60")}>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
                 {columns.map((c) => (
