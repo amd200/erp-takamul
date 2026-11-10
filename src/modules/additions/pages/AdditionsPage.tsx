@@ -40,7 +40,7 @@ function AdditionDialog({ open, onOpenChange, addition }: { open: boolean; onOpe
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-lg">
+      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-screen-sm">
         <DialogHeader><DialogTitle>{addition ? t("additions.edit") : t("additions.add")}</DialogTitle></DialogHeader>
         <form id="addition-form" onSubmit={submit}>
           <FieldGroup className="gap-3">

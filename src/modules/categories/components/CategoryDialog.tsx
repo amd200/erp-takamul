@@ -26,7 +26,7 @@ export function CategoryDialog({ open, onOpenChange, category }: { open: boolean
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-screen-sm">
         <DialogHeader><DialogTitle>{category ? t("categories.edit") : t("categories.add")}</DialogTitle></DialogHeader>
         <form onSubmit={submit} id="category-form" noValidate>
           <FieldGroup className="gap-4">

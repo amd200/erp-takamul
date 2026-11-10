@@ -32,7 +32,7 @@ function UnitDialog({ open, onOpenChange, unit }: { open: boolean; onOpenChange:
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-screen-sm">
         <DialogHeader><DialogTitle>{unit ? t("units.edit") : t("units.add")}</DialogTitle></DialogHeader>
         <form id="unit-form" onSubmit={submit}>
           <FieldGroup className="gap-4">
