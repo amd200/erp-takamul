@@ -103,7 +103,6 @@ export function OptionsPanel() {
   return (
     <SectionCard title={t("products.sections.options")}>
       <FieldGroup className="gap-4">
-        <FormSwitch control={control} name="isActive" label={t("products.isActive")} />
         {rules.sells && <FormSwitch control={control} name="showInSalesScreen" label={t("products.showInSales")} />}
         {rules.sells && (
           <FormSelect control={control} name="printerName" label={t("products.printer")} allowEmpty={t("products.printerFromCategory")}
