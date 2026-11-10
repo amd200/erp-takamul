@@ -46,7 +46,8 @@ export default function InvoiceFormPage() {
   const payments = useFieldArray({ control: form.control, name: "payments" })
   const [lines, gKind, gValue, pays, customerId] = useWatch({ control: form.control, name: ["lines", "globalDiscountKind", "globalDiscount", "payments", "customerId"] })
   const totals = invoiceTotals(lines, gKind, gValue)
-  const paid = paidOf(pays.map((p) => ({ amount: p.amount || 0 })))
+  const [credit, setCredit] = useState(false)
+  const paid = credit ? 0 : paidOf(pays.map((p) => ({ amount: p.amount || 0 })))
   const customer = customers.find((c) => c.id === customerId)
   useAutoPayment({ form, payments, pays, total: totals.grandTotal, treasuryId: pickTreasury(treasuries, appSettings.sales?.defaultSalesVault)?.id ?? 0, enabled: true })
   const overpaid = paid > totals.grandTotal + 0.005
@@ -69,20 +70,14 @@ export default function InvoiceFormPage() {
 
   const submit = form.handleSubmit((data) => {
     if (overpaid) return
-    create.mutate({ input: data, key: key.current }, {
+    const input = credit ? { ...data, payments: data.payments.map((p) => ({ ...p, amount: 0 })) } : data
+    create.mutate({ input, key: key.current }, {
       onSuccess: () => nav("/sales/invoices"),
       onError: renewIfReused(key),
     })
   })
 
-  // "Credit" zeroes every payment and remembers the amounts; "Cancel credit" puts them back. Any manual change drops the memory.
-  const [saved, setSaved] = useState<number[] | null>(null)
-  useEffect(() => { if (saved && (pays.length !== saved.length || pays.some((p) => (p.amount || 0) !== 0))) setSaved(null) }, [pays, saved])
-  const toggleCredit = () => {
-    if (saved) { saved.forEach((a, i) => form.setValue(`payments.${i}.amount`, a, { shouldValidate: true, shouldDirty: true })); setSaved(null); return }
-    setSaved(pays.map((p) => p.amount || 0))
-    pays.forEach((_, i) => form.setValue(`payments.${i}.amount`, 0, { shouldValidate: true, shouldDirty: true }))
-  }
+  // "Credit" only disables the payment fields (the amounts stay as shown); on save the amounts go out as 0 so the invoice is on account.
   // A new payment splits the invoice total equally over all payments (the last one takes the cents left); the user edits freely after.
   const addPayment = () => {
     const n = pays.length + 1
@@ -143,15 +138,15 @@ export default function InvoiceFormPage() {
                   {/* Amount and treasury side by side, each under a small grey caption. */}
                   <div className="w-full flex-1">
                     <div className="mb-1 hidden grid-cols-2 gap-3 text-xs text-muted-foreground sm:grid"><span>{t("sales.amount")}</span><span>{t("sales.treasury")}</span></div>
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2"><PaymentFields control={form.control} prefix={`payments.${i}`} compact /></div>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2"><PaymentFields control={form.control} prefix={`payments.${i}`} compact disabled={credit} /></div>
                   </div>
-                  <Button type="button" variant="ghost-destructive" size="icon" aria-label={t("common.remove")} onClick={() => payments.remove(i)}><Trash2 /></Button>
+                  <Button type="button" variant="ghost-destructive" size="icon" aria-label={t("common.remove")} disabled={credit} onClick={() => payments.remove(i)}><Trash2 /></Button>
                 </div>
               ))}
               {overpaid && <p className="text-sm text-destructive">{t("sales.overpaid")}</p>}
               <div className="flex flex-wrap items-center gap-3">
-                <Button type="button" size="lg" variant="secondary" onClick={addPayment} className="w-max rounded-lg px-4 text-sm font-medium transition-colors"><Plus size={16} strokeWidth={2} />{t("sales.addPayment")}</Button>
-                {pays.length > 0 && <Button type="button" size="lg" variant={saved ? "destructive" : "secondary"} onClick={toggleCredit} className="w-max rounded-lg px-4 text-sm font-medium transition-colors">{t(saved ? "sales.clearPayments" : "sales.deferred")}</Button>}
+                <Button type="button" size="lg" variant="secondary" disabled={credit} onClick={addPayment} className="w-max rounded-lg px-4 text-sm font-medium transition-colors"><Plus size={16} strokeWidth={2} />{t("sales.addPayment")}</Button>
+                {pays.length > 0 && <Button type="button" size="lg" variant={credit ? "destructive" : "secondary"} onClick={() => setCredit((v) => !v)} className="w-max rounded-lg px-4 text-sm font-medium transition-colors">{t(credit ? "sales.clearPayments" : "sales.deferred")}</Button>}
               </div>
             </div>
 

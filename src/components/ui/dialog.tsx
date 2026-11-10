@@ -88,7 +88,7 @@ function DialogContent({
         aria-describedby={undefined}
         className={cn("px-4 text-sm", className, "pt-0")}
       >
-        <div className="-mx-4 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pt-4 overscroll-contain px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className="-mx-4 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pt-4 overscroll-contain px-4 pb-[max(1rem,env(safe-area-inset-bottom))] has-[[data-slot=dialog-footer]]:pb-0">
           {children}
         </div>
       </DrawerContent>
@@ -147,7 +147,7 @@ function DialogFooter({
       data-slot="dialog-footer"
       className={cn(
         // In a drawer the footer sticks to the bottom so the buttons stay reachable on long forms.
-        "-mx-4 -mb-4 flex flex-row items-center justify-end gap-2 rounded-b-xl border-t bg-popover px-4 py-3 *:min-w-24 max-sm:sticky max-sm:bottom-0 max-sm:z-10 max-sm:-mb-[max(1rem,env(safe-area-inset-bottom))] max-sm:rounded-none max-sm:bg-popover max-sm:pb-[max(0.75rem,env(safe-area-inset-bottom))] max-sm:*:flex-1",
+        "-mx-4 -mb-4 flex flex-row items-center justify-end gap-2 rounded-b-xl border-t bg-popover px-4 py-3 *:min-w-24 max-sm:sticky max-sm:bottom-0 max-sm:z-10 max-sm:mb-0 max-sm:rounded-none max-sm:bg-popover max-sm:pb-[max(0.75rem,env(safe-area-inset-bottom))] max-sm:*:flex-1",
         className
       )}
       {...props}
