@@ -1,6 +1,6 @@
 import { PageBox } from "@/components/PageBox"
 import { Link, useParams } from "react-router-dom"
-import { ArrowLeft, Undo2 } from "lucide-react"
+import { ArrowLeft, FileText, Printer, Undo2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,6 +10,7 @@ import { EmptyState } from "@/components/EmptyState"
 import { formatMoney } from "@/lib/format"
 import { useAppSettings } from "@/modules/settings"
 import { useReturns } from "../queries"
+import { usePrintReturn } from "../print/usePrintReturn"
 
 const box = "inner-box"
 
@@ -18,6 +19,7 @@ export default function ReturnViewPage() {
   const { t } = useTranslation()
   const { id } = useParams()
   const { data, isLoading } = useReturns()
+  const print = usePrintReturn()
   const exempt = useAppSettings().taxSetting?.taxSetting === "Exempt"
   const r = data?.find((x) => x.id === Number(id))
 
@@ -30,7 +32,11 @@ export default function ReturnViewPage() {
 
   return (
     <PageBox title={t("viewDoc.returnInvoice")}
-      action={<Button asChild variant="outline"><Link to="/sales/returns">{t("viewDoc.backToReturns")}<ArrowLeft size={16} /></Link></Button>}>
+      action={<div className="flex flex-wrap gap-2">
+        <Button variant="outline" disabled={print.isPending} onClick={() => print.mutate({ ret: r, paper: "a4" })}><FileText size={16} />{t("sales.actions.printA4")}</Button>
+        <Button variant="outline" disabled={print.isPending} onClick={() => print.mutate({ ret: r, paper: "roll" })}><Printer size={16} />{t("sales.actions.printRoll")}</Button>
+        <Button asChild variant="outline"><Link to="/sales/returns">{t("viewDoc.backToReturns")}<ArrowLeft size={16} /></Link></Button>
+      </div>}>
 
       <div className="space-y-6">
         <div className={box}>

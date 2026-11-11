@@ -1,10 +1,11 @@
 import { useCallback, useRef, useState } from "react"
-import { CheckCheck, ClipboardList, Eye, Wallet } from "lucide-react"
+import { CheckCheck, ClipboardList, Eye, Printer, Trash2, Wallet } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { StatusBadge } from "@/components/StatusBadge"
 import { Dialog, DialogBody, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { RowMenu } from "@/components/RowActions"
 import { DataTable, type Column } from "@/components/DataTable"
 import { useTableSort } from "@/components/useTableSort"
@@ -19,7 +20,8 @@ import { PaymentScreen } from "@/modules/pos/payment/PaymentScreen"
 import type { PosPayment } from "@/modules/pos/types"
 import type { OrderRequest } from "../types"
 import { SectionCard } from "@/components/SectionCard"
-import { useCheckoutOrderRequest, useMarkReady, useOrderRequest, useOrderRequestPage } from "../queries"
+import { usePrintOrderRequest } from "../print/usePrintOrderRequest"
+import { useCheckoutOrderRequest, useDeleteOrderRequest, useMarkReady, useOrderRequest, useOrderRequestPage } from "../queries"
 
 const PAGE_SIZE = 20
 
@@ -77,6 +79,9 @@ export default function OrderRequestsPage() {
   const { data, isLoading, isFetching } = useOrderRequestPage({ page: page + 1, pageSize: PAGE_SIZE, searchTerm: search, from, to, sortBy, sortDescending })
   const ready = useMarkReady()
   const checkout = useCheckoutOrderRequest()
+  const print = usePrintOrderRequest()
+  const del = useDeleteOrderRequest()
+  const [toDelete, setToDelete] = useState<OrderRequest | null>(null)
   const [viewing, setViewing] = useState<number | null>(null)
   const [paying, setPaying] = useState<OrderRequest | null>(null)
   // One key per order being paid, so a double click or a retry after a dropped connection pays it once.
@@ -98,8 +103,10 @@ export default function OrderRequestsPage() {
     { id: "status", sortKey: "status", header: t("common.status"), cell: (o) => <StatusBadge tone={o.salesOrderId ? "success" : "warning"}>{o.salesOrderId ? t("orderRequests.invoiced") : t(`orderRequests.statuses.${o.status}`, { defaultValue: o.status || t("orderRequests.pending") })}</StatusBadge> },
     { id: "actions", header: "", align: "end", cell: (o) => <RowMenu items={[
       { key: "view", label: t("sales.actions.view"), icon: <Eye />, onSelect: () => setViewing(o.id) },
+      { key: "roll", label: t("sales.actions.printRoll"), icon: <Printer />, disabled: print.isPending, onSelect: () => print.mutate(o.id) },
       manage && !o.salesOrderId && { key: "ready", label: t("orderRequests.markReady"), icon: <CheckCheck />, disabled: ready.isPending, onSelect: () => ready.mutate(o.id) },
       manage && !o.salesOrderId && { key: "checkout", label: t("orderRequests.checkout"), icon: <Wallet />, onSelect: () => setPaying(o) },
+      manage && !o.salesOrderId && { key: "delete", label: t("common.delete"), icon: <Trash2 />, destructive: true, onSelect: () => setToDelete(o) },
     ]} /> },
   ]
 
@@ -120,6 +127,9 @@ export default function OrderRequestsPage() {
       </SectionCard>
 
       <DetailsDialog id={viewing} onOpenChange={(o) => !o && setViewing(null)} />
+      <ConfirmDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)} pending={del.isPending}
+        title={t("orderRequests.deleteTitle")} description={t("orderRequests.deleteBody", { number: toDelete?.orderNumber })}
+        onConfirm={() => toDelete && del.mutate(toDelete.id, { onSuccess: () => setToDelete(null) })} />
       <PaymentScreen requestCheckout open={!!paying} onOpenChange={(o) => !o && setPaying(null)} total={paying?.grandTotal ?? 0} hasCustomer={!!paying?.customerId} customerName={paying?.customerName ?? ""} pending={checkout.isPending} onConfirm={confirmPay} />
     </>
   )

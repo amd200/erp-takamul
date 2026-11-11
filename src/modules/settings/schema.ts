@@ -132,24 +132,24 @@ export const emptyCustomers: z.infer<typeof customersSchema> = {
   customersTab: { defultCustomar: null, showActualBalance: true, showCustomerNameAndPhoneOnlyInQuotations: false },
 }
 
-export const suppliersSchema = z.object({ suppliersTab: z.object({ showSupplierNameAndPhoneOnlyInPurchases: flag }) })
-export const emptySuppliers: z.infer<typeof suppliersSchema> = { suppliersTab: { showSupplierNameAndPhoneOnlyInPurchases: false } }
+export const suppliersSchema = z.object({ suppliersTab: z.object({ showSupplierNameAndPhoneOnlyInPurchases: flag, showActualSupplierBalance: flag, defaultSupplier: z.number() }) })
+export const emptySuppliers: z.infer<typeof suppliersSchema> = { suppliersTab: { showSupplierNameAndPhoneOnlyInPurchases: false, showActualSupplierBalance: false, defaultSupplier: 0 } }
 
 export const purchasesScreenSchema = z.object({ purchasesScreenTab: z.object({ posPurcherstype: named, purchesSetting: flag }) })
 export const emptyPurchasesScreen: z.infer<typeof purchasesScreenSchema> = { purchasesScreenTab: { posPurcherstype: "POS1", purchesSetting: false } }
 
 export const itemsSchema = z.object({
   itemsTab: z.object({
-    allowSaleWithZeroStock: flag, showCoastPrice: flag, showItemInOneLine: flag, defaultCategoryId: id, defaultUnitId: id,
-    enablePieceAndCartonSystem: flag, allowPriceChangeOnSale: flag, showProductBalanceAtSale: flag, enableSecondLanguageItemName: flag,
-    itemExpiry: flag, showWarehouseItems: flag, showCostGreaterThanSalePriceMessage: flag,
+    allowSaleWithZeroStock: flag, showCoastPrice: flag, showItemInOneLine: flag,
+    enablePieceAndCartonSystem: flag, allowPriceChangeOnSale: flag, showProductBalanceAtSale: flag,
+    showWarehouseItems: flag, showCostGreaterThanSalePriceMessage: flag,
   }),
 })
 export const emptyItems: z.infer<typeof itemsSchema> = {
   itemsTab: {
-    allowSaleWithZeroStock: false, showCoastPrice: false, showItemInOneLine: false, defaultCategoryId: null, defaultUnitId: null,
-    enablePieceAndCartonSystem: true, allowPriceChangeOnSale: true, showProductBalanceAtSale: true, enableSecondLanguageItemName: true,
-    itemExpiry: false, showWarehouseItems: false, showCostGreaterThanSalePriceMessage: true,
+    allowSaleWithZeroStock: false, showCoastPrice: false, showItemInOneLine: false,
+    enablePieceAndCartonSystem: true, allowPriceChangeOnSale: true, showProductBalanceAtSale: true,
+    showWarehouseItems: false, showCostGreaterThanSalePriceMessage: true,
   },
 }
 

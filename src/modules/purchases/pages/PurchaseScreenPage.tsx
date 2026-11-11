@@ -82,7 +82,9 @@ export default function PurchaseScreenPage() {
   const branch = activeBranchId() ?? session?.branchId ?? 0
 
   // The first supplier is chosen until the user picks another, as in the current system.
-  useEffect(() => { if (!supplierId && suppliers.length) setSupplierId(suppliers[0].id) }, [suppliers, supplierId])
+  useEffect(() => {
+    if (!supplierId && suppliers.length) setSupplierId((suppliers.find((s) => s.id === Number(settings.suppliersTab?.defaultSupplier)) ?? suppliers[0]).id)
+  }, [suppliers, supplierId, settings.suppliersTab?.defaultSupplier])
 
   // Direct items and raw materials are bought; prepared and branched items are not.
   const buyable = (p: Product) => p.isActive !== false && (p.productType === "Direct" || p.productType === "RawMatrial")
@@ -176,7 +178,7 @@ export default function PurchaseScreenPage() {
                     placeholder={t("pos3.pickSupplier")} searchPlaceholder={t("suppliers.search")} empty={t("pos3.noSupplier")} />
                 </div>
               </div>
-              {settings.customersTab?.showActualBalance && (
+              {settings.suppliersTab?.showActualSupplierBalance && (
                 <div className="flex flex-col gap-1">
                   <span className={label}>{t("pos3.supplierBalance")}</span>
                   <Input value={supplier ? formatMoney(supplier.balance ?? 0) : ""} readOnly className={cn("cursor-not-allowed text-center", field)} />

@@ -37,7 +37,7 @@ export default function InvoicesPage({ channel }: { channel: Channel }) {
   const branchColumn = useBranchColumn<SalesOrderDto>((i) => ({ id: i.branchId, name: i.branchShortName }))
   const columns: Column<SalesOrderDto>[] = [
     { id: "number", sortKey: "orderNumber", header: t("sales.number"), cell: (i) => <span className="font-semibold">{i.orderNumber}</span> },
-    { id: "date", sortKey: "orderDate", className: "min-w-44", header: t("common.date"), cell: (i) => <span className="text-muted-foreground">{formatDateTime(i.orderDate ?? "", i18n.language)}</span> },
+    { id: "date", sortKey: "orderDate", className: "min-w-44", header: t("common.dateTime"), cell: (i) => <span className="text-muted-foreground">{formatDateTime(i.orderDate ?? "", i18n.language)}</span> },
     ...branchColumn,
     { id: "customer", sortKey: "customerName", header: t("sales.customer"), cell: (i) => i.customerName },
     { id: "employee", sortKey: "employeeName", header: t("users.userName"), cell: (i) => i.employeeName || "—" },

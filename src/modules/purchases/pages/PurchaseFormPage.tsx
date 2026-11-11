@@ -37,7 +37,9 @@ export default function PurchaseFormPage() {
   const { data: existing, isLoading } = usePurchase(editId)
   const { data: suppliers = [] } = useSuppliers()
   const { data: supplierList = [] } = useSupplierList()
-  const showBalance = useAppSettings().customersTab?.showActualBalance
+  const suppliersTab = useAppSettings().suppliersTab
+  const showBalance = suppliersTab?.showActualSupplierBalance
+  const defaultSupplier = Number(suppliersTab?.defaultSupplier) || 0
   const { data: warehouses = [] } = useWarehouses()
   const { data: treasuries = [] } = useTreasuries()
   const exempt = useAppSettings().taxSetting?.taxSetting === "Exempt"
@@ -68,7 +70,10 @@ export default function PurchaseFormPage() {
 
   useEffect(() => { if (!editId && warehouses.length && !warehouseId) form.setValue("warehouseId", warehouses[0].id) }, [editId, warehouses, warehouseId, form])
 
-  useEffect(() => { if (!editId && suppliers.length && !supplierId) form.setValue("supplierId", suppliers[0].id) }, [editId, suppliers, supplierId, form])
+  useEffect(() => {
+    if (editId || !suppliers.length || supplierId) return
+    form.setValue("supplierId", (suppliers.find((s) => s.id === defaultSupplier) ?? suppliers[0]).id)
+  }, [editId, suppliers, supplierId, defaultSupplier, form])
 
   // The suppliers, warehouses and items belong to the branch, so what was picked from the old branch is cleared and the defaults are picked again.
   const changeBranch = async (next: number) => {

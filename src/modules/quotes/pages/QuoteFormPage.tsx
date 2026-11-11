@@ -9,8 +9,8 @@ import { List, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { FormInput, FormSelect, FormTextarea } from "@/components/form/FormFields"
+import { GlobalDiscountField } from "@/modules/sales/components/GlobalDiscountField"
+import { FormSelect, FormTextarea } from "@/components/form/FormFields"
 import { BalanceBox } from "@/components/BalanceBox"
 import { PageHeader } from "@/components/PageHeader"
 import { SectionCard } from "@/components/SectionCard"
@@ -119,15 +119,7 @@ export default function QuoteFormPage() {
             <div className="hidden lg:col-span-2 lg:block" />
             <aside className="summary-box">
               <h3 className="mb-5 text-base font-semibold text-foreground">{t("sales.invoiceSummary")}</h3>
-              <div className="mb-4 flex items-end gap-2">
-                <FormInput control={form.control} name="globalDiscount" type="number" label={t("sales.invoiceDiscount")} className="flex-1" />
-                <Controller control={form.control} name="globalDiscountKind" render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="h-10 w-20" aria-label={t("sales.discountKind")}><SelectValue /></SelectTrigger>
-                    <SelectContent><SelectItem value="value">{t("sales.kindValue")}</SelectItem><SelectItem value="percent">{t("sales.kindPercent")}</SelectItem></SelectContent>
-                  </Select>
-                )} />
-              </div>
+              <GlobalDiscountField />
               <TotalsPanel totals={totals} />
             </aside>
           </div>

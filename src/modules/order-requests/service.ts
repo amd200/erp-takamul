@@ -9,6 +9,7 @@ export const orderRequestsApi = {
     return http<PagedResult<OrderRequest>>("/sales-orders/requests", { params: { Page: p.page, PageSize: p.pageSize, SearchTerm: p.searchTerm || undefined, From: p.from || undefined, To: p.to || undefined, SortBy: p.sortBy, SortDescending: p.sortBy ? p.sortDescending : undefined } })
   },
   get: (id: number) => http<OrderRequestDetails>(`/sales-orders/requests/${id}`),
+  remove: (id: number) => http<unknown>(`/sales-orders/requests/${id}`, { method: "DELETE" }),
   markReady: (id: number) => http<unknown>(`/sales-orders/requests/${id}/mark-ready`, { method: "POST" }),
   checkout: (id: number, payments: PosPayment[], key: string) => retryWhileInProgress(() => http<unknown>("/sales-orders/requests/checkout", {
     method: "POST", headers: idempotencyHeaders(key),

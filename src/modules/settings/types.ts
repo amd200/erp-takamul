@@ -31,10 +31,10 @@ export type PurchasesScreenTab = { posPurcherstype: Enum; purchesSetting: boolea
 export type CustomersTab = { defultCustomar: number; showActualBalance: boolean; showCustomerNameAndPhoneOnlyInQuotations: boolean }
 export type ItemsTab = {
   allowSaleWithZeroStock: boolean; showItemInOneLine: boolean; showCostGreaterThanSalePriceMessage: boolean; showCoastPrice: boolean
-  defaultUnitId: number | null; defaultCategoryId: number | null; showWarehouseItems: boolean; allowPriceChangeOnSale: boolean
-  enablePieceAndCartonSystem: boolean; showProductBalanceAtSale: boolean; itemExpiry: boolean; enableSecondLanguageItemName: boolean
+  showWarehouseItems: boolean; allowPriceChangeOnSale: boolean
+  enablePieceAndCartonSystem: boolean; showProductBalanceAtSale: boolean;
 }
-export type SuppliersTab = { showSupplierNameAndPhoneOnlyInPurchases: boolean }
+export type SuppliersTab = { showSupplierNameAndPhoneOnlyInPurchases: boolean; showActualSupplierBalance: boolean; defaultSupplier: number }
 export type AppearanceTab = { itemNameSize: number; itemPriceSize: number; categorySize: number; subItemNameSize: number; subItemPriceSize: number }
 
 /** The older groups, only the fields the app reads from them. */

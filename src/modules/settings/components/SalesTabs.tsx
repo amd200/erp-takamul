@@ -1,9 +1,7 @@
 import { useTranslation } from "react-i18next"
 import { FormInput, FormSelect } from "@/components/form/FormFields"
 import { fullName } from "@/modules/lookups/types"
-import { useCategories } from "@/modules/categories/queries"
-import { useCustomers, useEmployees, useTreasuries } from "@/modules/lookups/service"
-import { useUnits } from "@/modules/units/queries"
+import { useCustomers, useEmployees, useSuppliers, useTreasuries } from "@/modules/lookups/service"
 import { Flag, Check, Section, Grid, Choice, useLabel, type FieldsProps } from "./fields"
 import { A4Preview, AppearancePreview, BarcodePreview } from "./Previews"
 
@@ -199,7 +197,16 @@ export function CustomersFields({ form: { control } }: FieldsProps) {
 
 export function SuppliersFields({ form: { control } }: FieldsProps) {
   const { t } = useTranslation()
-  return <Grid><Flag control={control} name="suppliersTab.showSupplierNameAndPhoneOnlyInPurchases" on={t("settings.o.nameAndPhone.true")} off={t("settings.o.nameAndPhone.false")} /></Grid>
+  const label = useLabel()
+  const { data: suppliers = [] } = useSuppliers()
+  return (
+    <Grid>
+      <FormSelect control={control} name="suppliersTab.defaultSupplier" numeric required label={label("defaultSupplier")}
+        options={[{ value: "0", label: t("common.none") }, ...suppliers.map((s) => ({ value: String(s.id), label: s.supplierName }))]} />
+      <Flag control={control} name="suppliersTab.showActualSupplierBalance" />
+      <Flag control={control} name="suppliersTab.showSupplierNameAndPhoneOnlyInPurchases" on={t("settings.o.nameAndPhone.true")} off={t("settings.o.nameAndPhone.false")} />
+    </Grid>
+  )
 }
 
 export function PurchasesScreenFields({ form: { control } }: FieldsProps) {
@@ -212,20 +219,12 @@ export function PurchasesScreenFields({ form: { control } }: FieldsProps) {
 }
 
 export function ItemsFields({ form: { control } }: FieldsProps) {
-  const { t } = useTranslation()
-  const label = useLabel()
-  const { data: categories = [] } = useCategories()
-  const { data: units = [] } = useUnits()
   return (
     <Grid>
       <Flag control={control} name="itemsTab.allowSaleWithZeroStock" />
       <Flag control={control} name="itemsTab.showCoastPrice" />
       <Flag control={control} name="itemsTab.showItemInOneLine" />
-      <FormSelect control={control} name="itemsTab.defaultCategoryId" numeric label={label("defaultCategoryId")} allowEmpty={t("common.none")}
-        options={categories.filter((c) => c.parentCategoryId == null).map((c) => ({ value: String(c.id), label: c.categoryNameAr }))} />
-      <FormSelect control={control} name="itemsTab.defaultUnitId" numeric label={label("defaultUnitId")} allowEmpty={t("common.none")}
-        options={units.map((u) => ({ value: String(u.id), label: u.name }))} />
-      {["enablePieceAndCartonSystem", "allowPriceChangeOnSale", "showProductBalanceAtSale", "enableSecondLanguageItemName", "itemExpiry", "showWarehouseItems", "showCostGreaterThanSalePriceMessage"].map((k) => (
+      {["enablePieceAndCartonSystem", "allowPriceChangeOnSale", "showProductBalanceAtSale", "showWarehouseItems", "showCostGreaterThanSalePriceMessage"].map((k) => (
         <Flag key={k} control={control} name={`itemsTab.${k}`} />
       ))}
     </Grid>

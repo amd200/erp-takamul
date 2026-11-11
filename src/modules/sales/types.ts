@@ -78,6 +78,7 @@ export type SalesReturnDto = {
   id: number; returnNumber?: string | null; salesOrderId?: number | null; salesOrderNumber?: string | null; customerName?: string | null; branchId?: number | null; branchShortName?: string | null; returnDate?: string | null
   reason?: string | null; subTotal?: number | null; taxAmount?: number | null; discountAmount?: number | null; grandTotal?: number | null
   refundedAmount?: number | null; zatcaStatus?: string | null; zatcaResponse?: string | null; items?: ReturnItemDto[] | null
+  customerId?: number | null; employeeName?: string | null; createdBy?: string | null; zatcaQRCode?: string | null; payments?: PaymentDto[] | null
 }
 
 export type ReturnInput = {

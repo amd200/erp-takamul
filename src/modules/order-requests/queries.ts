@@ -33,3 +33,12 @@ export function useCheckoutOrderRequest() {
     onError: (e) => errorToast(e, "common.saveFailed"),
   })
 }
+
+export function useDeleteOrderRequest() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) => orderRequestsApi.remove(id),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: orderRequestKeys.all }); toast.success(i18n.t("common.deleted")) },
+    onError: (e) => errorToast(e, "common.deleteFailed"),
+  })
+}

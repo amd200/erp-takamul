@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useBranchColumn } from "@/modules/branches/useBranchColumn"
 import { Link } from "react-router-dom"
-import { Eye, ScrollText, Send, Undo2 } from "lucide-react"
+import { Eye, FileText, Printer, ScrollText, Send, Undo2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useAppSettings } from "@/modules/settings"
 import { RowMenu } from "@/components/RowActions"
@@ -16,6 +16,7 @@ import { P } from "@/shared/permissions/permissions"
 import { ZatcaBadge } from "../components/StatusBadges"
 import { ZatcaResponseDialog } from "../components/ZatcaResponseDialog"
 import { useReturns, useSendReturn } from "../queries"
+import { usePrintReturn } from "../print/usePrintReturn"
 import type { SalesReturnDto } from "../types"
 
 export default function ReturnsPage() {
@@ -25,6 +26,7 @@ export default function ReturnsPage() {
   const { sort, sortBy, sortDescending } = useTableSort()
   const { data, isLoading } = useReturns({ SortBy: sortBy, SortDescending: sortDescending })
   const send = useSendReturn()
+  const print = usePrintReturn()
   const [zatcaDoc, setZatcaDoc] = useState<SalesReturnDto | null>(null)
 
   const branchColumn = useBranchColumn<SalesReturnDto>((r) => ({ id: r.branchId, name: r.branchShortName }))
@@ -38,6 +40,8 @@ export default function ReturnsPage() {
     { id: "refunded", sortKey: "refundedAmount", header: t("sales.refunded"), cell: (r) => (r.refundedAmount ? formatMoney(r.refundedAmount) : <span className="text-faint">—</span>) },
     ...(stage2 ? [{ id: "zatca", sortKey: "zatcaStatus", header: t("sales.zatcaStatus"), cell: (r: SalesReturnDto) => <ZatcaBadge status={r.zatcaStatus} /> }] : []),
     { id: "actions", header: "", align: "end", cell: (r) => <RowMenu items={[
+      { key: "a4", label: t("sales.actions.printA4"), icon: <FileText />, disabled: print.isPending, onSelect: () => print.mutate({ ret: r, paper: "a4" }) },
+      { key: "roll", label: t("sales.actions.printRoll"), icon: <Printer />, disabled: print.isPending, onSelect: () => print.mutate({ ret: r, paper: "roll" }) },
       stage2 && can(P.sales.zatca) && r.zatcaStatus !== "Sent" && { key: "resend", label: t("sales.actions.resend"), icon: <Send />, disabled: send.isPending, onSelect: () => send.mutate(r.id) },
       stage2 && { key: "zatca", label: t("sales.menu.zatcaResponse"), icon: <ScrollText />, onSelect: () => setZatcaDoc(r) },
       { key: "view", label: t("common.view"), icon: <Eye />, to: `/sales/returns/${r.id}` },

@@ -69,9 +69,9 @@ export default function ProductsListPage() {
 
   const columns: Column<Product>[] = [
     { id: "name", sortKey: "productNameAr", header: t("products.item"), cell: (p) => (
-      <div className="flex items-center gap-3">
+      <div className="flex items-center justify-center gap-3">
         <Thumb p={p} />
-        <div className="min-w-0">
+        <div className="min-w-0 text-center">
           <div className="truncate font-semibold">{p.productNameAr}</div>
           {p.productNameEn && <div className="truncate text-xs text-faint" dir="ltr">{p.productNameEn}</div>}
         </div>

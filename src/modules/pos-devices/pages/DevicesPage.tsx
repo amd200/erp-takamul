@@ -37,15 +37,15 @@ export default function DevicesPage() {
 
   const columns: Column<PosDevice>[] = [
     { id: "name", sortKey: "deviceName", header: t("devices.name"), cell: (d) => (
-      <div>
-        <div className="flex items-center gap-2 font-semibold">{d.deviceName}{!d.isActive && <StatusBadge tone="danger">{t("common.inactive")}</StatusBadge>}</div>
-        <div className="text-xs text-faint" dir="ltr">{d.invoiceSequence}</div>
+      <div className="flex flex-col items-center gap-0.5 text-center">
+        <div className="flex items-center justify-center gap-2 font-semibold leading-tight">{d.deviceName}{!d.isActive && <StatusBadge tone="danger">{t("common.inactive")}</StatusBadge>}</div>
+        {d.invoiceSequence && <span className="text-xs leading-tight text-faint" dir="ltr">{d.invoiceSequence}</span>}
       </div>
     ) },
     { id: "branch", sortKey: "branchName", header: t("users.branch"), cell: (d) => d.branchName || "—" },
     ...(onboarding ? [
       { id: "status", sortKey: "certificateType", header: t("devices.registration"), cell: (d: PosDevice) => (
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center justify-center gap-2">
           <DeviceStatusBadge status={d.status} />
           {!registered(d.status) && can(P.posDevices.edit) && (
             <Button variant="link" size="sm" className="h-auto px-0" onClick={() => show(d)}>{t("devices.completeRegistration")}</Button>

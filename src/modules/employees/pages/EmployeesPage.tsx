@@ -24,7 +24,7 @@ import { useDeleteEmployee, useEmployeeList, useSaveEmployee } from "../queries"
 import { emptyEmployee, employeeSchema, type EmployeeForm } from "../schema"
 import type { Employee } from "../types"
 
-/** Name and mobile; a user who may work across branches also picks the employee's branch (a new employee in a box at the top, a saved one in a field below). */
+/** Name and mobile; a user who may work across branches also picks the employee's branch (a box / select at the top). */
 function EmployeeDialog({ open, onOpenChange, employee }: { open: boolean; onOpenChange: (o: boolean) => void; employee: Employee | null }) {
   const { t } = useTranslation()
   const canPickBranch = useAuthStore((s) => canManageAllBranches(s.session))
@@ -45,9 +45,11 @@ function EmployeeDialog({ open, onOpenChange, employee }: { open: boolean; onOpe
           <form id="employee-form" onSubmit={submit} noValidate>
             <FieldGroup className="gap-4">
               {formBranch.show && <BranchSection value={formBranch.branchId} onChange={formBranch.pick} />}
-              <FormInput control={form.control} name="firstName" required label={t("employees.name")} />
-              <FormInput control={form.control} name="mobile" label={t("users.mobile")} dir="ltr" placeholder="05XXXXXXXX" />
               {canPickBranch && !!employee && <FormSelect control={form.control} name="branchId" numeric label={t("users.branch")} options={branches.map((b) => ({ value: String(b.id), label: b.name ?? "" }))} />}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <FormInput control={form.control} name="firstName" required label={t("employees.name")} />
+                <FormInput control={form.control} name="mobile" label={t("users.mobile")} dir="ltr" placeholder="05XXXXXXXX" />
+              </div>
             </FieldGroup>
           </form>
         </DialogBody>

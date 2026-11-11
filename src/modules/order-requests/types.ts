@@ -13,6 +13,9 @@ export type OrderRequest = {
   salesOrderId?: number | null
 }
 
-export type OrderRequestItem = { productName?: string | null; quantity: number; unitPrice?: number | null; discountValue?: number | null; lineTotal?: number | null; notes?: string | null }
+export type OrderRequestItem = {
+  productId?: number; unitId?: number | null; productName?: string | null; quantity: number; unitPrice?: number | null; taxPercentage?: number | null
+  discountPercentage?: number | null; discountValue?: number | null; lineTotal?: number | null; notes?: string | null
+}
 
 export type OrderRequestDetails = OrderRequest & { notes?: string | null; items?: OrderRequestItem[] | null; subTotal?: number | null; taxAmount?: number | null; discountAmount?: number | null }

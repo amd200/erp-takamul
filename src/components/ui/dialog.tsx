@@ -115,12 +115,13 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-/** Scrolling part of a dialog: sits between DialogHeader and DialogFooter, which stay in view. */
+/** Scrolling part of a dialog: sits between DialogHeader and DialogFooter, which stay in view.
+ *  The px/py padding (cancelled by the negative margins) keeps input focus rings from being clipped by the scroll box. */
 function DialogBody({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-body"
-      className={cn("-mx-4 no-scrollbar max-h-[50vh] overflow-y-auto px-4", className)}
+      className={cn("-mx-4 -my-1 no-scrollbar max-h-[50vh] overflow-y-auto px-4 py-1", className)}
       {...props}
     />
   )
@@ -138,7 +139,7 @@ function DialogFooter({
     <div
       data-slot="dialog-footer"
       className={cn(
-        "-mx-4 -mb-4 flex flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-4 sm:flex-row sm:justify-end",
+        "-mx-4 -mb-4 flex flex-col-reverse gap-2 rounded-b-xl border-t p-4 sm:flex-row sm:justify-end",
         className
       )}
       {...props}
