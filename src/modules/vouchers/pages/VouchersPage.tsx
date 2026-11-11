@@ -1,15 +1,14 @@
 import { useState } from "react"
 import { voucherNumber } from "../types"
-import { FileDown, HandCoins, Loader2, Plus, Printer, Wallet } from "lucide-react"
+import { FileDown, HandCoins, Plus, Printer, Trash2, Wallet } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
 import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
 import { PageHeader } from "@/components/PageHeader"
-import { RowActions } from "@/components/RowActions"
+import { RowMenu } from "@/components/RowActions"
 import { formatMoney, formatDateTime } from "@/lib/format"
 import { Can, useCan } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
@@ -44,19 +43,14 @@ function VouchersPage({ kind }: { kind: VoucherKind }) {
     { id: "treasury", sortKey: "treasuryName", header: t("sales.treasury"), cell: (v) => treasuries.find((x) => x.id === v.treasuryId)?.name },
     { id: "amount", sortKey: "amount", header: t("sales.amount"), cell: (v) => <span className={kind === "receipt" ? "font-semibold text-success" : "font-semibold"}>{formatMoney(v.amount)}</span> },
     { id: "desc", sortKey: "description", header: t("vouchers.description"), cell: (v) => <span className="text-muted-foreground">{v.description || "—"}</span> },
-    { id: "actions", header: "", align: "end", cell: (v) => (
-      <div className="flex justify-end gap-0.5">
-        <Tooltip>
-          <TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label={t("reports.print")} disabled={output.isPending} onClick={() => output.mutate({ voucher: v, treasuryName: treasuries.find((x) => x.id === v.treasuryId)?.name ?? "", as: "print" })}>{busy(v, "print") ? <Loader2 className="animate-spin" /> : <Printer />}</Button></TooltipTrigger>
-          <TooltipContent>{t("reports.print")}</TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label={t("shifts.downloadPdf")} disabled={output.isPending} onClick={() => output.mutate({ voucher: v, treasuryName: treasuries.find((x) => x.id === v.treasuryId)?.name ?? "", as: "pdf" })}>{busy(v, "pdf") ? <Loader2 className="animate-spin" /> : <FileDown />}</Button></TooltipTrigger>
-          <TooltipContent>{t("shifts.downloadPdf")}</TooltipContent>
-        </Tooltip>
-        {can(perm) && <RowActions onDelete={() => setToDelete(v)} />}
-      </div>
-    ) },
+    { id: "actions", header: "", align: "end", cell: (v) => {
+      const run = (as: "print" | "pdf") => output.mutate({ voucher: v, treasuryName: treasuries.find((x) => x.id === v.treasuryId)?.name ?? "", as })
+      return <RowMenu items={[
+        { key: "print", label: t("reports.print"), icon: <Printer />, disabled: output.isPending, loading: busy(v, "print"), onSelect: () => run("print") },
+        { key: "pdf", label: t("shifts.downloadPdf"), icon: <FileDown />, disabled: output.isPending, loading: busy(v, "pdf"), onSelect: () => run("pdf") },
+        can(perm) && { key: "delete", label: t("common.delete"), icon: <Trash2 />, destructive: true, onSelect: () => setToDelete(v) },
+      ]} />
+    } },
   ]
 
   return (

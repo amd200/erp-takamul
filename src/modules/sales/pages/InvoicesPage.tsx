@@ -35,12 +35,12 @@ export default function InvoicesPage({ channel }: { channel: Channel }) {
 
   const columns: Column<SalesOrderDto>[] = [
     { id: "number", sortKey: "orderNumber", header: t("sales.number"), cell: (i) => <span className="font-semibold">{i.orderNumber}</span> },
-    { id: "date", sortKey: "orderDate", header: t("common.date"), cell: (i) => <span className="text-muted-foreground">{formatDateTime(i.orderDate ?? "", i18n.language)}</span> },
+    { id: "date", sortKey: "orderDate", className: "min-w-44", header: t("common.date"), cell: (i) => <span className="text-muted-foreground">{formatDateTime(i.orderDate ?? "", i18n.language)}</span> },
     { id: "customer", sortKey: "customerName", header: t("sales.customer"), cell: (i) => i.customerName },
     { id: "employee", sortKey: "employeeName", header: t("users.userName"), cell: (i) => i.employeeName || "—" },
-    { id: "pay", sortKey: "orderStatus", header: t("sales.paymentStatus"), cell: (i) => <PaymentBadge status={i.paymentStatus} /> },
     ...(stage2 ? [{ id: "zatca", sortKey: "zatcaStatus", header: t("sales.zatcaStatus"), cell: (i: SalesOrderDto) => <ZatcaBadge status={i.zatcaStatus} message={i.zatcaStatus === "Rejected" ? i.zatcaResponse : null} /> }] : []),
     { id: "total", sortKey: "grandTotal", header: t("sales.grandTotal"), cell: (i) => <span className="font-semibold">{formatMoney(i.grandTotal ?? 0)}</span> },
+    { id: "pay", sortKey: "orderStatus", header: t("sales.paymentStatus"), cell: (i) => <PaymentBadge status={i.paymentStatus} /> },
     { id: "paid", sortKey: "paidAmount", header: t("sales.paid"), cell: (i) => formatMoney(i.totalPaid ?? 0) },
     { id: "actions", header: "", align: "end", cell: (i) => <InvoiceActions invoice={i} channel={channel} onPayments={() => setPayments(i)} onNotes={() => setNotes(i)} onZatcaResponse={() => setZatcaDoc(i)} onPreview={() => setPreview(i)} /> },
   ]

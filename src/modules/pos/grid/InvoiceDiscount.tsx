@@ -36,7 +36,7 @@ export function InvoiceDiscount({ discount, onChange, disabled, fieldsAlways }: 
       </div>
       {(!applied || fieldsAlways) && (
         <div className="flex items-end gap-2">
-          <label className="flex flex-col items-center gap-0.5 text-[11px] text-muted-foreground">%
+          <label className="flex flex-col items-center gap-0.5 text-[11px] text-muted-foreground">{t("sales.kindPercent")}
             <input inputMode="decimal" dir="ltr" value={pct} disabled={disabled || !!flat} onChange={(e) => /^\d*\.?\d*$/.test(e.target.value) && setPct(e.target.value)} className={box} />
           </label>
           <label className="flex flex-col items-center gap-0.5 text-[11px] text-muted-foreground">{t("sales.kindValue")}

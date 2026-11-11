@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 import { Eye, ScrollText, Send, Undo2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useAppSettings } from "@/modules/settings"
-import { Button } from "@/components/ui/button"
+import { RowMenu } from "@/components/RowActions"
 import { DataTable, type Column } from "@/components/DataTable"
 import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
@@ -29,20 +29,16 @@ export default function ReturnsPage() {
   const columns: Column<SalesReturnDto>[] = [
     { id: "number", sortKey: "returnNumber", header: t("sales.returnNumber"), cell: (r) => <span className="font-semibold">{r.returnNumber}</span> },
     { id: "invoice", sortKey: "salesOrderNumber", header: t("sales.invoice"), cell: (r) => <Link to={`/sales/invoices/${r.salesOrderId}`} className="hover:underline">{r.salesOrderNumber}</Link> },
-    { id: "date", sortKey: "returnDate", header: t("common.date"), cell: (r) => <span className="text-muted-foreground">{formatDateTime(r.returnDate ?? "", i18n.language)}</span> },
+    { id: "date", sortKey: "returnDate", className: "min-w-44", header: t("common.date"), cell: (r) => <span className="text-muted-foreground">{formatDateTime(r.returnDate ?? "", i18n.language)}</span> },
     { id: "customer", sortKey: "customerName", header: t("sales.customer"), cell: (r) => r.customerName },
     { id: "total", sortKey: "grandTotal", header: t("sales.grandTotal"), cell: (r) => <span className="font-semibold">{formatMoney(r.grandTotal ?? 0)}</span> },
     { id: "refunded", sortKey: "refundedAmount", header: t("sales.refunded"), cell: (r) => (r.refundedAmount ? formatMoney(r.refundedAmount) : <span className="text-faint">—</span>) },
     ...(stage2 ? [{ id: "zatca", sortKey: "zatcaStatus", header: t("sales.zatcaStatus"), cell: (r: SalesReturnDto) => <ZatcaBadge status={r.zatcaStatus} /> }] : []),
-    { id: "actions", header: "", align: "end", cell: (r) => (
-      <div className="flex justify-end gap-0.5">
-        {stage2 && can(P.sales.zatca) && r.zatcaStatus !== "Sent" && (
-          <Button variant="ghost" size="icon" aria-label={t("sales.actions.resend")} disabled={send.isPending} onClick={() => send.mutate(r.id)}><Send /></Button>
-        )}
-        {stage2 && <Button variant="ghost" size="icon" aria-label={t("sales.menu.zatcaResponse")} title={t("sales.menu.zatcaResponse")} onClick={() => setZatcaDoc(r)}><ScrollText /></Button>}
-        <Button asChild variant="ghost" size="icon" aria-label={t("common.view")}><Link to={`/sales/returns/${r.id}`}><Eye /></Link></Button>
-      </div>
-    ) },
+    { id: "actions", header: "", align: "end", cell: (r) => <RowMenu items={[
+      stage2 && can(P.sales.zatca) && r.zatcaStatus !== "Sent" && { key: "resend", label: t("sales.actions.resend"), icon: <Send />, disabled: send.isPending, onSelect: () => send.mutate(r.id) },
+      stage2 && { key: "zatca", label: t("sales.menu.zatcaResponse"), icon: <ScrollText />, onSelect: () => setZatcaDoc(r) },
+      { key: "view", label: t("common.view"), icon: <Eye />, to: `/sales/returns/${r.id}` },
+    ]} /> },
   ]
 
   return (

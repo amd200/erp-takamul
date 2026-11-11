@@ -71,7 +71,7 @@ export function EyePrescriptionBox({ prefix = "", bare }: { prefix?: Prefix; bar
   const { t } = useTranslation()
   const path = (k: EyeField) => `${prefix}${k}` as Path<CustomerForm>
   return (
-    <div className={cn("col-span-2", !bare && "rounded-lg border border-border/60 bg-background p-3 sm:p-4")}>
+    <div className={cn("col-span-full", !bare && "rounded-lg border border-border/60 bg-background p-3 sm:p-4")}>
       <div className="mb-3 flex items-center gap-2 text-sm font-medium text-muted-foreground"><Eye size={16} />{t("custDialog.eyePrescription")}</div>
       <div className="overflow-x-auto rounded-md border border-border/60">
         <table dir="ltr" className="w-full min-w-[560px] table-fixed border-collapse text-center text-xs">
@@ -119,7 +119,7 @@ export function CompanionsBlock() {
   return (
     <>
       {fields.map((c, i) => (
-        <div key={c.fieldKey} className="col-span-2 rounded-xl border border-border bg-muted/30 p-3 sm:p-4">
+        <div key={c.fieldKey} className="col-span-full rounded-xl border border-border bg-muted/30 p-3 sm:p-4">
           <div className="mb-3 flex items-center justify-between">
             <span className="flex items-center gap-2 text-sm font-bold text-foreground"><UserRoundPlus size={16} />{t("custDialog.companion")} {i + 1}</span>
             <Button type="button" variant="ghost-destructive" size="icon" aria-label={t("custDialog.remove")} onClick={() => remove(i)}><Trash2 size={16} /></Button>
@@ -139,7 +139,7 @@ export function CompanionsBlock() {
           </div>
         </div>
       ))}
-      <Button type="button" variant="outline" className="col-span-2 h-11 gap-2 border-dashed" onClick={() => append(emptyCompanion())}><UserRoundPlus size={18} />{t("custDialog.addCompanion")}</Button>
+      <Button type="button" variant="outline" className="col-span-full h-11 gap-2 border-dashed" onClick={() => append(emptyCompanion())}><UserRoundPlus size={18} />{t("custDialog.addCompanion")}</Button>
     </>
   )
 }

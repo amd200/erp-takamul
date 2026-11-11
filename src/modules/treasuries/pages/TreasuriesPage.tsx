@@ -38,7 +38,7 @@ function TreasuryDialog({ open, onOpenChange, treasury }: { open: boolean; onOpe
   const shown = form.watch("showInSalesScreen")
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-screen-sm">
+      <DialogContent className="sm:max-w-[900px]">
         <DialogHeader className="py-3"><DialogTitle className="flex items-center gap-2 text-[#2ecc71]"><Wallet size={18} />{title}</DialogTitle></DialogHeader>
         <form id="treasury-form" onSubmit={submit} noValidate className="no-scrollbar -mx-4 max-h-[50vh] overflow-y-auto px-4">
           <div className="grid grid-cols-1 gap-5 p-2 md:grid-cols-2">

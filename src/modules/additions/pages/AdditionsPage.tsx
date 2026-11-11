@@ -40,13 +40,13 @@ function AdditionDialog({ open, onOpenChange, addition }: { open: boolean; onOpe
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-screen-sm">
+      <DialogContent className="max-h-[calc(100dvh-16px)] overflow-y-auto sm:max-w-[900px]">
         <DialogHeader><DialogTitle>{addition ? t("additions.edit") : t("additions.add")}</DialogTitle></DialogHeader>
         <form id="addition-form" onSubmit={submit}>
           <FieldGroup className="gap-3">
             {formBranch.show && <BranchSection value={formBranch.branchId} onChange={changeBranch} />}
-            <FormInput control={form.control} name="nameAr" label={t("common.nameAr")} required />
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <FormInput control={form.control} name="nameAr" label={t("common.nameAr")} required />
               <FormInput control={form.control} name="nameEn" label={t("common.nameEn")} dir="ltr" />
               <FormInput control={form.control} name="nameUr" label={t("common.nameUr")} dir="ltr" />
             </div>

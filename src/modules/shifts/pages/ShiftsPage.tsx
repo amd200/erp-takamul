@@ -33,7 +33,6 @@ export default function ShiftsPage() {
   const day = (v: string | null) => (v ? date.format(new Date(v)) : "—")
 
   const columns: Column<Shift>[] = [
-    { id: "id", header: "#", cell: (s) => <span className="font-semibold tabular-nums">{s.id}</span> },
     { id: "date", header: t("common.date"), cell: (s) => <span className="text-muted-foreground">{day(s.shiftDate)}</span> },
     { id: "start", header: t("shifts.start"), cell: (s) => <span dir="ltr">{clock(s.startTime, i18n.language)}</span> },
     { id: "end", header: t("shifts.end"), cell: (s) => (s.endTime ? <span dir="ltr">{clock(s.endTime, i18n.language)}</span> : <span className="text-faint">—</span>) },

@@ -44,7 +44,7 @@ function ReservationDialog({ open, onOpenChange, reservation }: { open: boolean;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-[900px]">
         <DialogHeader><DialogTitle>{reservation ? t("reservations.edit") : t("reservations.add")}</DialogTitle></DialogHeader>
         <form id="reservation-form" onSubmit={submit} noValidate>
           <FieldGroup className="gap-4">

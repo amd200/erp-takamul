@@ -16,8 +16,12 @@ export type Column<T> = {
   cell: (row: T) => ReactNode
   align?: "start" | "end"
   className?: string
+  /** Fixed column width (e.g. "30%"); when any column sets it the table uses a fixed layout so tabs line up. */
+  width?: string
   /** The server field to sort by when this header is clicked (needs `server.sort`). */
   sortKey?: string
+  /** Marks the automatic serial-number column (added by the table itself, never by pages). */
+  serial?: boolean
 }
 
 /**
@@ -51,10 +55,12 @@ const features = tableFeatures({
 
 /** The one list pattern used by every page: search and filters on top, quiet table, pager at the bottom. */
 export function DataTable<T extends RowData>({
-  rows, columns, rowKey, loading, searchText, searchPlaceholder, filters, empty, emptyText, pageSize = 10, server, pager = true, sort: sortProp,
+  rows, columns: columnsProp, rowKey, serial = true, loading, searchText, searchPlaceholder, filters, empty, emptyText, pageSize = 10, server, pager = true, sort: sortProp,
 }: {
   rows: T[] | undefined
   columns: Column<T>[]
+  /** The running-number column "م" (1, 2, 3 ... continuing across pages) shown first in every table; pass false to hide it. */
+  serial?: boolean
   rowKey: (row: T) => string | number
   loading?: boolean
   /** Client-side search over loaded rows. With `server.onSearch` the search box asks the server instead. */
@@ -72,6 +78,8 @@ export function DataTable<T extends RowData>({
   sort?: TableSort
 }) {
   const { t } = useTranslation()
+  const header = t("common.serial")
+  const columns = useMemo<Column<T>[]>(() => (serial ? [{ id: "serial", header, width: "64px", serial: true, cell: () => null }, ...columnsProp] : columnsProp), [serial, header, columnsProp])
   const [q, setQ] = useState("")
   const onSearch = server?.onSearch
   const sort = sortProp ?? server?.sort
@@ -103,7 +111,7 @@ export function DataTable<T extends RowData>({
     onPaginationChange: setPagination,
     getRowId: (r) => String(rowKey(r)),
     globalFilterFn: matches,
-    getColumnCanGlobalFilter: (c) => c.id === columns[0]?.id,
+    getColumnCanGlobalFilter: (c) => c.id === columnsProp[0]?.id,
     manualFiltering: !!server, manualPagination: !!server, rowCount: server?.total, autoResetPageIndex: false,
   })
 
@@ -113,6 +121,8 @@ export function DataTable<T extends RowData>({
   const hasSearch = !!(searchText || onSearch)
   // No rows: a custom `empty` block replaces the table; with `emptyText` (or no `empty` at all) the header stays and one row says there is nothing.
   const showEmptyRow = slice.length === 0 && (!!emptyText || empty == null)
+  const firstNo = (server ? server.page : current) * (server ? server.pageSize : pageSize)
+  const render = (c: Column<T>, r: T, i: number) => (c.serial ? firstNo + i + 1 : c.cell(r))
   const setPage = (n: number) => setPagination((p) => ({ ...p, pageIndex: n }))
 
   // When the current page ends up empty (its last row was deleted, or a refetch has fewer pages), step back to the last page that has rows.
@@ -157,32 +167,32 @@ export function DataTable<T extends RowData>({
         <>
           {/* Phones: a wide table would scroll sideways, so each row becomes a card (label on one side, value on the other). */}
           <ul className={cn("flex flex-col gap-2 transition-opacity sm:hidden", server?.fetching && "opacity-60", slice.length === 0 && "hidden")}>
-            {slice.map((row) => {
+            {slice.map((row, ri) => {
               const r = row.original
-              const labelled = columns.filter((c) => c.header)
-              const actions = columns.filter((c) => !c.header)
+              const labelled = columns.filter((c) => c.header && c.id !== "actions" && !c.serial)
+              const actions = columns.filter((c) => !c.header || c.id === "actions")
               return (
                 <li key={row.id} className="rounded-xl border bg-card px-3 py-2.5">
                   <dl className="flex flex-col gap-1.5 text-sm">
                     {labelled.map((c, i) => (
                       <div key={c.id} className="flex items-center justify-between gap-3">
                         <dt className="shrink-0 text-xs text-muted-foreground">{c.header}</dt>
-                        <dd className={cn("min-w-0 text-end tabular-nums", i === 0 && "font-semibold", c.className)}>{c.cell(r)}</dd>
+                        <dd className={cn("min-w-0 text-end tabular-nums", i === 0 && "font-semibold", c.className)}>{render(c, r, ri)}</dd>
                       </div>
                     ))}
                   </dl>
-                  {actions.length > 0 && <div className="mt-2 flex items-center justify-end gap-1 border-t pt-2">{actions.map((c) => <div key={c.id}>{c.cell(r)}</div>)}</div>}
+                  {actions.length > 0 && <div className="mt-2 flex items-center justify-end gap-1 border-t pt-2">{actions.map((c) => <div key={c.id}>{render(c, r, ri)}</div>)}</div>}
                 </li>
               )
             })}
           </ul>
-          <Table className={cn("min-w-[640px] transition-opacity", slice.length > 0 && "max-sm:hidden", server?.fetching && "opacity-60")}>
+          <Table className={cn("min-w-[640px] transition-opacity", columnsProp.some((c) => c.width) && "table-fixed", slice.length > 0 && "max-sm:hidden", server?.fetching && "opacity-60")}>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
                 {columns.map((c) => (
-                  <TableHead key={c.id} aria-sort={c.sortKey && sort?.key === c.sortKey ? (sort.desc ? "descending" : "ascending") : undefined}
-                    className={cn("text-xs font-medium text-muted-foreground", c.align === "end" && "text-end")}>
-                    {c.sortKey && sort ? <SortButton column={c} sort={sort} onSorted={() => setPage(0)} /> : c.header}
+                  <TableHead key={c.id} style={c.width ? { width: c.width } : undefined} aria-sort={c.sortKey && sort?.key === c.sortKey ? (sort.desc ? "descending" : "ascending") : undefined}
+                    className={cn("text-xs font-medium text-muted-foreground", (c.align === "end" || c.id === "actions") && "text-end")}>
+                    {c.sortKey && sort ? <SortButton column={c} sort={sort} onSorted={() => setPage(0)} /> : c.id === "actions" && !c.header ? t("common.actions") : c.header}
                   </TableHead>
                 ))}
               </TableRow>
@@ -191,10 +201,10 @@ export function DataTable<T extends RowData>({
               {slice.length === 0 && (
                 <TableRow className="hover:bg-transparent"><TableCell colSpan={columns.length} className="py-6 font-normal text-muted-foreground">{emptyText ?? t("common.noData")}</TableCell></TableRow>
               )}
-              {slice.map((row) => (
+              {slice.map((row, ri) => (
                 <TableRow key={row.id}>
                   {row.getAllCells().map((cell) => (
-                    <TableCell key={cell.id} className={cn("tabular-nums py-3", columns.find((c) => c.id === cell.column.id)?.align === "end" && "text-end", columns.find((c) => c.id === cell.column.id)?.className)}><table.FlexRender cell={cell} /></TableCell>
+                    <TableCell key={cell.id} className={cn("tabular-nums py-3", columnsProp.some((c) => c.width) && "overflow-hidden text-ellipsis", (columns.find((c) => c.id === cell.column.id)?.align === "end" || cell.column.id === "actions") && "text-end", columns.find((c) => c.id === cell.column.id)?.className)}>{columns.find((c) => c.id === cell.column.id)?.serial ? firstNo + ri + 1 : <table.FlexRender cell={cell} />}</TableCell>
                   ))}
                 </TableRow>
               ))}

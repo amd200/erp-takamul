@@ -39,6 +39,7 @@ export type QuoteInput = {
   customerId: number
   date: string
   notes: string
+  globalDiscountKind: "value" | "percent"
   globalDiscount: number
   shipping: number
   lines: InvoiceLine[]

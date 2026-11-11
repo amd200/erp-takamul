@@ -20,16 +20,16 @@ export function StockUnitsSection() {
 
   return (
     <SectionCard title={t("products.sections.units")}>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className={rules.purchaseUnit ? "grid gap-4 sm:grid-cols-2 lg:grid-cols-3" : "grid gap-4 sm:grid-cols-2"}>
         <FormSelect control={control} name="baseUnitId" numeric required label={t("products.baseUnit")} options={unitOptions} />
-        {rules.holdsStock && (
-          <FormInput control={control} name="minStockLevel" type="number" label={t("products.minStock")} description={t("products.minStockHint")} />
-        )}
         {rules.purchaseUnit && (
           <>
             <FormSelect control={control} name="purchaseUnitId" numeric required label={t("products.purchaseUnit")} options={unitOptions} />
             <FormInput control={control} name="purchaseConversionFactor" type="number" required label={t("products.conversionFactor")} description={t("products.conversionHint")} />
           </>
+        )}
+        {rules.holdsStock && (
+          <div className="col-span-full"><FormInput control={control} name="minStockLevel" type="number" label={t("products.minStock")} description={t("products.minStockHint")} /></div>
         )}
       </div>
 

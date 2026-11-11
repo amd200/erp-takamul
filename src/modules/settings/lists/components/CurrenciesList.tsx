@@ -63,10 +63,8 @@ export function CurrenciesList({ readOnly }: { readOnly: boolean }) {
     { id: "symbol", sortKey: "symbol", header: t("settings.lists.currencies.symbol"), cell: (r) => <span className="text-muted-foreground">{r.symbol}</span> },
     { id: "default", sortKey: "isDefault", header: "", cell: (r) => r.isDefault && <Badge>{t("settings.lists.currencies.default")}</Badge> },
     { id: "actions", header: "", align: "end", cell: (r) => !readOnly && (
-      <div className="flex justify-end gap-1">
-        {!r.isDefault && <Button size="sm" variant="outline" disabled={makeDefault.isPending} onClick={() => makeDefault.mutate(r.id)}><Star />{t("settings.lists.currencies.setDefault")}</Button>}
-        <RowActions onEdit={() => open(r)} onDelete={() => setToDelete(r)} />
-      </div>
+      <RowActions extra={[!r.isDefault && { key: "default", label: t("settings.lists.currencies.setDefault"), icon: <Star />, disabled: makeDefault.isPending, onSelect: () => makeDefault.mutate(r.id) }]}
+        onEdit={() => open(r)} onDelete={() => setToDelete(r)} />
     ) },
   ]
   return (

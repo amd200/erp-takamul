@@ -71,7 +71,7 @@ export default function ProductsListPage() {
         <Thumb p={p} />
         <div className="min-w-0">
           <div className="truncate font-semibold">{p.productNameAr}</div>
-          <div className="truncate text-xs text-faint" dir="ltr">{p.productNameEn || `#${p.productCode}`}</div>
+          {p.productNameEn && <div className="truncate text-xs text-faint" dir="ltr">{p.productNameEn}</div>}
         </div>
       </div>
     ) },
@@ -81,7 +81,6 @@ export default function ProductsListPage() {
     { id: "barcode", sortKey: "barcode", header: t("products.barcode"), cell: (p) => <span className="text-muted-foreground" dir="ltr">{p.barcode || "—"}</span> },
     { id: "cost", sortKey: "costPrice", header: t("products.cost"), cell: (p) => <span className="text-muted-foreground">{p.costPrice ? formatMoney(p.costPrice) : "—"}</span> },
     { id: "price", sortKey: "sellingPrice", header: t("products.price"), cell: (p) => <span className="font-medium">{p.sellingPrice ? formatMoney(p.sellingPrice) : "—"}</span> },
-    { id: "status", sortKey: "isActive", header: t("common.status"), cell: (p) => <StatusBadge tone={p.isActive ? "success" : "danger"}>{p.isActive ? t("common.active") : t("common.inactive")}</StatusBadge> },
     { id: "actions", header: "", align: "end", cell: (p) => (
       <RowActions editTo={can(P.products.edit) ? `/products/edit/${p.id}?type=${p.productType}` : undefined} onDelete={can(P.products.delete) ? () => setToDelete(p) : undefined} />
     ) },

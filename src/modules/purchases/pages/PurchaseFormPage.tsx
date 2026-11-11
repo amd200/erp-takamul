@@ -11,7 +11,9 @@ import { Input } from "@/components/ui/input"
 import { FormSelect, FormTextarea } from "@/components/form/FormFields"
 import { PageHeader } from "@/components/PageHeader"
 import { SectionCard } from "@/components/SectionCard"
-import { formatMoney } from "@/lib/format"
+import { BalanceBox } from "@/components/BalanceBox"
+import { BranchSection } from "@/modules/branches/BranchSection"
+import { useFormBranch } from "@/modules/branches/useFormBranch"
 import { useSupplierList } from "@/modules/suppliers/queries"
 import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
 import { useAutoPayment } from "@/modules/sales/useAutoPayment"
@@ -31,6 +33,7 @@ export default function PurchaseFormPage() {
   const nav = useNavigate()
   const { id } = useParams()
   const editId = id ? Number(id) : undefined
+  const formBranch = useFormBranch(!editId)
   const { data: existing, isLoading } = usePurchase(editId)
   const { data: suppliers = [] } = useSuppliers()
   const { data: supplierList = [] } = useSupplierList()
@@ -46,7 +49,7 @@ export default function PurchaseFormPage() {
 
   const form = useForm<PurchaseForm>({ resolver: zodResolver(purchaseSchema), defaultValues: emptyPurchase() })
   const payments = useFieldArray({ control: form.control, name: "payments" })
-  const [lines, pays, supplierId] = useWatch({ control: form.control, name: ["lines", "payments", "supplierId"] })
+  const [lines, pays, supplierId, warehouseId] = useWatch({ control: form.control, name: ["lines", "payments", "supplierId", "warehouseId"] })
   const totals = useMemo(() => invoiceTotals(lines, "value", 0), [lines])
   const paid = paidOf(pays.map((p) => ({ amount: p.amount || 0 })))
   const remaining = Math.max(0, Math.round((totals.grandTotal - paid) * 100) / 100)
@@ -63,9 +66,18 @@ export default function PurchaseFormPage() {
     })
   }, [existing, taxes, form])
 
-  useEffect(() => { if (!editId && warehouses.length && !form.getValues("warehouseId")) form.setValue("warehouseId", warehouses[0].id) }, [editId, warehouses, form])
+  useEffect(() => { if (!editId && warehouses.length && !warehouseId) form.setValue("warehouseId", warehouses[0].id) }, [editId, warehouses, warehouseId, form])
 
-  useEffect(() => { if (!editId && suppliers.length && !form.getValues("supplierId")) form.setValue("supplierId", suppliers[0].id) }, [editId, suppliers, form])
+  useEffect(() => { if (!editId && suppliers.length && !supplierId) form.setValue("supplierId", suppliers[0].id) }, [editId, suppliers, supplierId, form])
+
+  // The suppliers, warehouses and items belong to the branch, so what was picked from the old branch is cleared and the defaults are picked again.
+  const changeBranch = async (next: number) => {
+    await formBranch.pick(next)
+    const empty = emptyPurchase()
+    form.setValue("supplierId", empty.supplierId)
+    form.setValue("warehouseId", empty.warehouseId)
+    form.setValue("lines", empty.lines)
+  }
 
   if (editId && isLoading) return <div className="h-96 animate-pulse rounded-xl bg-muted" />
 
@@ -91,20 +103,18 @@ export default function PurchaseFormPage() {
 
         <SectionCard title={t("sales.basics")}>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {formBranch.show && <BranchSection plain value={formBranch.branchId} onChange={changeBranch} />}
             <Controller control={form.control} name="date" render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="p-date">{t("common.date")}<span className="text-destructive">*</span></FieldLabel>
                 <Input id="p-date" type="date" {...field} />
               </Field>
             )} />
-            <FormSelect control={form.control} name="supplierId" numeric required label={t("purchases.supplier")} placeholder={t("reports.pick")}
-              options={suppliers.map((s) => ({ value: String(s.id), label: s.supplierName }))} />
-            {showBalance && (
-              <Field>
-                <FieldLabel htmlFor="supplierBalance">{t("purchases.supplierBalance")}</FieldLabel>
-                <Input id="supplierBalance" readOnly tabIndex={-1} dir="ltr" className="bg-muted/50 font-semibold" value={supplier ? `${formatMoney(Math.abs(supplier.balance ?? 0))} ${(supplier.balance ?? 0) === 0 ? "" : t((supplier.balance ?? 0) < 0 ? "sales.debtor" : "sales.creditor")}`.trim() : "—"} />
-              </Field>
-            )}
+            <div>
+              <FormSelect control={form.control} name="supplierId" numeric required label={t("purchases.supplier")} placeholder={t("reports.pick")}
+                options={suppliers.map((s) => ({ value: String(s.id), label: s.supplierName }))} />
+              {showBalance && supplier && <BalanceBox label={t("purchases.supplierBalance")} value={supplier.balance ?? 0} debitWhenPositive={false} />}
+            </div>
             {warehouses.length > 1 && <FormSelect control={form.control} name="warehouseId" numeric required label={t("sales.warehouse")} options={warehouses.map((w) => ({ value: String(w.id), label: w.warehouseName ?? "" }))} />}
           </div>
           <div className="mt-6"><FormTextarea control={form.control} name="notes" label={t("common.notes")} placeholder={t("purchases.notesHint")} /></div>

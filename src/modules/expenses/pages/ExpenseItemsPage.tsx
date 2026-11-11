@@ -30,7 +30,7 @@ function ItemDialog({ open, onOpenChange, item }: { open: boolean; onOpenChange:
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-[900px]">
         <DialogHeader><DialogTitle>{item ? t("expenseItems.edit") : t("expenseItems.add")}</DialogTitle></DialogHeader>
         <form id="expense-item-form" onSubmit={submit}>
           <FieldGroup className="gap-4">

@@ -11,7 +11,7 @@ export function FormDialog({ open, onOpenChange, title, onSubmit, pending, child
   const { t } = useTranslation()
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-[900px]">
         <DialogHeader><DialogTitle>{title}</DialogTitle></DialogHeader>
         <form id="list-form" onSubmit={(e) => { e.preventDefault(); onSubmit() }} noValidate>
           <FieldGroup className="gap-4">{children}</FieldGroup>

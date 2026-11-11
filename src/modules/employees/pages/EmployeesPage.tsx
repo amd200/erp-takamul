@@ -39,7 +39,7 @@ function EmployeeDialog({ open, onOpenChange, employee }: { open: boolean; onOpe
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-[900px]">
         <DialogHeader><DialogTitle>{employee ? t("employees.edit") : t("employees.add")}</DialogTitle></DialogHeader>
         <form id="employee-form" onSubmit={submit} noValidate>
           <FieldGroup className="gap-4">

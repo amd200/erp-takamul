@@ -44,7 +44,7 @@ export default function PurchasesPage() {
 
   const columns: Column<Purchase>[] = [
     { id: "number", sortKey: "purchaseOrderNumber", header: t("purchases.colNumber"), cell: (p) => <Link to={`/purchases/${p.id}`} className="hover:underline">{p.purchaseOrderNumber}</Link> },
-    { id: "date", sortKey: "orderDate", header: t("purchases.colDate"), cell: (p) => (p.orderDate ? formatDateTime(p.orderDate, i18n.language) : "—") },
+    { id: "date", sortKey: "orderDate", className: "min-w-44", header: t("purchases.colDate"), cell: (p) => (p.orderDate ? formatDateTime(p.orderDate, i18n.language) : "—") },
     { id: "supplier", sortKey: "supplierName", header: t("purchases.colSupplier"), cell: (p) => p.supplierName || "—" },
     { id: "status", sortKey: "orderStatus", header: t("purchases.colStatus"), cell: (p) => <Status p={p} /> },
     { id: "total", sortKey: "grandTotal", header: t("purchases.colTotal"), cell: (p) => formatMoney(p.grandTotal ?? 0) },

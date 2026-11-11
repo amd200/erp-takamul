@@ -38,7 +38,7 @@ export function SupplierDialog({ open, onOpenChange, supplier, onSaved }: { open
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[90dvh] flex-col gap-3 overflow-hidden p-4 sm:max-w-screen-sm sm:gap-4 sm:p-6">
+      <DialogContent className="flex max-h-[90dvh] flex-col gap-3 overflow-hidden p-4 sm:max-w-[900px] sm:gap-4 sm:p-6">
         <DialogHeader className="shrink-0 py-2 sm:py-3">
           <DialogTitle className="flex items-center gap-2 text-primary"><UserPlus size={20} />{title}</DialogTitle>
         </DialogHeader>

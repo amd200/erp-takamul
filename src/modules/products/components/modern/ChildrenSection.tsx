@@ -42,9 +42,9 @@ export function ChildrenSection({ selfId }: { selfId?: number }) {
           const c = rows.fields[i]
           return (
             <>
-              <span className="flex h-10 items-center font-medium">{c.nameAr}</span>
-              <span className="flex h-10 items-center text-muted-foreground" dir="ltr">{c.barcode || "—"}</span>
-              <span className="flex h-10 items-center tabular-nums">{formatMoney(c.sellingPrice)}</span>
+              <span className="flex h-10 items-center rounded-md border border-input bg-muted/40 px-3 text-sm font-medium">{c.nameAr}</span>
+              <span className="flex h-10 items-center rounded-md border border-input bg-muted/40 px-3 text-sm"><bdi>{c.barcode || "—"}</bdi></span>
+              <span className="flex h-10 items-center rounded-md border border-input bg-muted/40 px-3 text-sm tabular-nums">{formatMoney(c.sellingPrice)}</span>
             </>
           )
         }}

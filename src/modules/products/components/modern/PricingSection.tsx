@@ -36,11 +36,13 @@ export function PricingSection({ computedCost }: { computedCost: number }) {
           <>
             <FormSelect control={control} name="taxId" numeric required label={t("products.tax")}
               options={taxes.map((x) => ({ value: String(x.id), label: `${x.name} (${x.amount}%)` }))} />
-            <FormSelect control={control} name="taxCalculation" numeric label={t("products.taxCalculation")}
-              options={[{ value: "1", label: t("products.taxInclusive") }, { value: "2", label: t("products.taxExclusive") }]} />
+            {!zeroRate && (
+              <FormSelect control={control} name="taxCalculation" numeric label={t("products.taxCalculation")}
+                options={[{ value: "1", label: t("products.taxInclusive") }, { value: "2", label: t("products.taxExclusive") }]} />
+            )}
             {zeroRate && (
               <FormSelect control={control} name="taxExemptionReasonId" numeric required label={t("products.exemptionReason")}
-                placeholder={t("products.pickReason")} className="sm:col-span-2"
+                placeholder={t("products.pickReason")}
                 options={taxReasons.map((r) => ({ value: String(r.id), label: r.taxExemptionReasonText || r.taxExemptionReasonCode || "" }))} />
             )}
           </>

@@ -507,6 +507,7 @@
     "name": "Deta intigration"
   },
   "common": {
+    "serial": "Kr.",
     "routeErrorTitle": "Aprotyashito truti",
     "routeErrorChunk": "App update hoyeche. Cholte thakte page reload korun.",
     "reload": "Reload",
@@ -680,7 +681,7 @@
       "invoiceNumber": "Chalan nombor",
       "date": "Tarikh",
       "customerName": "Grahker nam",
-      "cashier": "Catiar",
+      "userName": "Byabaharkarir nam",
       "paymentStatus": "Pement status",
       "totalAmount": "Mot",
       "paidAmount": "Prodotto poriman",
@@ -736,9 +737,9 @@
     },
     "tabs": {
       "all": "Sab",
-      "Direct": "Sarasori",
-      "Branched": "Sakhajukto",
-      "Prepared": "Prostut",
+      "Direct": "Sarasori item",
+      "Branched": "Sakhajukto item",
+      "Prepared": "Prostut item",
       "RawMatrial": "Kanchamal"
     },
     "typePick": "Age dhoron beche nin; milano field dekha jabe.",
@@ -762,7 +763,7 @@
       "cost": "Kharch",
       "units": "Unit ebong stock",
       "components": "Upadan",
-      "children": "Boikalpik",
+      "children": "Ei item-er sorasori item",
       "summary": "Damer sarangsho",
       "image": "Chobi",
       "options": "Bikolpo"
@@ -793,10 +794,10 @@
     "noComponents": "Ekhono kono upadan jog kora hoyni.",
     "rawMaterial": "Kanchamal",
     "quantityPerItem": "Prati item-e poriman",
-    "childrenHint": "Protiti variant nijosso barcod ebong dame bikray hoy.",
-    "addChild": "Variant jog korun",
-    "noChildren": "Ekhono variant nei. Apni je size ba swad becen ta jog korun.",
-    "childName": "Sakhar nam",
+    "childrenHint": "Protiti sorasori item nijosso barcod ebong dame bikray hoy.",
+    "addChild": "Sorasori item jog korun",
+    "noChildren": "Ekhono sorasori item nei. Apni je size ba swad becen ta jog korun.",
+    "childName": "Sorasori item-er nam",
     "beforeTax": "Tax-er age",
     "taxAmount": "Tax ({{rate}}%)",
     "finalPrice": "Churranto mulyo",
@@ -831,8 +832,7 @@
     "emptyHint": "Item gochate prothom shreni jog korun.",
     "deleteTitle": "Bivag muchun",
     "deleteBody": "“{{name}}” muche fela hobe. Tar item-gulor notun shreni dorkar hobe.",
-    "printerForItems": "Grup-er item-er jonyo printer",
-    "printerForItemsHint": "Ekhane printer-er nam dile eta grup-er sob item-e prayog hobe. Nijosso rakhte khali rakhun."
+    "printerForItems": "Grup-er item-er jonyo printer"
   },
   "units": {
     "title": "Unit",
@@ -1057,6 +1057,7 @@
     "exclusive": "chhara",
     "discountKind": "Discount type",
     "kindValue": "Man",
+    "kindPercent": "Shotangsh",
     "categoryDiscount": "Catagori discount",
     "categoryDiscountHintPercent": "Ei item-er shreni theke chhar ache ({{value}}%), ja line-e deya jekono chhar-er poriborte prayog hobe",
     "categoryDiscountHintValue": "Ei item-er shreni theke chhar ache (prati unit {{value}}), ja line-e deya jekono chhar-er poriborte prayog hobe",

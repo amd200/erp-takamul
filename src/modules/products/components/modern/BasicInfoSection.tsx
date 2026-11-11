@@ -20,14 +20,16 @@ export function BasicInfoSection({ branchField }: { branchField?: ReactNode }) {
     <SectionCard title={t("products.sections.basic")}>
       <div className="grid gap-4 sm:grid-cols-2">
         {branchField}
-        <FormInput control={control} name="nameAr" label={t("common.nameAr")} required />
-        <FormInput control={control} name="nameEn" label={t("common.nameEn")} dir="ltr" />
-        <FormInput control={control} name="nameUr" label={t("common.nameUr")} dir="ltr" className={rules.ownBarcodeAndPrice ? undefined : "sm:col-span-2"} />
+        <div className="grid gap-4 sm:col-span-2 lg:grid-cols-3">
+          <FormInput control={control} name="nameAr" label={t("common.nameAr")} required />
+          <FormInput control={control} name="nameEn" label={t("common.nameEn")} dir="ltr" />
+          <FormInput control={control} name="nameUr" label={t("common.nameUr")} dir="ltr" />
+        </div>
         {rules.ownBarcodeAndPrice && (
           <FormInput control={control} name="barcode" label={t("products.barcode")} dir="ltr" required
             end={<Button type="button" variant="outline" onClick={() => setValue("barcode", randomBarcode(), { shouldValidate: true })}>{t("products.generate")}</Button>} />
         )}
-        <FormSelect control={control} name="categoryId" numeric label={t("products.category")} required placeholder={t("products.pickCategory")} className="sm:col-span-2"
+        <FormSelect control={control} name="categoryId" numeric label={t("products.category")} required placeholder={t("products.pickCategory")} className={rules.ownBarcodeAndPrice ? undefined : "sm:col-span-2"}
           options={categories.map((c) => ({ value: String(c.id), label: c.parentCategoryId ? `— ${c.categoryNameAr}` : c.categoryNameAr }))} />
         <FormTextarea control={control} name="description" label={t("common.description")} placeholder={t("common.optional")} className="sm:col-span-2" />
       </div>

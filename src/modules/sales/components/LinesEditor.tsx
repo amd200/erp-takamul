@@ -133,7 +133,7 @@ export function LinesEditor({ allowFreeText, purchase, simple, hideDiscount }: {
                         <Controller control={control} name={`lines.${i}.discountKind`} render={({ field }) => (
                           <Select value={field.value} onValueChange={field.onChange}>
                             <SelectTrigger className="h-10 w-16 shrink-0" aria-label={t("sales.discountKind")}><SelectValue /></SelectTrigger>
-                            <SelectContent><SelectItem value="value">{t("sales.kindValue")}</SelectItem><SelectItem value="percent">%</SelectItem></SelectContent>
+                            <SelectContent><SelectItem value="value">{t("sales.kindValue")}</SelectItem><SelectItem value="percent">{t("sales.kindPercent")}</SelectItem></SelectContent>
                           </Select>
                         )} />
                       </div>

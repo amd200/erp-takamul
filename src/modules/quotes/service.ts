@@ -18,10 +18,17 @@ const itemBody = (l: InvoiceLine) => ({
 
 const stamp = (day: string, key?: string) => `${day}T${pinnedTo(key, () => new Date().toTimeString().slice(0, 8))}`
 
+/** The server takes the invoice discount as an amount only, so a percentage is turned into one on the net of the lines. */
+const globalDiscountAmount = (q: QuoteInput) => {
+  if (q.globalDiscountKind !== "percent") return q.globalDiscount
+  const net = q.lines.reduce((s, l) => s + lineAmounts(l).net, 0)
+  return Math.round(((net * q.globalDiscount) / 100) * 100) / 100
+}
+
 const body = (q: QuoteInput, key?: string) => ({
   customerId: q.customerId,
   quotationDate: q.date.length > 10 ? q.date : stamp(q.date, key),
-  globalDiscountAmount: q.globalDiscount,
+  globalDiscountAmount: globalDiscountAmount(q),
   shippingCost: q.shipping,
   notes: q.notes || null,
   items: q.lines.map(itemBody),

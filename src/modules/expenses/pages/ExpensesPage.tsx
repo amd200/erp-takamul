@@ -60,7 +60,7 @@ function ExpenseDialog({ open, onOpenChange, expense }: { open: boolean; onOpenC
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-[900px]">
         <DialogHeader><DialogTitle>{expense ? t("expenses.edit") : t("expenses.add")}</DialogTitle></DialogHeader>
         <form id="expense-form" onSubmit={submit} noValidate>
           <FieldGroup className="gap-4">

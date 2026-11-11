@@ -95,7 +95,7 @@ export function toPreparedForm(p: ProductInput, { editing, branchId }: { editing
 export function toBranchedForm(p: ProductInput, { editing, branchId }: { editing: boolean; branchId?: number | null }) {
   return toFormData({
     ...(editing ? {} : { BranchId: branchId }),
-    ...common(p), BaseUnit: p.baseUnitId || undefined, ChildrenIds: p.children.map((c) => c.id), ...imageFields(p.image, editing),
+    ...common(p), ChildrenIds: p.children.map((c) => c.id), ...imageFields(p.image, editing),
   })
 }
 

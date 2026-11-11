@@ -137,7 +137,7 @@ export function ExtraUnitsBox() {
   const { data: units = [] } = useUnits()
   const rows = useFieldArray({ control, name: "units" })
   const unitOptions = units.map((u) => ({ value: String(u.id), label: u.name }))
-  const grid = "md:grid-cols-[minmax(220px,2fr)_1fr_1fr_1fr_36px]"
+  const grid = "md:grid-cols-[minmax(220px,2fr)_1fr_1fr_1fr_16px]"
   return (
     <section className="space-y-4 rounded-xl border border-primary/25 bg-primary/[0.025] p-4 lg:col-span-2">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -149,7 +149,7 @@ export function ExtraUnitsBox() {
       </div>
       {rows.fields.length > 0 && (
         <div className="space-y-3">
-          <div className={`hidden gap-3 px-1 text-xs font-medium text-muted-foreground md:grid ${grid}`}>
+          <div className={`hidden gap-3 text-xs font-medium text-muted-foreground md:grid ${grid}`}>
             <span>{t("productForm.unit")}</span><span>{t("productForm.unitQty")}</span><span>{t("productForm.barcode")}</span><span>{t("productForm.price")}</span><span />
           </div>
           {rows.fields.map((f, i) => (
@@ -158,7 +158,7 @@ export function ExtraUnitsBox() {
               <FormInput control={control} name={`units.${i}.conversionFactor`} type="number" label={t("productForm.unitQty")} labelHidden />
               <FormInput control={control} name={`units.${i}.barcode`} dir="ltr" label={t("productForm.barcode")} labelHidden placeholder={t("productForm.unitBarcode")} />
               <FormInput control={control} name={`units.${i}.sellingPrice`} type="number" label={t("productForm.price")} labelHidden placeholder={t("productForm.price")} />
-              <Button type="button" variant="ghost-destructive" size="icon" aria-label={t("common.remove")} onClick={() => rows.remove(i)}><Trash2 size={16} /></Button>
+              <Button type="button" variant="ghost-destructive" size="icon" className="w-4 justify-self-end max-md:w-full" aria-label={t("common.remove")} onClick={() => rows.remove(i)}><Trash2 size={16} /></Button>
             </div>
           ))}
         </div>

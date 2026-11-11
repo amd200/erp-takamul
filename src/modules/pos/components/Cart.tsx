@@ -16,7 +16,7 @@ import { CartHeader, useOrderTypes } from "./CartHeader"
 import { ItemEditor } from "./ItemEditor"
 import { CART_GRID, CartLineRow } from "./CartLineRow"
 import { CustomerPicker } from "./CustomerPicker"
-import { QuickCustomerDialog } from "./QuickCustomerDialog"
+import { CustomerDialog } from "@/modules/customers/components/CustomerDialog"
 import { CheckThenDiscard } from "./CheckThenDiscard"
 
 const TABS = ["add", "discount", "note"] as const
@@ -218,7 +218,7 @@ export function Cart({ onPay, onHold, onSend, busy, onShift, categoryId = null }
             <div className="mb-3 text-sm font-bold text-foreground">{t("pos1.orderDiscount")}</div>
             <div className="mb-3 flex items-center gap-2">
               <button type="button" onClick={() => setDiscKind("value")} className={cn("flex size-12 shrink-0 items-center justify-center rounded-xl border-2 text-base font-bold transition-all", discKind === "value" ? "border-primary bg-primary/10 text-primary" : "border-gray-200 bg-white text-gray-400")}><CurrencySymbol size={18} /></button>
-              <button type="button" onClick={() => setDiscKind("percent")} className={cn("flex size-12 shrink-0 items-center justify-center rounded-xl border-2 text-base font-bold transition-all", discKind === "percent" ? "border-primary bg-primary/10 text-primary" : "border-gray-200 bg-white text-gray-400")}>%</button>
+              <button type="button" onClick={() => setDiscKind("percent")} className={cn("flex h-12 min-w-12 shrink-0 px-3 items-center justify-center rounded-xl border-2 text-sm font-bold transition-all", discKind === "percent" ? "border-primary bg-primary/10 text-primary" : "border-gray-200 bg-white text-gray-400")}>{t("sales.kindPercent")}</button>
               <Input value={discInput} onChange={(e) => setDiscInput(e.target.value)} type="number" min="0" placeholder="0" className="h-12 flex-1 rounded-xl border border-gray-200 bg-white px-3 text-right text-sm font-semibold outline-none focus:border-primary/40" />
             </div>
             <div className="flex gap-2">
@@ -239,7 +239,7 @@ export function Cart({ onPay, onHold, onSend, busy, onShift, categoryId = null }
         )}
       </div>
 
-      <QuickCustomerDialog open={adding} onOpenChange={setAdding} onCreated={(id, name) => s.setCustomer(id, name)} />
+      <CustomerDialog open={adding} onOpenChange={setAdding} onCreated={(id, name) => s.setCustomer(id, name)} />
       <ItemEditor line={editing} additions={activeAdditions} onClose={() => setEditingKey(null)} onQty={s.setQty} onPatch={s.patchLine} />
     </section>
   )

@@ -114,8 +114,13 @@ export default function ProductFormPage() {
               <BasicInfoSection branchField={formBranch.show ? <BranchSection className="sm:col-span-2" value={formBranch.branchId} onChange={formBranch.pick} hint={t("products.branchHint")} /> : undefined} />
               {rules.components && <ModernComponents computedCost={computedCost} />}
               {rules.children && <ModernChildren selfId={editId} />}
-              <PricingSection computedCost={computedCost} />
-              <StockUnitsSection />
+              {/* A branched item has no price, tax, unit or stock of its own; they belong to its children. */}
+              {rules.children || (
+                <>
+                  <PricingSection computedCost={computedCost} />
+                  <StockUnitsSection />
+                </>
+              )}
             </div>
             <aside className="flex min-w-0 flex-col gap-5 lg:sticky lg:top-20 lg:self-start">
               {rules.ownBarcodeAndPrice && <PriceSummary />}

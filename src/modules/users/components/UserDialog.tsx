@@ -38,7 +38,7 @@ export function UserDialog({ open, onOpenChange, user }: { open: boolean; onOpen
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-screen-sm">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[900px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-primary"><UserPlus size={20} />{title}</DialogTitle>
           <DialogDescription>{t("oldUsers.subtitle")}</DialogDescription>

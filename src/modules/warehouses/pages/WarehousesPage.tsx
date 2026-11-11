@@ -34,7 +34,7 @@ function WarehouseDialog({ open, onOpenChange, warehouse }: { open: boolean; onO
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-screen-sm">
+      <DialogContent className="max-h-[calc(100dvh-16px)] overflow-y-auto sm:max-w-[900px]">
         <DialogHeader><DialogTitle>{warehouse ? t("warehouses.edit") : t("warehouses.add")}</DialogTitle></DialogHeader>
         <form id="warehouse-form" onSubmit={submit} noValidate>
           <FieldGroup className="gap-4">

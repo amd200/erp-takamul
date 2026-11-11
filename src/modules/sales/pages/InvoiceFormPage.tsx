@@ -6,14 +6,16 @@ import { Link, useNavigate } from "react-router-dom"
 import { List, Plus, Trash2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
-import { QuickCustomerDialog } from "@/modules/pos/components/QuickCustomerDialog"
+import { CustomerDialog } from "@/modules/customers/components/CustomerDialog"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { FormInput, FormSelect, FormTextarea } from "@/components/form/FormFields"
 import { PageHeader } from "@/components/PageHeader"
 import { SectionCard } from "@/components/SectionCard"
-import { formatMoney } from "@/lib/format"
+import { BalanceBox } from "@/components/BalanceBox"
+import { BranchSection } from "@/modules/branches/BranchSection"
+import { useFormBranch } from "@/modules/branches/useFormBranch"
 import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
 import { pickTreasury, useCustomers, useEmployees, useTreasuries, useWarehouses } from "@/modules/lookups/service"
 import { LinesEditor } from "../components/LinesEditor"
@@ -31,6 +33,7 @@ export default function InvoiceFormPage() {
   const defaultCustomer = appSettings.customersTab?.defultCustomar
   const defaultEmployee = appSettings.salonsTab?.defaultServiceEmployeeId
   const nav = useNavigate()
+  const formBranch = useFormBranch()
   const { data: customers = [] } = useCustomers()
   const { data: warehouses = [] } = useWarehouses()
   const { data: employees = [] } = useEmployees()
@@ -53,6 +56,22 @@ export default function InvoiceFormPage() {
   const overpaid = paid > totals.grandTotal + 0.005
 
   const defaulted = useRef(false)
+  const employeeDefaulted = useRef(false)
+  // The customers, warehouses, employees and items belong to the branch, so what was picked from the old branch is cleared and the defaults are picked again.
+  const changeBranch = async (next: number) => {
+    await formBranch.pick(next)
+    defaulted.current = false
+    employeeDefaulted.current = false
+    form.setValue("customerId", 0)
+    form.setValue("employeeId", null)
+    form.setValue("warehouseId", 0)
+    form.setValue("lines", [])
+  }
+
+  useEffect(() => {
+    if (warehouses.length && !warehouses.some((w) => w.id === form.getValues("warehouseId"))) form.setValue("warehouseId", warehouses[0].id)
+  }, [warehouses, form])
+
   useEffect(() => {
     if (defaulted.current || !customers.length) return
     defaulted.current = true
@@ -60,7 +79,6 @@ export default function InvoiceFormPage() {
     if (c && !form.getValues("customerId")) form.setValue("customerId", c.id)
   }, [customers, defaultCustomer, form])
 
-  const employeeDefaulted = useRef(false)
   useEffect(() => {
     if (employeeDefaulted.current || !appSettings.salonsTab?.showEmployeeService || !employees.length) return
     employeeDefaulted.current = true
@@ -96,6 +114,7 @@ export default function InvoiceFormPage() {
 
         <SectionCard title={t("sales.basics")}>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {formBranch.show && <BranchSection plain value={formBranch.branchId} onChange={changeBranch} />}
             <Controller control={form.control} name="date" render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="date">{t("common.date")}<span className="text-destructive">*</span></FieldLabel>
@@ -106,15 +125,10 @@ export default function InvoiceFormPage() {
               <div className="min-w-0 flex-1">
                 <FormSelect control={form.control} name="customerId" numeric required label={t("sales.customer")}
                   options={customers.map((c) => ({ value: String(c.id), label: c.customerName }))} />
+                {appSettings.customersTab?.showActualBalance && customer && <BalanceBox label={t("sales.balanceLabel")} value={customer.balance ?? 0} debitWhenPositive />}
               </div>
               <Button type="button" variant="outline" size="icon-lg" className="mt-[27px] shrink-0" aria-label={t("customers.add")} title={t("customers.add")} onClick={() => setAddingCustomer(true)}><Plus /></Button>
             </div>
-            {appSettings.customersTab?.showActualBalance && (
-              <Field>
-                <FieldLabel htmlFor="customerBalance">{t("sales.balanceLabel")}</FieldLabel>
-                <Input id="customerBalance" readOnly tabIndex={-1} dir="ltr" className="bg-muted/50 font-semibold" value={customer ? `${formatMoney(Math.abs(customer.balance ?? 0))} ${(customer.balance ?? 0) === 0 ? "" : t((customer.balance ?? 0) > 0 ? "sales.debtor" : "sales.creditor")}`.trim() : "—"} />
-              </Field>
-            )}
             {appSettings.salonsTab?.showEmployeeService && <FormSelect control={form.control} name="employeeId" numeric label={t("sales.employee")} allowEmpty={t("common.none")} options={employees.map((e) => ({ value: String(e.id), label: fullName(e) }))} />}
             {warehouses.length > 1 && <FormSelect control={form.control} name="warehouseId" numeric required label={t("sales.warehouse")} options={warehouses.map((w) => ({ value: String(w.id), label: w.warehouseName ?? "" }))} />}
           </div>
@@ -157,7 +171,7 @@ export default function InvoiceFormPage() {
                 <Controller control={form.control} name="globalDiscountKind" render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger className="h-10 w-20" aria-label={t("sales.discountKind")}><SelectValue /></SelectTrigger>
-                    <SelectContent><SelectItem value="value">{t("sales.kindValue")}</SelectItem><SelectItem value="percent">%</SelectItem></SelectContent>
+                    <SelectContent><SelectItem value="value">{t("sales.kindValue")}</SelectItem><SelectItem value="percent">{t("sales.kindPercent")}</SelectItem></SelectContent>
                   </Select>
                 )} />
               </div>
@@ -174,7 +188,7 @@ export default function InvoiceFormPage() {
           <Button type="submit" size="xl" disabled={create.isPending || overpaid}>{t("sales.saveInvoice")}</Button>
         </div>
       </form>
-      <QuickCustomerDialog open={addingCustomer} onOpenChange={setAddingCustomer} onCreated={(id) => form.setValue("customerId", id, { shouldValidate: true })} />
+      <CustomerDialog open={addingCustomer} onOpenChange={setAddingCustomer} onCreated={(id) => form.setValue("customerId", id, { shouldValidate: true })} />
     </FormProvider>
   )
 }

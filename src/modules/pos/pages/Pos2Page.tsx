@@ -10,7 +10,7 @@ import { ShiftReportDialog } from "@/modules/shifts/components/ShiftReportDialog
 import { useCloseShift } from "@/modules/shifts/queries"
 import { useUnits } from "@/modules/units/queries"
 import { cartTotals } from "../cart"
-import { QuickCustomerDialog } from "../components/QuickCustomerDialog"
+import { CustomerDialog } from "@/modules/customers/components/CustomerDialog"
 import { OpticsToolsDialog } from "../components/OpticsToolsDialog"
 import { ShiftGate } from "../components/ShiftGate"
 import { PaymentScreen } from "../payment/PaymentScreen"
@@ -169,7 +169,7 @@ function Pos2Screen({ shift, optics }: { shift: Shift; optics: boolean }) {
       <InvoicesDialog open={heldOpen} onOpenChange={setHeldOpen} />
       <QuotationDialog open={quoteOpen} onOpenChange={setQuoteOpen} />
       {optics && <OpticsToolsDialog open={toolsOpen} onOpenChange={setToolsOpen} />}
-      <QuickCustomerDialog open={addingCustomer} onOpenChange={setAddingCustomer} onCreated={(id, name) => store().setCustomer(id, name)} />
+      <CustomerDialog open={addingCustomer} onOpenChange={setAddingCustomer} onCreated={(id, name) => store().setCustomer(id, name)} />
       <ShiftReportDialog shift={report} onOpenChange={(o) => !o && setReport(null)} onClose={setToClose} />
       <ConfirmDialog open={!!toClose} onOpenChange={(o) => !o && setToClose(null)} pending={closeShift.isPending}
         title={t("shifts.closeTitle")} description={t("shifts.closeBody", { id: toClose?.id })} confirmLabel={t("shifts.close")}

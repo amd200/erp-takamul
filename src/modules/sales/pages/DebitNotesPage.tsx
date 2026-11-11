@@ -3,8 +3,7 @@ import { Link } from "react-router-dom"
 import { FilePlus2, FileText, Printer, RefreshCw, ScrollText } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useAppSettings } from "@/modules/settings"
-import { Button } from "@/components/ui/button"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { RowMenu } from "@/components/RowActions"
 import { DataTable, type Column } from "@/components/DataTable"
 import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
@@ -32,35 +31,17 @@ export default function DebitNotesPage() {
   const columns: Column<DebitNoteDto>[] = [
     { id: "number", sortKey: "debitNoteNumber", header: t("sales.debitNumber"), cell: (d) => <span className="font-semibold">{d.debitNoteNumber}</span> },
     { id: "invoice", sortKey: "salesOrderNumber", header: t("sales.invoice"), cell: (d) => <Link to={`/sales/invoices/${d.salesOrderId}`} className="hover:underline">{d.salesOrderNumber}</Link> },
-    { id: "date", sortKey: "issueDate", header: t("common.date"), cell: (d) => <span className="text-muted-foreground">{formatDateTime(d.issueDate ?? "", i18n.language)}</span> },
+    { id: "date", sortKey: "issueDate", className: "min-w-44", header: t("common.date"), cell: (d) => <span className="text-muted-foreground">{formatDateTime(d.issueDate ?? "", i18n.language)}</span> },
     { id: "customer", sortKey: "customerName", header: t("sales.customer"), cell: (d) => d.customerName },
     { id: "createdBy", sortKey: "createdByName", header: t("users.userName"), cell: (d) => d.createdByName || d.createdBy || "—" },
     { id: "total", sortKey: "grandTotal", header: t("sales.grandTotal"), cell: (d) => <span className="font-semibold">{formatMoney(d.grandTotal ?? 0)}</span> },
     ...(stage2 ? [{ id: "zatca", sortKey: "zatcaStatus", header: t("sales.zatcaStatus"), cell: (d: DebitNoteDto) => <ZatcaBadge status={d.zatcaStatus} /> }] : []),
-    { id: "actions", header: "", align: "end", cell: (d) => (
-      <div className="flex items-center justify-end gap-0.5">
-        <Tooltip>
-          <TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label={t("sales.actions.printA4")} disabled={print.isPending} onClick={() => print.mutate({ note: d, paper: "a4" })}><FileText /></Button></TooltipTrigger>
-          <TooltipContent>{t("sales.actions.printA4")}</TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label={t("sales.actions.printRoll")} disabled={print.isPending} onClick={() => print.mutate({ note: d, paper: "roll" })}><Printer /></Button></TooltipTrigger>
-          <TooltipContent>{t("sales.actions.printRoll")}</TooltipContent>
-        </Tooltip>
-        {stage2 && can(P.sales.zatca) && (
-          <Tooltip>
-            <TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label={t("sales.actions.resendDebit")} disabled={send.isPending} onClick={() => send.mutate(d.id)}><RefreshCw className={send.isPending && send.variables === d.id ? "animate-spin" : ""} /></Button></TooltipTrigger>
-            <TooltipContent>{t("sales.actions.resendDebit")}</TooltipContent>
-          </Tooltip>
-        )}
-        {stage2 && (
-          <Tooltip>
-            <TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label={t("sales.menu.zatcaResponse")} onClick={() => setZatcaDoc(d)}><ScrollText /></Button></TooltipTrigger>
-            <TooltipContent>{t("sales.menu.zatcaResponse")}</TooltipContent>
-          </Tooltip>
-        )}
-      </div>
-    ) },
+    { id: "actions", header: "", align: "end", cell: (d) => <RowMenu items={[
+      { key: "a4", label: t("sales.actions.printA4"), icon: <FileText />, disabled: print.isPending, onSelect: () => print.mutate({ note: d, paper: "a4" }) },
+      { key: "roll", label: t("sales.actions.printRoll"), icon: <Printer />, disabled: print.isPending, onSelect: () => print.mutate({ note: d, paper: "roll" }) },
+      stage2 && can(P.sales.zatca) && { key: "resend", label: t("sales.actions.resendDebit"), icon: <RefreshCw />, loading: send.isPending && send.variables === d.id, disabled: send.isPending, onSelect: () => send.mutate(d.id) },
+      stage2 && { key: "zatca", label: t("sales.menu.zatcaResponse"), icon: <ScrollText />, onSelect: () => setZatcaDoc(d) },
+    ]} /> },
   ]
 
   return (

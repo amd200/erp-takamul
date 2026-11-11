@@ -507,6 +507,7 @@
     "name": "Takamul Data"
   },
   "common": {
+    "serial": "#",
     "routeErrorTitle": "Unexpected error",
     "routeErrorChunk": "The app was updated. Reload the page to continue.",
     "reload": "Reload",
@@ -680,7 +681,7 @@
       "invoiceNumber": "Invoice Number",
       "date": "Date",
       "customerName": "Customer Name",
-      "cashier": "Cashier",
+      "userName": "Username",
       "paymentStatus": "Payment Status",
       "totalAmount": "Total",
       "paidAmount": "Paid Amount",
@@ -736,9 +737,9 @@
     },
     "tabs": {
       "all": "All",
-      "Direct": "Direct",
-      "Branched": "Branched",
-      "Prepared": "Prepared",
+      "Direct": "Direct items",
+      "Branched": "Variant (branched) items",
+      "Prepared": "Prepared items",
       "RawMatrial": "Raw materials"
     },
     "typePick": "Pick the type first; the matching fields will appear.",
@@ -762,7 +763,7 @@
       "cost": "Cost",
       "units": "Units and stock",
       "components": "Components",
-      "children": "Variants",
+      "children": "Direct items of this product",
       "summary": "Price summary",
       "image": "Image",
       "options": "Options"
@@ -793,10 +794,10 @@
     "noComponents": "No materials added yet.",
     "rawMaterial": "Material",
     "quantityPerItem": "Quantity per item",
-    "childrenHint": "Each variant sells with its own barcode and price.",
-    "addChild": "Add variant",
-    "noChildren": "No variants yet. Add the sizes or flavours you sell.",
-    "childName": "Variant name",
+    "childrenHint": "Each direct item sells with its own barcode and price.",
+    "addChild": "Add direct item",
+    "noChildren": "No direct items yet. Add the sizes or flavours you sell.",
+    "childName": "Direct item name",
     "beforeTax": "Before tax",
     "taxAmount": "Tax ({{rate}}%)",
     "finalPrice": "Final price",
@@ -831,8 +832,7 @@
     "emptyHint": "Add your first category to organise items.",
     "deleteTitle": "Delete category",
     "deleteBody": "“{{name}}” will be deleted. Its items will need a new category.",
-    "printerForItems": "Printer for the group's items",
-    "printerForItemsHint": "A printer name here is applied to every item already in this group. Leave it empty to keep theirs."
+    "printerForItems": "Printer for the group's items"
   },
   "units": {
     "title": "Units",
@@ -1057,6 +1057,7 @@
     "exclusive": "excl.",
     "discountKind": "Discount type",
     "kindValue": "Amt",
+    "kindPercent": "Percentage",
     "categoryDiscount": "Category discount",
     "categoryDiscountHintPercent": "This item has a discount from its category ({{value}}%), which replaces any discount you enter on the line",
     "categoryDiscountHintValue": "This item has a discount from its category ({{value}} per unit), which replaces any discount you enter on the line",

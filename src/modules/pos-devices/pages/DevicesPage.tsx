@@ -56,12 +56,8 @@ export default function DevicesPage() {
     ] : []),
     { id: "icv", sortKey: "currentICV", header: t("devices.lastIcv"), cell: (d) => (d.currentICV ? <span className="tabular-nums">{d.currentICV}</span> : <span className="text-faint">—</span>) },
     { id: "actions", header: "", align: "end", cell: (d) => (
-      <div className="flex items-center justify-end gap-1">
-        {onboarding && can(P.posDevices.edit) && (
-          <Button variant="ghost" size="icon" aria-label={t("devices.chain")} title={t("devices.chain")} onClick={() => setChainFor(d)}><Link2 /></Button>
-        )}
-        <RowActions onEdit={can(P.posDevices.edit) ? () => show(d) : undefined} onDelete={can(P.posDevices.delete) ? () => setToDelete(d) : undefined} />
-      </div>
+      <RowActions extra={[onboarding && can(P.posDevices.edit) && { key: "chain", label: t("devices.chain"), icon: <Link2 />, onSelect: () => setChainFor(d) }]}
+        onEdit={can(P.posDevices.edit) ? () => show(d) : undefined} onDelete={can(P.posDevices.delete) ? () => setToDelete(d) : undefined} />
     ) },
   ]
 

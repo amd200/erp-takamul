@@ -32,14 +32,16 @@ function UnitDialog({ open, onOpenChange, unit }: { open: boolean; onOpenChange:
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-screen-sm">
+      <DialogContent className="max-h-[calc(100dvh-16px)] overflow-y-auto sm:max-w-[900px]">
         <DialogHeader><DialogTitle>{unit ? t("units.edit") : t("units.add")}</DialogTitle></DialogHeader>
         <form id="unit-form" onSubmit={submit}>
           <FieldGroup className="gap-4">
             {formBranch.show && <BranchSection value={formBranch.branchId} onChange={formBranch.pick} />}
-            <FormInput control={form.control} name="name" label={t("units.name")} required />
-            <FormInput control={form.control} name="taxCode" label={t("units.taxCode")} dir="ltr" />
-            <FormInput control={form.control} name="description" label={t("common.description")} />
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <FormInput control={form.control} name="name" label={t("units.name")} required />
+              <FormInput control={form.control} name="taxCode" label={t("units.taxCode")} dir="ltr" />
+              <FormInput control={form.control} name="description" label={t("common.description")} />
+            </div>
           </FieldGroup>
         </form>
         <DialogFooter>

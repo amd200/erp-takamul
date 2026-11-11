@@ -22,7 +22,7 @@ export function OperationsStats() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3 xl:gap-6">
         {stats.map((s, i) => (
           <div key={s.title} style={{ animationDelay: `${0.2 + i * 0.1}s` }}
-            className="group relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition-all duration-300 fill-mode-backwards animate-in fade-in slide-in-from-bottom-4 hover:-translate-y-1 hover:shadow-lg dark:bg-[#1e293b]">
+            className="group relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition-all duration-300 fill-mode-backwards animate-in fade-in slide-in-from-bottom-4 hover:-translate-y-1 hover:shadow-lg">
             <div className={`absolute inset-x-0 top-0 h-[3px] opacity-80 ${s.line}`} />
             <div className="mb-4 flex items-center justify-between">
               <p className="text-[14px] font-semibold text-muted-foreground dark:text-faint">{s.title}</p>

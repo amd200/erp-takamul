@@ -90,54 +90,43 @@ export function CustomerDialog({ open, onOpenChange, customer, onCreated, withMe
 
         <FormProvider {...form}>
           <form id="customer-form" onSubmit={submit} noValidate className={cn("min-h-0 flex-1 overflow-x-hidden overflow-y-auto", !embedded && "-mx-1 px-1 sm:-mx-4 sm:px-4")}>
-            <div className="grid grid-cols-2 gap-4 p-1 sm:gap-5 sm:p-2">
+            <div className="grid grid-cols-1 gap-3 p-1 sm:grid-cols-3 sm:p-2">
               {part !== "companions" && <>
-              {formBranch.show && <BranchSection className="col-span-2" value={formBranch.branchId} onChange={formBranch.pick} />}
-              {/* In the optics tools the file number, name and mobile share one row, as in the current POS. */}
-              <div className={cn("col-span-2 grid gap-4 sm:gap-5", embedded && withMeasurements ? "sm:grid-cols-3" : "grid-cols-2")}>
-                {withMeasurements && <div className={cn(!(embedded && withMeasurements) && "col-span-2")}><FormInput control={c} name="fileNumber" label={t("custDialog.fileNumber")} placeholder={t("custDialog.fileNumber")} /></div>}
-                <FormInput control={c} name="name" required label={t("custDialog.name")} placeholder={t("custDialog.nameHint")} />
-                <FormInput control={c} name="phone" label={t("custDialog.mobile")} placeholder={t("custDialog.mobileHint")} />
-              </div>
+              {formBranch.show && <BranchSection className="col-span-full" value={formBranch.branchId} onChange={formBranch.pick} />}
+              {withMeasurements && <FormInput control={c} name="fileNumber" label={t("custDialog.fileNumber")} />}
+              <FormInput control={c} name="name" required label={t("custDialog.name")} />
+              <FormInput control={c} name="phone" label={t("custDialog.mobile")} />
 
               {!hideDetails && (
                 <>
-                  <FormInput control={c} name="country" label={t("custDialog.country")} placeholder={t("custDialog.countryHint")} disabled />
-                  <FormInput control={c} name="state" label={t("custDialog.region")} placeholder={t("custDialog.regionHint")} />
-                  <FormInput control={c} name="city" label={t("custDialog.city")} placeholder={t("custDialog.cityHint")} />
-                  <FormInput control={c} name="district" label={t("custDialog.district")} placeholder={t("custDialog.districtHint")} />
-                  <div className="col-span-2"><FormInput control={c} name="street" label={t("custDialog.street")} placeholder={t("custDialog.streetHint")} /></div>
+                  <FormInput control={c} name="country" label={t("custDialog.country")} disabled />
+                  <FormInput control={c} name="state" label={t("custDialog.region")} />
+                  <FormInput control={c} name="city" label={t("custDialog.city")} />
+                  <FormInput control={c} name="district" label={t("custDialog.district")} />
+                  <div className="sm:col-span-2"><FormInput control={c} name="street" label={t("custDialog.street")} /></div>
 
-                  <div className="col-span-2 my-2 w-full rounded-2xl border border-border p-5">
-                    <div className="flex flex-row items-center justify-between gap-4">
-                      <div>
-                        <h3 className="text-base font-bold text-foreground">{t("custDialog.nationalAddress")}</h3>
-                        <p className="mt-1 text-sm text-muted-foreground">{t("custDialog.vatHint")}</p>
-                      </div>
-                      <Controller control={c} name="isNational" render={({ field }) => <Switch className="shrink-0 scale-130 cursor-pointer" checked={field.value} onCheckedChange={field.onChange} />} />
+                  <div className="rounded-lg border border-border p-4 col-span-full">
+                    <div className="flex items-center justify-between gap-4">
+                      <h3 className="text-sm font-bold text-foreground">{t("custDialog.nationalAddress")}</h3>
+                      <Controller control={c} name="isNational" render={({ field }) => <Switch className="shrink-0 cursor-pointer" checked={field.value} onCheckedChange={field.onChange} />} />
                     </div>
                     {national && (
-                      <div className="mt-5 grid grid-cols-2 gap-4 border-t border-border pt-5">
-                        <FormInput control={c} name="taxNumber" required label={t("custDialog.taxNumber")} placeholder={t("custDialog.taxNumberHint")} dir="ltr" />
-                        <FormInput control={c} name="commercialRegister" required label={t("custDialog.commercialRegister")} placeholder={t("custDialog.commercialRegisterHint")} dir="ltr" />
+                      <div className="mt-4 grid grid-cols-1 gap-3 border-t border-border pt-4 sm:grid-cols-3">
+                        <FormInput control={c} name="taxNumber" required label={t("custDialog.taxNumber")} dir="ltr" />
+                        <FormInput control={c} name="commercialRegister" required label={t("custDialog.commercialRegister")} dir="ltr" />
+                        <FormInput control={c} name="additionalNumber" required label={t("custDialog.additionalNumber")} />
+                        <FormInput control={c} name="buildingNumber" required label={t("custDialog.buildingNumber")} />
+                        <FormInput control={c} name="postalCode" required label={t("custDialog.postalCode")} />
                       </div>
                     )}
                   </div>
-
-                  {national && (
-                    <>
-                      <FormInput control={c} name="additionalNumber" required label={t("custDialog.additionalNumber")} placeholder={t("custDialog.additionalNumberHint")} />
-                      <FormInput control={c} name="buildingNumber" required label={t("custDialog.buildingNumber")} placeholder={t("custDialog.buildingNumberHint")} />
-                      <div className="col-span-2"><FormInput control={c} name="postalCode" required label={t("custDialog.postalCode")} placeholder={t("custDialog.postalCodeHint")} /></div>
-                    </>
-                  )}
                 </>
               )}
 
               {withMeasurements && <EyePrescriptionBox />}
 
               {collapsible && (
-                <Button type="button" variant="outline" className="col-span-2 h-11 gap-2 border-dashed border-primary/60 text-primary hover:bg-primary/5 hover:text-primary" onClick={() => setShowFull((v) => !v)}>
+                <Button type="button" variant="outline" className="h-11 gap-2 border-dashed col-span-full border-primary/60 text-primary hover:bg-primary/5 hover:text-primary" onClick={() => setShowFull((v) => !v)}>
                   {showFull ? <ChevronUp size={18} /> : <ChevronDown size={18} />}{showFull ? t("custDialog.hideFull") : t("custDialog.showFull")}
                 </Button>
               )}
@@ -158,7 +147,7 @@ export function CustomerDialog({ open, onOpenChange, customer, onCreated, withMe
   if (embedded) return <EmbeddedDialog>{body}</EmbeddedDialog>
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[90dvh] flex-col gap-3 overflow-hidden p-4 sm:max-w-screen-sm sm:gap-4 sm:p-6">{body}</DialogContent>
+      <DialogContent className="flex max-h-[90dvh] flex-col gap-3 overflow-hidden p-4 sm:max-w-[900px] sm:gap-4 sm:p-6">{body}</DialogContent>
     </Dialog>
   )
 }

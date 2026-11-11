@@ -39,7 +39,7 @@ function TransferDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-[900px]">
         <DialogHeader><DialogTitle>{t("treasuries.newTransfer")}</DialogTitle></DialogHeader>
         <form id="transfer-form" onSubmit={submit} noValidate>
           <FieldGroup className="gap-4">

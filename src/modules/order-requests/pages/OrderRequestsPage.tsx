@@ -2,11 +2,10 @@ import { useCallback, useRef, useState } from "react"
 import { CheckCheck, ClipboardList, Eye, Wallet } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { StatusBadge } from "@/components/StatusBadge"
-import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { RowMenu } from "@/components/RowActions"
 import { DataTable, type Column } from "@/components/DataTable"
 import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
@@ -95,17 +94,11 @@ export default function OrderRequestsPage() {
     { id: "items", sortKey: "itemsCount", header: t("orderRequests.items"), cell: (o) => o.itemsCount },
     { id: "total", sortKey: "grandTotal", header: t("sales.grandTotal"), cell: (o) => <span className="font-semibold">{formatMoney(o.grandTotal ?? 0)}</span> },
     { id: "status", sortKey: "status", header: t("common.status"), cell: (o) => <StatusBadge tone={o.salesOrderId ? "success" : "warning"}>{o.salesOrderId ? t("orderRequests.invoiced") : t(`orderRequests.statuses.${o.status}`, { defaultValue: o.status || t("orderRequests.pending") })}</StatusBadge> },
-    { id: "actions", header: "", align: "end", cell: (o) => (
-      <div className="flex justify-end gap-0.5">
-        <Tooltip><TooltipTrigger asChild><Button type="button" variant="ghost" size="icon" aria-label={t("sales.actions.view")} onClick={() => setViewing(o.id)}><Eye /></Button></TooltipTrigger><TooltipContent>{t("sales.actions.view")}</TooltipContent></Tooltip>
-        {manage && !o.salesOrderId && (
-          <>
-            <Tooltip><TooltipTrigger asChild><Button type="button" variant="ghost" size="icon" aria-label={t("orderRequests.markReady")} disabled={ready.isPending} onClick={() => ready.mutate(o.id)}><CheckCheck /></Button></TooltipTrigger><TooltipContent>{t("orderRequests.markReady")}</TooltipContent></Tooltip>
-            <Tooltip><TooltipTrigger asChild><Button type="button" variant="ghost" size="icon" aria-label={t("orderRequests.checkout")} onClick={() => setPaying(o)}><Wallet /></Button></TooltipTrigger><TooltipContent>{t("orderRequests.checkout")}</TooltipContent></Tooltip>
-          </>
-        )}
-      </div>
-    ) },
+    { id: "actions", header: "", align: "end", cell: (o) => <RowMenu items={[
+      { key: "view", label: t("sales.actions.view"), icon: <Eye />, onSelect: () => setViewing(o.id) },
+      manage && !o.salesOrderId && { key: "ready", label: t("orderRequests.markReady"), icon: <CheckCheck />, disabled: ready.isPending, onSelect: () => ready.mutate(o.id) },
+      manage && !o.salesOrderId && { key: "checkout", label: t("orderRequests.checkout"), icon: <Wallet />, onSelect: () => setPaying(o) },
+    ]} /> },
   ]
 
   return (
