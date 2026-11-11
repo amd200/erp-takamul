@@ -9,7 +9,6 @@ import { cellText } from "../format"
 import type { Cell, Column, Row } from "../types"
 
 const TONE = { good: "success", warn: "warning", bad: "danger", muted: "neutral" } as const
-const numeric = (k: Column["kind"]) => k === "money" || k === "number" || k === "percent"
 const sortValue = (c: Cell) => (c == null ? -Infinity : typeof c === "object" ? c.text : c)
 
 /** Report rows with click-to-sort headers and a totals footer. Numbers align to the end. */
@@ -38,7 +37,7 @@ export function ReportTable({ columns, rows, totals }: { columns: Column[]; rows
       <TableHeader>
         <TableRow className="hover:bg-transparent">
           {columns.map((c) => (
-            <TableHead key={c.id} className={cn("text-xs font-medium text-muted-foreground", numeric(c.kind) && "text-end")}
+            <TableHead key={c.id} className="font-medium text-muted-foreground"
               aria-sort={sort?.id === c.id ? (sort.dir === 1 ? "ascending" : "descending") : undefined}>
               <button type="button" onClick={() => toggle(c.id)} className="inline-flex items-center gap-1 hover:text-foreground print:pointer-events-none">
                 {t(`reports.c.${c.id}`)}
@@ -54,7 +53,7 @@ export function ReportTable({ columns, rows, totals }: { columns: Column[]; rows
             {columns.map((c) => {
               const v = r[c.id]
               return (
-                <TableCell key={c.id} className={cn("py-2.5 tabular-nums", numeric(c.kind) && "text-end", c.strong && "font-semibold", v == null && "text-faint")}>
+                <TableCell key={c.id} className={cn("py-2.5 tabular-nums", c.strong && "font-semibold", v == null && "text-faint")}>
                   {c.kind === "badge" && v && typeof v === "object"
                     ? <StatusBadge tone={TONE[v.tone]}>{cellText(v, c.kind, t, i18n.language)}</StatusBadge>
                     : cellText(v, c.kind, t, i18n.language)}
@@ -68,7 +67,7 @@ export function ReportTable({ columns, rows, totals }: { columns: Column[]; rows
         <TableFooter>
           <TableRow className="hover:bg-transparent">
             {columns.map((c, i) => (
-              <TableCell key={c.id} className={cn("py-3 font-semibold tabular-nums", numeric(c.kind) && "text-end")}>
+              <TableCell key={c.id} className={cn("py-3 font-semibold tabular-nums")}>
                 {i === 0 ? t("reports.total") : totals[c.id] == null || totals[c.id] === "" ? "" : cellText(totals[c.id], c.kind, t, i18n.language)}
               </TableCell>
             ))}

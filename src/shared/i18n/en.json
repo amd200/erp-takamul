@@ -383,7 +383,7 @@
     "itemsList": "Items List",
     "chooseProduct": "Choose product",
     "productName": "Product Name",
-    "productCode": "Product Code",
+    "productCode": "Product Barcode",
     "unit": "Unit",
     "before": "Qty Before Operation",
     "operationType": "Operation Type",
@@ -508,6 +508,7 @@
   },
   "common": {
     "serial": "#",
+    "branch": "Branch",
     "routeErrorTitle": "Unexpected error",
     "routeErrorChunk": "The app was updated. Reload the page to continue.",
     "reload": "Reload",
@@ -645,12 +646,14 @@
     "theme": "Appearance",
     "themes": {
       "light": "Light",
-      "dark": "Dark",
-      "system": "Match device"
+      "dark": "Dark"
     },
     "language": "Language",
     "account": "Account",
     "changePassword": "Change password",
+    "newPassword": "New password",
+    "newPasswordHint": "Enter the new password",
+    "rewriteNewPassword": "Re-enter the new password",
     "logout": "Sign out",
     "selectBranch": "Select Branch",
     "allBranches": "All Branches",
@@ -686,9 +689,8 @@
       "totalAmount": "Total",
       "paidAmount": "Paid Amount",
       "supplierName": "Supplier Name",
-      "purchaseStatus": "Purchase Order Status",
-      "discountAmount": "Discount Amount",
-      "code": "Code",
+      "invoiceTotal": "Invoice Total",
+      "quoteNumber": "Quotation Number",
       "name": "Name",
       "phone": "Phone"
     },
@@ -710,6 +712,9 @@
   },
   "products": {
     "listTitle": "Items",
+    "nameAr": "Product name (Arabic)",
+    "nameEn": "Product name (English)",
+    "nameUr": "Product name (Bengali)",
     "listDescription": "Direct, branched and prepared items, plus raw materials.",
     "add": "Add item",
     "addTitle": "Add item",
@@ -721,6 +726,7 @@
     "quantity": "Quantity",
     "barcode": "Barcode",
     "cost": "Cost",
+    "purchasePrice": "Purchase price",
     "price": "Price",
     "sellingPrice": "Selling price",
     "types": {
@@ -777,9 +783,9 @@
     "taxExclusive": "Tax added on top",
     "exemptionReason": "Exemption reason",
     "pickReason": "Choose a reason",
-    "baseUnit": "Base unit",
+    "baseUnit": "Selling unit",
     "minStock": "Minimum stock",
-    "minStockHint": "You'll be alerted when stock reaches this level.",
+    "minStockHint": "You'll be alerted when stock reaches the minimum level.",
     "purchaseUnit": "Purchase unit",
     "conversionFactor": "Conversion factor",
     "conversionHint": "Base units in one purchase unit.",
@@ -811,7 +817,7 @@
     "fixErrors": "Fix the fields marked in red, then save.",
     "imageChange": "Change image",
     "imageTooBig": "The image is larger than 2 MB.",
-    "imageType": "Use a PNG, JPG or WEBP image.",
+    "imageType": "Use a PNG or JPG image.",
     "listCount_one": "1 item",
     "listCount_other": "{{n}} items",
     "noRawMaterials": "No raw materials yet. Add one first to use it as a component."
@@ -822,6 +828,9 @@
     "add": "Add category",
     "edit": "Edit category",
     "name": "Category",
+    "nameAr": "Category name (Arabic)",
+    "nameEn": "Category name (English)",
+    "nameUr": "Category name (Bengali)",
     "parent": "Parent",
     "isMain": "Main category",
     "itemCount": "Items",
@@ -854,6 +863,9 @@
     "add": "Add add-on",
     "edit": "Edit add-on",
     "name": "Add-on",
+    "nameAr": "Add-on name (Arabic)",
+    "nameEn": "Add-on name (English)",
+    "nameUr": "Add-on name (Bengali)",
     "categories": "Categories",
     "createdAt": "Added",
     "showWith": "Shown with categories",
@@ -1124,6 +1136,8 @@
     "deleteReceiptTitle": "Confirm Delete",
     "deleteReceiptBody": "This action cannot be undone",
     "receiptNote": "Payment on invoice no. {{number}}",
+    "editReceiptTitle": "Edit Receipt",
+    "receiptUpdated": "Receipt updated",
     "amount": "Amount",
     "method": "Method",
     "treasury": "Treasury",
@@ -2895,7 +2909,7 @@
       "address": "Address"
     },
     "taxHint": "Shown on the tax invoice.",
-    "imageHint": "PNG, JPG or WEBP up to 2 MB."
+    "imageHint": "PNG or JPG up to 2 MB."
   },
   "reservations": {
     "title": "Reservations",

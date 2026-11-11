@@ -62,6 +62,8 @@ export const kindRules = (type: ProductType) => ({
   components: type === "Prepared",
   children: type === "Branched",
   purchaseUnit: type === "RawMatrial",
+  /** A prepared item has no stock or purchase unit, so its base unit (the selling unit) sits in the basic data card. */
+  unitInBasic: type === "Prepared",
   costIsComputed: type === "Prepared",
 })
 

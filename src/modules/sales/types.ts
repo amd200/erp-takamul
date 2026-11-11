@@ -65,7 +65,7 @@ export type PaymentDto = { id: number; amount: number; paymentMethod?: string | 
 export type InvoicePaymentItem = { id: number; paymentNumber?: string | null; paymentDate?: string | null; amount: number; paymentMethod?: string | null; status?: string | null; notes?: string | null; transactionName?: string | null }
 export type SalesOrderDto = {
   id: number; warehouseId?: number | null; orderNumber?: string | null; orderDate?: string | null; customerId?: number | null; customerName?: string | null; warehouseName?: string | null
-  employeeName?: string | null; createdBy?: string | null; orderStatus?: string | null; subTotal?: number | null; taxAmount?: number | null; discountAmount?: number | null
+  employeeName?: string | null; createdBy?: string | null; branchId?: number | null; branchShortName?: string | null; orderStatus?: string | null; subTotal?: number | null; taxAmount?: number | null; discountAmount?: number | null
   grandTotal?: number | null; paymentStatus?: string | null; zatcaStatus?: string | null; zatcaResponse?: string | null; zatcaQRCode?: string | null; notes?: string | null
   items?: ItemDto[] | null; payments?: PaymentDto[] | null; totalPaid?: number | null
 }
@@ -75,7 +75,7 @@ export type ReturnItemDto = {
   taxPercentage?: number | null; taxAmount?: number | null; discountValue?: number | null; lineTotal?: number | null; taxCalculation?: number | null
 }
 export type SalesReturnDto = {
-  id: number; returnNumber?: string | null; salesOrderId?: number | null; salesOrderNumber?: string | null; customerName?: string | null; returnDate?: string | null
+  id: number; returnNumber?: string | null; salesOrderId?: number | null; salesOrderNumber?: string | null; customerName?: string | null; branchId?: number | null; branchShortName?: string | null; returnDate?: string | null
   reason?: string | null; subTotal?: number | null; taxAmount?: number | null; discountAmount?: number | null; grandTotal?: number | null
   refundedAmount?: number | null; zatcaStatus?: string | null; zatcaResponse?: string | null; items?: ReturnItemDto[] | null
 }
@@ -99,7 +99,7 @@ export type DebitNoteItemDto = {
   subTotal?: number | null; taxAmount?: number | null; lineTotal?: number | null; taxId?: number | null
 }
 export type DebitNoteDto = {
-  id: number; debitNoteNumber?: string | null; salesOrderId?: number | null; salesOrderNumber?: string | null; customerName?: string | null; createdByName?: string | null; createdBy?: string | null
+  id: number; debitNoteNumber?: string | null; salesOrderId?: number | null; salesOrderNumber?: string | null; customerName?: string | null; createdByName?: string | null; createdBy?: string | null; branchName?: string | null
   issueDate?: string | null; subTotal?: number | null; taxAmount?: number | null; grandTotal?: number | null; reason?: string | null; zatcaStatus?: string | null; zatcaResponse?: string | null
   items?: DebitNoteItemDto[] | null; payments?: PaymentDto[] | null; totalPaid?: number | null
 }

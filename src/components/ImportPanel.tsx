@@ -43,13 +43,13 @@ export function ImportPanel({ headers, preview, onImport, pending }: {
           <Table className="min-w-[560px]">
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                {[...headers, t("common.status")].map((h) => <TableHead key={h} className="text-xs text-muted-foreground">{h}</TableHead>)}
+                {[...headers, t("common.status")].map((h) => <TableHead key={h} className="text-muted-foreground">{h}</TableHead>)}
               </TableRow>
             </TableHeader>
             <TableBody>
               {preview.map((r, i) => (
                 <TableRow key={i}>
-                  {r.cells.map((c, j) => <TableCell key={j} className={j === 0 ? "font-medium" : undefined}>{c || "—"}</TableCell>)}
+                  {r.cells.map((c, j) => <TableCell key={j} className={j === 0 ?"font-medium" : undefined}>{c || "—"}</TableCell>)}
                   <TableCell><StatusBadge tone={r.error ? "danger" : "success"}>{r.error ?? t("import.valid")}</StatusBadge></TableCell>
                 </TableRow>
               ))}

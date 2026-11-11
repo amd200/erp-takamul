@@ -26,14 +26,14 @@ export function RepeatRows({ headers, cols, count, renderRow, onRemove, empty, e
     )
   }
   return (
-    <div className="overflow-x-auto">
+    <div className="-m-1 overflow-x-auto p-1 pb-2 md:overflow-visible">
       <div className="flex min-w-[520px] flex-col gap-2">
         <div className={cn("grid gap-2 text-xs font-medium text-muted-foreground", cols)}>
           {headers.map((h) => <span key={h}>{h}</span>)}
           <span />
         </div>
         {Array.from({ length: count }, (_, i) => (
-          <div key={i} className={cn("grid items-start gap-2", cols)}>
+          <div key={i} className={cn("grid items-center gap-2", cols)}>
             {renderRow(i)}
             <Button type="button" variant="ghost" size="icon-lg" aria-label={t("common.remove")} onClick={() => onRemove(i)} className="hover:bg-destructive-soft hover:text-destructive">
               <Trash2 />

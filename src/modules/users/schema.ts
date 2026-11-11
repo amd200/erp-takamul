@@ -25,3 +25,10 @@ export const buildUserSchema = (isNew: boolean) =>
 
 export type UserForm = z.infer<typeof base>
 export const emptyUser: UserForm = { name: "", userName: "", email: "", mobile: "", branchId: 0, roleName: "", isMultiBranch: false, password: "", confirmPassword: "" }
+
+export const changePasswordSchema = z.object({
+  password: z.string().min(8, "validation.passwordMin"),
+  confirmPassword: z.string(),
+}).refine((v) => v.password === v.confirmPassword, { path: ["confirmPassword"], message: "validation.passwordMatch" })
+
+export type ChangePasswordForm = z.infer<typeof changePasswordSchema>

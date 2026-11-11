@@ -37,7 +37,7 @@ function DetailsDialog({ id, onOpenChange }: { id: number | null; onOpenChange: 
         {isLoading || !o ? <div className="h-40 animate-pulse rounded-xl bg-muted" /> : (
           <div className="flex flex-col gap-4">
             <Table className="min-w-[420px]">
-              <TableHeader><TableRow className="hover:bg-transparent">{[t("products.item"), t("products.quantity"), t("sales.unitPrice"), t("sales.lineTotal")].map((h) => <TableHead key={h} className="text-xs text-muted-foreground">{h}</TableHead>)}</TableRow></TableHeader>
+              <TableHeader><TableRow className="hover:bg-transparent">{[t("products.item"), t("products.quantity"), t("sales.unitPrice"), t("sales.lineTotal")].map((h) => <TableHead key={h} className="text-muted-foreground">{h}</TableHead>)}</TableRow></TableHeader>
               <TableBody>
                 {(o.items ?? []).map((i, k) => (
                   <TableRow key={k}>

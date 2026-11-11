@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { useBranchColumn } from "@/modules/branches/useBranchColumn"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Plus, Store } from "lucide-react"
@@ -70,9 +71,11 @@ export default function WarehousesPage() {
   const [open, setOpen] = useState(false)
   const [toDelete, setToDelete] = useState<Warehouse | null>(null)
 
+  const branchColumn = useBranchColumn<Warehouse>((w) => ({ id: w.branchId, name: w.branchName }))
   const columns: Column<Warehouse>[] = [
     { id: "code", sortKey: "warehouseCode", header: t("warehouses.code"), cell: (w) => <span className="font-semibold" dir="ltr">{w.warehouseCode || "—"}</span> },
     { id: "name", sortKey: "warehouseName", header: t("warehouses.name"), cell: (w) => <span className="font-semibold">{w.warehouseName || "—"}</span> },
+    ...branchColumn,
     { id: "address", sortKey: "address", header: t("warehouses.address"), cell: (w) => <span className="text-muted-foreground">{[w.address, w.city].filter(Boolean).join("، ") || "—"}</span> },
     { id: "capacity", sortKey: "capacity", header: t("warehouses.capacity"), cell: (w) => (w.capacity != null ? formatNumber(w.capacity) : <span className="text-faint">—</span>) },
     { id: "manager", sortKey: "managerName", header: t("warehouses.manager"), cell: (w) => w.managerName || <span className="text-faint">—</span> },

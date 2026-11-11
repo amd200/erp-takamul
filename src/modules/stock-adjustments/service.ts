@@ -6,6 +6,8 @@ import type { AdjustmentDto, AdjustmentInput, StockRowDto } from "./types"
 
 /** The body create (POST bulk-adjust) and update (PUT /{id}) share. */
 const bodyOf = (input: AdjustmentInput) => ({
+  // The server currently stamps its own time; the chosen date is sent so it is used once the endpoint accepts it.
+  operationDate: input.date || undefined,
   notes: input.notes || null,
   items: input.lines.map((l) => ({ stockInventoryId: l.stockInventoryId, unitId: l.unitId, operationType: l.operation, quantity: l.quantity })),
 })

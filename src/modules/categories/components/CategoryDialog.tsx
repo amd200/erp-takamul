@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { FieldGroup } from "@/components/ui/field"
-import { FormInput, FormSelect, FormTextarea } from "@/components/form/FormFields"
+import { FormInput, FormSelect } from "@/components/form/FormFields"
 import { BranchSection } from "@/modules/branches/BranchSection"
 import { useFormBranch } from "@/modules/branches/useFormBranch"
 import { categorySchema, categoryFormValues, emptyCategory, type CategoryForm } from "../schema"
@@ -34,12 +34,12 @@ export function CategoryDialog({ open, onOpenChange, category }: { open: boolean
           <FieldGroup className="gap-4">
             {formBranch.show && <BranchSection value={formBranch.branchId} onChange={formBranch.pick} />}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <FormInput control={form.control} name="categoryNameAr" label={t("common.nameAr")} required />
-              <FormInput control={form.control} name="categoryNameEn" label={t("common.nameEn")} dir="ltr" />
-              <FormInput control={form.control} name="categoryNameUr" label={t("common.nameUr")} dir="ltr" />
+              <FormInput control={form.control} name="categoryNameAr" label={t("categories.nameAr")} required />
+              <FormInput control={form.control} name="categoryNameEn" label={t("categories.nameEn")} dir="ltr" />
+              <FormInput control={form.control} name="categoryNameUr" label={t("categories.nameUr")} dir="ltr" />
             </div>
             <FormInput control={form.control} name="displayOrder" type="number" label={t("common.displayOrder")} />
-            <FormTextarea control={form.control} name="description" label={t("common.description")} placeholder={t("common.optional")} />
+            <FormInput control={form.control} name="description" label={t("common.description")} placeholder={t("common.optional")} />
             {/* The server keeps printers per item; this sets it on every item already in the category. */}
             {category && (
               <FormSelect control={form.control} name="printerName" label={t("categories.printerForItems")} allowEmpty={t("productForm.noPrinter")} options={printers} />

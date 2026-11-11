@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react"
-import { enteredPrice, priceBeforeTaxOf, showsInSales, taxCalcOf } from "@/modules/products/mappers"
+import { enteredPrice, showsInSales, taxCalcOf } from "@/modules/products/mappers"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { useCategories } from "@/modules/categories/queries"
 import { useDebounced } from "@/modules/products/lookup"
@@ -23,10 +23,7 @@ export function useTaxesEnabled() {
   return settings.data != null && !settings.isPlaceholderData && settings.data.taxSetting?.taxSetting !== "Exempt"
 }
 
-/**
- * Turns an item into a cart line: its unit, price and the tax rate of the branch. In a tax-exempt branch an item that carries tax
- * is sold without it: the price before tax and a rate of 0.
- */
+/** Turns an item into a cart line: its unit, price and the tax rate of the branch. */
 export function useSellLine() {
   const taxesEnabled = useTaxesEnabled()
   const taxes = useTaxes(taxesEnabled)
@@ -38,11 +35,11 @@ export function useSellLine() {
   return useCallback((p: Product, opts: { unitId?: number; price?: number; name?: string } = {}): SellLine => {
     const unitId = opts.unitId ?? p.baseUnitId ?? 0
     return {
-      productId: p.id, unitId, name: opts.name ?? p.productNameAr, unitName: unitName(unitId), quantity: 1, unitPrice: opts.price ?? (taxesEnabled ? enteredPrice(p) : priceBeforeTaxOf(p)),
-      taxRate: rateOf(p), taxCalculation: taxesEnabled ? taxCalcOf(p) : 2, discountKind: "value", discount: 0, imageUrl: p.imageUrl ?? null,
+      productId: p.id, unitId, name: opts.name ?? p.productNameAr, unitName: unitName(unitId), quantity: 1, unitPrice: opts.price ?? enteredPrice(p),
+      taxRate: rateOf(p), taxCalculation: taxCalcOf(p), discountKind: "value", discount: 0, imageUrl: p.imageUrl ?? null,
       ...categoryDiscountOf(p.categoryId),
     }
-  }, [unitName, rateOf, categoryDiscountOf, taxesEnabled])
+  }, [unitName, rateOf, categoryDiscountOf])
 }
 
 /**

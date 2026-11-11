@@ -7,8 +7,7 @@ import { useStockSearch } from "./queries"
 import type { StockRowDto } from "./types"
 
 /**
- * Finds an item in a warehouse, like the item search elsewhere: the list opens under the field as you type (name and
- * warehouse, barcode small under it), Enter on a scanned barcode adds the exact match, and the field clears after a pick.
+ * Finds an item in a warehouse, like the item search elsewhere: the list opens under the field as you type (name, with the barcode small under it), Enter on a scanned barcode adds the exact match, and the field clears after a pick.
  * Rows come straight from GET /StockInventory; one item in two warehouses is two rows.
  */
 export function StockSearchInput({ onPick, accept, placeholder }: { onPick: (row: StockRowDto) => void; accept: (row: StockRowDto) => boolean; placeholder: string }) {
@@ -43,8 +42,8 @@ export function StockSearchInput({ onPick, accept, placeholder }: { onPick: (row
           {rows.map((r) => (
             <li key={r.id}>
               <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => pick(r)} className="flex w-full flex-col rounded-sm px-3 py-1.5 text-start text-sm hover:bg-accent">
-                <span>{r.productName}{r.warehouseName ? ` - ${r.warehouseName}` : ""}</span>
-                {r.barcode && <span className="mt-0.5 text-[10px] text-muted-foreground" dir="ltr">{r.barcode}</span>}
+                <span>{r.productName}</span>
+                {r.barcode && <span className="mt-0.5 text-[10px] text-muted-foreground"><bdi dir="ltr">{r.barcode}</bdi></span>}
               </button>
             </li>
           ))}

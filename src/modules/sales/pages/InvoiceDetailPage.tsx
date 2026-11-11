@@ -71,7 +71,7 @@ export default function InvoiceDetailPage() {
             <Table className="min-w-[560px]">
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
-                  {[t("products.item"), t("products.quantity"), t("sales.unitPrice"), t("sales.discount"), ...(exempt ? [] : [t("sales.tax")]), t("sales.lineTotal")].map((h) => <TableHead key={h} className="text-xs text-muted-foreground">{h}</TableHead>)}
+                  {[t("products.item"), t("products.quantity"), t("sales.unitPrice"), t("sales.discount"), ...(exempt ? [] : [t("sales.tax")]), t("sales.lineTotal")].map((h) => <TableHead key={h} className="text-muted-foreground">{h}</TableHead>)}
                 </TableRow>
               </TableHeader>
               <TableBody>

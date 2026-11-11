@@ -19,6 +19,13 @@ export const useSaveUser = () => {
   })
 }
 
+export const useChangePassword = () =>
+  useMutation({
+    mutationFn: ({ employeeId, password }: { employeeId: number; password: string }) => usersApi.changePassword(employeeId, password),
+    onSuccess: () => toast.success(i18n.t("common.saved")),
+    onError: (e) => errorToast(e, "common.saveFailed"),
+  })
+
 export const useDeleteUser = () => {
   const qc = useQueryClient()
   return useMutation({

@@ -383,7 +383,7 @@
     "itemsList": "Item talika",
     "chooseProduct": "Ponno choyon korun",
     "productName": "Ponyer nam",
-    "productCode": "Ponno cod",
+    "productCode": "Ponno barcode",
     "unit": "Unit",
     "before": "Operation age poriman",
     "operationType": "Operation type",
@@ -508,6 +508,7 @@
   },
   "common": {
     "serial": "Kr.",
+    "branch": "Sakha",
     "routeErrorTitle": "Aprotyashito truti",
     "routeErrorChunk": "App update hoyeche. Cholte thakte page reload korun.",
     "reload": "Reload",
@@ -645,12 +646,14 @@
     "theme": "Chehara",
     "themes": {
       "light": "Alo",
-      "dark": "Andhokar",
-      "system": "Device-er moto"
+      "dark": "Andhokar"
     },
     "language": "Bhasha",
     "account": "Hisab",
     "changePassword": "Password poriborton korun",
+    "newPassword": "Notun passward",
+    "newPasswordHint": "Notun passward din",
+    "rewriteNewPassword": "Notun passwardti punorai type korun",
     "logout": "Logout",
     "selectBranch": "Sakha nirbachon korun",
     "allBranches": "Sakal sakha",
@@ -686,9 +689,8 @@
       "totalAmount": "Mot",
       "paidAmount": "Prodotto poriman",
       "supplierName": "Sarborahokarir nam",
-      "purchaseStatus": "Cray adesh sthiti",
-      "discountAmount": "Charer poriman",
-      "code": "Cod",
+      "invoiceTotal": "Chalaner mot",
+      "quoteNumber": "Dor prostab nombor",
       "name": "Nam",
       "phone": "Fon"
     },
@@ -710,6 +712,9 @@
   },
   "products": {
     "listTitle": "Item",
+    "nameAr": "Itemer nam (Arabic)",
+    "nameEn": "Itemer nam (English)",
+    "nameUr": "Itemer nam (Bangla)",
     "listDescription": "Sarasori, sakhajukto ebong prostut item, sathe kancha mal.",
     "add": "Item jog karun",
     "addTitle": "Item jog karun",
@@ -721,6 +726,7 @@
     "quantity": "Poriman",
     "barcode": "Barcod",
     "cost": "Kharch",
+    "purchasePrice": "Kroy mulyo",
     "price": "Dam",
     "sellingPrice": "Bikray mulyo",
     "types": {
@@ -777,9 +783,9 @@
     "taxExclusive": "Mulyo tax chara",
     "exemptionReason": "Kor charer karon",
     "pickReason": "Karon beche nin",
-    "baseUnit": "Mul unit",
+    "baseUnit": "Bikroy unit",
     "minStock": "Nunotom stock",
-    "minStockHint": "Stock ei stor-e pouchale apnake janano hobe.",
+    "minStockHint": "Stock nunotom stor-e pouchale apnake janano hobe.",
     "purchaseUnit": "Cray unit",
     "conversionFactor": "Rupantor factor",
     "conversionHint": "Ek kroy unit-e mul unit-er songkha.",
@@ -811,7 +817,7 @@
     "fixErrors": "Lal chinhito field thik korun, tarpor sanrakhon korun.",
     "imageChange": "Chobi poriborton korun",
     "imageTooBig": "Chobi 2 MB-er cheye boro.",
-    "imageType": "PNG, JPG ba WEBP chobi byabohar korun.",
+    "imageType": "PNG ba JPG chobi byabohar korun.",
     "listCount_one": "1 ti item",
     "listCount_other": "{{n}} ti item",
     "noRawMaterials": "Ekhono kancha mal nei. Upadan hisabe byabohar korte age ekti jog korun."
@@ -822,6 +828,9 @@
     "add": "Bivag jog korun",
     "edit": "Bivag sampadana korun",
     "name": "Shreni",
+    "nameAr": "Shreni-r nam (Arabic)",
+    "nameEn": "Shreni-r nam (English)",
+    "nameUr": "Shreni-r nam (Bangla)",
     "parent": "Abhibhabok",
     "isMain": "Prodhan bivag",
     "itemCount": "Item",
@@ -854,6 +863,9 @@
     "add": "Notun sanjojan jog korun",
     "edit": "Add-on sampadona korun",
     "name": "Add-on",
+    "nameAr": "Add-on-er nam (Arabic)",
+    "nameEn": "Add-on-er nam (English)",
+    "nameUr": "Add-on-er nam (Bangla)",
     "categories": "Catagori",
     "createdAt": "Jog kora hoyeche",
     "showWith": "Shreni-r shathe dekhano hobe",
@@ -1124,6 +1136,8 @@
     "deleteReceiptTitle": "Muche fela nischito korun",
     "deleteReceiptBody": "Ei criyati purbabosthay ferano jabe na",
     "receiptNote": "Chalan nong {{number}}-er upor pement",
+    "editReceiptTitle": "Rosid songshodhon",
+    "receiptUpdated": "Rosid update hoyeche",
     "amount": "Poriman",
     "method": "Pement poddhoti",
     "treasury": "Koshagar",
@@ -2895,7 +2909,7 @@
       "address": "Thikana"
     },
     "taxHint": "Tax chalane dekhano hoy.",
-    "imageHint": "PNG, JPG ba WEBP 2 MB porjonto."
+    "imageHint": "PNG ba JPG 2 MB porjonto."
   },
   "reservations": {
     "title": "Reaservation",

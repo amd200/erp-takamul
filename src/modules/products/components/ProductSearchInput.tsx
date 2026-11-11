@@ -52,7 +52,7 @@ export function ProductSearchInput({ onPick, accept, type, placeholder }: {
             <li key={p.id}>
               <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => pick(p)} className="flex w-full flex-col rounded-sm px-3 py-1.5 text-start text-sm hover:bg-accent">
                 <span>{p.productNameAr}</span>
-                {p.barcode && <span className="mt-0.5 text-[10px] text-muted-foreground" dir="ltr">{p.barcode}</span>}
+                {p.barcode && <span className="mt-0.5 text-[10px] text-muted-foreground"><bdi dir="ltr">{p.barcode}</bdi></span>}
               </button>
             </li>
           ))}

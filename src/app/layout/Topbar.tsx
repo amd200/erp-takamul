@@ -1,5 +1,6 @@
+import { useState } from "react"
 import { Link } from "react-router-dom"
-import { Bell, Check, Globe, KeyRound, LogOut, LayoutGrid, Monitor, Moon, Package, ShoppingCart, Sun } from "lucide-react"
+import { Bell, Check, Globe, KeyRound, LogOut, LayoutGrid, Moon, Package, ShoppingCart, Sun } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -11,13 +12,14 @@ import { LANGUAGES } from "@/shared/i18n"
 import { useSession } from "@/shared/session/session"
 import { useAppSettings } from "@/modules/settings"
 import { useLogout } from "@/modules/auth/queries"
+import { ChangePasswordDialog } from "@/modules/users/components/ChangePasswordDialog"
 import { BranchSwitcher } from "./BranchSwitcher"
 import { Button } from "@/components/ui/button"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { useTheme, type ThemeChoice } from "@/shared/theme/ThemeProvider"
 
 const THEMES: { id: ThemeChoice; icon: typeof Sun }[] = [
-  { id: "light", icon: Sun }, { id: "dark", icon: Moon }, { id: "system", icon: Monitor },
+  { id: "light", icon: Sun }, { id: "dark", icon: Moon },
 ]
 
 /** The old colours of the three quick buttons: blue, green, amber (each a soft background with matching text and icon). */
@@ -33,13 +35,14 @@ export function Topbar() {
   const postype = useAppSettings().salesScreenTab?.postype
   const posPath = postype === "Pos3" ? "/pos-optics" : postype === "Pos2" ? "/pos2" : "/pos"
   const logout = useLogout()
+  const [pwOpen, setPwOpen] = useState(false)
   return (
     <header className="sticky top-0 z-30 flex flex-wrap items-center gap-2 border-b bg-card px-4 py-3 md:px-6 print:hidden">
       <SidebarTrigger />
       <BranchSwitcher />
       <div className="order-last flex w-full gap-2 lg:order-none lg:w-auto">
-        <Button asChild variant="secondary" className={cn("rounded-full max-lg:flex-1", quickA4)}><Link to="/sales/invoices/create"><LayoutGrid />{t("topbar.quickA4")}</Link></Button>
-        <Button asChild variant="secondary" className={cn("rounded-full max-lg:flex-1", quickPos)}><Link to={posPath}><ShoppingCart />{t("topbar.quickPos")}</Link></Button>
+        <Can perm={P.sales.add}><Button asChild variant="secondary" className={cn("rounded-full max-lg:flex-1", quickA4)}><Link to="/sales/invoices/create"><LayoutGrid />{t("topbar.quickA4")}</Link></Button></Can>
+        <Can perm={P.sales.pos}><Button asChild variant="secondary" className={cn("rounded-full max-lg:flex-1", quickPos)}><Link to={posPath}><ShoppingCart />{t("topbar.quickPos")}</Link></Button></Can>
         <Can perm={P.products.add}><Button asChild variant="ghost" className={cn("rounded-full bg-muted max-lg:flex-1", quickItem)}><Link to="/products/create"><Package />{t("topbar.quickItem")}</Link></Button></Can>
       </div>
 
@@ -99,11 +102,12 @@ export function Topbar() {
               <span className="text-xs font-normal text-muted-foreground">{user.role}</span>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem><KeyRound />{t("topbar.changePassword")}</DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => setPwOpen(true)}><KeyRound />{t("topbar.changePassword")}</DropdownMenuItem>
             <DropdownMenuItem variant="destructive" onSelect={() => logout.mutate()}><LogOut />{t("topbar.logout")}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      <ChangePasswordDialog open={pwOpen} onOpenChange={setPwOpen} />
     </header>
   )
 }

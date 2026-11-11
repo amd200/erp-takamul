@@ -56,7 +56,7 @@ export default function PurchaseViewPage() {
             <Table className="min-w-[560px]">
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
-                  {[t("products.item"), t("products.quantity"), t("purchases.cost"), t("sales.discount"), ...(exempt ? [] : [t("sales.tax")]), t("sales.lineTotal")].map((h) => <TableHead key={h} className="text-xs text-muted-foreground">{h}</TableHead>)}
+                  {[t("products.item"), t("products.quantity"), t("purchases.cost"), t("sales.discount"), ...(exempt ? [] : [t("sales.tax")]), t("sales.lineTotal")].map((h) => <TableHead key={h} className="text-muted-foreground">{h}</TableHead>)}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -83,7 +83,7 @@ export default function PurchaseViewPage() {
           {(p.payments ?? []).length > 0 && (
             <SectionCard title={t("sales.payments")}>
               <Table>
-                <TableHeader><TableRow className="hover:bg-transparent">{[t("common.date"), t("sales.method"), t("sales.treasury"), t("sales.amount")].map((h) => <TableHead key={h} className="text-xs text-muted-foreground">{h}</TableHead>)}</TableRow></TableHeader>
+                <TableHeader><TableRow className="hover:bg-transparent">{[t("common.date"), t("sales.method"), t("sales.treasury"), t("sales.amount")].map((h) => <TableHead key={h} className="text-muted-foreground">{h}</TableHead>)}</TableRow></TableHeader>
                 <TableBody>
                   {(p.payments ?? []).map((x, i) => (
                     <TableRow key={x.id ?? i}>

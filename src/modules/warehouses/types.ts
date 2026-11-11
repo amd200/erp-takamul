@@ -8,6 +8,8 @@ export type Warehouse = {
   state?: string | null
   capacity?: number | null
   managerName?: string | null
+  branchId?: number | null
+  branchName?: string | null
   isActive?: boolean | null
 }
 

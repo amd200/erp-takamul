@@ -45,5 +45,5 @@ export function useCatalog(search: string, currentCat: number | null, phone: boo
   }
 }
 
-/** What a card shows: the price with tax, or before it in a tax-exempt branch. */
-export const shownPrice = (p: Pick<Product, "priceBeforeTax" | "priceAfterTax" | "sellingPrice">, exempt: boolean) => listedPrice(p, exempt)
+/** What a card shows: the price with tax. */
+export const shownPrice = (p: Pick<Product, "priceAfterTax" | "sellingPrice">) => listedPrice(p)

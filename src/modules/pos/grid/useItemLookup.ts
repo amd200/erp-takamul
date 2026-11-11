@@ -1,12 +1,12 @@
 import { useCallback, useMemo, useState } from "react"
-import { listedPrice, priceBeforeTaxOf, showsInSales } from "@/modules/products/mappers"
+import { listedPrice, showsInSales } from "@/modules/products/mappers"
 import { useQueryClient } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 import { useFindByBarcode } from "@/modules/products/queries"
 import { rememberProduct, searchProducts, useProductSearch, useProductsByIds } from "@/modules/products/lookup"
 import type { Product } from "@/modules/products/types"
 import { useAppSettings } from "@/modules/settings"
-import { useSellLine, useTaxesEnabled, type SellLine } from "../hooks"
+import { useSellLine, type SellLine } from "../hooks"
 import { matchesScaleCode, readScale, scaleRule } from "../scale"
 import type { SearchOption } from "./ItemSearch"
 
@@ -14,7 +14,6 @@ const sellable = (p: Product) => showsInSales(p) && p.productType !== "RawMatria
 
 /** The cart line for a scanned or typed code: an exact barcode on an item or a sale unit, or a scale label (weight or price). */
 export function useCodeLookup() {
-  const taxesEnabled = useTaxesEnabled()
   const qc = useQueryClient()
   const { mutateAsync: findByBarcode } = useFindByBarcode()
   const toLine = useSellLine()
@@ -37,8 +36,8 @@ export function useCodeLookup() {
     const hit = await findByBarcode({ code: c, accept: sellable })
     if (!hit) return null
     rememberProduct(qc, hit.product)
-    return hit.unit ? toLine(hit.product, { unitId: hit.unit.unitId, price: (taxesEnabled ? hit.unit.sellingPrice : priceBeforeTaxOf(hit.product, hit.unit)) ?? 0 }) : toLine(hit.product)
-  }, [qc, findByBarcode, scale, toLine, taxesEnabled])
+    return hit.unit ? toLine(hit.product, { unitId: hit.unit.unitId, price: hit.unit.sellingPrice ?? 0 }) : toLine(hit.product)
+  }, [qc, findByBarcode, scale, toLine])
 }
 
 /**
@@ -48,7 +47,6 @@ export function useCodeLookup() {
 export function useItemLookup(lineProductIds: number[], readLines?: boolean) {
   const { i18n } = useTranslation()
   const qc = useQueryClient()
-  const taxesEnabled = useTaxesEnabled()
   const toLine = useSellLine()
   const byCode = useCodeLookup()
 
@@ -57,8 +55,8 @@ export function useItemLookup(lineProductIds: number[], readLines?: boolean) {
   const results = useMemo(() => (typed.trim() === "" ? [] : (found.data ?? []).filter(sellable)), [typed, found.data])
 
   const options = useMemo<SearchOption[]>(
-    () => results.map((p) => ({ id: p.id, name: i18n.language === "bn" ? p.productNameUr || p.productNameEn || p.productNameAr : i18n.language === "en" && p.productNameEn ? p.productNameEn : p.productNameAr, code: p.barcode ?? "", price: listedPrice(p, !taxesEnabled) })),
-    [results, i18n.language, taxesEnabled],
+    () => results.map((p) => ({ id: p.id, name: i18n.language === "bn" ? p.productNameUr || p.productNameEn || p.productNameAr : i18n.language === "en" && p.productNameEn ? p.productNameEn : p.productNameAr, code: p.barcode ?? "", price: listedPrice(p) })),
+    [results, i18n.language],
   )
 
   /** The cart line for an item picked from the list of the last search. */

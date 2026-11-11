@@ -1,22 +1,20 @@
 import { useCallback, useMemo, useState } from "react"
-import { enteredPrice, priceBeforeTaxOf, taxCalcOf } from "@/modules/products/mappers"
+import { enteredPrice, taxCalcOf } from "@/modules/products/mappers"
 import type { Product } from "@/modules/products/types"
-import { useTaxesEnabled } from "../hooks"
 import { usePosStore } from "../store"
 import type { CartLine } from "../types"
 import { useBranchedItems } from "./queries"
 
 type NewLine = Omit<CartLine, "key" | "notes" | "extras">
 
-/** An item as a cart line. The tax rate is the one the server sends with the item, so no tax list is read; a tax-exempt branch sells at the price before tax and adds none. */
-const lineOf = (p: Product, name: string, taxesEnabled: boolean): NewLine => ({
-  productId: p.id, unitId: p.baseUnitId ?? 0, name, unitName: "", quantity: 1, unitPrice: taxesEnabled ? enteredPrice(p) : priceBeforeTaxOf(p),
-  taxRate: taxesEnabled ? p.taxPercentage ?? 0 : 0, taxCalculation: taxesEnabled ? taxCalcOf(p) : 2, discountKind: "value", discount: 0, imageUrl: p.imageUrl ?? null, categoryId: p.categoryId ?? null,
+/** An item as a cart line. The tax rate is the one the server sends with the item, so no tax list is read. */
+const lineOf = (p: Product, name: string): NewLine => ({
+  productId: p.id, unitId: p.baseUnitId ?? 0, name, unitName: "", quantity: 1, unitPrice: enteredPrice(p),
+  taxRate: p.taxPercentage ?? 0, taxCalculation: taxCalcOf(p), discountKind: "value", discount: 0, imageUrl: p.imageUrl ?? null, categoryId: p.categoryId ?? null,
 })
 
 /** What picking an item does: adds it, or opens the list of the items a branched item groups. */
 export function useOrderActions(productName: (p: Pick<Product, "productNameAr" | "productNameEn" | "productNameUr">) => string) {
-  const taxesEnabled = useTaxesEnabled()
   const add = usePosStore((s) => s.add)
   const setQty = usePosStore((s) => s.setQty)
   const lines = usePosStore((s) => s.lines)
@@ -33,8 +31,8 @@ export function useOrderActions(productName: (p: Pick<Product, "productNameAr" |
 
   const pick = useCallback((p: Product) => {
     if (p.productType === "Branched") setParentId(p.id)
-    else add(lineOf(p, productName(p), taxesEnabled))
-  }, [add, productName, taxesEnabled])
+    else add(lineOf(p, productName(p)))
+  }, [add, productName])
 
   // The newest line of the item loses one; at the last piece every line of the item goes.
   const decrease = useCallback((productId: number, quantity: number) => {

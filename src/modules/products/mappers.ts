@@ -14,15 +14,8 @@ const num = (v: number | null | undefined, d = 0) => (typeof v === "number" && N
 /** The price as it is entered and sold: with tax when the item is priced with tax, otherwise before it. */
 export const enteredPrice = (d: Pick<Product, "taxCalculation" | "priceAfterTax" | "priceBeforeTax" | "sellingPrice">) =>
   num(toCalc(d.taxCalculation) === 1 ? d.priceAfterTax ?? d.sellingPrice : d.priceBeforeTax ?? d.sellingPrice)
-/**
- * The price when the branch is tax-exempt: an item that carries tax is sold without it (the server uses the price before tax and adds none).
- * `u` is a sale unit's own prices, when the item is sold in one.
- */
-export const priceBeforeTaxOf = (d: Pick<Product, "priceBeforeTax" | "sellingPrice">, u?: { priceBeforeTax?: number | null; sellingPrice?: number | null }) =>
-  num(u ? u.priceBeforeTax ?? u.sellingPrice : d.priceBeforeTax ?? d.sellingPrice)
-/** The price a card or search result shows: before tax in an exempt branch, otherwise with tax. */
-export const listedPrice = (d: Pick<Product, "priceBeforeTax" | "priceAfterTax" | "sellingPrice">, exempt: boolean) =>
-  exempt ? priceBeforeTaxOf(d) : num(d.priceAfterTax ?? d.sellingPrice)
+/** The price a card or search result shows: with tax. */
+export const listedPrice = (d: Pick<Product, "priceAfterTax" | "sellingPrice">) => num(d.priceAfterTax ?? d.sellingPrice)
 /** 1 = the price includes tax, 2 = tax is added on top. */
 export const taxCalcOf = (d: Pick<Product, "taxCalculation">): TaxCalculation => toCalc(d.taxCalculation)
 /** Items shown on the sales screen: switched on, and never raw materials unless the server says so. */
@@ -65,8 +58,12 @@ export function productFormOf(d: Product): ProductInput {
 const imageFields = (image: ProductInput["image"], editing: boolean) =>
   image instanceof File ? { Image: image } : editing && typeof image === "string" && image ? { ImageUrl: image } : {}
 
-const taxFields = (p: ProductInput) =>
-  ({ TaxId: p.taxId || undefined, TaxCalculation: calcToServer(p.taxCalculation), TaxExemptionReasonId: p.taxExemptionReasonId ?? undefined })
+/** An exempt item (it has an exemption reason) is sent as 1 = NotApplicable, otherwise 2 / 3. */
+const taxFields = (p: ProductInput) => ({
+  TaxId: p.taxId || undefined,
+  TaxCalculation: p.taxExemptionReasonId ? 1 : calcToServer(p.taxCalculation),
+  TaxExemptionReasonId: p.taxExemptionReasonId ?? undefined,
+})
 
 const common = (p: ProductInput) => ({
   ProductNameAr: p.nameAr, ProductNameEn: p.nameEn, ProductNameUr: p.nameUr, Description: p.description, CategoryId: p.categoryId,

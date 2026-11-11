@@ -59,7 +59,7 @@ export function ImagePanel() {
 
   const pick = (file: File | undefined) => {
     if (!file) return
-    if (!/^image\/(png|jpe?g|webp)$/.test(file.type)) return setError(t("products.imageType"))
+    if (!/^image\/(png|jpe?g)$/.test(file.type)) return setError(t("products.imageType"))
     if (file.size > MAX_IMAGE) return setError(t("products.imageTooBig"))
     setError(null)
     setValue("image", file, { shouldDirty: true })
@@ -67,7 +67,7 @@ export function ImagePanel() {
 
   return (
     <SectionCard title={t("products.sections.image")}>
-      <input ref={input} type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" aria-label={t("products.imageDrop")}
+      <input ref={input} type="file" accept="image/png,image/jpeg" className="sr-only" aria-label={t("products.imageDrop")}
         onChange={(e) => { pick(e.target.files?.[0]); e.target.value = "" }} />
       {preview ? (
         <div className="flex flex-col gap-2">

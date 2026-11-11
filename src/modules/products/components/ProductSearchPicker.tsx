@@ -44,7 +44,7 @@ export function ProductSearchPicker({ onPick, accept, type, price = (p) => enter
                 <CommandItem key={p.id} value={String(p.id)} onSelect={() => { rememberProduct(qc, p); onPick(p); close() }}>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate">{p.productNameAr}</span>
-                    {p.barcode && <span className="block text-[10px] text-muted-foreground" dir="ltr">{p.barcode}</span>}
+                    {p.barcode && <span className="block text-[10px] text-muted-foreground"><bdi dir="ltr">{p.barcode}</bdi></span>}
                   </span>
                   <span className="text-xs text-muted-foreground tabular-nums">{formatMoney(price(p))}</span>
                 </CommandItem>

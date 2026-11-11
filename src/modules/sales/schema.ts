@@ -50,6 +50,10 @@ export const receiptFormSchema = z.object({
 })
 export type ReceiptForm = z.infer<typeof receiptFormSchema>
 
+/** Editing the amount of a recorded receipt. */
+export const receiptAmountSchema = z.object({ amount: num().positive("validation.amountPositive") })
+export type ReceiptAmountForm = z.infer<typeof receiptAmountSchema>
+
 export const debitNoteSchema = z.object({
   invoiceId: num("validation.invoiceRequired").min(1, "validation.invoiceRequired"),
   date: z.string().min(1, "validation.dateRequired"),

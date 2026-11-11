@@ -94,7 +94,7 @@ export default function ImportProductsPage() {
             <Table className="mt-4 min-w-[520px]">
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
-                  {[t("import.row"), t("products.item"), t("import.reason")].map((h) => <TableHead key={h} className="text-xs text-muted-foreground">{h}</TableHead>)}
+                  {[t("import.row"), t("products.item"), t("import.reason")].map((h) => <TableHead key={h} className="text-muted-foreground">{h}</TableHead>)}
                 </TableRow>
               </TableHeader>
               <TableBody>

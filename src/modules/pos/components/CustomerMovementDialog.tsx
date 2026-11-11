@@ -102,7 +102,7 @@ export function CustomerMovementDialog({ open, onOpenChange, customerId, embedde
           <Table className="min-w-[640px]">
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                {COLUMNS.map((c) => <TableHead key={c} className="text-xs font-medium text-muted-foreground">{t(`reports.c.${c}`)}</TableHead>)}
+                {COLUMNS.map((c) => <TableHead key={c} className="font-medium text-muted-foreground">{t(`reports.c.${c}`)}</TableHead>)}
               </TableRow>
             </TableHeader>
             <TableBody>

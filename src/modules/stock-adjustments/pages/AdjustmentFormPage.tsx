@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { FormTextarea } from "@/components/form/FormFields"
+import { FormInput } from "@/components/form/FormFields"
 import { formatDateTime } from "@/lib/format"
 import { cn } from "@/lib/utils"
 import { BranchSection } from "@/modules/branches/BranchSection"
@@ -27,6 +27,9 @@ const cap = "mb-1.5 text-xs text-muted-foreground md:hidden"
  * Add a quantity adjustment, or (at /view/:id) look at a saved one: the same form with every field locked.
  * Laid out as in the current system: basic data, the items list with its eight columns, then the buttons.
  */
+const nowLocal = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60_000).toISOString().slice(0, 10) }
+const toLocal = (s?: string | null) => { if (!s) return nowLocal(); const d = new Date(s); return Number.isNaN(d.getTime()) ? nowLocal() : new Date(d.getTime() - d.getTimezoneOffset() * 60_000).toISOString().slice(0, 10) }
+
 export default function AdjustmentFormPage() {
   const { t, i18n } = useTranslation()
   const nav = useNavigate()
@@ -39,7 +42,7 @@ export default function AdjustmentFormPage() {
   const update = useUpdateAdjustment()
   const { data: saved = [] } = useAdjustments()
   const adjustment = viewId ? saved.find((a) => a.id === viewId) : undefined
-  const form = useForm<AdjustmentForm>({ resolver: zodResolver(adjustmentSchema), defaultValues: { notes: "", lines: [] } })
+  const form = useForm<AdjustmentForm>({ resolver: zodResolver(adjustmentSchema), defaultValues: { date: nowLocal(), notes: "", lines: [] } })
   const lines = useFieldArray({ control: form.control, name: "lines" })
   const values = useWatch({ control: form.control, name: "lines" })
   // The stock rows picked so far; they come from the server search, so only these are ever loaded.
@@ -49,7 +52,7 @@ export default function AdjustmentFormPage() {
   useEffect(() => {
     if (!isEdit || !adjustment) return
     const items = adjustment.items ?? []
-    form.reset({ notes: adjustment.notes ?? "", lines: items.map((l) => ({ stockInventoryId: l.id ?? 0, unitId: l.unitId ?? null, operation: l.operationType ?? "Add", quantity: l.quantityChanged ?? 0 })) })
+    form.reset({ date: toLocal(adjustment.operationDate), notes: adjustment.notes ?? "", lines: items.map((l) => ({ stockInventoryId: l.id ?? 0, unitId: l.unitId ?? null, operation: l.operationType ?? "Add", quantity: l.quantityChanged ?? 0 })) })
     setPicked(new Map(items.map((l) => [l.id ?? 0, {
       id: l.id ?? 0, productId: l.productId ?? 0, productName: l.productName ?? "", barcode: l.barcode, warehouseId: 0, quantityAvailable: l.quantityBefore ?? 0,
       productUnits: l.unitId ? [{ unitId: l.unitId, unitName: l.unitName, isBaseUnit: true }] : [],
@@ -92,13 +95,15 @@ export default function AdjustmentFormPage() {
           <div className="space-y-6">
             {formBranch.show && <BranchSection value={formBranch.branchId} onChange={changeBranch} />}
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <Field>
-              <FieldLabel>{t("adjForm.date")}</FieldLabel>
-              <Input readOnly className="cursor-not-allowed text-center" value={adjustment ? formatDateTime(adjustment.operationDate ?? "", i18n.language) : new Date().toLocaleString("en-GB").replace(",", "")} />
-            </Field>
             {isView
-              ? <Field><FieldLabel>{t("adjForm.notes")}</FieldLabel><Input readOnly value={adjustment?.notes ?? ""} /></Field>
-              : <FormTextarea control={form.control} name="notes" label={t("adjForm.notes")} placeholder={t("adjForm.notesHint")} />}
+              ? <>
+                  <Field><FieldLabel>{t("adjForm.date")}</FieldLabel><Input readOnly className="text-center" value={formatDateTime(adjustment?.operationDate ?? "", i18n.language)} /></Field>
+                  <Field><FieldLabel>{t("adjForm.notes")}</FieldLabel><Input readOnly value={adjustment?.notes ?? ""} /></Field>
+                </>
+              : <>
+                  <FormInput control={form.control} name="date" type="date" label={t("adjForm.date")} inputClassName="text-center" />
+                  <FormInput control={form.control} name="notes" label={t("adjForm.notes")} placeholder={t("adjForm.notesHint")} />
+                </>}
             </div>
           </div>
         </div>

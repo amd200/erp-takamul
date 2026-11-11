@@ -1,9 +1,9 @@
 import { z } from "zod"
+import { IMAGE_TYPES, MAX_IMAGE_SIZE } from "@/lib/image"
 import type { Branch } from "./types"
 
 const text = z.string().trim()
 const english = /^[a-zA-Z0-9\s\-_.,'&()]*$/
-const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/svg+xml"]
 
 export const branchSchema = z.object({
   code: text.min(1, "branchForm.err.code").max(20),
@@ -32,10 +32,13 @@ export const branchSchema = z.object({
   imageUrl: z.string(),
   stampImageUrl: z.string(),
   image: z.instanceof(File)
-    .refine((f) => f.size <= 2 * 1024 * 1024, "branchForm.err.imageSize")
-    .refine((f) => IMAGE_TYPES.includes(f.type), "branchForm.err.imageType")
+    .refine((f) => f.size <= MAX_IMAGE_SIZE, "products.imageTooBig")
+    .refine((f) => IMAGE_TYPES.includes(f.type), "products.imageType")
     .nullable(),
-  stampImage: z.instanceof(File).nullable(),
+  stampImage: z.instanceof(File)
+    .refine((f) => f.size <= MAX_IMAGE_SIZE, "products.imageTooBig")
+    .refine((f) => IMAGE_TYPES.includes(f.type), "products.imageType")
+    .nullable(),
 })
 export type BranchForm = z.infer<typeof branchSchema>
 

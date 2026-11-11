@@ -32,7 +32,7 @@ export function RowMenu({ items }: { items: (RowItem | false | null | undefined)
 
   if (list.length <= 2) {
     return (
-      <div className="flex justify-end gap-0.5">
+      <div className="flex justify-center gap-0.5">
         {list.map((i) => (
           <Tooltip key={i.key}>
             <TooltipTrigger asChild>
@@ -57,7 +57,7 @@ export function RowMenu({ items }: { items: (RowItem | false | null | undefined)
     <DropdownMenuItem key={i.key} className={`${menuItem} ${i.destructive ? "text-destructive" : ""}`} disabled={i.disabled} onSelect={i.onSelect}>{i.loading ? <Loader2 size={14} className="animate-spin" /> : i.icon}{i.label}</DropdownMenuItem>
   )
   return (
-    <div className="flex justify-end">
+    <div className="flex justify-center">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button type="button" variant="ghost" size="icon" aria-label={t("common.actions")}><MoreHorizontal /></Button>

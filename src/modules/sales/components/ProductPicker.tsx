@@ -92,7 +92,7 @@ export function ProductPicker({ onAdd, purchase, noCategoryDiscount }: { onAdd: 
                   onMouseDown={(e) => { e.preventDefault(); pick(p) }} onMouseEnter={() => setActive(i)}
                   className={cn("flex w-full cursor-default flex-col rounded-md px-1.5 py-1 text-start text-sm select-none", i === active && "bg-muted")}>
                   <span>{p.productNameAr}</span>
-                  {p.barcode && <span className="mt-0.5 font-mono text-[10px] text-muted-foreground" dir="ltr">{p.barcode}</span>}
+                  {p.barcode && <span className="mt-0.5 font-mono text-[10px] text-muted-foreground"><bdi dir="ltr">{p.barcode}</bdi></span>}
                 </li>
               ))}
           </ul>

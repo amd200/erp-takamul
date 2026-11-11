@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { useBranchColumn } from "@/modules/branches/useBranchColumn"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Plus, Ruler } from "lucide-react"
@@ -64,8 +65,10 @@ export default function UnitsPage() {
   const [toDelete, setToDelete] = useState<Unit | null>(null)
   const open = (u: Unit | null) => { setEditing(u); setDialogOpen(true) }
 
+  const branchColumn = useBranchColumn<Unit>((u) => ({ id: u.branchId }))
   const columns: Column<Unit>[] = [
     { id: "name", sortKey: "name", header: t("units.name"), cell: (u) => <span className="font-semibold">{u.name}</span> },
+    ...branchColumn,
     { id: "code", sortKey: "taxCode", header: t("units.taxCode"), cell: (u) => <span className="text-muted-foreground" dir="ltr">{u.taxCode || "—"}</span> },
     { id: "desc", sortKey: "description", header: t("common.description"), cell: (u) => <span className="text-muted-foreground">{u.description || "—"}</span> },
     { id: "actions", header: "", align: "end", cell: (u) => can(P.units.manage) && <RowActions onEdit={() => open(u)} onDelete={() => setToDelete(u)} /> },

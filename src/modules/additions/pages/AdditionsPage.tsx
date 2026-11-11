@@ -46,9 +46,9 @@ function AdditionDialog({ open, onOpenChange, addition }: { open: boolean; onOpe
           <FieldGroup className="gap-3">
             {formBranch.show && <BranchSection value={formBranch.branchId} onChange={changeBranch} />}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <FormInput control={form.control} name="nameAr" label={t("common.nameAr")} required />
-              <FormInput control={form.control} name="nameEn" label={t("common.nameEn")} dir="ltr" />
-              <FormInput control={form.control} name="nameUr" label={t("common.nameUr")} dir="ltr" />
+              <FormInput control={form.control} name="nameAr" label={t("additions.nameAr")} required />
+              <FormInput control={form.control} name="nameEn" label={t("additions.nameEn")} dir="ltr" />
+              <FormInput control={form.control} name="nameUr" label={t("additions.nameUr")} dir="ltr" />
             </div>
             <Controller control={form.control} name="categoryIds" render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>

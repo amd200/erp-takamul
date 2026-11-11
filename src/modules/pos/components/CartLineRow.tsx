@@ -47,7 +47,7 @@ export const CartLineRow = memo(function CartLineRow({ line: l, index, locked, o
       <div className="flex items-center justify-center gap-1" onClick={stop} onKeyDown={stop}>
         <button type="button" aria-label={t("pos.less")} disabled={locked} onClick={() => onQty(l.key, l.quantity - 1)}
           className="flex size-4 items-center justify-center rounded border border-border text-muted-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"><Minus size={11} /></button>
-        <input type="number" min="0" step="any" value={l.quantity} readOnly={locked} aria-label={t("products.quantity")}
+        <input type="number" onWheel={(e) => e.currentTarget.blur()} min="0" step="any" value={l.quantity} readOnly={locked} aria-label={t("products.quantity")}
           onChange={(e) => { const v = Number(e.target.value); if (Number.isFinite(v)) onQty(l.key, v) }}
           className="h-6 w-7 [appearance:textfield] rounded border bg-card text-center text-xs font-semibold tabular-nums outline-none focus:border-primary focus:ring-1 focus:ring-primary [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" />
         <button type="button" aria-label={t("pos.more")} disabled={locked} onClick={() => onQty(l.key, l.quantity + 1)}

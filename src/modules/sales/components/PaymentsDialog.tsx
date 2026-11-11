@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Trash2 } from "lucide-react"
+import { Pencil, Trash2 } from "lucide-react"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
@@ -17,8 +17,8 @@ import { useCustomer } from "@/modules/customers/queries"
 import { pickTreasury, useTreasuries } from "@/modules/lookups/service"
 import { useAppSettings } from "@/modules/settings"
 import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
-import { useDeletePayment, useInvoicePayments, useRecordPayment } from "../queries"
-import { receiptFormSchema, today, type ReceiptForm } from "../schema"
+import { useDeletePayment, useInvoicePayments, useRecordPayment, useUpdatePayment } from "../queries"
+import { receiptAmountSchema, receiptFormSchema, today, type ReceiptAmountForm, type ReceiptForm } from "../schema"
 import type { InvoicePaymentItem, SalesOrderDto } from "../types"
 
 /** Add a receipt voucher (سند قبض) against an invoice, with the vouchers already taken for it. */
@@ -29,6 +29,9 @@ export function PaymentsDialog({ invoice, onOpenChange }: { invoice: SalesOrderD
   const { data: payments = [] } = useInvoicePayments(invoice?.id)
   const record = useRecordPayment()
   const remove = useDeletePayment()
+  const update = useUpdatePayment()
+  const [toEdit, setToEdit] = useState<InvoicePaymentItem | null>(null)
+  const editForm = useForm<ReceiptAmountForm>({ resolver: zodResolver(receiptAmountSchema), defaultValues: { amount: 0 } })
   const [toDelete, setToDelete] = useState<InvoicePaymentItem | null>(null)
   const defaultVault = useAppSettings().sales?.defaultSalesVault
   const form = useForm<ReceiptForm>({ resolver: zodResolver(receiptFormSchema), defaultValues: { date: today(), treasuryId: 0, amount: 0 } })
@@ -68,7 +71,7 @@ export function PaymentsDialog({ invoice, onOpenChange }: { invoice: SalesOrderD
               <Table>
                 <TableHeader>
                   <TableRow className="hover:bg-transparent">
-                    {[t("sales.paymentNumber"), t("sales.paymentDate"), t("sales.treasury"), t("sales.amount"), ""].map((h, i) => <TableHead key={i} className="text-xs text-muted-foreground">{h}</TableHead>)}
+                    {[t("sales.paymentNumber"), t("sales.paymentDate"), t("sales.treasury"), t("sales.amount"), ""].map((h, i) => <TableHead key={i} className="text-muted-foreground">{h}</TableHead>)}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -78,7 +81,8 @@ export function PaymentsDialog({ invoice, onOpenChange }: { invoice: SalesOrderD
                       <TableCell>{p.paymentDate ? formatDateTime(p.paymentDate, i18n.language) : "—"}</TableCell>
                       <TableCell className="text-muted-foreground">{p.transactionName || "—"}</TableCell>
                       <TableCell className="font-semibold tabular-nums">{formatMoney(p.amount)}</TableCell>
-                      <TableCell className="text-end">
+                      <TableCell >
+                        <Button variant="ghost" size="icon" aria-label={t("common.edit")} onClick={() => { setToEdit(p); editForm.reset({ amount: p.amount }) }}><Pencil /></Button>
                         <Button variant="ghost-destructive" size="icon" aria-label={t("common.delete")} onClick={() => setToDelete(p)}><Trash2 /></Button>
                       </TableCell>
                     </TableRow>
@@ -93,6 +97,19 @@ export function PaymentsDialog({ invoice, onOpenChange }: { invoice: SalesOrderD
           <Button type="submit" form="payment-form" disabled={record.isPending}>{t("sales.saveReceipt")}</Button>
         </DialogFooter>
       </DialogContent>
+      <Dialog open={!!toEdit} onOpenChange={(o) => !o && setToEdit(null)}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader><DialogTitle>{t("sales.editReceiptTitle")} {toEdit?.paymentNumber ?? ""}</DialogTitle></DialogHeader>
+          <form id="edit-payment-form" className="flex flex-col gap-3"
+            onSubmit={editForm.handleSubmit((v) => toEdit && update.mutate({ paymentId: toEdit.id, amount: v.amount }, { onSuccess: () => setToEdit(null) }))}>
+            <FormInput control={editForm.control} name="amount" type="number" label={t("sales.amount")} required />
+          </form>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setToEdit(null)}>{t("common.cancel")}</Button>
+            <Button type="submit" form="edit-payment-form" disabled={update.isPending}>{t("common.save")}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <ConfirmDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)} title={t("sales.deleteReceiptTitle")}
         description={`${t("sales.receiptName")} ${toDelete?.paymentNumber ?? ""} — ${t("sales.deleteReceiptBody")}`} pending={remove.isPending}
         onConfirm={() => toDelete && remove.mutate(toDelete.id, { onSuccess: () => setToDelete(null) })} />

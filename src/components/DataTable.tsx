@@ -191,7 +191,7 @@ export function DataTable<T extends RowData>({
               <TableRow className="hover:bg-transparent">
                 {columns.map((c) => (
                   <TableHead key={c.id} style={c.width ? { width: c.width } : undefined} aria-sort={c.sortKey && sort?.key === c.sortKey ? (sort.desc ? "descending" : "ascending") : undefined}
-                    className={cn("text-xs font-medium text-muted-foreground", (c.align === "end" || c.id === "actions") && "text-end")}>
+                    className="font-medium text-muted-foreground">
                     {c.sortKey && sort ? <SortButton column={c} sort={sort} onSorted={() => setPage(0)} /> : c.id === "actions" && !c.header ? t("common.actions") : c.header}
                   </TableHead>
                 ))}
@@ -204,7 +204,7 @@ export function DataTable<T extends RowData>({
               {slice.map((row, ri) => (
                 <TableRow key={row.id}>
                   {row.getAllCells().map((cell) => (
-                    <TableCell key={cell.id} className={cn("tabular-nums py-3", columnsProp.some((c) => c.width) && "overflow-hidden text-ellipsis", (columns.find((c) => c.id === cell.column.id)?.align === "end" || cell.column.id === "actions") && "text-end", columns.find((c) => c.id === cell.column.id)?.className)}>{columns.find((c) => c.id === cell.column.id)?.serial ? firstNo + ri + 1 : <table.FlexRender cell={cell} />}</TableCell>
+                    <TableCell key={cell.id} className={cn("tabular-nums py-3", columnsProp.some((c) => c.width) && "overflow-hidden text-ellipsis", columns.find((c) => c.id === cell.column.id)?.className)}>{columns.find((c) => c.id === cell.column.id)?.serial ? firstNo + ri + 1 : <table.FlexRender cell={cell} />}</TableCell>
                   ))}
                 </TableRow>
               ))}

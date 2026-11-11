@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import type { Category } from "@/modules/categories/types"
 import { cn } from "@/lib/utils"
 import type { Product } from "@/modules/products/types"
-import { useTaxesEnabled } from "../hooks"
 import { shownPrice } from "./useCatalog"
 import { usePos4Items } from "./queries"
 
@@ -23,7 +22,6 @@ type CardProps = {
 
 /** A card on a wide screen: the picture on a soft panel, the name and the price; a frame once it is in the cart. */
 const Card = memo(function Card({ item, name, typography, quantity, onSelect }: CardProps) {
-  const exempt = !useTaxesEnabled()
   const { t } = useTranslation()
   const added = quantity > 0
   return (
@@ -39,7 +37,7 @@ const Card = memo(function Card({ item, name, typography, quantity, onSelect }: 
         <div className="mb-0.5 leading-tight font-semibold text-foreground" style={{ fontSize: typography.productName }}>{name}</div>
         <div className="flex flex-row-reverse items-center justify-center gap-x-1 font-bold text-primary" style={{ fontSize: typography.productPrice + 2 }}>
           <CurrencySymbol size={typography.priceIcon + 2} />
-          {shownPrice(item, exempt).toFixed(2)}
+          {shownPrice(item).toFixed(2)}
         </div>
       </div>
     </div>
@@ -48,7 +46,6 @@ const Card = memo(function Card({ item, name, typography, quantity, onSelect }: 
 
 /** A row on a phone: the price and calories on one side, the picture with the +/- control on the other. */
 const MobileCard = memo(function MobileCard({ item, name, typography, quantity, onSelect, onDecrease }: CardProps) {
-  const exempt = !useTaxesEnabled()
   const { t, i18n } = useTranslation()
   const added = quantity > 0
   return (
@@ -77,7 +74,7 @@ const MobileCard = memo(function MobileCard({ item, name, typography, quantity, 
         <div className="pos4-product-meta mt-2 flex items-center justify-start gap-3 font-bold" dir="rtl">
           <span className="flex flex-row-reverse items-center gap-x-1 text-primary" style={{ fontSize: typography.productPrice + 2 }}>
             <CurrencySymbol size={typography.priceIcon + 2} />
-            {shownPrice(item, exempt).toFixed(2)}
+            {shownPrice(item).toFixed(2)}
           </span>
           {item.calories != null && (
             <span className="pos4-calories" dir="rtl">

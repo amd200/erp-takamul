@@ -65,7 +65,7 @@ export function MethodsDialog(props: PaymentProps) {
                 <div key={x.id} className="grid grid-cols-2 gap-3">
                   <button type="button" disabled={busy} onClick={() => p.selectSingle(x.id)} className={pill(on)}><Icon size={21} strokeWidth={2} /><span className="line-clamp-2">{label(x)}</span></button>
                   <div className="relative min-w-0" dir="ltr">
-                    <input type="number" min="0" step="0.01" inputMode="decimal" value={on ? p.singleRaw : "0.00"} readOnly={!on} disabled={busy} aria-label={`${t("pos.tendered")} - ${label(x)}`}
+                    <input type="number" onWheel={(e) => e.currentTarget.blur()} min="0" step="0.01" inputMode="decimal" value={on ? p.singleRaw : "0.00"} readOnly={!on} disabled={busy} aria-label={`${t("pos.tendered")} - ${label(x)}`}
                       onFocus={(e) => { if (!on) p.selectSingle(x.id); e.currentTarget.select() }} onChange={(e) => p.setSingleRaw(e.target.value)} className={field(on)} />
                     {unit}
                   </div>
@@ -94,7 +94,7 @@ export function MethodsDialog(props: PaymentProps) {
                   return (
                     <label key={x.id} className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-2 rounded-xl border border-border bg-muted/35 p-2">
                       <span className="px-1 text-sm font-bold text-muted-foreground">{label(x)}</span>
-                      <input type="number" min="0" step="0.01" inputMode="decimal" dir="ltr" value={split && sp ? sp.raw : "0.00"} disabled={!split || !sp || busy} aria-label={`${t("pos.tendered")} - ${label(x)}`}
+                      <input type="number" onWheel={(e) => e.currentTarget.blur()} min="0" step="0.01" inputMode="decimal" dir="ltr" value={split && sp ? sp.raw : "0.00"} disabled={!split || !sp || busy} aria-label={`${t("pos.tendered")} - ${label(x)}`}
                         onFocus={(e) => { if (sp) p.activate(sp.id); e.currentTarget.select() }} onChange={(e) => sp && p.setSplitRaw(sp.id, e.target.value)}
                         className={cn("h-12 min-w-0 rounded-lg border bg-background px-3 text-left text-lg font-black outline-none transition disabled:cursor-default disabled:opacity-100", line, active && (beauty ? "ring-2 ring-primary/10" : "ring-2 ring-[#263e72]/10"))} />
                     </label>

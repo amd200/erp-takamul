@@ -1,6 +1,7 @@
 import { z } from "zod"
 
 export const adjustmentSchema = z.object({
+  date: z.string(),
   notes: z.string(),
   lines: z
     .array(z.object({

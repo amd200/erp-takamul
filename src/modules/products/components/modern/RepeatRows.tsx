@@ -26,7 +26,7 @@ export function RepeatRows({ headers, cols, count, renderRow, onRemove, empty, e
     )
   }
   return (
-    <div className="overflow-x-auto">
+    <div className="-m-1 overflow-x-auto p-1">
       <div className="flex min-w-[520px] flex-col gap-2">
         <div className={cn("grid gap-2 text-xs font-medium text-muted-foreground", cols)}>
           {headers.map((h) => <span key={h}>{h}</span>)}

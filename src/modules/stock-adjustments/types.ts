@@ -15,4 +15,4 @@ export type StockRowDto = {
   productUnits?: { unitId: number; unitName?: string | null; isBaseUnit: boolean; barcode?: string | null }[] | null
 }
 
-export type AdjustmentInput = { notes: string; lines: { stockInventoryId: number; unitId: number | null; operation: Operation; quantity: number }[] }
+export type AdjustmentInput = { date: string; notes: string; lines: { stockInventoryId: number; unitId: number | null; operation: Operation; quantity: number }[] }

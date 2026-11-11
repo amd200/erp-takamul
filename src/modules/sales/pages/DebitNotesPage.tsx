@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useBranchColumn } from "@/modules/branches/useBranchColumn"
 import { Link } from "react-router-dom"
 import { FilePlus2, FileText, Printer, RefreshCw, ScrollText } from "lucide-react"
 import { useTranslation } from "react-i18next"
@@ -28,10 +29,12 @@ export default function DebitNotesPage() {
   const print = usePrintDebitNote()
   const [zatcaDoc, setZatcaDoc] = useState<DebitNoteDto | null>(null)
 
+  const branchColumn = useBranchColumn<DebitNoteDto>((d) => ({ name: d.branchName }))
   const columns: Column<DebitNoteDto>[] = [
     { id: "number", sortKey: "debitNoteNumber", header: t("sales.debitNumber"), cell: (d) => <span className="font-semibold">{d.debitNoteNumber}</span> },
     { id: "invoice", sortKey: "salesOrderNumber", header: t("sales.invoice"), cell: (d) => <Link to={`/sales/invoices/${d.salesOrderId}`} className="hover:underline">{d.salesOrderNumber}</Link> },
     { id: "date", sortKey: "issueDate", className: "min-w-44", header: t("common.date"), cell: (d) => <span className="text-muted-foreground">{formatDateTime(d.issueDate ?? "", i18n.language)}</span> },
+    ...branchColumn,
     { id: "customer", sortKey: "customerName", header: t("sales.customer"), cell: (d) => d.customerName },
     { id: "createdBy", sortKey: "createdByName", header: t("users.userName"), cell: (d) => d.createdByName || d.createdBy || "—" },
     { id: "total", sortKey: "grandTotal", header: t("sales.grandTotal"), cell: (d) => <span className="font-semibold">{formatMoney(d.grandTotal ?? 0)}</span> },

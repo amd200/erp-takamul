@@ -47,7 +47,7 @@ export function PosSimPanel() {
                   {k === "slow" && (
                     <>
                       <label className="flex items-center gap-1">
-                        <input type="number" min={1} max={120} value={sim.slowSeconds} onChange={(e) => sim.setSlow({ slowSeconds: Math.max(1, Number(e.target.value) || 1) })} className="w-14 rounded border bg-background px-1" />
+                        <input type="number" onWheel={(e) => e.currentTarget.blur()} min={1} max={120} value={sim.slowSeconds} onChange={(e) => sim.setSlow({ slowSeconds: Math.max(1, Number(e.target.value) || 1) })} className="w-14 rounded border bg-background px-1" />
                         {t("posSim.seconds")}
                       </label>
                       <label className="flex items-center gap-1">

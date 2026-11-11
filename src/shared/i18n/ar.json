@@ -383,7 +383,7 @@
     "itemsList": "قائمة الأصناف",
     "chooseProduct": "اختر الصنف",
     "productName": "اسم الصنف",
-    "productCode": "كود الصنف",
+    "productCode": "باركود الصنف",
     "unit": "الوحدة",
     "before": "الكمية المتاحة قبل العملية",
     "operationType": "نوع العملية",
@@ -508,6 +508,7 @@
   },
   "common": {
     "serial": "م",
+    "branch": "الفرع",
     "routeErrorTitle": "حدث خطأ غير متوقع",
     "routeErrorChunk": "تم تحديث النظام. أعد تحميل الصفحة للمتابعة.",
     "reload": "إعادة تحميل",
@@ -650,12 +651,14 @@
     "theme": "المظهر",
     "themes": {
       "light": "فاتح",
-      "dark": "داكن",
-      "system": "حسب الجهاز"
+      "dark": "داكن"
     },
     "language": "اللغة",
     "account": "الحساب",
     "changePassword": "تغيير كلمة المرور",
+    "newPassword": "كلمة المرور الجديدة",
+    "newPasswordHint": "ادخل كلمة المرور الجديدة",
+    "rewriteNewPassword": "اعد كتابة كلمة المرور الجديدة",
     "logout": "تسجيل الخروج",
     "selectBranch": "اختر الفرع",
     "allBranches": "جميع الفروع",
@@ -691,9 +694,8 @@
       "totalAmount": "الإجمالي",
       "paidAmount": "المدفوع",
       "supplierName": "اسم المورد",
-      "purchaseStatus": "حالة عملية الشراء",
-      "discountAmount": "قيمة الخصم",
-      "code": "الكود",
+      "invoiceTotal": "إجمالي الفاتورة",
+      "quoteNumber": "رقم عرض السعر",
       "name": "الاسم",
       "phone": "رقم الجوال"
     },
@@ -710,6 +712,9 @@
   },
   "products": {
     "listTitle": "إدارة الاصناف",
+    "nameAr": "اسم الصنف بالعربي",
+    "nameEn": "اسم الصنف بالإنجليزي",
+    "nameUr": "اسم الصنف بالبنغالية",
     "listDescription": "الأصناف المباشرة والمتفرعة والمجهزة والخامات.",
     "add": "إضافة صنف",
     "addTitle": "إضافة صنف",
@@ -721,6 +726,7 @@
     "quantity": "الكمية",
     "barcode": "الباركود",
     "cost": "التكلفة",
+    "purchasePrice": "سعر الشراء",
     "price": "السعر",
     "sellingPrice": "سعر البيع",
     "types": {
@@ -777,9 +783,9 @@
     "taxExclusive": "السعر غير شامل الضريبة",
     "exemptionReason": "سبب الإعفاء",
     "pickReason": "اختر السبب",
-    "baseUnit": "الوحدة الأساسية",
+    "baseUnit": "وحدة البيع",
     "minStock": "حد المخزون الأدنى",
-    "minStockHint": "ينبهك النظام عند وصول الكمية له.",
+    "minStockHint": "ينبهك النظام عند وصول الكمية للحد الأدنى.",
     "purchaseUnit": "وحدة الشراء",
     "conversionFactor": "معامل التحويل",
     "conversionHint": "كم وحدة أساسية في وحدة الشراء.",
@@ -811,7 +817,7 @@
     "fixErrors": "أكمل الحقول المحددة بالأحمر ثم احفظ.",
     "imageChange": "تغيير الصورة",
     "imageTooBig": "الصورة أكبر من 2 ميجا.",
-    "imageType": "الصورة لازم تكون PNG أو JPG أو WEBP.",
+    "imageType": "الصورة لازم تكون PNG أو JPG.",
     "listCount_one": "صنف واحد",
     "listCount": "{{n}} صنف",
     "noRawMaterials": "مفيش خامات لسه. ضيف خامة الأول عشان تستخدمها في المكونات."
@@ -822,6 +828,9 @@
     "add": "إضافة تصنيف",
     "edit": "تعديل تصنيف",
     "name": "التصنيف",
+    "nameAr": "اسم التصنيف بالعربي",
+    "nameEn": "اسم التصنيف بالإنجليزي",
+    "nameUr": "اسم التصنيف بالبنغالية",
     "parent": "تابعة لـ",
     "isMain": "تصنيف رئيسي",
     "itemCount": "عدد الأصناف",
@@ -854,6 +863,9 @@
     "add": "إضافة جديدة",
     "edit": "تعديل إضافة",
     "name": "الإضافة",
+    "nameAr": "اسم الإضافة بالعربي",
+    "nameEn": "اسم الإضافة بالإنجليزي",
+    "nameUr": "اسم الإضافة بالبنغالية",
     "categories": "التصنيفات",
     "createdAt": "أُضيفت",
     "showWith": "تظهر مع التصنيفات",
@@ -1124,6 +1136,8 @@
     "deleteReceiptTitle": "تأكيد الحذف",
     "deleteReceiptBody": "هذا الإجراء لا يمكن التراجع عنه",
     "receiptNote": "دفعة على الفاتورة رقم {{number}}",
+    "editReceiptTitle": "تعديل سند القبض",
+    "receiptUpdated": "تم تعديل سند القبض",
     "amount": "المبلغ",
     "method": "طريقة الدفع",
     "treasury": "الخزينة",
@@ -2895,7 +2909,7 @@
       "address": "العنوان"
     },
     "taxHint": "بتظهر على الفاتورة الضريبية.",
-    "imageHint": "PNG أو JPG أو WEBP حتى 2 ميجا."
+    "imageHint": "PNG أو JPG حتى 2 ميجا."
   },
   "reservations": {
     "title": "الحجوزات",

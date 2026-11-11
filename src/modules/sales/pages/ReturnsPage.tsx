@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useBranchColumn } from "@/modules/branches/useBranchColumn"
 import { Link } from "react-router-dom"
 import { Eye, ScrollText, Send, Undo2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
@@ -26,10 +27,12 @@ export default function ReturnsPage() {
   const send = useSendReturn()
   const [zatcaDoc, setZatcaDoc] = useState<SalesReturnDto | null>(null)
 
+  const branchColumn = useBranchColumn<SalesReturnDto>((r) => ({ id: r.branchId, name: r.branchShortName }))
   const columns: Column<SalesReturnDto>[] = [
     { id: "number", sortKey: "returnNumber", header: t("sales.returnNumber"), cell: (r) => <span className="font-semibold">{r.returnNumber}</span> },
     { id: "invoice", sortKey: "salesOrderNumber", header: t("sales.invoice"), cell: (r) => <Link to={`/sales/invoices/${r.salesOrderId}`} className="hover:underline">{r.salesOrderNumber}</Link> },
     { id: "date", sortKey: "returnDate", className: "min-w-44", header: t("common.date"), cell: (r) => <span className="text-muted-foreground">{formatDateTime(r.returnDate ?? "", i18n.language)}</span> },
+    ...branchColumn,
     { id: "customer", sortKey: "customerName", header: t("sales.customer"), cell: (r) => r.customerName },
     { id: "total", sortKey: "grandTotal", header: t("sales.grandTotal"), cell: (r) => <span className="font-semibold">{formatMoney(r.grandTotal ?? 0)}</span> },
     { id: "refunded", sortKey: "refundedAmount", header: t("sales.refunded"), cell: (r) => (r.refundedAmount ? formatMoney(r.refundedAmount) : <span className="text-faint">—</span>) },

@@ -17,6 +17,7 @@ import { formatMoney, formatNumber } from "@/lib/format"
 import { Can, useCan } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
 import { useCategories } from "@/modules/categories/queries"
+import { useBranchColumn } from "@/modules/branches/useBranchColumn"
 import { useDeleteProduct, useProductPage } from "../queries"
 import { PRODUCT_TYPES, type Product, type ProductType } from "../types"
 
@@ -47,6 +48,7 @@ export default function ProductsListPage() {
   const can = useCan()
   const { data: categories = [] } = useCategories()
   const del = useDeleteProduct()
+  const branchColumn = useBranchColumn<Product>((p) => ({ id: p.branchId }))
   const [tab, setTab] = useState<Tab>("all")
   const tabsRef = useRef<HTMLDivElement>(null)
   useEffect(() => { tabsRef.current?.querySelector("[data-state=active]")?.scrollIntoView({ inline: "nearest", block: "nearest" }) }, [tab])
@@ -77,10 +79,11 @@ export default function ProductsListPage() {
     ) },
     { id: "type", sortKey: "productType", header: t("products.type"), cell: (p) => <Badge variant="secondary">{t(`products.types.${p.productType}`)}</Badge> },
     { id: "category", sortKey: "categoryName", header: t("products.category"), cell: (p) => p.categoryName || "—" },
+    ...branchColumn,
     { id: "qty", sortKey: "balance", header: t("products.quantity"), cell: (p) => <StockCell p={p} /> },
     { id: "barcode", sortKey: "barcode", header: t("products.barcode"), cell: (p) => <span className="text-muted-foreground" dir="ltr">{p.barcode || "—"}</span> },
-    { id: "cost", sortKey: "costPrice", header: t("products.cost"), cell: (p) => <span className="text-muted-foreground">{p.costPrice ? formatMoney(p.costPrice) : "—"}</span> },
-    { id: "price", sortKey: "sellingPrice", header: t("products.price"), cell: (p) => <span className="font-medium">{p.sellingPrice ? formatMoney(p.sellingPrice) : "—"}</span> },
+    { id: "cost", sortKey: "costPrice", header: t("products.purchasePrice"), cell: (p) => <span className="text-muted-foreground">{p.costPrice ? formatMoney(p.costPrice) : "—"}</span> },
+    { id: "price", sortKey: "sellingPrice", header: t("products.sellingPrice"), cell: (p) => <span className="font-medium">{p.sellingPrice ? formatMoney(p.sellingPrice) : "—"}</span> },
     { id: "actions", header: "", align: "end", cell: (p) => (
       <RowActions editTo={can(P.products.edit) ? `/products/edit/${p.id}?type=${p.productType}` : undefined} onDelete={can(P.products.delete) ? () => setToDelete(p) : undefined} />
     ) },

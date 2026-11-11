@@ -67,32 +67,29 @@ export function RecentTransactions() {
     { id: "date", header: t("home.col.date"), cell: (r) => day(r.orderDate) },
     { id: "customer", header: t("home.col.customerName"), cell: (r) => r.customerName },
     { id: "userName", header: t("home.col.userName"), cell: (r) => r.createdBy },
-    { id: "status", header: t("home.col.paymentStatus"), cell: (r) => <PaymentState row={r} /> },
     { id: "total", header: t("home.col.totalAmount"), cell: (r) => formatMoney(r.grandTotal ?? 0) },
-    { id: "paid", header: t("home.col.paidAmount"), cell: (r) => paidOf(r) },
+    { id: "status", header: t("home.col.paymentStatus"), cell: (r) => <PaymentState row={r} /> },
+    { id: "paid", header: t("home.col.paidAmount"), cell: (r) => formatMoney(paidOf(r)) },
   ]
   const purchaseCols: Column<RecentPurchase>[] = [
     { id: "number", header: t("home.col.invoiceNumber"), cell: (r) => r.purchaseOrderNumber },
     { id: "date", header: t("home.col.date"), cell: (r) => day(r.orderDate) },
     { id: "supplier", header: t("home.col.supplierName"), cell: (r) => r.supplierName },
-    { id: "status", header: t("home.col.purchaseStatus"), cell: (r) => r.orderStatus === "Confirmed" || r.orderStatus === "UnConfirmed" ? t(`home.purchase.${r.orderStatus}`) : r.orderStatus },
+    { id: "total", header: t("home.col.invoiceTotal"), cell: (r) => formatMoney(r.grandTotal ?? 0) },
   ]
   const quoteCols: Column<Quote>[] = [
-    { id: "number", header: t("home.col.invoiceNumber"), cell: (r) => r.quotationNumber },
+    { id: "number", header: t("home.col.quoteNumber"), cell: (r) => r.quotationNumber },
     { id: "date", header: t("home.col.date"), cell: (r) => day(r.quotationDate) },
     { id: "customer", header: t("home.col.customerName"), cell: (r) => r.customerName },
-    { id: "discount", header: t("home.col.discountAmount"), cell: (r) => r.discountAmount },
-    { id: "total", header: t("home.col.totalAmount"), cell: (r) => r.grandTotal },
+    { id: "total", header: t("home.col.totalAmount"), cell: (r) => formatMoney(r.grandTotal ?? 0) },
   ]
   const supplierCols: Column<Supplier>[] = [
-    { id: "code", header: t("home.col.code"), width: "20%", cell: (r) => r.id },
-    { id: "name", header: t("home.col.name"), width: "50%", cell: (r) => r.supplierName },
-    { id: "phone", header: t("home.col.phone"), width: "30%", cell: (r) => r.phone },
+    { id: "name", header: t("home.col.name"), width: "60%", cell: (r) => r.supplierName },
+    { id: "phone", header: t("home.col.phone"), width: "40%", cell: (r) => r.phone },
   ]
   const customerCols: Column<Customer>[] = [
-    { id: "code", header: t("home.col.code"), width: "20%", cell: (r) => r.id },
-    { id: "name", header: t("home.col.name"), width: "50%", cell: (r) => r.customerName },
-    { id: "phone", header: t("home.col.phone"), width: "30%", cell: (r) => r.phone },
+    { id: "name", header: t("home.col.name"), width: "60%", cell: (r) => r.customerName },
+    { id: "phone", header: t("home.col.phone"), width: "40%", cell: (r) => r.phone },
   ]
   const table = { empty: null, emptyText: t("home.noData"), pager: false } as const
 

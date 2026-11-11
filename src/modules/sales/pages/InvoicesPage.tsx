@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react"
+import { useBranchColumn } from "@/modules/branches/useBranchColumn"
 import { FileText, RotateCw } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useAppSettings } from "@/modules/settings"
@@ -33,9 +34,11 @@ export default function InvoicesPage({ channel }: { channel: Channel }) {
   const [zatcaDoc, setZatcaDoc] = useState<SalesOrderDto | null>(null)
   const onSearch = useCallback((q: string) => { setSearch((prev) => { if (prev !== q) setPage(0); return q }) }, [])
 
+  const branchColumn = useBranchColumn<SalesOrderDto>((i) => ({ id: i.branchId, name: i.branchShortName }))
   const columns: Column<SalesOrderDto>[] = [
     { id: "number", sortKey: "orderNumber", header: t("sales.number"), cell: (i) => <span className="font-semibold">{i.orderNumber}</span> },
     { id: "date", sortKey: "orderDate", className: "min-w-44", header: t("common.date"), cell: (i) => <span className="text-muted-foreground">{formatDateTime(i.orderDate ?? "", i18n.language)}</span> },
+    ...branchColumn,
     { id: "customer", sortKey: "customerName", header: t("sales.customer"), cell: (i) => i.customerName },
     { id: "employee", sortKey: "employeeName", header: t("users.userName"), cell: (i) => i.employeeName || "—" },
     ...(stage2 ? [{ id: "zatca", sortKey: "zatcaStatus", header: t("sales.zatcaStatus"), cell: (i: SalesOrderDto) => <ZatcaBadge status={i.zatcaStatus} message={i.zatcaStatus === "Rejected" ? i.zatcaResponse : null} /> }] : []),

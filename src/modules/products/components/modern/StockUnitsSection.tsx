@@ -18,10 +18,12 @@ export function StockUnitsSection() {
   const rules = kindRules(type)
   const unitOptions = units.map((u) => ({ value: String(u.id), label: u.name }))
 
+  if (rules.unitInBasic) return null
+
   return (
     <SectionCard title={t("products.sections.units")}>
-      <div className={rules.purchaseUnit ? "grid gap-4 sm:grid-cols-2 lg:grid-cols-3" : "grid gap-4 sm:grid-cols-2"}>
-        <FormSelect control={control} name="baseUnitId" numeric required label={t("products.baseUnit")} options={unitOptions} />
+      <div className={rules.purchaseUnit ? "grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3" : "grid items-start gap-4 sm:grid-cols-2"}>
+        {<FormSelect control={control} name="baseUnitId" numeric required label={t("products.baseUnit")} options={unitOptions} />}
         {rules.purchaseUnit && (
           <>
             <FormSelect control={control} name="purchaseUnitId" numeric required label={t("products.purchaseUnit")} options={unitOptions} />
@@ -29,7 +31,7 @@ export function StockUnitsSection() {
           </>
         )}
         {rules.holdsStock && (
-          <div className="col-span-full"><FormInput control={control} name="minStockLevel" type="number" label={t("products.minStock")} description={t("products.minStockHint")} /></div>
+          <FormInput control={control} name="minStockLevel" type="number" label={t("products.minStock")} description={t("products.minStockHint")} />
         )}
       </div>
 
@@ -49,7 +51,7 @@ export function StockUnitsSection() {
             count={extra.fields.length}
             onRemove={extra.remove}
             empty={t("products.noExtraUnits")}
-            cols="grid-cols-[1.2fr_0.7fr_1.4fr_0.9fr_auto]"
+            cols="grid-cols-[minmax(0,1.4fr)_minmax(0,0.8fr)_minmax(0,1.6fr)_minmax(0,1fr)_auto]"
             headers={[t("products.unit"), t("products.factor"), t("products.barcode"), t("products.sellingPrice")]}
             renderRow={(i) => (
               <>

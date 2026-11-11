@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from "react"
 import { Controller, FormProvider, useController, useForm, useFormContext } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
+import { imageError } from "@/lib/image"
 import { ArrowLeft, ArrowRight, ImagePlus } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
@@ -27,18 +28,19 @@ function ImageDrop({ file: fileName, url: urlName, label, current, readOnly }: {
   useEffect(() => () => { if (picked && preview) URL.revokeObjectURL(preview) }, [picked, preview])
   const take = (f?: File) => {
     if (!f || readOnly) return
-    if (!f.type.startsWith("image/")) return void toast.error(t("branchForm.invalidImage"))
+    const err = imageError(f)
+    if (err) return void toast.error(t(err))
     field.onChange(f)
   }
   return (
     <Field data-invalid={fieldState.invalid}>
       <FieldLabel>{label}</FieldLabel>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3" onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); take(e.dataTransfer.files[0]) }}>
         <div className="grid size-20 shrink-0 place-items-center overflow-hidden rounded-xl border bg-muted/40">
           {preview ? <img src={preview} alt="" className="size-full object-contain" /> : <ImagePlus className="size-6 text-faint" />}
         </div>
         <div className="flex flex-col gap-1">
-          <input ref={input} type="file" accept="image/*" aria-label={label} className="sr-only" onChange={(e) => { take(e.target.files?.[0]); e.target.value = "" }} />
+          <input ref={input} type="file" accept="image/png,image/jpeg" aria-label={label} className="sr-only" onChange={(e) => { take(e.target.files?.[0]); e.target.value = "" }} />
           <div className="flex gap-2">
             <Button type="button" variant="outline" disabled={readOnly} onClick={() => input.current?.click()}>{t("products.imageChange")}</Button>
             {preview && !readOnly && <Button type="button" variant="ghost" onClick={() => { field.onChange(null); setValue(urlName, "") }}>{t("common.delete")}</Button>}

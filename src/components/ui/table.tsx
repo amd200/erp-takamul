@@ -68,7 +68,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
       data-slot="table-head"
       className={cn(
         "align-middle whitespace-nowrap text-[var(--table-header-text)] [&:has([role=checkbox])]:pe-0",
-        "h-10 px-2 text-start font-medium",
+        "h-10 px-2 text-center text-sm font-medium",
         className
       )}
       {...props}
@@ -82,7 +82,7 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
       data-slot="table-cell"
       className={cn(
         "align-middle whitespace-nowrap [&:has([role=checkbox])]:pe-0",
-        "p-2",
+        "p-2 text-center",
         className
       )}
       {...props}

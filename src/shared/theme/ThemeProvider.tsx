@@ -1,33 +1,23 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 
-export type ThemeChoice = "light" | "dark" | "system"
-type Ctx = { choice: ThemeChoice; resolved: "light" | "dark"; setChoice: (c: ThemeChoice) => void }
+export type ThemeChoice = "light" | "dark"
+type Ctx = { choice: ThemeChoice; resolved: ThemeChoice; setChoice: (c: ThemeChoice) => void }
 
 const ThemeContext = createContext<Ctx | null>(null)
 const KEY = "theme"
-const media = () => window.matchMedia("(prefers-color-scheme: dark)")
 
 function readChoice(): ThemeChoice {
   try {
     const v = localStorage.getItem(KEY)
-    return v === "light" || v === "dark" ? v : "system"
+    return v === "dark" ? "dark" : "light"
   } catch {
-    return "system"
+    return "light"
   }
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [choice, setChoiceState] = useState<ThemeChoice>(readChoice)
-  const [systemDark, setSystemDark] = useState(() => media().matches)
-
-  useEffect(() => {
-    const m = media()
-    const onChange = () => setSystemDark(m.matches)
-    m.addEventListener("change", onChange)
-    return () => m.removeEventListener("change", onChange)
-  }, [])
-
-  const resolved = choice === "system" ? (systemDark ? "dark" : "light") : choice
+  const resolved = choice
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", resolved === "dark")
@@ -36,8 +26,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const setChoice = (c: ThemeChoice) => {
     setChoiceState(c)
     try {
-      if (c === "system") localStorage.removeItem(KEY)
-      else localStorage.setItem(KEY, c)
+      localStorage.setItem(KEY, c)
     } catch {
       /* storage unavailable: keep the choice for this session only */
     }
