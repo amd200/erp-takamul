@@ -5,7 +5,7 @@ import { Plus, Tags } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { StatusBadge } from "@/components/StatusBadge"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { FieldGroup } from "@/components/ui/field"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
@@ -32,13 +32,15 @@ function ItemDialog({ open, onOpenChange, item }: { open: boolean; onOpenChange:
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[900px]">
         <DialogHeader><DialogTitle>{item ? t("expenseItems.edit") : t("expenseItems.add")}</DialogTitle></DialogHeader>
-        <form id="expense-item-form" onSubmit={submit}>
-          <FieldGroup className="gap-4">
-            <FormInput control={form.control} name="name" label={t("expenseItems.name")} placeholder={t("expenseItems.namePlaceholder")} required />
-            {/* The server creates every item active, so the switch only shows when editing. */}
-            {item && <FormSwitch control={form.control} name="isActive" label={t("common.active")} description={t("expenseItems.activeHint")} />}
-          </FieldGroup>
-        </form>
+        <DialogBody>
+          <form id="expense-item-form" onSubmit={submit}>
+            <FieldGroup className="gap-4">
+              <FormInput control={form.control} name="name" label={t("expenseItems.name")} placeholder={t("expenseItems.namePlaceholder")} required />
+              {/* The server creates every item active, so the switch only shows when editing. */}
+              {item && <FormSwitch control={form.control} name="isActive" label={t("common.active")} description={t("expenseItems.activeHint")} />}
+            </FieldGroup>
+          </form>
+        </DialogBody>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
           <Button type="submit" form="expense-item-form" disabled={save.isPending}>{t("common.save")}</Button>

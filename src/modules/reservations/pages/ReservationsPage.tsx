@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { CalendarDays, Plus } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -46,23 +46,25 @@ function ReservationDialog({ open, onOpenChange, reservation }: { open: boolean;
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[900px]">
         <DialogHeader><DialogTitle>{reservation ? t("reservations.edit") : t("reservations.add")}</DialogTitle></DialogHeader>
-        <form id="reservation-form" onSubmit={submit} noValidate>
-          <FieldGroup className="gap-4">
-            {formBranch.show && <BranchSection value={formBranch.branchId} onChange={formBranch.pick} />}
-            <FormInput control={form.control} name="customerName" required label={t("reservations.customerName")} />
-            <FormInput control={form.control} name="customerPhone" required label={t("users.mobile")} dir="ltr" />
-            <div className="grid grid-cols-2 gap-3">
-              <Controller control={form.control} name="date" render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}><FieldLabel htmlFor="r-date">{t("common.date")}</FieldLabel><Input id="r-date" type="date" className="h-10" {...field} />{fieldState.error?.message && <FieldError>{t(fieldState.error.message)}</FieldError>}</Field>
-              )} />
-              <Controller control={form.control} name="time" render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}><FieldLabel htmlFor="r-time">{t("reservations.time")}</FieldLabel><Input id="r-time" type="time" className="h-10" dir="ltr" {...field} />{fieldState.error?.message && <FieldError>{t(fieldState.error.message)}</FieldError>}</Field>
-              )} />
-            </div>
-            {reservation && <FormSelect control={form.control} name="status" label={t("common.status")} options={BOOKING_STATUSES.map((s) => ({ value: s, label: t(`reservations.statuses.${s}`) }))} />}
-            <FormTextarea control={form.control} name="notes" label={t("common.notes")} />
-          </FieldGroup>
-        </form>
+        <DialogBody>
+          <form id="reservation-form" onSubmit={submit} noValidate>
+            <FieldGroup className="gap-4">
+              {formBranch.show && <BranchSection value={formBranch.branchId} onChange={formBranch.pick} />}
+              <FormInput control={form.control} name="customerName" required label={t("reservations.customerName")} />
+              <FormInput control={form.control} name="customerPhone" required label={t("users.mobile")} dir="ltr" />
+              <div className="grid grid-cols-2 gap-3">
+                <Controller control={form.control} name="date" render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}><FieldLabel htmlFor="r-date">{t("common.date")}</FieldLabel><Input id="r-date" type="date" className="h-10" {...field} />{fieldState.error?.message && <FieldError>{t(fieldState.error.message)}</FieldError>}</Field>
+                )} />
+                <Controller control={form.control} name="time" render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}><FieldLabel htmlFor="r-time">{t("reservations.time")}</FieldLabel><Input id="r-time" type="time" className="h-10" dir="ltr" {...field} />{fieldState.error?.message && <FieldError>{t(fieldState.error.message)}</FieldError>}</Field>
+                )} />
+              </div>
+              {reservation && <FormSelect control={form.control} name="status" label={t("common.status")} options={BOOKING_STATUSES.map((s) => ({ value: s, label: t(`reservations.statuses.${s}`) }))} />}
+              <FormTextarea control={form.control} name="notes" label={t("common.notes")} />
+            </FieldGroup>
+          </form>
+        </DialogBody>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
           <Button type="submit" form="reservation-form" disabled={save.isPending}>{t("common.save")}</Button>

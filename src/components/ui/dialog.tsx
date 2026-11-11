@@ -1,20 +1,33 @@
 import * as React from "react"
-import { cn } from "cn"
+import { cn } from "@/lib/utils"
 import { Dialog as DialogPrimitive } from "radix-ui"
 
 import { Button } from "@/components/ui/button"
 import { XIcon } from "lucide-react"
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
+import { useIsMobile } from "@/lib/use-mobile"
+
+/** Below `sm` every dialog is a bottom drawer; the parts below pick the matching primitive. */
+const MobileContext = React.createContext(false)
 
 function Dialog({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Root>) {
-  return <DialogPrimitive.Root data-slot="dialog" {...props} />
+  const mobile = useIsMobile()
+  return (
+    <MobileContext.Provider value={mobile}>
+      {mobile
+        ? <Drawer data-slot="dialog" open={props.open} defaultOpen={props.defaultOpen} onOpenChange={props.onOpenChange}>{props.children}</Drawer>
+        : <DialogPrimitive.Root data-slot="dialog" {...props} />}
+    </MobileContext.Provider>
+  )
 }
 
 function DialogTrigger({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Trigger>) {
-  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
+  const Trigger = React.useContext(MobileContext) ? DrawerTrigger : DialogPrimitive.Trigger
+  return <Trigger data-slot="dialog-trigger" {...props} />
 }
 
 function DialogPortal({
@@ -26,7 +39,8 @@ function DialogPortal({
 function DialogClose({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Close>) {
-  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
+  const Close = React.useContext(MobileContext) ? DrawerClose : DialogPrimitive.Close
+  return <Close data-slot="dialog-close" {...props} />
 }
 
 function DialogOverlay({
@@ -53,6 +67,14 @@ function DialogContent({
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean
 }) {
+  if (React.useContext(MobileContext)) {
+    return (
+      <DrawerContent aria-describedby={undefined} className={cn("text-sm", className)}>
+        {/* Same p-4 box as the desktop dialog, so the -mx-4 of DialogBody/DialogFooter cancel it exactly (no sideways overflow). */}
+        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 pt-4">{children}</div>
+      </DrawerContent>
+    )
+  }
   return (
     <DialogPortal>
       <DialogOverlay />
@@ -93,6 +115,17 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Scrolling part of a dialog: sits between DialogHeader and DialogFooter, which stay in view. */
+function DialogBody({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="dialog-body"
+      className={cn("-mx-4 no-scrollbar max-h-[50vh] overflow-y-auto px-4", className)}
+      {...props}
+    />
+  )
+}
+
 function DialogFooter({
   className,
   showCloseButton = false,
@@ -124,8 +157,9 @@ function DialogTitle({
   className,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Title>) {
+  const Title = React.useContext(MobileContext) ? DrawerTitle : DialogPrimitive.Title
   return (
-    <DialogPrimitive.Title
+    <Title
       data-slot="dialog-title"
       className={cn(
         "font-heading text-base leading-none font-medium",
@@ -140,8 +174,9 @@ function DialogDescription({
   className,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Description>) {
+  const Description = React.useContext(MobileContext) ? DrawerDescription : DialogPrimitive.Description
   return (
-    <DialogPrimitive.Description
+    <Description
       data-slot="dialog-description"
       className={cn(
         "text-sm text-muted-foreground *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
@@ -154,6 +189,7 @@ function DialogDescription({
 
 export {
   Dialog,
+  DialogBody,
   DialogClose,
   DialogContent,
   DialogDescription,

@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Plus, Ruler } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { FieldGroup } from "@/components/ui/field"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
@@ -33,18 +33,20 @@ function UnitDialog({ open, onOpenChange, unit }: { open: boolean; onOpenChange:
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[calc(100dvh-16px)] overflow-y-auto sm:max-w-[900px]">
+      <DialogContent className="sm:max-w-[900px]">
         <DialogHeader><DialogTitle>{unit ? t("units.edit") : t("units.add")}</DialogTitle></DialogHeader>
-        <form id="unit-form" onSubmit={submit}>
-          <FieldGroup className="gap-4">
-            {formBranch.show && <BranchSection value={formBranch.branchId} onChange={formBranch.pick} />}
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <FormInput control={form.control} name="name" label={t("units.name")} required />
-              <FormInput control={form.control} name="taxCode" label={t("units.taxCode")} dir="ltr" />
-              <FormInput control={form.control} name="description" label={t("common.description")} />
-            </div>
-          </FieldGroup>
-        </form>
+        <DialogBody>
+          <form id="unit-form" onSubmit={submit}>
+            <FieldGroup className="gap-4">
+              {formBranch.show && <BranchSection value={formBranch.branchId} onChange={formBranch.pick} />}
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <FormInput control={form.control} name="name" label={t("units.name")} required />
+                <FormInput control={form.control} name="taxCode" label={t("units.taxCode")} dir="ltr" />
+                <FormInput control={form.control} name="description" label={t("common.description")} />
+              </div>
+            </FieldGroup>
+          </form>
+        </DialogBody>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
           <Button type="submit" form="unit-form" disabled={save.isPending}>{t("common.save")}</Button>

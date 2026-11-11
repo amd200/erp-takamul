@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { IdCard, Plus } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { FieldGroup } from "@/components/ui/field"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
@@ -41,14 +41,16 @@ function EmployeeDialog({ open, onOpenChange, employee }: { open: boolean; onOpe
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[900px]">
         <DialogHeader><DialogTitle>{employee ? t("employees.edit") : t("employees.add")}</DialogTitle></DialogHeader>
-        <form id="employee-form" onSubmit={submit} noValidate>
-          <FieldGroup className="gap-4">
-            {formBranch.show && <BranchSection value={formBranch.branchId} onChange={formBranch.pick} />}
-            <FormInput control={form.control} name="firstName" required label={t("employees.name")} />
-            <FormInput control={form.control} name="mobile" label={t("users.mobile")} dir="ltr" placeholder="05XXXXXXXX" />
-            {canPickBranch && !!employee && <FormSelect control={form.control} name="branchId" numeric label={t("users.branch")} options={branches.map((b) => ({ value: String(b.id), label: b.name ?? "" }))} />}
-          </FieldGroup>
-        </form>
+        <DialogBody>
+          <form id="employee-form" onSubmit={submit} noValidate>
+            <FieldGroup className="gap-4">
+              {formBranch.show && <BranchSection value={formBranch.branchId} onChange={formBranch.pick} />}
+              <FormInput control={form.control} name="firstName" required label={t("employees.name")} />
+              <FormInput control={form.control} name="mobile" label={t("users.mobile")} dir="ltr" placeholder="05XXXXXXXX" />
+              {canPickBranch && !!employee && <FormSelect control={form.control} name="branchId" numeric label={t("users.branch")} options={branches.map((b) => ({ value: String(b.id), label: b.name ?? "" }))} />}
+            </FieldGroup>
+          </form>
+        </DialogBody>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
           <Button type="submit" form="employee-form" disabled={save.isPending}>{t("common.save")}</Button>

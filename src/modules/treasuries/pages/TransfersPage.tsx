@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { ArrowLeftRight, Plus } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
@@ -41,20 +41,22 @@ function TransferDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[900px]">
         <DialogHeader><DialogTitle>{t("treasuries.newTransfer")}</DialogTitle></DialogHeader>
-        <form id="transfer-form" onSubmit={submit} noValidate>
-          <FieldGroup className="gap-4">
-            <FormSelect control={form.control} name="fromTreasuryId" numeric required label={t("treasuries.from")} options={options} />
-            <FormSelect control={form.control} name="toTreasuryId" numeric required label={t("treasuries.to")} options={options} />
-            <div className="grid grid-cols-2 gap-3">
-              <FormInput control={form.control} name="amount" type="number" required label={t("sales.amount")} />
-              <Controller control={form.control} name="date" render={({ field }) => (
-                <Field><FieldLabel htmlFor="tr-date">{t("common.date")}</FieldLabel><Input id="tr-date" type="date" className="h-10" {...field} /></Field>
-              )} />
-            </div>
-            {over && <p className="text-sm text-destructive">{t("treasuries.errors.insufficient")}</p>}
-            <FormTextarea control={form.control} name="notes" label={t("common.notes")} />
-          </FieldGroup>
-        </form>
+        <DialogBody>
+          <form id="transfer-form" onSubmit={submit} noValidate>
+            <FieldGroup className="gap-4">
+              <FormSelect control={form.control} name="fromTreasuryId" numeric required label={t("treasuries.from")} options={options} />
+              <FormSelect control={form.control} name="toTreasuryId" numeric required label={t("treasuries.to")} options={options} />
+              <div className="grid grid-cols-2 gap-3">
+                <FormInput control={form.control} name="amount" type="number" required label={t("sales.amount")} />
+                <Controller control={form.control} name="date" render={({ field }) => (
+                  <Field><FieldLabel htmlFor="tr-date">{t("common.date")}</FieldLabel><Input id="tr-date" type="date" className="h-10" {...field} /></Field>
+                )} />
+              </div>
+              {over && <p className="text-sm text-destructive">{t("treasuries.errors.insufficient")}</p>}
+              <FormTextarea control={form.control} name="notes" label={t("common.notes")} />
+            </FieldGroup>
+          </form>
+        </DialogBody>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
           <Button type="submit" form="transfer-form" disabled={run.isPending || over}>{t("treasuries.transfer")}</Button>

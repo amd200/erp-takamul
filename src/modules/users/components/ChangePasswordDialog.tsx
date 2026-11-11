@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { KeyRound } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogBody, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { FormInput } from "@/components/form/FormFields"
 import { useAuthStore } from "@/shared/auth/authStore"
 import { useChangePassword } from "../queries"
@@ -32,15 +32,16 @@ export function ChangePasswordDialog({ open, onOpenChange }: { open: boolean; on
           <DialogTitle className="flex items-center gap-2 text-primary"><KeyRound size={20} />{t("topbar.changePassword")}</DialogTitle>
           <DialogDescription className="sr-only">{t("topbar.changePassword")}</DialogDescription>
         </DialogHeader>
+        <DialogBody>
 
-        <form id="change-password-form" onSubmit={submit} noValidate className="flex flex-col gap-4">
-          <FormInput control={c} name="password" type="password" required autoComplete="new-password" label={t("topbar.newPassword")} placeholder={t("topbar.newPasswordHint")} />
-          <FormInput control={c} name="confirmPassword" type="password" required autoComplete="new-password" label={t("oldUsers.confirmPassword")} placeholder={t("topbar.rewriteNewPassword")} />
-        </form>
-
+          <form id="change-password-form" onSubmit={submit} noValidate className="flex flex-col gap-4">
+            <FormInput control={c} name="password" type="password" required autoComplete="new-password" label={t("topbar.newPassword")} placeholder={t("topbar.newPasswordHint")} />
+            <FormInput control={c} name="confirmPassword" type="password" required autoComplete="new-password" label={t("oldUsers.confirmPassword")} placeholder={t("topbar.rewriteNewPassword")} />
+          </form>
+        </DialogBody>
         <DialogFooter>
-          <Button type="button" variant="outline" size="xl" className="w-full sm:w-auto" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
-          <Button type="submit" form="change-password-form" size="xl" className="w-full sm:w-auto" disabled={change.isPending}>{t("topbar.changePassword")}</Button>
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
+          <Button type="submit" form="change-password-form" disabled={change.isPending}>{t("topbar.changePassword")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

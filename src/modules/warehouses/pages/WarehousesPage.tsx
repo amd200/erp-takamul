@@ -6,7 +6,7 @@ import { Plus, Store } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { StatusBadge } from "@/components/StatusBadge"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { FieldGroup } from "@/components/ui/field"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
@@ -35,23 +35,25 @@ function WarehouseDialog({ open, onOpenChange, warehouse }: { open: boolean; onO
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[calc(100dvh-16px)] overflow-y-auto sm:max-w-[900px]">
+      <DialogContent className="sm:max-w-[900px]">
         <DialogHeader><DialogTitle>{warehouse ? t("warehouses.edit") : t("warehouses.add")}</DialogTitle></DialogHeader>
-        <form id="warehouse-form" onSubmit={submit} noValidate>
-          <FieldGroup className="gap-4">
-            {formBranch.show && <BranchSection value={formBranch.branchId} onChange={formBranch.pick} />}
-            <div className="grid gap-3 sm:grid-cols-2">
-              <FormInput control={form.control} name="warehouseCode" required label={t("warehouses.code")} dir="ltr" disabled={!!warehouse} />
-              <FormInput control={form.control} name="warehouseName" required label={t("warehouses.name")} />
-            </div>
-            <FormInput control={form.control} name="address" label={t("warehouses.address")} />
-            <div className="grid gap-3 sm:grid-cols-2">
-              <FormInput control={form.control} name="city" label={t("partners.city")} disabled={!warehouse} />
-              <FormInput control={form.control} name="state" label={t("partners.state")} disabled={!warehouse} />
-            </div>
-            <FormInput control={form.control} name="capacity" type="number" label={t("warehouses.capacity")} disabled={!warehouse} />
-          </FieldGroup>
-        </form>
+        <DialogBody>
+          <form id="warehouse-form" onSubmit={submit} noValidate>
+            <FieldGroup className="gap-4">
+              {formBranch.show && <BranchSection value={formBranch.branchId} onChange={formBranch.pick} />}
+              <div className="grid gap-3 sm:grid-cols-2">
+                <FormInput control={form.control} name="warehouseCode" required label={t("warehouses.code")} dir="ltr" disabled={!!warehouse} />
+                <FormInput control={form.control} name="warehouseName" required label={t("warehouses.name")} />
+              </div>
+              <FormInput control={form.control} name="address" label={t("warehouses.address")} />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <FormInput control={form.control} name="city" label={t("partners.city")} disabled={!warehouse} />
+                <FormInput control={form.control} name="state" label={t("partners.state")} disabled={!warehouse} />
+              </div>
+              <FormInput control={form.control} name="capacity" type="number" label={t("warehouses.capacity")} disabled={!warehouse} />
+            </FieldGroup>
+          </form>
+        </DialogBody>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
           <Button type="submit" form="warehouse-form" disabled={save.isPending}>{t("common.save")}</Button>

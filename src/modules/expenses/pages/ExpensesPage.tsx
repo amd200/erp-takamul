@@ -5,7 +5,7 @@ import { Plus, Wallet } from "lucide-react"
 import { EmptyState } from "@/components/EmptyState"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
@@ -62,27 +62,29 @@ function ExpenseDialog({ open, onOpenChange, expense }: { open: boolean; onOpenC
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[900px]">
         <DialogHeader><DialogTitle>{expense ? t("expenses.edit") : t("expenses.add")}</DialogTitle></DialogHeader>
-        <form id="expense-form" onSubmit={submit} noValidate>
-          <FieldGroup className="gap-4">
-            {formBranch.show && <BranchSection value={formBranch.branchId} onChange={changeBranch} />}
-            <FormInput control={form.control} name="name" label={t("expenses.name")} placeholder={t("expenses.namePlaceholder")} required />
-            <div className="grid gap-3 sm:grid-cols-2">
-              <FormInput control={form.control} name="amount" type="number" required label={t("expenses.amount")} />
-              <Controller control={form.control} name="date" render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
-                  <FieldLabel htmlFor="expense-date">{t("common.date")}</FieldLabel>
-                  <Input id="expense-date" type="date" className="h-10" {...field} />
-                </Field>
-              )} />
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <FormSelect control={form.control} name="treasuryId" numeric required label={t("expenses.treasury")} options={treasuryOptions} placeholder={t("expenses.pickTreasury")} />
-              <FormSelect control={form.control} name="itemId" numeric label={t("expenses.item")} options={itemOptions} allowEmpty={t("expenses.noItem")} />
-            </div>
-            {over && <p className="text-sm text-destructive">{t("treasuries.errors.insufficient")}</p>}
-            <FormTextarea control={form.control} name="notes" label={t("common.notes")} />
-          </FieldGroup>
-        </form>
+        <DialogBody>
+          <form id="expense-form" onSubmit={submit} noValidate>
+            <FieldGroup className="gap-4">
+              {formBranch.show && <BranchSection value={formBranch.branchId} onChange={changeBranch} />}
+              <FormInput control={form.control} name="name" label={t("expenses.name")} placeholder={t("expenses.namePlaceholder")} required />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <FormInput control={form.control} name="amount" type="number" required label={t("expenses.amount")} />
+                <Controller control={form.control} name="date" render={({ field, fieldState }) => (
+                  <Field data-invalid={!!fieldState.error}>
+                    <FieldLabel htmlFor="expense-date">{t("common.date")}</FieldLabel>
+                    <Input id="expense-date" type="date" className="h-10" {...field} />
+                  </Field>
+                )} />
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <FormSelect control={form.control} name="treasuryId" numeric required label={t("expenses.treasury")} options={treasuryOptions} placeholder={t("expenses.pickTreasury")} />
+                <FormSelect control={form.control} name="itemId" numeric label={t("expenses.item")} options={itemOptions} allowEmpty={t("expenses.noItem")} />
+              </div>
+              {over && <p className="text-sm text-destructive">{t("treasuries.errors.insufficient")}</p>}
+              <FormTextarea control={form.control} name="notes" label={t("common.notes")} />
+            </FieldGroup>
+          </form>
+        </DialogBody>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
           <Button type="submit" form="expense-form" disabled={save.isPending || over}>{t("common.save")}</Button>

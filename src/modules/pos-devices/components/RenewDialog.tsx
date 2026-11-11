@@ -3,7 +3,7 @@ import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogBody, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { errorToast } from "@/shared/api/errors"
 import { useRenewCertificate } from "../queries"
@@ -23,8 +23,10 @@ export function RenewDialog({ cert, onClose }: { cert: CertificateSummary | null
           <DialogTitle>{t("devices.renewTitle")}</DialogTitle>
           <DialogDescription>{t("devices.renewBody", { name: cert?.deviceName })}</DialogDescription>
         </DialogHeader>
-        <Input value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))} inputMode="numeric" dir="ltr" autoComplete="one-time-code"
-          aria-label={t("devices.otp")} placeholder="••••••" className="h-12 max-w-48 text-center text-xl tracking-[0.5em]" />
+        <DialogBody>
+          <Input value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))} inputMode="numeric" dir="ltr" autoComplete="one-time-code"
+            aria-label={t("devices.otp")} placeholder="••••••" className="h-12 max-w-48 text-center text-xl tracking-[0.5em]" />
+        </DialogBody>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>{t("common.cancel")}</Button>
           <Button disabled={renew.isPending || otp.length !== 6 || !cert}

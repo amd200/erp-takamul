@@ -139,8 +139,8 @@ export function CustomerDialog({ open, onOpenChange, customer, onCreated, withMe
         </FormProvider>
 
         <DialogFooter className="shrink-0">
-          <Button type="button" variant="destructive" className="h-12 w-full px-6 text-base sm:w-auto" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
-          <Button type="submit" form="customer-form" className="h-12 w-full px-6 text-base sm:w-auto" disabled={save.isPending}>{editing ? t("custDialog.edit") : t("custDialog.add")}</Button>
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
+          <Button type="submit" form="customer-form" disabled={save.isPending}>{editing ? t("custDialog.edit") : t("custDialog.add")}</Button>
         </DialogFooter>
     </>
   )

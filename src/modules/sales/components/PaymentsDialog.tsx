@@ -6,7 +6,7 @@ import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
@@ -49,49 +49,51 @@ export function PaymentsDialog({ invoice, onOpenChange }: { invoice: SalesOrderD
     <Dialog open={!!invoice} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader><DialogTitle>{t("sales.receiptTitle")}</DialogTitle></DialogHeader>
-        {invoice && (
-          <>
-            <form id="payment-form" onSubmit={submit} className="flex flex-col gap-3">
-              <div className="grid gap-3 sm:grid-cols-2">
-                <FormInput control={form.control} name="date" type="date" label={t("common.date")} required />
-                <FormSelect control={form.control} name="treasuryId" numeric label={t("sales.treasury")} required
-                  options={treasuries.map((x) => ({ value: String(x.id), label: x.name }))} />
-              </div>
-              <div className="grid gap-3 sm:grid-cols-[2fr_1fr_1fr]">
-                <Field><FieldLabel>{t("sales.customerName")}</FieldLabel><Input readOnly value={invoice.customerName ?? ""} className="h-10 bg-muted" /></Field>
-                <Field><FieldLabel>{t("sales.currentBalance")}</FieldLabel><Input readOnly value={formatMoney(customer?.balance ?? 0)} className="h-10 bg-muted text-center" /></Field>
-                <FormInput control={form.control} name="amount" type="number" label={t("sales.amount")} required />
-              </div>
-            </form>
-            <Separator />
-            <div className="font-semibold">{t("sales.previousPayments")}</div>
-            {payments.length === 0 ? (
-              <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">{t("sales.noPayments")}</div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow className="hover:bg-transparent">
-                    {[t("sales.paymentNumber"), t("sales.paymentDate"), t("sales.treasury"), t("sales.amount"), ""].map((h, i) => <TableHead key={i} className="text-muted-foreground">{h}</TableHead>)}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {payments.map((p) => (
-                    <TableRow key={p.id}>
-                      <TableCell className="font-medium">{p.paymentNumber}</TableCell>
-                      <TableCell>{p.paymentDate ? formatDateTime(p.paymentDate, i18n.language) : "—"}</TableCell>
-                      <TableCell className="text-muted-foreground">{p.transactionName || "—"}</TableCell>
-                      <TableCell className="font-semibold tabular-nums">{formatMoney(p.amount)}</TableCell>
-                      <TableCell >
-                        <Button variant="ghost" size="icon" aria-label={t("common.edit")} onClick={() => { setToEdit(p); editForm.reset({ amount: p.amount }) }}><Pencil /></Button>
-                        <Button variant="ghost-destructive" size="icon" aria-label={t("common.delete")} onClick={() => setToDelete(p)}><Trash2 /></Button>
-                      </TableCell>
+        <DialogBody>
+          {invoice && (
+            <>
+              <form id="payment-form" onSubmit={submit} className="flex flex-col gap-3">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <FormInput control={form.control} name="date" type="date" label={t("common.date")} required />
+                  <FormSelect control={form.control} name="treasuryId" numeric label={t("sales.treasury")} required
+                    options={treasuries.map((x) => ({ value: String(x.id), label: x.name }))} />
+                </div>
+                <div className="grid gap-3 sm:grid-cols-[2fr_1fr_1fr]">
+                  <Field><FieldLabel>{t("sales.customerName")}</FieldLabel><Input readOnly value={invoice.customerName ?? ""} className="h-10 bg-muted" /></Field>
+                  <Field><FieldLabel>{t("sales.currentBalance")}</FieldLabel><Input readOnly value={formatMoney(customer?.balance ?? 0)} className="h-10 bg-muted text-center" /></Field>
+                  <FormInput control={form.control} name="amount" type="number" label={t("sales.amount")} required />
+                </div>
+              </form>
+              <Separator />
+              <div className="font-semibold">{t("sales.previousPayments")}</div>
+              {payments.length === 0 ? (
+                <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">{t("sales.noPayments")}</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow className="hover:bg-transparent">
+                      {[t("sales.paymentNumber"), t("sales.paymentDate"), t("sales.treasury"), t("sales.amount"), ""].map((h, i) => <TableHead key={i} className="text-muted-foreground">{h}</TableHead>)}
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </>
-        )}
+                  </TableHeader>
+                  <TableBody>
+                    {payments.map((p) => (
+                      <TableRow key={p.id}>
+                        <TableCell className="font-medium">{p.paymentNumber}</TableCell>
+                        <TableCell>{p.paymentDate ? formatDateTime(p.paymentDate, i18n.language) : "—"}</TableCell>
+                        <TableCell className="text-muted-foreground">{p.transactionName || "—"}</TableCell>
+                        <TableCell className="font-semibold tabular-nums">{formatMoney(p.amount)}</TableCell>
+                        <TableCell >
+                          <Button variant="ghost" size="icon" aria-label={t("common.edit")} onClick={() => { setToEdit(p); editForm.reset({ amount: p.amount }) }}><Pencil /></Button>
+                          <Button variant="ghost-destructive" size="icon" aria-label={t("common.delete")} onClick={() => setToDelete(p)}><Trash2 /></Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </>
+          )}
+        </DialogBody>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
           <Button type="submit" form="payment-form" disabled={record.isPending}>{t("sales.saveReceipt")}</Button>
@@ -100,10 +102,12 @@ export function PaymentsDialog({ invoice, onOpenChange }: { invoice: SalesOrderD
       <Dialog open={!!toEdit} onOpenChange={(o) => !o && setToEdit(null)}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader><DialogTitle>{t("sales.editReceiptTitle")} {toEdit?.paymentNumber ?? ""}</DialogTitle></DialogHeader>
-          <form id="edit-payment-form" className="flex flex-col gap-3"
-            onSubmit={editForm.handleSubmit((v) => toEdit && update.mutate({ paymentId: toEdit.id, amount: v.amount }, { onSuccess: () => setToEdit(null) }))}>
-            <FormInput control={editForm.control} name="amount" type="number" label={t("sales.amount")} required />
-          </form>
+          <DialogBody>
+            <form id="edit-payment-form" className="flex flex-col gap-3"
+              onSubmit={editForm.handleSubmit((v) => toEdit && update.mutate({ paymentId: toEdit.id, amount: v.amount }, { onSuccess: () => setToEdit(null) }))}>
+              <FormInput control={editForm.control} name="amount" type="number" label={t("sales.amount")} required />
+            </form>
+          </DialogBody>
           <DialogFooter>
             <Button variant="outline" onClick={() => setToEdit(null)}>{t("common.cancel")}</Button>
             <Button type="submit" form="edit-payment-form" disabled={update.isPending}>{t("common.save")}</Button>

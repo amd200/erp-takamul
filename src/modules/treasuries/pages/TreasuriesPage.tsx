@@ -12,7 +12,7 @@ import { PageHeader } from "@/components/PageHeader"
 import { CurrencySymbol } from "@/modules/settings"
 import { formatMoney } from "@/lib/format"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
@@ -40,26 +40,28 @@ function TreasuryDialog({ open, onOpenChange, treasury }: { open: boolean; onOpe
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[900px]">
         <DialogHeader className="py-3"><DialogTitle className="flex items-center gap-2 text-[#2ecc71]"><Wallet size={18} />{title}</DialogTitle></DialogHeader>
-        <form id="treasury-form" onSubmit={submit} noValidate className="no-scrollbar -mx-4 max-h-[50vh] overflow-y-auto px-4">
-          <div className="grid grid-cols-1 gap-5 p-2 md:grid-cols-2">
-            {formBranch.show && <BranchSection className="md:col-span-2" value={formBranch.branchId} onChange={formBranch.pick} />}
-            <FormInput control={form.control} name="name" required label={t("oldTreasuries.nameLabel")} placeholder={t("oldTreasuries.nameHint")} />
-            <FormInput control={form.control} name="openingBalance" type="number" label={t("oldTreasuries.opening")} placeholder="0" />
-            <div className="md:col-span-2">
-              <Controller control={form.control} name="openingBalanceDate" render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}><FieldLabel htmlFor="obd">{t("oldTreasuries.openingDate")}</FieldLabel><Input id="obd" type="date" {...field} aria-invalid={fieldState.invalid} /><FieldError>{fieldState.error && t(fieldState.error.message!)}</FieldError></Field>
-              )} />
+        <DialogBody>
+          <form id="treasury-form" onSubmit={submit} noValidate className="no-scrollbar -mx-4 max-h-[50vh] overflow-y-auto px-4">
+            <div className="grid grid-cols-1 gap-5 p-2 md:grid-cols-2">
+              {formBranch.show && <BranchSection className="md:col-span-2" value={formBranch.branchId} onChange={formBranch.pick} />}
+              <FormInput control={form.control} name="name" required label={t("oldTreasuries.nameLabel")} placeholder={t("oldTreasuries.nameHint")} />
+              <FormInput control={form.control} name="openingBalance" type="number" label={t("oldTreasuries.opening")} placeholder="0" />
+              <div className="md:col-span-2">
+                <Controller control={form.control} name="openingBalanceDate" render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}><FieldLabel htmlFor="obd">{t("oldTreasuries.openingDate")}</FieldLabel><Input id="obd" type="date" {...field} aria-invalid={fieldState.invalid} /><FieldError>{fieldState.error && t(fieldState.error.message!)}</FieldError></Field>
+                )} />
+              </div>
+              <div className="flex items-center gap-3 rounded-2xl border border-border p-3 md:col-span-2">
+                <Checkbox id="treasury-in-sales" checked={shown ?? "indeterminate"} onCheckedChange={(c) => form.setValue("showInSalesScreen", c === true, { shouldValidate: true, shouldDirty: true })} />
+                <label htmlFor="treasury-in-sales" className="cursor-pointer text-sm font-medium">{t("oldTreasuries.showInSales")}</label>
+              </div>
+              {form.formState.errors.showInSalesScreen && <FieldError>{t("validation.required")}</FieldError>}
             </div>
-            <div className="flex items-center gap-3 rounded-2xl border border-border p-3 md:col-span-2">
-              <Checkbox id="treasury-in-sales" checked={shown ?? "indeterminate"} onCheckedChange={(c) => form.setValue("showInSalesScreen", c === true, { shouldValidate: true, shouldDirty: true })} />
-              <label htmlFor="treasury-in-sales" className="cursor-pointer text-sm font-medium">{t("oldTreasuries.showInSales")}</label>
-            </div>
-            {form.formState.errors.showInSalesScreen && <FieldError>{t("validation.required")}</FieldError>}
-          </div>
-        </form>
+          </form>
+        </DialogBody>
         <DialogFooter>
-          <Button type="button" variant="destructive" className="h-12 w-full px-6 text-base sm:w-auto" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
-          <Button type="submit" form="treasury-form" className="h-12 w-full px-6 text-base sm:w-auto" disabled={save.isPending}>{treasury ? t("oldTreasuries.saveChanges") : t("oldTreasuries.add")}</Button>
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
+          <Button type="submit" form="treasury-form" disabled={save.isPending}>{treasury ? t("oldTreasuries.saveChanges") : t("oldTreasuries.add")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

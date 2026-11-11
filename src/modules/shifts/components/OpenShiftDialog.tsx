@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogBody, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -66,19 +66,21 @@ export function OpenShiftDialog({ open, onOpenChange }: { open: boolean; onOpenC
           <DialogTitle>{t("shifts.openTitle")}</DialogTitle>
           <DialogDescription>{t("shifts.openHint")}</DialogDescription>
         </DialogHeader>
-        <form id="open-shift" noValidate onSubmit={(e) => { e.preventDefault(); submit() }}>
-          <FieldGroup className="gap-4">
-            {multi && <Pick id="shift-branch" label={t("shifts.branch")} value={branchId} onChange={(v) => { setBranchId(v); setEmployeeId(0) }} options={branches.map((b) => ({ id: b.id, name: b.name || String(b.id) }))} placeholder={t("reports.pick")} />}
-            <Pick id="shift-employee" label={t("shifts.employee")} value={employeeId} onChange={setEmployeeId} options={employees.map((e) => ({ id: e.id, name: e.firstName }))} placeholder={t("reports.pick")} />
-            <Pick id="shift-device" label={t("shifts.device")} value={deviceId} onChange={setDeviceId} options={devices.map((x) => ({ id: x.id, name: x.deviceName }))} placeholder={t("reports.pick")} />
-            <Field data-invalid={submitted && (!Number.isFinite(amount) || amount < 0)}>
-              <FieldLabel htmlFor="shift-balance">{t("shifts.openingBalance")}</FieldLabel>
-              <Input id="shift-balance" type="number" inputMode="decimal" min={0} className="h-10" value={balance} onChange={(e) => setBalance(e.target.value)} />
-              {submitted && (!Number.isFinite(amount) || amount < 0) && <FieldError>{t("validation.min0")}</FieldError>}
-            </Field>
-            {submitted && invalid && Number.isFinite(amount) && amount >= 0 && <p className="text-sm text-destructive">{t("shifts.fillAll")}</p>}
-          </FieldGroup>
-        </form>
+        <DialogBody>
+          <form id="open-shift" noValidate onSubmit={(e) => { e.preventDefault(); submit() }}>
+            <FieldGroup className="gap-4">
+              {multi && <Pick id="shift-branch" label={t("shifts.branch")} value={branchId} onChange={(v) => { setBranchId(v); setEmployeeId(0) }} options={branches.map((b) => ({ id: b.id, name: b.name || String(b.id) }))} placeholder={t("reports.pick")} />}
+              <Pick id="shift-employee" label={t("shifts.employee")} value={employeeId} onChange={setEmployeeId} options={employees.map((e) => ({ id: e.id, name: e.firstName }))} placeholder={t("reports.pick")} />
+              <Pick id="shift-device" label={t("shifts.device")} value={deviceId} onChange={setDeviceId} options={devices.map((x) => ({ id: x.id, name: x.deviceName }))} placeholder={t("reports.pick")} />
+              <Field data-invalid={submitted && (!Number.isFinite(amount) || amount < 0)}>
+                <FieldLabel htmlFor="shift-balance">{t("shifts.openingBalance")}</FieldLabel>
+                <Input id="shift-balance" type="number" inputMode="decimal" min={0} className="h-10" value={balance} onChange={(e) => setBalance(e.target.value)} />
+                {submitted && (!Number.isFinite(amount) || amount < 0) && <FieldError>{t("validation.min0")}</FieldError>}
+              </Field>
+              {submitted && invalid && Number.isFinite(amount) && amount >= 0 && <p className="text-sm text-destructive">{t("shifts.fillAll")}</p>}
+            </FieldGroup>
+          </form>
+        </DialogBody>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
           <Button type="submit" form="open-shift" disabled={run.isPending}>{t("shifts.open")}</Button>

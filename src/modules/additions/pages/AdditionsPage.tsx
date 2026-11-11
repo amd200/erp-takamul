@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Plus, Puzzle } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
@@ -40,25 +40,27 @@ function AdditionDialog({ open, onOpenChange, addition }: { open: boolean; onOpe
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[calc(100dvh-16px)] overflow-y-auto sm:max-w-[900px]">
+      <DialogContent className="sm:max-w-[900px]">
         <DialogHeader><DialogTitle>{addition ? t("additions.edit") : t("additions.add")}</DialogTitle></DialogHeader>
-        <form id="addition-form" onSubmit={submit}>
-          <FieldGroup className="gap-3">
-            {formBranch.show && <BranchSection value={formBranch.branchId} onChange={changeBranch} />}
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <FormInput control={form.control} name="nameAr" label={t("additions.nameAr")} required />
-              <FormInput control={form.control} name="nameEn" label={t("additions.nameEn")} dir="ltr" />
-              <FormInput control={form.control} name="nameUr" label={t("additions.nameUr")} dir="ltr" />
-            </div>
-            <Controller control={form.control} name="categoryIds" render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel>{t("additions.showWith")}<span className="text-destructive">*</span></FieldLabel>
-                <MultiPicker options={categories.map((c) => ({ value: c.id, label: c.categoryNameAr }))} value={field.value} onChange={field.onChange} listClassName="max-h-32" />
-                <FieldError errors={fieldState.error ? [{ message: t(fieldState.error.message!) }] : undefined} />
-              </Field>
-            )} />
-          </FieldGroup>
-        </form>
+        <DialogBody>
+          <form id="addition-form" onSubmit={submit}>
+            <FieldGroup className="gap-3">
+              {formBranch.show && <BranchSection value={formBranch.branchId} onChange={changeBranch} />}
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <FormInput control={form.control} name="nameAr" label={t("additions.nameAr")} required />
+                <FormInput control={form.control} name="nameEn" label={t("additions.nameEn")} dir="ltr" />
+                <FormInput control={form.control} name="nameUr" label={t("additions.nameUr")} dir="ltr" />
+              </div>
+              <Controller control={form.control} name="categoryIds" render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>{t("additions.showWith")}<span className="text-destructive">*</span></FieldLabel>
+                  <MultiPicker options={categories.map((c) => ({ value: c.id, label: c.categoryNameAr }))} value={field.value} onChange={field.onChange} listClassName="max-h-32" />
+                  <FieldError errors={fieldState.error ? [{ message: t(fieldState.error.message!) }] : undefined} />
+                </Field>
+              )} />
+            </FieldGroup>
+          </form>
+        </DialogBody>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
           <Button type="submit" form="addition-form" disabled={save.isPending}>{t("common.save")}</Button>

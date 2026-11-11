@@ -119,13 +119,11 @@ export function VoucherDialog({ kind, open, onOpenChange, embedded = false, cust
           )} />
         </form>
 
-        <DialogFooter className="shrink-0 border-t border-border px-5 py-7">
-          <div className="flex w-full flex-col-reverse gap-3 px-2 sm:flex-row sm:justify-end">
-            <Button type="button" variant="destructive" size="xl" onClick={() => onOpenChange(false)} className="w-full sm:w-auto">{t("common.cancel")}</Button>
-            <Button type="submit" form="voucher-form" size="xl" disabled={create.isPending || overdraw} className="w-full sm:w-auto">
-              {create.isPending && <Loader2 size={16} className="animate-spin" />}{t(`vouchers.saveVoucher.${kind}`)}
-            </Button>
-          </div>
+        <DialogFooter className="mx-0 mb-0 rounded-none">
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
+          <Button type="submit" form="voucher-form" disabled={create.isPending || overdraw}>
+            {create.isPending && <Loader2 size={16} className="animate-spin" />}{t(`vouchers.saveVoucher.${kind}`)}
+          </Button>
         </DialogFooter>
     </>
   )

@@ -2,7 +2,7 @@ import { useCallback, useRef, useState } from "react"
 import { CheckCheck, ClipboardList, Eye, Wallet } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { StatusBadge } from "@/components/StatusBadge"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogBody, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { RowMenu } from "@/components/RowActions"
@@ -29,35 +29,37 @@ function DetailsDialog({ id, onOpenChange }: { id: number | null; onOpenChange: 
   const { data: o, isLoading } = useOrderRequest(id)
   return (
     <Dialog open={id != null} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-2xl">
+      <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>{t("orderRequests.orderTitle", { number: o?.orderNumber ?? "" })}</DialogTitle>
           <DialogDescription>{o && [o.customerName, o.customerPhone].filter(Boolean).join(" · ")}</DialogDescription>
         </DialogHeader>
-        {isLoading || !o ? <div className="h-40 animate-pulse rounded-xl bg-muted" /> : (
-          <div className="flex flex-col gap-4">
-            <Table className="min-w-[420px]">
-              <TableHeader><TableRow className="hover:bg-transparent">{[t("products.item"), t("products.quantity"), t("sales.unitPrice"), t("sales.lineTotal")].map((h) => <TableHead key={h} className="text-muted-foreground">{h}</TableHead>)}</TableRow></TableHeader>
-              <TableBody>
-                {(o.items ?? []).map((i, k) => (
-                  <TableRow key={k}>
-                    <TableCell><div className="font-medium">{i.productName}</div>{i.notes && <div className="text-xs text-muted-foreground">{i.notes}</div>}</TableCell>
-                    <TableCell className="tabular-nums">{i.quantity}</TableCell>
-                    <TableCell className="tabular-nums">{formatMoney(i.unitPrice ?? 0)}</TableCell>
-                    <TableCell className="font-semibold tabular-nums">{formatMoney(i.lineTotal ?? 0)}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            {o.notes && <p className="rounded-lg bg-muted px-3 py-2 text-muted-foreground">{o.notes}</p>}
-            <dl className="ms-auto flex w-full max-w-xs flex-col gap-1.5 text-sm tabular-nums">
-              <div className="flex justify-between"><dt className="text-muted-foreground">{t("sales.subTotal")}</dt><dd>{formatMoney(o.subTotal ?? 0)}</dd></div>
-              {(o.discountAmount ?? 0) > 0 && <div className="flex justify-between"><dt className="text-muted-foreground">{t("sales.discount")}</dt><dd>-{formatMoney(o.discountAmount ?? 0)}</dd></div>}
-              {!exempt && <div className="flex justify-between"><dt className="text-muted-foreground">{t("sales.tax")}</dt><dd>{formatMoney(o.taxAmount ?? 0)}</dd></div>}
-              <div className="flex justify-between border-t pt-2 text-base font-semibold"><dt>{t("sales.grandTotal")}</dt><dd>{formatMoney(o.grandTotal ?? 0)}</dd></div>
-            </dl>
-          </div>
-        )}
+        <DialogBody>
+          {isLoading || !o ? <div className="h-40 animate-pulse rounded-xl bg-muted" /> : (
+            <div className="flex flex-col gap-4">
+              <Table className="min-w-[420px]">
+                <TableHeader><TableRow className="hover:bg-transparent">{[t("products.item"), t("products.quantity"), t("sales.unitPrice"), t("sales.lineTotal")].map((h) => <TableHead key={h} className="text-muted-foreground">{h}</TableHead>)}</TableRow></TableHeader>
+                <TableBody>
+                  {(o.items ?? []).map((i, k) => (
+                    <TableRow key={k}>
+                      <TableCell><div className="font-medium">{i.productName}</div>{i.notes && <div className="text-xs text-muted-foreground">{i.notes}</div>}</TableCell>
+                      <TableCell className="tabular-nums">{i.quantity}</TableCell>
+                      <TableCell className="tabular-nums">{formatMoney(i.unitPrice ?? 0)}</TableCell>
+                      <TableCell className="font-semibold tabular-nums">{formatMoney(i.lineTotal ?? 0)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              {o.notes && <p className="rounded-lg bg-muted px-3 py-2 text-muted-foreground">{o.notes}</p>}
+              <dl className="ms-auto flex w-full max-w-xs flex-col gap-1.5 text-sm tabular-nums">
+                <div className="flex justify-between"><dt className="text-muted-foreground">{t("sales.subTotal")}</dt><dd>{formatMoney(o.subTotal ?? 0)}</dd></div>
+                {(o.discountAmount ?? 0) > 0 && <div className="flex justify-between"><dt className="text-muted-foreground">{t("sales.discount")}</dt><dd>-{formatMoney(o.discountAmount ?? 0)}</dd></div>}
+                {!exempt && <div className="flex justify-between"><dt className="text-muted-foreground">{t("sales.tax")}</dt><dd>{formatMoney(o.taxAmount ?? 0)}</dd></div>}
+                <div className="flex justify-between border-t pt-2 text-base font-semibold"><dt>{t("sales.grandTotal")}</dt><dd>{formatMoney(o.grandTotal ?? 0)}</dd></div>
+              </dl>
+            </div>
+          )}
+        </DialogBody>
       </DialogContent>
     </Dialog>
   )

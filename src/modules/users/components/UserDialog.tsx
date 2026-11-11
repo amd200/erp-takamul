@@ -5,7 +5,7 @@ import { UserPlus } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogBody, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { FormInput, FormSelect } from "@/components/form/FormFields"
 import { useSession } from "@/shared/session/session"
 import { useBranchList } from "@/modules/branches/queries"
@@ -38,39 +38,40 @@ export function UserDialog({ open, onOpenChange, user }: { open: boolean; onOpen
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[900px]">
+      <DialogContent className="sm:max-w-[900px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-primary"><UserPlus size={20} />{title}</DialogTitle>
           <DialogDescription>{t("oldUsers.subtitle")}</DialogDescription>
         </DialogHeader>
+        <DialogBody>
 
-        <form id="user-form" onSubmit={submit} noValidate className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormInput control={c} name="userName" required label={t("oldUsers.userName")} placeholder={t("oldUsers.userNameHint")} />
-          <FormInput control={c} name="mobile" label={t("oldUsers.mobile")} placeholder={t("oldUsers.mobileExample")} />
-          <FormInput control={c} name="email" required label={t("oldUsers.email")} placeholder="example@email.com" />
-          <FormSelect control={c} name="branchId" numeric required label={t("oldUsers.branch")} placeholder={t("oldUsers.chooseBranch")}
-            options={branches.map((b) => ({ value: String(b.id), label: b.name || String(b.id) }))} />
-          <div className="sm:col-span-2">
-            <FormSelect control={c} name="roleName" required label={t("oldUsers.permission")} placeholder={t("oldUsers.choosePermission")}
-              options={roles.map((r) => ({ value: r, label: r }))} />
-          </div>
-          {!user && <FormInput control={c} name="password" type="password" required label={t("oldUsers.password")} placeholder={t("oldUsers.passwordHint")} />}
-          {!user && <FormInput control={c} name="confirmPassword" type="password" required label={t("oldUsers.confirmPassword")} placeholder={t("oldUsers.rewritePassword")} />}
+          <form id="user-form" onSubmit={submit} noValidate className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <FormInput control={c} name="userName" required label={t("oldUsers.userName")} placeholder={t("oldUsers.userNameHint")} />
+            <FormInput control={c} name="mobile" label={t("oldUsers.mobile")} placeholder={t("oldUsers.mobileExample")} />
+            <FormInput control={c} name="email" required label={t("oldUsers.email")} placeholder="example@email.com" />
+            <FormSelect control={c} name="branchId" numeric required label={t("oldUsers.branch")} placeholder={t("oldUsers.chooseBranch")}
+              options={branches.map((b) => ({ value: String(b.id), label: b.name || String(b.id) }))} />
+            <div className="sm:col-span-2">
+              <FormSelect control={c} name="roleName" required label={t("oldUsers.permission")} placeholder={t("oldUsers.choosePermission")}
+                options={roles.map((r) => ({ value: r, label: r }))} />
+            </div>
+            {!user && <FormInput control={c} name="password" type="password" required label={t("oldUsers.password")} placeholder={t("oldUsers.passwordHint")} />}
+            {!user && <FormInput control={c} name="confirmPassword" type="password" required label={t("oldUsers.confirmPassword")} placeholder={t("oldUsers.rewritePassword")} />}
 
-          <div className="rounded-lg border border-border p-3 sm:col-span-2">
-            <div className="flex items-start gap-3">
-              <Checkbox id="user-multi-branch" className="mt-0.5" checked={multi === true} onCheckedChange={(v) => form.setValue("isMultiBranch", v === true)} />
-              <div className="space-y-1">
-                <label htmlFor="user-multi-branch" className="cursor-pointer text-sm font-medium">{t("oldUsers.multiBranch")}</label>
-                <p className="text-xs text-muted-foreground">{t("oldUsers.multiBranchHint")}</p>
+            <div className="rounded-lg border border-border p-3 sm:col-span-2">
+              <div className="flex items-start gap-3">
+                <Checkbox id="user-multi-branch" className="mt-0.5" checked={multi === true} onCheckedChange={(v) => form.setValue("isMultiBranch", v === true)} />
+                <div className="space-y-1">
+                  <label htmlFor="user-multi-branch" className="cursor-pointer text-sm font-medium">{t("oldUsers.multiBranch")}</label>
+                  <p className="text-xs text-muted-foreground">{t("oldUsers.multiBranchHint")}</p>
+                </div>
               </div>
             </div>
-          </div>
-        </form>
-
+          </form>
+        </DialogBody>
         <DialogFooter>
-          <Button type="button" variant="destructive" size="xl" className="w-full sm:w-auto" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
-          <Button type="submit" form="user-form" size="xl" className="w-full sm:w-auto" disabled={save.isPending}>{title}</Button>
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
+          <Button type="submit" form="user-form" disabled={save.isPending}>{title}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

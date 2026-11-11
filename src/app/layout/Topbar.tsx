@@ -37,19 +37,19 @@ export function Topbar() {
   const logout = useLogout()
   const [pwOpen, setPwOpen] = useState(false)
   return (
-    <header className="sticky top-0 z-30 flex flex-wrap items-center gap-2 border-b bg-card px-4 py-3 md:px-6 print:hidden">
+    <header className="sticky top-0 z-30 flex flex-wrap items-center gap-x-1 gap-y-2 border-b bg-card px-3 py-2 sm:gap-x-2 sm:px-4 sm:py-3 md:px-6 print:hidden">
       <SidebarTrigger />
       <BranchSwitcher />
       <div className="order-last flex w-full gap-2 lg:order-none lg:w-auto">
-        <Can perm={P.sales.add}><Button asChild variant="secondary" className={cn("rounded-full max-lg:flex-1", quickA4)}><Link to="/sales/invoices/create"><LayoutGrid />{t("topbar.quickA4")}</Link></Button></Can>
-        <Can perm={P.sales.pos}><Button asChild variant="secondary" className={cn("rounded-full max-lg:flex-1", quickPos)}><Link to={posPath}><ShoppingCart />{t("topbar.quickPos")}</Link></Button></Can>
-        <Can perm={P.products.add}><Button asChild variant="ghost" className={cn("rounded-full bg-muted max-lg:flex-1", quickItem)}><Link to="/products/create"><Package />{t("topbar.quickItem")}</Link></Button></Can>
+        <Can perm={P.sales.add}><Button asChild variant="secondary" className={cn("rounded-full max-lg:h-9 max-lg:min-w-0 max-lg:flex-1 max-lg:px-2 max-lg:text-xs", quickA4)}><Link to="/sales/invoices/create"><LayoutGrid />{t("topbar.quickA4")}</Link></Button></Can>
+        <Can perm={P.sales.pos}><Button asChild variant="secondary" className={cn("rounded-full max-lg:h-9 max-lg:min-w-0 max-lg:flex-1 max-lg:px-2 max-lg:text-xs", quickPos)}><Link to={posPath}><ShoppingCart />{t("topbar.quickPos")}</Link></Button></Can>
+        <Can perm={P.products.add}><Button asChild variant="ghost" className={cn("rounded-full bg-muted max-lg:h-9 max-lg:min-w-0 max-lg:flex-1 max-lg:px-2 max-lg:text-xs", quickItem)}><Link to="/products/create"><Package />{t("topbar.quickItem")}</Link></Button></Can>
       </div>
 
-      <div className="ms-auto flex items-center gap-1">
+      <div className="ms-auto flex shrink-0 items-center sm:gap-1">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon-lg" className="relative rounded-full" aria-label={t("topbar.notifications")}>
+            <Button variant="ghost" size="icon-lg" className="relative rounded-full max-sm:size-9" aria-label={t("topbar.notifications")}>
               <Bell /><span className="absolute end-2 top-2 size-2 rounded-full border-2 border-background bg-destructive" />
             </Button>
           </DropdownMenuTrigger>
@@ -66,7 +66,7 @@ export function Topbar() {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon-lg" className="rounded-full" aria-label={t("topbar.theme")}>{resolved === "dark" ? <Moon /> : <Sun />}</Button>
+            <Button variant="ghost" size="icon-lg" className="rounded-full max-sm:size-9" aria-label={t("topbar.theme")}>{resolved === "dark" ? <Moon /> : <Sun />}</Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {THEMES.map(({ id, icon: Icon }) => (
@@ -79,7 +79,7 @@ export function Topbar() {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon-lg" className="rounded-full" aria-label={t("topbar.language")}><Globe /></Button>
+            <Button variant="ghost" size="icon-lg" className="rounded-full max-sm:size-9" aria-label={t("topbar.language")}><Globe /></Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {LANGUAGES.map((l) => (
@@ -92,7 +92,7 @@ export function Topbar() {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-10 rounded-full px-1" aria-label={t("topbar.account")}>
+            <Button variant="ghost" className="h-10 rounded-full px-1 max-sm:h-9" aria-label={t("topbar.account")}>
               <span className="grid size-8 place-items-center rounded-full bg-secondary text-[13px] font-semibold text-secondary-foreground">{(user.name[0] ?? "?").toUpperCase()}</span>
             </Button>
           </DropdownMenuTrigger>

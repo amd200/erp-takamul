@@ -43,7 +43,7 @@ export function BranchSwitcher() {
   return (
     <Select disabled={changing || saving} value={current == null ? "all" : String(current)} onValueChange={change}>
       <SelectTrigger aria-label={t("topbar.selectBranch")} title={t("topbar.selectBranch")} data-chosen={chosen ?? ""}
-        className="h-9 w-auto min-w-0 max-w-40 gap-1.5 px-2.5 text-xs sm:w-40 sm:max-w-none sm:text-sm lg:w-48">
+        className="h-9 w-auto min-w-0 max-w-40 max-sm:max-w-none max-sm:flex-1 gap-1.5 px-2.5 text-xs sm:w-40 sm:max-w-none sm:text-sm lg:w-48">
         <Building2 size={15} className="shrink-0 text-primary" />
         <SelectValue placeholder={t("topbar.selectBranch")} />
       </SelectTrigger>
