@@ -18,3 +18,15 @@ export function useLogout() {
     onSettled: () => { qc.clear(); usePosStore.getState().clear(); nav("/login", { replace: true }) },
   })
 }
+
+export function useForgotPassword() {
+  return useMutation({ mutationFn: authApi.forgotPassword })
+}
+
+export function useVerifyOtp() {
+  return useMutation({ mutationFn: authApi.verifyOtp })
+}
+
+export function useResetPassword() {
+  return useMutation({ mutationFn: authApi.resetPassword })
+}

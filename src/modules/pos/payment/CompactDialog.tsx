@@ -18,7 +18,7 @@ const beautyStyle = {
   "--compact-payment-accent-soft": "var(--secondary)", "--compact-payment-ink-hover": "var(--primary)", "--compact-payment-ink-soft": "var(--secondary)", "--compact-payment-action": "var(--primary)",
 } as CSSProperties
 
-const treasuryClass = "group h-auto min-h-11 sm:min-h-[58px] w-full justify-start gap-1.5 rounded-[15px] border border-[var(--compact-payment-border,#e1e4ec)] bg-[var(--compact-payment-surface,#fff)]/40 p-2 text-start whitespace-normal text-[var(--compact-payment-muted,#626b8a)] hover:bg-[var(--compact-payment-surface,#fff)] disabled:opacity-45 data-[selected=true]:border-[var(--compact-payment-accent,#199f50)] data-[selected=true]:bg-[var(--compact-payment-selected,#e6f6ec)] data-[selected=true]:text-[var(--compact-payment-ink,#0e124d)] sm:min-h-[72px] sm:gap-3 sm:px-4 sm:py-3 [&>svg]:text-[var(--compact-payment-icon,#9ba2b6)] data-[selected=true]:[&>svg]:text-[var(--compact-payment-accent,#199f50)]"
+const treasuryClass = "group h-auto min-h-11 sm:min-h-[58px] w-full justify-start gap-1.5 rounded-[15px] border border-[var(--compact-payment-border,#e1e4ec)] bg-[var(--compact-payment-surface,#fff)]/40 p-2 text-start whitespace-normal text-[var(--compact-payment-muted,#626b8a)] hover:bg-[var(--compact-payment-surface,#fff)] disabled:opacity-45 dark:disabled:opacity-60 data-[selected=true]:border-[var(--compact-payment-accent,#199f50)] data-[selected=true]:bg-[var(--compact-payment-selected,#e6f6ec)] data-[selected=true]:text-[var(--compact-payment-ink,#0e124d)] sm:min-h-[72px] sm:gap-3 sm:px-4 sm:py-3 [&>svg]:text-[var(--compact-payment-icon,#9ba2b6)] data-[selected=true]:[&>svg]:text-[var(--compact-payment-accent,#199f50)]"
 const checkClass = "flex size-[18px] shrink-0 items-center justify-center rounded-full border border-[var(--compact-payment-check-border,#ccd1e0)] sm:size-[22px] group-data-[selected=true]:border-[var(--compact-payment-accent,#199f50)] group-data-[selected=true]:bg-[var(--compact-payment-accent,#199f50)]"
 const nameClass = "min-w-0 flex-1 truncate text-xs font-semibold sm:text-base"
 const amountClass = "shrink-0 whitespace-nowrap font-[Arial] text-sm font-semibold text-[var(--compact-payment-amount-muted,#9098af)] sm:text-lg group-data-[selected=true]:font-bold group-data-[selected=true]:text-[var(--compact-payment-accent,#199f50)]"
@@ -92,7 +92,7 @@ export function CompactDialog(props: PaymentProps) {
               })}
             </div>
             {p.loading && <p role="status" className="mt-2.5 shrink-0 text-xs text-[var(--compact-payment-muted,#626b8a)]">{t("common.loading")}</p>}
-            {!p.loading && p.treasuries.length === 0 && <p role="alert" className="mt-2.5 shrink-0 text-xs text-[#c83232]">{p.error ? t("pos.treasuryError") : t("pos.noTreasury")}</p>}
+            {!p.loading && p.treasuries.length === 0 && <p role="alert" className="mt-2.5 shrink-0 text-xs text-[#c83232] dark:text-destructive">{p.error ? t("pos.treasuryError") : t("pos.noTreasury")}</p>}
             <div className="shrink-0 p-1 pt-0 sm:pt-2">
               <Button type="button" variant="ghost" className={treasuryClass} data-selected={p.credit} aria-pressed={p.credit} disabled={busy} onClick={p.selectCredit}>
                 <span className={checkClass}>{p.credit && <Check size={14} strokeWidth={3} className="text-white" />}</span>
@@ -109,7 +109,7 @@ export function CompactDialog(props: PaymentProps) {
                 <span className="text-[11px] leading-normal text-[var(--compact-payment-muted,#626b8a)]">{t("posPayment.totalEntered")}</span>
                 <strong className="self-start font-[Arial] text-[22px] leading-[1.15] font-bold sm:text-[26px]" dir="ltr">{p.paid.toFixed(2)}</strong>
               </div>
-              <div className={cn("flex min-h-12 flex-col justify-center rounded-[14px] border px-4 py-0.5 sm:min-h-14", difference > 0 ? "border-[#f0b8b8] bg-[#fcecec] text-[#c83232]" : "border-[var(--compact-payment-accent-border,#a8dec0)] bg-[var(--compact-payment-selected,#e6f6ec)] text-[var(--compact-payment-accent,#199f50)]")}>
+              <div className={cn("flex min-h-12 flex-col justify-center rounded-[14px] border px-4 py-0.5 sm:min-h-14", difference > 0 ? "border-[#f0b8b8] bg-[#fcecec] text-[#c83232] dark:border-destructive/40 dark:bg-destructive-soft dark:text-destructive" : "border-[var(--compact-payment-accent-border,#a8dec0)] bg-[var(--compact-payment-selected,#e6f6ec)] text-[var(--compact-payment-accent,#199f50)]")}>
                 <span className="text-[11px] leading-normal">{difference >= 0 ? t("posPayment.remaining") : t("posPayment.change")}</span>
                 <strong className="self-start font-[Arial] text-[22px] leading-[1.15] font-bold sm:text-[26px]" dir="ltr">{Math.abs(difference).toFixed(2)}</strong>
               </div>
@@ -133,7 +133,7 @@ export function CompactDialog(props: PaymentProps) {
                   {row.map((k) => (
                     <button key={k} type="button" disabled={busy || p.credit || (split && !p.splits.length)} aria-label={k === "back" ? t("posPayment.deleteDigit") : k}
                       onMouseDown={(e) => e.preventDefault()} onClick={() => p.pushKey(k)} className={keyClass}>
-                      {k === "back" ? <Delete size={22} className="mx-auto text-[#d33232]" /> : k}
+                      {k === "back" ? <Delete size={22} className="mx-auto text-[#d33232] dark:text-destructive" /> : k}
                     </button>
                   ))}
                 </div>
@@ -147,7 +147,7 @@ export function CompactDialog(props: PaymentProps) {
           <Button type="button" className={`${actionClass} col-span-full border-[var(--compact-payment-action,#0e124d)] bg-[var(--compact-payment-action,#0e124d)] text-white hover:bg-[var(--compact-payment-ink-hover,#191e65)] sm:col-span-1`} disabled={busy || !p.canSave} onClick={() => onConfirm(p.payments(), true)}>{t("posPayment.saveAndPrint")}</Button>
           <Button type="button" variant="outline" className={cn(actionClass, "border-[var(--compact-payment-accent,#199f50)] bg-[var(--compact-payment-surface,#fff)] text-[var(--compact-payment-accent,#199f50)] hover:bg-[var(--compact-payment-accent-soft,#eff7f2)] hover:text-[var(--compact-payment-accent,#199f50)]", !showPdf && !split && "col-span-full sm:col-span-1")} disabled={busy || !p.canSave} onClick={() => onConfirm(p.payments(), false)}>{t("posPayment.saveOnly")}</Button>
           {showPdf && <Button type="button" variant="outline" className={cn(actionClass, "border-[var(--compact-payment-ink,#0e124d)] bg-[var(--compact-payment-surface,#fff)] text-[var(--compact-payment-ink,#0e124d)] hover:bg-[var(--compact-payment-ink-soft,#f0f1f8)] hover:text-[var(--compact-payment-ink,#0e124d)]")} disabled={busy || !p.canSave} onClick={() => onConfirm(p.payments(), false, "pdf")}><FileText size={17} />{t("posPayment.savePdf")}</Button>}
-          {split && <Button type="button" variant="outline" className={cn(actionClass, "border-[#ce3030] bg-[var(--compact-payment-surface,#fff)] text-[#ce3030] hover:bg-[#fff3f3] hover:text-[#ce3030]", showPdf && "col-span-full sm:col-span-1")} disabled={busy} onClick={p.toggleSplit}>{t("posPayment.stopSplit")}</Button>}
+          {split && <Button type="button" variant="outline" className={cn(actionClass, "border-[#ce3030] bg-[var(--compact-payment-surface,#fff)] text-[#ce3030] hover:bg-[#fff3f3] hover:text-[#ce3030] dark:border-destructive/60 dark:text-destructive dark:hover:bg-destructive-soft dark:hover:text-destructive", showPdf && "col-span-full sm:col-span-1")} disabled={busy} onClick={p.toggleSplit}>{t("posPayment.stopSplit")}</Button>}
         </footer>
       </DialogContent>
     </DialogPrimitive.Root>

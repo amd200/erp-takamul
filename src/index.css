@@ -68,6 +68,26 @@
 }
 
 .dark {
+  /* POS payment dialog (modules/pos/payment/CompactDialog.tsx); light values are its built-in fallbacks. */
+  --compact-payment-background: #0e1426;
+  --compact-payment-surface: #151c33;
+  --compact-payment-border: #2b3554;
+  --compact-payment-ink: #e6e9f3;
+  --compact-payment-muted: #98a1b8;
+  --compact-payment-icon: #6a738d;
+  --compact-payment-check-border: #3a4668;
+  --compact-payment-amount-muted: #8089a3;
+  --compact-payment-accent: #5cbf6a;
+  --compact-payment-accent-hover: #4aa958;
+  --compact-payment-selected: #1b3326;
+  --compact-payment-accent-border: #2f6b3a;
+  --compact-payment-accent-soft: #1d2540;
+  --compact-payment-ink-soft: #1d2540;
+  --compact-payment-ink-hover: #3a4d99;
+  --compact-payment-action: #2c3a73;
+  --compact-payment-header: #1a2347;
+  --compact-payment-header-muted: #b9bfd8;
+  --compact-payment-header-amount: #6ce39a;
   --background: #0e1426;
   --foreground: #e6e9f3;
   --card: #151c33;

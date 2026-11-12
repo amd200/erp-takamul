@@ -9,6 +9,9 @@ export type LoginForm = z.infer<typeof loginSchema>
 export const forgotSchema = z.object({ email: z.string().trim().min(1, "validation.emailRequired").email("validation.emailInvalid") })
 export type ForgotForm = z.infer<typeof forgotSchema>
 
+export const otpSchema = z.object({ otp: z.string().trim().length(6, "validation.otpLength") })
+export type OtpForm = z.infer<typeof otpSchema>
+
 export const resetSchema = z.object({ password: z.string(), confirmPassword: z.string() }).superRefine((v, ctx) => {
   if (v.password.length < 8) ctx.addIssue({ code: "custom", path: ["password"], message: "validation.passwordMin" })
   if (v.password !== v.confirmPassword) ctx.addIssue({ code: "custom", path: ["confirmPassword"], message: "validation.passwordMatch" })

@@ -1,6 +1,8 @@
 import { useAuthStore } from "@/shared/auth/authStore"
 import { applyToken, type TokenResponse } from "@/shared/auth/tokens"
 import { refreshAccessToken } from "@/shared/http/client"
+import i18n from "@/shared/i18n"
+import { ApiError } from "@/shared/http/ApiError"
 import { http } from "@/shared/http/request"
 
 /** Stable id for this browser; the server limits a user to one device at a time ("DEVICE_CONFLICT"). */
@@ -34,11 +36,12 @@ export const authApi = {
   forgotPassword: (email: string) =>
     http<void>("/Auth/forget-password", { method: "POST", data: JSON.stringify(email), headers: { "Content-Type": "application/json" } }),
 
+  /** The server answers 200 even for a wrong code; only the message "OTP_VALID" means it matched. */
   verifyOtp: async ({ email, otp }: { email: string; otp: string }) => {
-    const res = await http<{ token?: string; resetToken?: string; data?: { token?: string } }>("/Auth/verify-otp", { method: "POST", data: { email, otp, code: otp } })
-    return { resetToken: res?.token ?? res?.resetToken ?? res?.data?.token ?? otp }
+    const res = await http<{ message?: string }>("/Auth/verify-otp", { method: "POST", data: { email, otp } })
+    if (res?.message !== "OTP_VALID") throw new ApiError(res?.message ?? i18n.t("common.unexpected"), 400)
   },
 
-  resetPassword: ({ email, token, password }: { email: string; token: string; password: string }) =>
-    http<void>("/Auth/reset-password", { method: "POST", data: { email, token, newPassword: password } }),
+  resetPassword: ({ email, password }: { email: string; password: string }) =>
+    http<void>("/Auth/reset-password", { method: "POST", data: { email, newPassword: password } }),
 }

@@ -1,39 +1,45 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation } from "@tanstack/react-query"
 import { Navigate, useLocation, useNavigate } from "react-router-dom"
-import { Loader2 } from "lucide-react"
+import { Lock } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import { FieldGroup } from "@/components/ui/field"
-import { FormInput } from "@/components/form/FormFields"
-import { authApi } from "../service"
 import { AuthLayout } from "../components/AuthLayout"
+import { AuthError, AuthField, authButtonClass } from "../components/AuthField"
+import { useResetPassword } from "../queries"
 import { resetSchema, type ResetForm } from "../schema"
 
+/** Step 3 of 3: the new password. */
 export default function ResetPasswordPage() {
   const { t } = useTranslation()
   const nav = useNavigate()
-  const state = useLocation().state as { token?: string; email?: string } | null
+  const email = (useLocation().state as { email?: string } | null)?.email
   const form = useForm<ResetForm>({ resolver: zodResolver(resetSchema), defaultValues: { password: "", confirmPassword: "" } })
-  const reset = useMutation({
-    mutationFn: authApi.resetPassword,
-    onSuccess: () => { toast.success(t("auth.passwordChanged")); nav("/login") },
-  })
+  const reset = useResetPassword()
+  const first = form.formState.errors.password?.message ?? form.formState.errors.confirmPassword?.message
+  const error = reset.error?.message ?? (first && t(first))
 
-  if (!state?.email) return <Navigate to="/forgot-password" replace />
+  if (!email) return <Navigate to="/forgot-password" replace />
 
+  const clear = { onChange: () => reset.reset() }
   return (
-    <AuthLayout title={t("auth.resetTitle")} description={t("auth.resetDescription")}>
-      <form onSubmit={form.handleSubmit((v) => reset.mutate({ email: state?.email ?? "", token: state?.token ?? "", password: v.password }))} noValidate className="flex flex-col gap-5">
-        <FieldGroup className="gap-4">
-          <FormInput control={form.control} name="password" type="password" dir="ltr" label={t("users.newPassword")} description={t("users.passwordHint")} />
-          <FormInput control={form.control} name="confirmPassword" type="password" dir="ltr" label={t("users.confirmPassword")} />
-        </FieldGroup>
-        {reset.isError && <p role="alert" className="text-sm text-destructive">{reset.error.message}</p>}
-        <Button type="submit" size="lg" className="h-10" disabled={reset.isPending}>{reset.isPending && <Loader2 className="animate-spin" />}{t("auth.savePassword")}</Button>
-      </form>
+    <AuthLayout title={t("auth.resetTitle")} onBack={() => nav("/verify-otp", { state: { email } })}>
+      {reset.isSuccess ? (
+        <div className="py-4 text-center">
+          <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-green-500/10 text-green-500"><Lock size={32} /></div>
+          <h3 className="mb-2 text-lg font-bold">{t("auth.resetDone")}</h3>
+          <button type="button" onClick={() => nav("/login")} className="mt-4 font-medium text-primary hover:underline">{t("auth.backToLogin")}</button>
+        </div>
+      ) : (
+        <form onSubmit={form.handleSubmit((v) => reset.mutate({ email, password: v.password }))} noValidate className="space-y-4">
+          <AuthField icon={Lock} type="password" placeholder={t("auth.newPassword")} {...form.register("password", clear)} />
+          <AuthField icon={Lock} type="password" placeholder={t("auth.confirmPassword")} {...form.register("confirmPassword", clear)} />
+          {error && <AuthError>{error}</AuthError>}
+          <button type="submit" disabled={reset.isPending} className={`mt-4 ${authButtonClass}`}>
+            {reset.isPending ? <span className="inline-block size-5 animate-spin rounded-full border-2 border-white/30 border-t-white" /> : t("auth.resetButton")}
+          </button>
+          <button type="button" onClick={() => nav("/login")} className="mt-4 w-full text-center font-medium text-primary hover:underline">{t("auth.backToLogin")}</button>
+        </form>
+      )}
     </AuthLayout>
   )
 }
