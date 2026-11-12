@@ -1,4 +1,7 @@
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { toast } from "sonner"
+import i18n from "@/shared/i18n"
+import { errorToast } from "@/shared/api/errors"
 import { homeApi } from "./service"
 import { homeKeys } from "./keys"
 
@@ -16,3 +19,13 @@ export const useRecentPurchases = (enabled: boolean) => useQuery({ queryKey: hom
 export const useRecentQuotes = (enabled: boolean) => useQuery({ queryKey: homeKeys.recent("quotes"), queryFn: homeApi.quotes, enabled })
 export const useRecentSuppliers = (enabled: boolean) => useQuery({ queryKey: homeKeys.recent("suppliers"), queryFn: homeApi.suppliers, enabled })
 export const useRecentCustomers = (enabled: boolean) => useQuery({ queryKey: homeKeys.recent("customers"), queryFn: homeApi.customers, enabled })
+
+export const useSubscriptionDays = () => useQuery({ queryKey: homeKeys.subscription, queryFn: homeApi.subscriptionDays })
+export function useRenewSubscription() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: homeApi.renewSubscription,
+    onSuccess: () => { qc.invalidateQueries({ queryKey: homeKeys.subscription }); toast.success(i18n.t("home.renewalSent")) },
+    onError: (e) => errorToast(e, "home.renewalFailed"),
+  })
+}

@@ -7,12 +7,13 @@ const fmt = (v: number | null | undefined) => (typeof v === "number" && !Number.
 
 type Opts = { withVouchers: boolean; byEmployee: boolean; exempt: boolean }
 
-const CSS = `body{width:auto;padding:4mm 3mm;font-size:12px}
+const CSS = `body{width:auto;padding:0 3mm;font-size:12px}
+.sheet{width:100%;border-collapse:collapse}.sheet>thead>tr>td,.sheet>tfoot>tr>td,.sheet>tbody>tr>td{padding:0;border:0;text-align:start;direction:inherit;font-size:inherit;font-weight:inherit;white-space:normal}.sheet-gap{height:5mm}
 .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding:5px 16px;border:1px solid #d4d4d4;border-radius:12px;background:#f5f5f5}
 .meta-label,.card-row span{color:#525252;font-size:10px;font-weight:700}.meta-value{display:block;margin-top:4px;font-size:14px;font-weight:700}.meta-end{text-align:end}
 .times{display:flex;align-items:stretch;padding:12px;margin-bottom:20px;border:1px solid #d4d4d4;border-radius:8px}.time{flex:1;text-align:center}.time+.time{border-inline-start:1px solid #d4d4d4}
 .time-value{display:block;margin-top:4px;font-size:12px;font-weight:700}
-.section{margin-bottom:16px}.section-title{margin:0 0 10px;font-size:14px;font-weight:700}
+.section{margin-bottom:16px}.section-title{margin:0 0 10px;font-size:14px;font-weight:700;break-after:avoid;page-break-after:avoid}
 .table-wrap{overflow:hidden;border:1px solid #d4d4d4;border-radius:8px;break-inside:avoid}
 table{table-layout:fixed}th{padding:8px 4px;background:#f5f5f5;border-bottom:1px solid #d4d4d4;font-size:10px;text-align:center;white-space:nowrap}
 td{padding:9px 4px;border-bottom:1px solid #d4d4d4;font-size:11px;font-weight:500;text-align:center}tr:last-child td{border-bottom:0}
@@ -39,7 +40,7 @@ export function shiftReportClassicDoc(r: ShiftReport, o: Opts): PrintDoc {
 
   const items = (r.soldItems ?? []).map((x) => `<tr><td>${esc(x.productName)}</td><td>${fmt(x.unitPrice)}</td><td>${esc(x.quantity)}</td><td>${fmt(x.lineTotal)}</td></tr>`).join("")
 
-  const body = `<header class="header">
+  const content = `<header class="header">
 <div><span class="meta-label">${t("userName")}</span><span class="meta-value">${esc(r.employeeName)}</span></div>
 <div class="meta-end"><span class="meta-label">${t("shiftNumber")}</span><span class="meta-value">#${esc(r.shiftId)}</span></div></header>
 <div class="times">
@@ -55,6 +56,9 @@ ${returns.length ? section(t("returns"), `<div class="cards">${returns.map((x) =
 ${returns.length || (o.withVouchers && treasuries.some((x) => (x.paymentCount ?? 0) > 0)) ? section(`${t("netSection")} (${t("sales")} - ${t("returns")})`, `<div class="cards">${treasuries.map((x) => `<div class="card"><div class="card-name">${esc(x.treasuryName)}</div>${row(t("netSales"), fmt(x.netTotal))}${o.withVouchers ? row(t("voucherCount"), x.paymentCount ?? "—") + row(t("voucherTotal"), fmt(x.paymentTotal)) + row(t("treasuryNet"), fmt(x.paymentTotal == null ? null : x.netTotal + x.paymentTotal)) : ""}</div>`).join("")}</div>`) : ""}
 ${o.byEmployee && (r.employeeSalesSummary?.length ?? 0) > 0 ? section(t("employeeDaily"), `<div class="cards">${(r.employeeSalesSummary ?? []).map((e) => `<div class="card"><div class="emp-head"><span>${esc(e.employeeName || "—")} (${esc(e.salesInvoicesCount)} ${t("orders")})</span><strong>${t("net")} ${fmt(e.netSales)}</strong></div>${row(`${t("totalReturns")} (${e.returnInvoicesCount ?? 0} ${t("returnsUnit")})`, fmt(e.totalReturns))}</div>`).join("")}</div>`) : ""}
 ${(r.totalExpenses ?? 0) > 0 || (r.totalPurchases ?? 0) > 0 ? section(t("purchasesExpenses"), `<div class="cards two"><div class="card card-center"><span class="meta-label">${t("totalPurchases")}</span><strong>${fmt(r.totalPurchases)}</strong></div><div class="card card-center"><span class="meta-label">${t("totalExpenses")}</span><strong>${fmt(r.totalExpenses)}</strong></div></div>`) : ""}`
+
+  // thead/tfoot repeat on every printed page, so each page (not just the first) gets top and bottom padding even with browser margins = None.
+  const body = `<table class="sheet"><thead><tr><td><div class="sheet-gap"></div></td></tr></thead><tfoot><tr><td><div class="sheet-gap"></div></td></tr></tfoot><tbody><tr><td>${content}</td></tr></tbody></table>`
 
   return { title: i18n.t("shifts.reportTitle", { id: r.shiftId }), paper: "roll80", css: CSS, body, anySheet: true }
 }

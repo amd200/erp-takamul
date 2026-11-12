@@ -4,7 +4,7 @@ import type { SalesOrderDto } from "@/modules/sales/types"
 import type { Quote } from "@/modules/quotes/types"
 import type { Supplier } from "@/modules/suppliers/types"
 import type { Customer } from "@/modules/customers/types"
-import type { InvoiceStatistics, RecentPurchase, TodayExpenses, TodayProfit, TodayPurchases, TodaySales } from "./types"
+import type { InvoiceStatistics, RecentPurchase, SubscriptionStatus, TodayExpenses, TodayProfit, TodayPurchases, TodaySales } from "./types"
 
 /** The five latest rows of each list on the home page, asked for the way the current system asks. */
 const latest = <T,>(url: string, params: Record<string, unknown> = {}) =>
@@ -15,6 +15,8 @@ export const homeApi = {
   todayPurchases: () => http<TodayPurchases>("/Statestic/today-purchases"),
   todayExpenses: () => http<TodayExpenses>("/Statestic/today-expenses"),
   todayProfit: () => http<TodayProfit>("/Statestic/today-profit"),
+  subscriptionDays: () => http<SubscriptionStatus>("/tenant/renewal/remaining-days"),
+  renewSubscription: () => http<unknown>("/tenant/renewal", { method: "POST" }),
   invoiceStatistics: () => http<InvoiceStatistics>("/zatca-invoices/invoice-statistics-today/summary"),
 
   /** `orderType` is left out when the user may see both kinds of invoice. */

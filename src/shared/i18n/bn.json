@@ -667,6 +667,11 @@
     "totalPurchases": "Mot cray",
     "loadingData": "Deta load hocche...",
     "noData": "Kon tathya upolobdho nei",
+    "welcome": "Swagtom",
+    "totalOperationsDate": "Tarikher jonno mot operation",
+    "renewSubscription": "Sadasyota punarnabikaron karun - baki din: {{days}} din",
+    "renewalSent": "Sadasyota punarnobikaraner anurodh safalvabe pathano hoyeche ebong porjalochona multubi ache",
+    "renewalFailed": "Sadasyota punarnabikaran korar somoy ekti truti hoyeche",
     "recent": "Samprotik operation",
     "ops": {
       "title": "Dhap 2 operations-er abostha (shesh 24 ghonta)",

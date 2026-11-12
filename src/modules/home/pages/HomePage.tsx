@@ -8,6 +8,7 @@ import { useAppSettings } from "@/modules/settings"
 import { useTodayExpenses, useTodayProfit, useTodayPurchases, useTodaySales } from "../queries"
 import { StatCard } from "../components/StatCard"
 import { OperationsStats } from "../components/OperationsStats"
+import { SubscriptionBanner } from "../components/SubscriptionBanner"
 import { RecentTransactions } from "../components/RecentTransactions"
 
 /** The dashboard, as in the current system: today's four totals, the ZATCA counts in stage two, and the latest operations. */
@@ -35,10 +36,11 @@ export function HomePage() {
   }
 
   // As in the current system the whole page, latest operations included, needs one of the statistics permissions.
-  if (!Object.values(show).some(Boolean)) return null
+  if (!Object.values(show).some(Boolean)) return <SubscriptionBanner />
 
   return (
     <div className="relative space-y-4">
+      <SubscriptionBanner />
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {show.sales && <StatCard title={t("home.totalSales")} value={formatMoney(Number(sales.data?.totalSales ?? 0))} icon={SaudiRiyal} className="bg-(--dashboard-sales) text-(--dashboard-sales-text)" delay={0.1} />}
         {show.expenses && <StatCard title={t("home.totalExpenses")} value={formatMoney(Number(expenses.data?.totalExpenses ?? 0))} icon={Banknote} className="bg-(--dashboard-expenses) text-(--dashboard-expenses-text)" delay={0.2} />}

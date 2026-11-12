@@ -6,6 +6,9 @@ export type TodayPurchases = { date: string; totalPurchases: number }
 export type TodayExpenses = { date: string; totalExpenses: number }
 export type TodayProfit = { date: string; totalSales: number; totalCostOfSales: number; grossProfit: number; totalExpenses: number; netProfit: number }
 
+/** GET /tenant/renewal/remaining-days: SubscriptionStatusDto inside { success, data }. */
+export type SubscriptionStatus = { success?: boolean; data?: { remainingDays: number; subscriptionEnd: string; isSubscriptionActive: boolean } }
+
 /** GET /zatca-invoices/invoice-statistics-today/summary: InvoiceStatisticDto inside { success, message, data }. */
 export type InvoiceStatistics = { success?: boolean; message?: string | null; data?: { totalinvoiceValid: number; totalinvoiceRejected: number; totalinvoiceNotSent: number } | null }
 

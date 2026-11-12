@@ -667,6 +667,11 @@
     "totalPurchases": "Total Purchases",
     "loadingData": "Loading data...",
     "noData": "No data available",
+    "welcome": "Welcome",
+    "totalOperationsDate": "Total operations for date",
+    "renewSubscription": "Renew Subscription - Days remaining: {{days}} days",
+    "renewalSent": "Subscription renewal request sent successfully and is pending review",
+    "renewalFailed": "An error occurred while renewing the subscription",
     "recent": "Recent Operations",
     "ops": {
       "title": "Phase 2 operations status (last 24 hours)",
