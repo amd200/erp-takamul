@@ -32,7 +32,7 @@ export const NAV: NavItem[] = [
       { key: "invoicesA4", to: "/sales/invoices", perm: P.sales.view },
       { key: "invoicesPos", to: "/sales/pos-invoices", perm: P.sales.pos },
       { key: "returns", to: "/sales/returns", perm: P.sales.returnsView },
-      { key: "debitNotes", to: "/sales/debit-notes", perm: P.sales.debitView, when: (s) => s.generalTab?.enableDebitNote },
+      { key: "debitNotes", to: "/sales/debit-notes", perm: P.sales.debitView, when: (s) => s.operationsTab?.enableDebitNote },
     ],
   },
   {

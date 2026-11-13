@@ -14,7 +14,6 @@ export function GeneralFields({ form: { control } }: FieldsProps) {
       <Flag control={control} name="generalTab.showReturnedItemsDetails" />
       <FormInput control={control} name="generalTab.rowsPerPage" type="number" required label={label("rowsPerPage")} />
       <Flag control={control} name="preparationTicketTab.showOrderDeviceNumber" />
-      <Flag control={control} name="generalTab.enableDebitNote" />
     </Grid>
   )
 }
@@ -157,7 +156,8 @@ export function OperationsFields({ form: { control } }: FieldsProps) {
   return (
     <Grid>
       {["btnHolding", "whatsappSending", "emailSending", "isClaimVoucher", "isStockVoucher", "allowPrintA3", "allowExportExcel", "allowPrintInvoiceA4", "allowPrintInvoiceRoll",
-        "allowViewInvoicePayments", "allowEditInvoiceNotes", "allowSalesReturn", "allowDownloadInvoicePdfA4", "allowDownloadInvoicePdfRoll"].map((k) => (
+        "allowViewInvoicePayments", "allowEditInvoiceNotes", "allowSalesReturn", "allowDownloadInvoicePdfA4", "allowDownloadInvoicePdfRoll",
+        "allowPrintInvoiceA5", "enableDebitNote", "allowResendInvoiceToZatca", "allowViewZatcaResponse", "allowDownloadZatcaResponseXml", "allowDownloadZatcaResponseExcel"].map((k) => (
         <Flag key={k} control={control} name={`operationsTab.${k}`} />
       ))}
     </Grid>

@@ -15,11 +15,11 @@ const text = z.string()
 
 // ---- sales settings
 export const generalSchema = z.object({
-  generalTab: z.object({ showReturnedItemsDetails: flag, rowsPerPage: count(5, 100), enableDebitNote: flag }),
+  generalTab: z.object({ showReturnedItemsDetails: flag, rowsPerPage: count(5, 100) }),
   preparationTicketTab: z.object({ showOrderDeviceNumber: flag }),
 })
 export const emptyGeneral: z.infer<typeof generalSchema> = {
-  generalTab: { showReturnedItemsDetails: true, rowsPerPage: 10, enableDebitNote: true },
+  generalTab: { showReturnedItemsDetails: true, rowsPerPage: 10 },
   preparationTicketTab: { showOrderDeviceNumber: false },
 }
 
@@ -101,14 +101,16 @@ export const operationsSchema = z.object({
   operationsTab: z.object({
     btnHolding: flag, whatsappSending: flag, emailSending: flag, isClaimVoucher: flag, isStockVoucher: flag, allowPrintA3: flag, allowExportExcel: flag,
     allowPrintInvoiceA4: flag, allowPrintInvoiceRoll: flag, allowViewInvoicePayments: flag, allowEditInvoiceNotes: flag, allowSalesReturn: flag,
-    allowDownloadInvoicePdfA4: flag, allowDownloadInvoicePdfRoll: flag,
+    allowDownloadInvoicePdfA4: flag, allowDownloadInvoicePdfRoll: flag, allowPrintInvoiceA5: flag, enableDebitNote: flag,
+    allowResendInvoiceToZatca: flag, allowViewZatcaResponse: flag, allowDownloadZatcaResponseXml: flag, allowDownloadZatcaResponseExcel: flag,
   }),
 })
 export const emptyOperations: z.infer<typeof operationsSchema> = {
   operationsTab: {
     btnHolding: true, whatsappSending: true, emailSending: true, isClaimVoucher: false, isStockVoucher: false, allowPrintA3: true, allowExportExcel: true,
     allowPrintInvoiceA4: true, allowPrintInvoiceRoll: true, allowViewInvoicePayments: true, allowEditInvoiceNotes: true, allowSalesReturn: true,
-    allowDownloadInvoicePdfA4: true, allowDownloadInvoicePdfRoll: true,
+    allowDownloadInvoicePdfA4: true, allowDownloadInvoicePdfRoll: true, allowPrintInvoiceA5: true, enableDebitNote: false,
+    allowResendInvoiceToZatca: true, allowViewZatcaResponse: true, allowDownloadZatcaResponseXml: true, allowDownloadZatcaResponseExcel: true,
   },
 }
 

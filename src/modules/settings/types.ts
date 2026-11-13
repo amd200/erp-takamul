@@ -5,7 +5,7 @@
  */
 type Enum = string | null
 
-export type GeneralTab = { showReturnedItemsDetails: boolean; rowsPerPage: number; enableDebitNote: boolean; salesOrderStartNumber: boolean }
+export type GeneralTab = { showReturnedItemsDetails: boolean; rowsPerPage: number; salesOrderStartNumber: boolean }
 export type PaymentTab = { showPaymentMethods: boolean; showPaidAndRemainingAmount: boolean; paymentScreenType: Enum; mobilePaymentScreenType: Enum; posPurcherstype: Enum; postype: Enum }
 export type ShiftsTab = { enableShiftStatement: boolean; showReturnsInShiftPrint: boolean }
 export type PrintA4Tab = { showHeaderAndFooterInPrint: boolean; a4InvoiceType: Enum }
@@ -13,6 +13,8 @@ export type OperationsTab = {
   btnHolding: boolean; whatsappSending: boolean; emailSending: boolean; isClaimVoucher: boolean; isStockVoucher: boolean; allowPrintA3: boolean
   allowPrintInvoiceA4: boolean; allowPrintInvoiceRoll: boolean; allowViewInvoicePayments: boolean; allowEditInvoiceNotes: boolean; allowSalesReturn: boolean
   allowDownloadInvoicePdfA4: boolean; allowDownloadInvoicePdfRoll: boolean; allowExportExcel: boolean
+  allowPrintInvoiceA5: boolean; enableDebitNote: boolean; allowResendInvoiceToZatca: boolean; allowViewZatcaResponse: boolean
+  allowDownloadZatcaResponseXml: boolean; allowDownloadZatcaResponseExcel: boolean
 }
 export type TablesTab = { isTables: boolean; selectTableNumberDuringSave: boolean; showTableNumberInOrders: boolean }
 export type SalonsTab = { beautyTheme: boolean; showEmployeeService: boolean; showServiceEmployeeSales: boolean; defaultServiceEmployeeId: number | null }
