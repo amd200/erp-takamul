@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next"
-import { FormInput, FormSelect } from "@/components/form/FormFields"
+import { FormInput, FormSelect, FormSwitch } from "@/components/form/FormFields"
 import { fullName } from "@/modules/lookups/types"
 import { useCustomers, useEmployees, useSuppliers, useTreasuries } from "@/modules/lookups/service"
 import { Flag, Check, Section, Grid, Choice, useLabel, type FieldsProps } from "./fields"
@@ -153,14 +153,17 @@ export function VoucherFields({ form: { control } }: FieldsProps) {
 }
 
 export function OperationsFields({ form: { control } }: FieldsProps) {
+  const label = useLabel()
   return (
-    <Grid>
+    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
       {["btnHolding", "whatsappSending", "emailSending", "isClaimVoucher", "isStockVoucher", "allowPrintA3", "allowExportExcel", "allowPrintInvoiceA4", "allowPrintInvoiceRoll",
         "allowViewInvoicePayments", "allowEditInvoiceNotes", "allowSalesReturn", "allowDownloadInvoicePdfA4", "allowDownloadInvoicePdfRoll",
         "allowPrintInvoiceA5", "enableDebitNote", "allowResendInvoiceToZatca", "allowViewZatcaResponse", "allowDownloadZatcaResponseXml", "allowDownloadZatcaResponseExcel"].map((k) => (
-        <Flag key={k} control={control} name={`operationsTab.${k}`} />
+        <div key={k} className="rounded-lg border bg-card px-4 py-3 transition-colors hover:bg-muted/50">
+          <FormSwitch control={control} name={`operationsTab.${k}`} label={label(k)} />
+        </div>
       ))}
-    </Grid>
+    </div>
   )
 }
 

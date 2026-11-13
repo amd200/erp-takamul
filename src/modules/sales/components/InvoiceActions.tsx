@@ -1,3 +1,4 @@
+import { Fragment, type ReactNode } from "react"
 import { Button } from "@/components/ui/button"
 import { useMutation } from "@tanstack/react-query"
 import { Link } from "react-router-dom"
@@ -41,49 +42,54 @@ export function InvoiceActions({ invoice, channel, onPayments, onNotes, onZatcaR
   const canAddDebitNote = enableDebitNote && can(P.sales.debitAdd)
 
   const item = "flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground"
+  const spin = (kind: FileKind, icon: ReactNode) => (download.isPending && download.variables === kind ? <RefreshCw className="animate-spin" size={14} /> : icon)
+
+  // Each group is a list of items; hidden items are dropped and separators only go between groups that still have items.
+  const groups: ReactNode[][] = [
+    [
+      ops?.allowPrintInvoiceA4 && <DropdownMenuItem key="a4" className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "print" })}><FileText size={14} />{t("sales.menu.printA4")}</DropdownMenuItem>,
+      ops?.allowPrintInvoiceA5 && <DropdownMenuItem key="a5" className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "print", paper: "a5" })}><FileText size={14} />{t("sales.menu.printA5")}</DropdownMenuItem>,
+      ops?.allowPrintInvoiceRoll && <DropdownMenuItem key="roll" className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "print", paper: "roll" })}><Printer size={14} />{t("sales.menu.printRoll")}</DropdownMenuItem>,
+      ops?.allowViewInvoicePayments && <DropdownMenuItem key="payments" className={item} onSelect={onPayments}><DollarSign size={14} />{t("sales.menu.payments")}</DropdownMenuItem>,
+    ],
+    [ops?.allowEditInvoiceNotes && <DropdownMenuItem key="notes" className={item} onSelect={onNotes}><FileText size={14} />{t("sales.menu.notes")}</DropdownMenuItem>],
+    [
+      canReturn && <DropdownMenuItem key="return" asChild><Link to={`/sales/returns/create?invoice=${invoice.id}`} className={item}><RotateCcw size={14} />{t("sales.menu.return")}</Link></DropdownMenuItem>,
+      canAddDebitNote && <DropdownMenuItem key="debit" asChild><Link to={`/sales/debit-notes/create?invoice=${invoice.id}`} className={item}><PlusCircle size={14} />{t("sales.menu.debitNote")}</Link></DropdownMenuItem>,
+      ops?.isStockVoucher && <DropdownMenuItem key="stock" className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "print", voucher: "stock" })}><Warehouse size={14} />{t("sales.menu.stockVoucher")}</DropdownMenuItem>,
+      ops?.isClaimVoucher && <DropdownMenuItem key="claim" className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "print", voucher: "claim" })}><FileCheck size={14} />{t("sales.menu.claimVoucher")}</DropdownMenuItem>,
+    ],
+    [
+      ops?.allowDownloadInvoicePdfA4 && <DropdownMenuItem key="pdfa4" className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "pdf" })}><FileDown size={14} />{t("sales.menu.downloadPdfA4")}</DropdownMenuItem>,
+      ops?.allowDownloadInvoicePdfRoll && <DropdownMenuItem key="pdfroll" className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "pdf", paper: "roll" })}>{channel === "POS" ? <Printer size={14} /> : <Download size={14} />}{t("sales.menu.downloadPdfRoll")}</DropdownMenuItem>,
+      ops?.allowPrintA3 && <DropdownMenuItem key="pdfa3" className={item} disabled={download.isPending} onSelect={() => download.mutate("pdfa3")}>{spin("pdfa3", <FileDown size={14} />)}{t("sales.menu.pdfa3")}</DropdownMenuItem>,
+      ops?.allowExportExcel && <DropdownMenuItem key="excel" className={item} disabled={download.isPending} onSelect={() => download.mutate("xlsx")}><FileSpreadsheet size={14} />{t("sales.menu.excel")}</DropdownMenuItem>,
+    ],
+    [
+      ops?.emailSending && <DropdownMenuItem key="email" className={item}><Mail size={14} />{t(channel === "POS" ? "sales.menu.emailPos" : "sales.menu.email")}</DropdownMenuItem>,
+      ops?.whatsappSending && <DropdownMenuItem key="whatsapp" className={item}><MessageCircle size={14} />{t("sales.menu.whatsapp")}</DropdownMenuItem>,
+    ],
+    zatca ? [
+      ops?.allowResendInvoiceToZatca && <DropdownMenuItem key="resend" className={item} disabled={send.isPending} onSelect={() => send.mutate(invoice.id)}><RefreshCw size={14} />{t("sales.menu.resend")}</DropdownMenuItem>,
+      ops?.allowViewZatcaResponse && <DropdownMenuItem key="zatca" className={item} onSelect={onZatcaResponse}><ScrollText size={14} />{t("sales.menu.zatcaResponse")}</DropdownMenuItem>,
+      ops?.allowDownloadZatcaResponseXml && <DropdownMenuItem key="xml" className={item} disabled={download.isPending} onSelect={() => download.mutate("xml")}>{spin("xml", <Download size={14} />)}{t("sales.menu.zatcaXml")}</DropdownMenuItem>,
+      ops?.allowDownloadZatcaResponseExcel && <DropdownMenuItem key="zxlsx" className={item} disabled={download.isPending} onSelect={() => download.mutate("xlsx")}>{spin("xlsx", <Download size={14} />)}{t("sales.menu.zatcaExcel")}</DropdownMenuItem>,
+    ] : [],
+  ].map((g) => g.filter(Boolean)).filter((g) => g.length > 0)
 
   return (
     <div className="flex items-center justify-end gap-1">
     <Button type="button" variant="ghost" size="icon" aria-label={t("sales.menu.preview")} onClick={onPreview}><Eye /></Button>
+    {groups.length > 0 && (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button type="button" variant="ghost" size="icon" aria-label={t("common.actions")}><MoreHorizontal /></Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52 p-1">
-        {ops?.allowPrintInvoiceA4 && <DropdownMenuItem className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "print" })}><FileText size={14} />{t("sales.menu.printA4")}</DropdownMenuItem>}
-        {ops?.allowPrintInvoiceA5 && <DropdownMenuItem className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "print", paper: "a5" })}><FileText size={14} />{t("sales.menu.printA5")}</DropdownMenuItem>}
-        {ops?.allowPrintInvoiceRoll && <DropdownMenuItem className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "print", paper: "roll" })}><Printer size={14} />{t("sales.menu.printRoll")}</DropdownMenuItem>}
-        {ops?.allowViewInvoicePayments && <DropdownMenuItem className={item} onSelect={onPayments}><DollarSign size={14} />{t("sales.menu.payments")}</DropdownMenuItem>}
-        <DropdownMenuSeparator />
-        {ops?.allowEditInvoiceNotes && <DropdownMenuItem className={item} onSelect={onNotes}><FileText size={14} />{t("sales.menu.notes")}</DropdownMenuItem>}
-        <DropdownMenuSeparator />
-        {canReturn && <DropdownMenuItem asChild><Link to={`/sales/returns/create?invoice=${invoice.id}`} className={item}><RotateCcw size={14} />{t("sales.menu.return")}</Link></DropdownMenuItem>}
-        {canAddDebitNote && <DropdownMenuItem asChild><Link to={`/sales/debit-notes/create?invoice=${invoice.id}`} className={item}><PlusCircle size={14} />{t("sales.menu.debitNote")}</Link></DropdownMenuItem>}
-        {ops?.isStockVoucher && <DropdownMenuItem className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "print", voucher: "stock" })}><Warehouse size={14} />{t("sales.menu.stockVoucher")}</DropdownMenuItem>}
-        {ops?.isClaimVoucher && <DropdownMenuItem className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "print", voucher: "claim" })}><FileCheck size={14} />{t("sales.menu.claimVoucher")}</DropdownMenuItem>}
-        <DropdownMenuSeparator />
-        {ops?.allowDownloadInvoicePdfA4 && <DropdownMenuItem className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "pdf" })}><FileDown size={14} />{t("sales.menu.downloadPdfA4")}</DropdownMenuItem>}
-        {ops?.allowDownloadInvoicePdfRoll && <DropdownMenuItem className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "pdf", paper: "roll" })}>{channel === "POS" ? <Printer size={14} /> : <Download size={14} />}{t("sales.menu.downloadPdfRoll")}</DropdownMenuItem>}
-        {ops?.allowPrintA3 && <DropdownMenuItem className={item} disabled={download.isPending} onSelect={() => download.mutate("pdfa3")}>{download.isPending && download.variables === "pdfa3" ? <RefreshCw className="animate-spin" size={14} /> : <FileDown size={14} />}{t("sales.menu.pdfa3")}</DropdownMenuItem>}
-        {ops?.allowExportExcel && <DropdownMenuItem className={item} disabled={download.isPending} onSelect={() => download.mutate("xlsx")}><FileSpreadsheet size={14} />{t("sales.menu.excel")}</DropdownMenuItem>}
-        {(ops?.emailSending || ops?.whatsappSending) && (
-          <>
-            <DropdownMenuSeparator />
-            {ops?.emailSending && <DropdownMenuItem className={item}><Mail size={14} />{t(channel === "POS" ? "sales.menu.emailPos" : "sales.menu.email")}</DropdownMenuItem>}
-            {ops?.whatsappSending && <DropdownMenuItem className={item}><MessageCircle size={14} />{t("sales.menu.whatsapp")}</DropdownMenuItem>}
-          </>
-        )}
-        {zatca && (ops?.allowResendInvoiceToZatca || ops?.allowViewZatcaResponse || ops?.allowDownloadZatcaResponseXml || ops?.allowDownloadZatcaResponseExcel) && (
-          <>
-            <DropdownMenuSeparator />
-            {ops?.allowResendInvoiceToZatca && <DropdownMenuItem className={item} disabled={send.isPending} onSelect={() => send.mutate(invoice.id)}><RefreshCw size={14} />{t("sales.menu.resend")}</DropdownMenuItem>}
-            {ops?.allowViewZatcaResponse && <DropdownMenuItem className={item} onSelect={onZatcaResponse}><ScrollText size={14} />{t("sales.menu.zatcaResponse")}</DropdownMenuItem>}
-            {ops?.allowDownloadZatcaResponseXml && <DropdownMenuItem className={item} disabled={download.isPending} onSelect={() => download.mutate("xml")}>{download.isPending && download.variables === "xml" ? <RefreshCw className="animate-spin" size={14} /> : <Download size={14} />}{t("sales.menu.zatcaXml")}</DropdownMenuItem>}
-            {ops?.allowDownloadZatcaResponseExcel && <DropdownMenuItem className={item} disabled={download.isPending} onSelect={() => download.mutate("xlsx")}>{download.isPending && download.variables === "xlsx" ? <RefreshCw className="animate-spin" size={14} /> : <Download size={14} />}{t("sales.menu.zatcaExcel")}</DropdownMenuItem>}
-          </>
-        )}
+        {groups.map((g, i) => <Fragment key={i}>{i > 0 && <DropdownMenuSeparator />}{g}</Fragment>)}
       </DropdownMenuContent>
     </DropdownMenu>
+    )}
     </div>
   )
 }
