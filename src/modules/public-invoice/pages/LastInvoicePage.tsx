@@ -143,41 +143,36 @@ function Tracking({ params }: { params: URLSearchParams }) {
   const renderError = t(isRequest ? "invTrack.orderRenderError" : "invTrack.renderError")
 
   // Shown for held and final records alike. It never replaces the receipt: it only offers to turn notifications on.
-  const tone: Tone = green ? "success" : requestStatus === "orderreceived" ? "info" : "pending"
   const StatusIcon = orderInvoiced ? ReceiptText : pickupReady ? PackageCheck : finalized ? ChefHat : requestStatus === "orderreceived" ? ClipboardCheck : CheckCircle2
   const showDenied = blocked || (!supported && !showIosHint) || notify === "unsupported" || notify === "error"
+  // The site's own card (as on the settings pages): a header row with the status, the offer below it.
   const notifyBar = record && (
-    <section className="mx-auto mb-4 w-full max-w-[340px] overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-sm">
-      <div className={cn("h-1 w-full", TONES[tone].bar)} />
-      <div className="flex flex-col items-center gap-3 p-5 text-center">
-        <span className={cn("flex size-14 items-center justify-center rounded-full", TONES[tone].icon)}><StatusIcon className="size-7" strokeWidth={2} /></span>
-        <div className="space-y-1">
-          <h1 className={cn("text-lg font-bold leading-snug", TONES[tone].title)}>{title}</h1>
-          {!finalized && !isRequest && <p className="text-sm leading-relaxed text-muted-foreground">{t("invTrack.preparing")}</p>}
+    <section className="mx-auto mb-4 w-full max-w-[340px] overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+      <div className="flex items-center gap-3 border-b border-border bg-[var(--bg-main)]/50 p-4">
+        <span className={cn("grid size-10 shrink-0 place-items-center rounded-full", green ? "bg-success-soft text-success" : "bg-primary/10 text-primary")}><StatusIcon className="size-5" /></span>
+        <div className="min-w-0">
+          <h1 className={cn("font-bold leading-snug", green ? "text-success" : "text-[var(--text-main)]")}>{title}</h1>
+          {!finalized && !isRequest && <p className="mt-0.5 text-xs text-muted-foreground">{t("invTrack.preparing")}</p>}
         </div>
-        {!hideControls && (
-          <div className="flex w-full flex-col gap-2.5 pt-1">
-            {notify === "enabled" ? (
-              !finalized && !isRequest && (
-                <div className="flex items-center justify-center gap-2 rounded-xl bg-emerald-50 px-3 py-2.5 text-sm font-medium text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400">
-                  <BellRing className="size-4 shrink-0" />{t("invTrack.orderPreparing")}
-                </div>
-              )
-            ) : (
-              <>
-                {supported && !blocked && (
-                  <Button type="button" size="lg" className="h-12 w-full gap-2 rounded-xl text-base font-bold" disabled={enabling} onClick={() => void enable()}>
-                    {enabling ? <Loader2 className="size-5 animate-spin" /> : <BellRing className="size-5" />}{t("invTrack.enable")}
-                  </Button>
-                )}
-                {notify === "no-push" && <Notice>{t("invTrack.noPush")}</Notice>}
-                {showDenied && <Notice icon={BellOff}>{t("invTrack.denied")}</Notice>}
-              </>
-            )}
-            {showIosHint && <Notice icon={Share}>{t("invTrack.iosHint")}</Notice>}
-          </div>
-        )}
       </div>
+      {!hideControls && (notify !== "enabled" || (!finalized && !isRequest)) && (
+        <div className="flex flex-col gap-3 p-4">
+          {notify === "enabled" ? (
+            <Notice tone="success" icon={BellRing}>{t("invTrack.orderPreparing")}</Notice>
+          ) : (
+            <>
+              {supported && !blocked && (
+                <Button type="button" size="xl" className="w-full gap-2 font-bold" disabled={enabling} onClick={() => void enable()}>
+                  {enabling ? <Loader2 className="size-4 animate-spin" /> : <BellRing className="size-4" />}{t("invTrack.enable")}
+                </Button>
+              )}
+              {notify === "no-push" && <Notice>{t("invTrack.noPush")}</Notice>}
+              {showDenied && <Notice icon={BellOff}>{t("invTrack.denied")}</Notice>}
+            </>
+          )}
+          {showIosHint && <Notice icon={Share}>{t("invTrack.iosHint")}</Notice>}
+        </div>
+      )}
     </section>
   )
 
@@ -191,8 +186,8 @@ function Tracking({ params }: { params: URLSearchParams }) {
         {html ? <Receipt html={html} title={title} /> : <Message role="alert">{renderError}</Message>}
         {html && (
           <div className="mx-auto mt-4 flex w-full max-w-[340px] flex-col gap-2.5">
-            <Button type="button" variant="outline" size="lg" className="h-12 w-full gap-2 rounded-xl bg-card font-bold" onClick={() => void savePdf()} disabled={pdfBusy}>
-              {pdfBusy ? <Loader2 className="size-5 animate-spin" /> : <Download className="size-5" />}
+            <Button type="button" variant="outline" size="xl" className="w-full gap-2 bg-card font-bold" onClick={() => void savePdf()} disabled={pdfBusy}>
+              {pdfBusy ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
               {pdfBusy ? t("common.loading") : t(isRequest ? "invTrack.orderDownloadPdf" : "invTrack.downloadPdf")}
             </Button>
             {pdfFailed && <Notice>{renderError}</Notice>}
@@ -202,7 +197,7 @@ function Tracking({ params }: { params: URLSearchParams }) {
     )
   } else body = <Message role="status">{t("common.loading")}</Message>
 
-  return <main dir={i18n.dir()} className="min-h-dvh bg-muted/40 px-4 py-6 text-foreground">{body}</main>
+  return <main dir={i18n.dir()} className="min-h-dvh bg-[var(--bg-main)] px-4 py-6 text-foreground">{body}</main>
 }
 
 /** The roll receipt in a frame of its own, as tall as its content. */
@@ -218,24 +213,16 @@ function Receipt({ html, title }: { html: string; title: string }) {
     setHeight(d.documentElement.scrollHeight + 12)
   }
   return (
-    <div className="mx-auto w-fit overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-border">
+    <div className="mx-auto w-fit overflow-hidden rounded-xl border border-border bg-white shadow-sm">
       <iframe ref={ref} title={title} srcDoc={html} onLoad={fit} style={{ width: 302, height, border: 0, display: "block" }} />
     </div>
   )
 }
 
-type Tone = "success" | "info" | "pending"
-/** The status card's colours: green once ready / final, blue for a received order, the brand colour while it is being made. */
-const TONES: Record<Tone, { bar: string; icon: string; title: string }> = {
-  success: { bar: "bg-emerald-500", icon: "bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400", title: "text-emerald-700 dark:text-emerald-400" },
-  info: { bar: "bg-sky-500", icon: "bg-sky-100 text-sky-600 dark:bg-sky-950/60 dark:text-sky-400", title: "text-foreground" },
-  pending: { bar: "bg-primary", icon: "bg-primary/10 text-primary", title: "text-foreground" },
-}
-
-/** A short warning under the status (notifications off, iPhone hint, ...). */
-function Notice({ children, icon: Icon = AlertTriangle }: { children: React.ReactNode; icon?: LucideIcon }) {
+/** A short note under the status, in the site's soft warning / success colours. */
+function Notice({ children, icon: Icon = AlertTriangle, tone = "warning" }: { children: React.ReactNode; icon?: LucideIcon; tone?: "warning" | "success" }) {
   return (
-    <p role="status" className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-start text-[13px] leading-relaxed text-amber-800 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-300">
+    <p role="status" className={cn("flex items-start gap-2 rounded-lg px-3 py-2 text-start text-sm", tone === "success" ? "bg-success-soft text-success" : "bg-warning-soft text-warning")}>
       <Icon className="mt-0.5 size-4 shrink-0" />
       <span>{children}</span>
     </p>
