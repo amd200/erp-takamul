@@ -1,4 +1,4 @@
-import { esc, type PrintDoc } from "@/shared/print"
+import { esc, riyalIcon, type PrintDoc } from "@/shared/print"
 import { voucherNumber } from "../types"
 import { tafqeet } from "@/lib/tafqeet"
 import type { Branch } from "@/modules/branches/types"
@@ -82,7 +82,7 @@ const PDF_CSS = `
 .tag-lbl-cell>span{display:block;transform:translateY(-4px)}
 `
 
-const CURRENCY_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m20 19.5-5.5 1.2"/><path d="M14.5 4v11.22a1 1 0 0 0 1.242.97L20 15.2"/><path d="m2.978 19.351 5.549-1.363A2 2 0 0 0 10 16"/><path d="M20 10 4 13.5"/></svg>`
+const CURRENCY_ICON = riyalIcon("18")
 
 /** A receipt (قبض) or payment (صرف) voucher on A4, with one to five copies on the sheet. */
 export function voucherDoc(v: Voucher, o: VoucherOptions): PrintDoc {

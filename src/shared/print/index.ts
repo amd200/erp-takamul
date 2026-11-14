@@ -3,3 +3,4 @@
 export { esc, PAPERS, renderDocument, type Paper, type PrintDoc } from "./document"
 export { printDocument } from "./print"
 export { downloadPdf } from "./pdf"
+export { currencyMark, isRiyal, riyalIcon } from "./currency"
