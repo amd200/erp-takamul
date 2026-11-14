@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react"
-import { Clock, CreditCard, FileText, Plus, Printer, QrCode, Search, Trash2, User, X } from "lucide-react"
+import { BellRing, Clock, CreditCard, FileText, Loader2, Plus, Printer, QrCode, Search, Trash2, User, X } from "lucide-react"
 import { CurrencySymbol } from "./CurrencySymbol"
 import { InvoiceQrDialog } from "./InvoiceQrDialog"
 import { useQuery } from "@tanstack/react-query"
@@ -21,6 +21,7 @@ import { useDeleteHeld } from "../queries"
 import { usePosStore } from "../store"
 import { posKeys } from "../keys"
 import { salesKeys } from "@/modules/sales/keys"
+import { useSendInvoiceNotification } from "@/modules/public-invoice/queries"
 
 export type Order = SalesOrderDto & { isHolding?: boolean | null; orderType?: string | null; orderDeviceNumber?: number | string | null; employeeId?: number | null; tableId?: number | null }
 type Tab = "completed" | "pending" | "tables"
@@ -76,6 +77,9 @@ export function OrdersDialog({ open, onOpenChange, onlySuspended = false, onDisc
   const [tab, setTab] = useState<Tab>("completed")
   const [search, setSearch] = useState("")
   const [qrId, setQrId] = useState<number | null>(null)
+  // The send button and the customer's QR follow the branch setting notificationsTab.enableNotifications.
+  const notificationsOn = useAppSettings().notificationsTab?.enableNotifications === true
+  const sendNotification = useSendInvoiceNotification()
   const held = onlySuspended || tab === "pending"
   const showTables = useAppSettings().salesScreenTab?.isTables === true
   const tables = !onlySuspended && tab === "tables"
@@ -178,7 +182,12 @@ export function OrdersDialog({ open, onOpenChange, onlySuspended = false, onDisc
                         <span className="flex items-center gap-1 text-[12px] font-bold text-foreground">{(o.grandTotal ?? 0).toFixed(2)}<CurrencySymbol size={11} /></span>
                       </div>
                       <div className="flex shrink-0 items-center gap-2">
-                        {!held && o.orderStatus === "Confirmed" && !o.isHolding && (
+                        {notificationsOn && !held && o.orderStatus === "Confirmed" && !o.isHolding && (
+                          <button type="button" title={t("invTrack.send")} aria-label={t("invTrack.send")} className={icon} disabled={sendNotification.isPending} onClick={() => sendNotification.mutate(o.id)}>
+                            {sendNotification.isPending && sendNotification.variables === o.id ? <Loader2 size={15} className="animate-spin" /> : <BellRing size={15} />}
+                          </button>
+                        )}
+                        {notificationsOn && !held && o.orderStatus === "Confirmed" && !o.isHolding && (
                           <button type="button" title={t("pos1.showQr")} aria-label={t("pos1.showQr")} className={icon} onClick={() => setQrId(o.id)}><QrCode size={15} /></button>
                         )}
                         {!held && o.orderStatus !== "Cancelled" && (
@@ -208,7 +217,7 @@ export function OrdersDialog({ open, onOpenChange, onlySuspended = false, onDisc
           </div>
         </div>
       </DialogContent>
-      <InvoiceQrDialog invoiceId={qrId} onClose={() => setQrId(null)} />
+      <InvoiceQrDialog invoiceId={qrId} notifications={notificationsOn} onClose={() => setQrId(null)} />
       {onFinish && (
         <ConfirmDialog open={confirmFinish} onOpenChange={setConfirmFinish} title={t("pos.finishTitle")} description={t("pos.finishDesc")} confirmLabel={t("pos.finishConfirm")}
           onConfirm={() => { setConfirmFinish(false); onFinish(); onOpenChange(false) }} />

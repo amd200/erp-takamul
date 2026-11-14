@@ -1,6 +1,6 @@
-import { publicInvoiceApi } from "./service"
+import { publicInvoiceApi, recordKey, type FollowedRecord } from "./service"
 
-/** "no-push": the local notification worked but the server subscription did not, so no later push will arrive. */
+/** "no-push": the server subscription is unavailable, so the customer must keep the tracking page open. */
 export type NotifyResult = "enabled" | "no-push" | "denied" | "unsupported" | "error"
 
 const SW_URL = "/push-sw.js"
@@ -16,12 +16,12 @@ export function needsAddToHomeScreen() {
   return isIos && !standalone
 }
 
-const shownKey = (invoiceId: number) => `created-notified-${invoiceId}`
-const wasShown = (invoiceId: number) => {
-  try { return localStorage.getItem(shownKey(invoiceId)) === "1" } catch { return false }
+const shownKey = (r: FollowedRecord) => `created-notified-${recordKey(r)}`
+const wasShown = (r: FollowedRecord) => {
+  try { return localStorage.getItem(shownKey(r)) === "1" } catch { return false }
 }
-const markShown = (invoiceId: number) => {
-  try { localStorage.setItem(shownKey(invoiceId), "1") } catch { /* storage unavailable */ }
+const markShown = (r: FollowedRecord) => {
+  try { localStorage.setItem(shownKey(r), "1") } catch { /* storage unavailable */ }
 }
 
 function urlBase64ToUint8Array(base64: string) {
@@ -30,10 +30,10 @@ function urlBase64ToUint8Array(base64: string) {
 }
 
 /**
- * Asks for permission (must run from a tap), shows the local "order created" notification through the service
- * worker (once per invoice), then registers the push subscription so the "invoice ready" push can arrive later.
+ * Registers the push subscription for `record`. Only a tap passes `local`, which shows the "order created" notification
+ * once per record; the quiet re-registration (permission already granted) shows nothing.
  */
-export async function enableInvoiceNotifications(invoiceId: number, local: { title: string; body: string }): Promise<NotifyResult> {
+export async function enableInvoiceNotifications(record: FollowedRecord, local?: { title: string; body: string }): Promise<NotifyResult> {
   if (!isNotificationSupported()) return "unsupported"
   try {
     const permission = Notification.permission === "default" ? await Notification.requestPermission() : Notification.permission
@@ -41,18 +41,21 @@ export async function enableInvoiceNotifications(invoiceId: number, local: { tit
 
     await navigator.serviceWorker.register(SW_URL)
     const registration = await navigator.serviceWorker.ready
-    // Tapping it must open this customer's own invoice.
+    // Tapping it must open this customer's own record, not the site root (the back office sign-in).
     const target = new URL(window.location.href)
-    target.searchParams.set("invoiceId", String(invoiceId))
-    // Once per invoice: opening the page from the notification must not show it again.
-    if (!wasShown(invoiceId)) {
-      markShown(invoiceId)
+    for (const k of ["invoiceId", "orderRequestId", "pickup"]) target.searchParams.delete(k)
+    Object.entries(record).forEach(([k, id]) => target.searchParams.set(k, String(id)))
+    if (local && !wasShown(record)) {
       await registration.showNotification(local.title, {
         body: local.body,
         icon: "/qr-icon-192.png",
-        tag: `invoice-created-${invoiceId}`,
+        badge: "/qr-icon-192.png",
+        silent: false,
+        requireInteraction: true,
+        tag: `invoice-created-${recordKey(record)}`,
         data: { url: target.pathname + target.search },
       })
+      markShown(record)
     }
 
     if (!isPushSupported()) return "no-push"
@@ -62,7 +65,7 @@ export async function enableInvoiceNotifications(invoiceId: number, local: { tit
       const subscription = existing ?? await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(publicKey) })
       const json = subscription.toJSON()
       if (!json.endpoint || !json.keys?.p256dh || !json.keys.auth) return "no-push"
-      await publicInvoiceApi.subscribe(invoiceId, { endpoint: json.endpoint, keys: { p256dh: json.keys.p256dh, auth: json.keys.auth } })
+      await publicInvoiceApi.subscribe(record, { endpoint: json.endpoint, keys: { p256dh: json.keys.p256dh, auth: json.keys.auth } })
     } catch (error) {
       console.warn("Push subscription failed; only in-page tracking will work:", error)
       return "no-push"

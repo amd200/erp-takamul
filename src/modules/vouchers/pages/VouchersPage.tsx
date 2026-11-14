@@ -35,7 +35,7 @@ function VouchersPage({ kind }: { kind: VoucherKind }) {
   const rows = (data ?? []).filter((v) => v.kind === kind).sort((a, b) => (sortBy ? 0 : b.transactionDate.localeCompare(a.transactionDate)))
 
   const columns: Column<Voucher>[] = [
-    { id: "number", sortKey: "id", header: t("vouchers.number"), cell: (v) => <span className="font-semibold">{voucherNumber(v)}</span> },
+    { id: "number", sortKey: "paymentNumber", header: t("vouchers.number"), cell: (v) => <span className="font-semibold">{v.paymentNumber || "—"}</span> },
     { id: "date", sortKey: "transactionDate", header: t("common.date"), cell: (v) => <span className="text-muted-foreground">{formatDateTime(v.transactionDate, i18n.language)}</span> },
     { id: "party", sortKey: kind === "receipt" ? "customerName" : "supplierName", header: t(kind === "receipt" ? "vouchers.from" : "vouchers.to"), cell: (v) => (
       <span>{v.partyName}</span>
@@ -59,7 +59,7 @@ function VouchersPage({ kind }: { kind: VoucherKind }) {
         actions={<Can perm={perm}><Button size="lg" onClick={() => setOpen(true)}><Plus />{t(`vouchers.new.${kind}`)}</Button></Can>} />
       <SectionCard>
         <DataTable rows={rows} loading={isLoading} columns={columns} sort={sort} rowKey={(v) => voucherNumber(v)}
-          searchText={(v) => `${voucherNumber(v)} ${v.partyName} ${v.description}`} searchPlaceholder={t("vouchers.search")}
+          searchText={(v) => `${v.paymentNumber ?? ""} ${v.partyName} ${v.description}`} searchPlaceholder={t("vouchers.search")}
           empty={<EmptyState icon={kind === "receipt" ? <HandCoins /> : <Wallet />} title={t(`vouchers.empty.${kind}`)} hint={t("vouchers.emptyHint")} />} />
       </SectionCard>
       <VoucherDialog kind={kind} open={open} onOpenChange={setOpen} />

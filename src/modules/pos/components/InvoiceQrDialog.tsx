@@ -6,15 +6,19 @@ import { toast } from "sonner"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { useAuthStore } from "@/shared/auth/authStore"
 
-/** The customer's tracking page link for a final invoice: `/qr` on this origin with the branch and the invoice id. */
-const invoiceQrLink = (invoiceId: number, branchId?: number | null) => `${window.location.origin}/qr?${branchId ? `branchId=${encodeURIComponent(branchId)}&` : ""}invoiceId=${invoiceId}`
+/**
+ * The customer's tracking page link for a final invoice: `/qr` on this origin with the branch and the invoice id.
+ * `notify=0` (branch notifications off) makes the page hide its notifications offer; the receipt still opens.
+ */
+const invoiceQrLink = (invoiceId: number, branchId: number | null | undefined, notifications: boolean) =>
+  `${window.location.origin}/qr?${branchId ? `branchId=${encodeURIComponent(branchId)}&` : ""}invoiceId=${invoiceId}${notifications ? "" : "&notify=0"}`
 
 /** A completed invoice's QR for the customer to scan (opens their invoice page and its push notifications), with the link to copy. */
-export function InvoiceQrDialog({ invoiceId, onClose }: { invoiceId: number | null; onClose: () => void }) {
+export function InvoiceQrDialog({ invoiceId, notifications = true, onClose }: { invoiceId: number | null; notifications?: boolean; onClose: () => void }) {
   const { t } = useTranslation()
   const branchId = useAuthStore((st) => st.session?.branchId)
   const [dataUrl, setDataUrl] = useState("")
-  const link = invoiceId ? invoiceQrLink(invoiceId, branchId) : ""
+  const link = invoiceId ? invoiceQrLink(invoiceId, branchId, notifications) : ""
 
   useEffect(() => {
     if (!link) { setDataUrl(""); return }

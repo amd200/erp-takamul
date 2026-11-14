@@ -140,6 +140,9 @@ export const emptySuppliers: z.infer<typeof suppliersSchema> = { suppliersTab: {
 export const purchasesScreenSchema = z.object({ purchasesScreenTab: z.object({ posPurcherstype: named, purchesSetting: flag }) })
 export const emptyPurchasesScreen: z.infer<typeof purchasesScreenSchema> = { purchasesScreenTab: { posPurcherstype: "POS1", purchesSetting: false } }
 
+export const notificationsSchema = z.object({ notificationsTab: z.object({ enableNotifications: flag }) })
+export const emptyNotifications: z.infer<typeof notificationsSchema> = { notificationsTab: { enableNotifications: false } }
+
 export const itemsSchema = z.object({
   itemsTab: z.object({
     allowSaleWithZeroStock: flag, showCoastPrice: flag, showItemInOneLine: flag,

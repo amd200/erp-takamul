@@ -10,6 +10,7 @@ export type PartyType = "customer" | "supplier"
 /** A transaction, as the server sends it. */
 export type TransactionDto = {
   id: number
+  paymentNumber?: string | null
   customerId?: number | null
   customerName?: string | null
   supplierId?: number | null

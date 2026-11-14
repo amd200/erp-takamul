@@ -37,6 +37,7 @@ export type ItemsTab = {
   enablePieceAndCartonSystem: boolean; showProductBalanceAtSale: boolean;
 }
 export type SuppliersTab = { showSupplierNameAndPhoneOnlyInPurchases: boolean; showActualSupplierBalance: boolean; defaultSupplier: number }
+export type NotificationsTab = { enableNotifications: boolean }
 export type AppearanceTab = { itemNameSize: number; itemPriceSize: number; categorySize: number; subItemNameSize: number; subItemPriceSize: number }
 
 /** The older groups, only the fields the app reads from them. */
@@ -54,7 +55,7 @@ type Groups = {
   generalTab: GeneralTab; paymentTab: PaymentTab; shiftsTab: ShiftsTab; printA4Tab: PrintA4Tab; operationsTab: OperationsTab; tablesTab: TablesTab
   salonsTab: SalonsTab; printRollTab: PrintRollTab; salesScreenTab: SalesScreenTab; preparationTicketTab: PreparationTicketTab
   preparationScreenTab: PreparationScreenTab; vouchersPrintTab: VouchersPrintTab; purchasesScreenTab: PurchasesScreenTab; customersTab: CustomersTab
-  itemsTab: ItemsTab; suppliersTab: SuppliersTab; appearanceTab: AppearanceTab
+  itemsTab: ItemsTab; suppliersTab: SuppliersTab; appearanceTab: AppearanceTab; notificationsTab: NotificationsTab
   sales: SalesGroup; print: PrintGroup; taxSetting: TaxGroup; tobaccoFees: TobaccoGroup; barcodeScale: BarcodeGroup; whatsApp: WhatsAppGroup
 }
 export type GroupKey = keyof Groups

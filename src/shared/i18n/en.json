@@ -1671,7 +1671,8 @@
       "currencies": "Currencies",
       "taxes": "Tax list",
       "tax_exemption_reasons": "Exemption reasons",
-      "money": "Currency and numbers"
+      "money": "Currency and numbers",
+      "notifications": "Notifications"
     },
     "sd": {
       "company": "Tax phase and how amounts appear across the system.",
@@ -1709,7 +1710,8 @@
       "currencies": "Available currencies and the default one.",
       "taxes": "Tax rates items can use.",
       "tax_exemption_reasons": "Exemption reasons used on invoices.",
-      "money": "Currency symbol, decimals and number separators."
+      "money": "Currency symbol, decimals and number separators.",
+      "notifications": "Customer invoice notifications and the invoice page link (QR)."
     },
     "g": {
       "tax": "Tax system",
@@ -1867,7 +1869,8 @@
       "showCustomerNameAndPhoneOnlyInQuotations": "Customer data when adding",
       "showActualSupplierBalance": "Show supplier's actual balance",
       "defaultSupplier": "Default supplier",
-      "showSupplierNameAndPhoneOnlyInPurchases": "Supplier data when adding"
+      "showSupplierNameAndPhoneOnlyInPurchases": "Supplier data when adding",
+      "enableNotifications": "Enable invoice notifications for customers"
     },
     "o": {
       "taxSetting": {
@@ -3466,17 +3469,30 @@
   "invTrack": {
     "appName": "Your invoice",
     "created": "Your order was created successfully",
+    "orderReceived": "Your order has been received",
     "preparing": "Your invoice is being prepared, we will notify you when it is ready",
+    "orderPreparing": "Your order is being prepared",
+    "pickupReady": "Your order is ready for pickup",
+    "orderInvoiced": "Your order has been converted to a sales invoice",
     "enable": "Enable notifications",
-    "enabled": "Notifications are on, you will be notified when your invoice is ready",
     "denied": "Notifications are off, keep this page open to follow your order",
     "iosHint": "Add this page to the Home Screen to receive notifications",
     "invalid": "This link is invalid or has expired",
     "notifyBody": "We will notify you when the invoice is ready",
-    "none": "There is no pending invoice right now",
-    "ready": "Your invoice is ready",
+    "none": "There are no orders or invoices right now",
     "noPush": "Notifications could not be fully set up, keep this page open to follow your order",
-    "renderError": "The invoice could not be displayed"
+    "renderError": "The invoice could not be displayed",
+    "orderRenderError": "The order receipt could not be displayed",
+    "downloadPdf": "Download invoice as PDF",
+    "orderDownloadPdf": "Download order receipt as PDF",
+    "send": "Send notification",
+    "sent": "Notification sent to the customer",
+    "noDevice": "The customer has not enabled notifications for this invoice",
+    "sendFailed": "Could not send the notification",
+    "linkBranch": "Branch",
+    "pageLink": "Customer invoice page link (QR)",
+    "copied": "Copied",
+    "copyFailed": "Could not copy the link"
   },
   "posSim": {
     "dir": "ltr",

@@ -1,7 +1,16 @@
+import { useState } from "react"
+import { Check as CheckIcon, Copy } from "lucide-react"
 import { useTranslation } from "react-i18next"
+import { toast } from "sonner"
+import { Button } from "@/components/ui/button"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useSession } from "@/shared/session/session"
+import { useAppSettings } from "../queries"
 import { FormInput, FormSelect, FormSwitch } from "@/components/form/FormFields"
 import { fullName } from "@/modules/lookups/types"
-import { useCustomers, useEmployees, useSuppliers, useTreasuries } from "@/modules/lookups/service"
+import { useBranches, useCustomers, useEmployees, useSuppliers, useTreasuries } from "@/modules/lookups/service"
 import { Flag, Check, Section, Grid, Choice, useLabel, type FieldsProps } from "./fields"
 import { A4Preview, AppearancePreview, BarcodePreview } from "./Previews"
 
@@ -230,6 +239,54 @@ export function ItemsFields({ form: { control } }: FieldsProps) {
       {["enablePieceAndCartonSystem", "allowPriceChangeOnSale", "showProductBalanceAtSale", "showWarehouseItems", "showCostGreaterThanSalePriceMessage"].map((k) => (
         <Flag key={k} control={control} name={`itemsTab.${k}`} />
       ))}
+    </Grid>
+  )
+}
+
+/** Customer invoice notifications. Once saved on, the branch's public tracking page link (/qr) can be copied. */
+export function NotificationsFields({ form: { control } }: FieldsProps) {
+  const { t } = useTranslation()
+  const saved = useAppSettings().notificationsTab?.enableNotifications === true
+  const { branch } = useSession()
+  const { data: branches = [] } = useBranches()
+  const [linkBranch, setLinkBranch] = useState<number | null>(null)
+  const [copied, setCopied] = useState(false)
+  const branchId = linkBranch ?? branch.id ?? branches[0]?.id ?? 0
+  const link = `${window.location.origin}/qr?branchId=${encodeURIComponent(branchId)}`
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(link)
+      setCopied(true)
+      toast.success(t("pos1.linkCopied"))
+      window.setTimeout(() => setCopied(false), 2000)
+    } catch {
+      toast.error(t("invTrack.copyFailed"))
+    }
+  }
+  return (
+    <Grid>
+      <Flag control={control} name="notificationsTab.enableNotifications" />
+      {saved && (
+        <>
+          <Field>
+            <FieldLabel htmlFor="qr-link-branch">{t("invTrack.linkBranch")}</FieldLabel>
+            <Select value={String(branchId)} onValueChange={(v) => { setLinkBranch(Number(v)); setCopied(false) }}>
+              <SelectTrigger id="qr-link-branch" className="w-full"><SelectValue /></SelectTrigger>
+              <SelectContent>{branches.map((b) => <SelectItem key={b.id} value={String(b.id)}>{b.name}</SelectItem>)}</SelectContent>
+            </Select>
+          </Field>
+          <Field className="md:col-span-2">
+            <FieldLabel>{t("invTrack.pageLink")}</FieldLabel>
+            <div className="flex gap-2">
+              <Input value={link} readOnly dir="ltr" className="min-w-0 font-mono text-xs" />
+              <Button type="button" variant="outline" onClick={() => void copy()} className="shrink-0 gap-1.5">
+                {copied ? <CheckIcon size={16} className="text-green-600" /> : <Copy size={16} />}
+                {copied ? t("invTrack.copied") : t("pos1.copyLink")}
+              </Button>
+            </div>
+          </Field>
+        </>
+      )}
     </Grid>
   )
 }

@@ -27,6 +27,7 @@ const ENDPOINT: Record<GroupKey, string> = {
   itemsTab: "/Settings/tabs/items",
   suppliersTab: "/Settings/tabs/suppliers",
   appearanceTab: "/Settings/tabs/appearance",
+  notificationsTab: "/Settings/tabs/notifications",
   // settings no tab carries yet
   sales: "/Settings/sales",
   print: "/Settings/Printting",

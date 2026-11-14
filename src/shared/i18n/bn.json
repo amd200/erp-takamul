@@ -1671,7 +1671,8 @@
       "currencies": "Mudra",
       "taxes": "Tax talika",
       "tax_exemption_reasons": "Kor charer karon",
-      "money": "Mudra ebong songkha"
+      "money": "Mudra ebong songkha",
+      "notifications": "Notification"
     },
     "sd": {
       "company": "Tax dhap ebong system-e poriman kibhabe dekhabe.",
@@ -1709,7 +1710,8 @@
       "currencies": "Uplobdho mudra ebong difalt mudra.",
       "taxes": "Item-e byabohar kora jay emon tax har.",
       "tax_exemption_reasons": "Chalane byabohrito chhar-er karon.",
-      "money": "Mudra chinho, doshomik ebong songkha bibhajok."
+      "money": "Mudra chinho, doshomik ebong songkha bibhajok.",
+      "notifications": "Customer invoice notifications and the invoice page link (QR)."
     },
     "g": {
       "tax": "Tax sistem",
@@ -1867,7 +1869,8 @@
       "showCustomerNameAndPhoneOnlyInQuotations": "Jog korar somoy grahoker totho",
       "showActualSupplierBalance": "Sarborahokari prokrito balance dekhan",
       "defaultSupplier": "Difalt sarborahokari",
-      "showSupplierNameAndPhoneOnlyInPurchases": "Jog korar somoy sarborahokari-r totho"
+      "showSupplierNameAndPhoneOnlyInPurchases": "Jog korar somoy sarborahokari-r totho",
+      "enableNotifications": "Enable invoice notifications"
     },
     "o": {
       "taxSetting": {
@@ -3466,17 +3469,30 @@
   "invTrack": {
     "appName": "Your invoice",
     "created": "Your order was created successfully",
+    "orderReceived": "Your order has been received",
     "preparing": "Your invoice is being prepared, we will notify you when it is ready",
+    "orderPreparing": "Your order is being prepared",
+    "pickupReady": "Your order is ready for pickup",
+    "orderInvoiced": "Your order has been converted to a sales invoice",
     "enable": "Enable notifications",
-    "enabled": "Notification chalu, apnar chalan prostut hole janano hobe",
     "denied": "Notifications are off, keep this page open to follow your order",
     "iosHint": "Add this page to the Home Screen to receive notifications",
     "invalid": "This link is invalid or has expired",
     "notifyBody": "We will notify you when the invoice is ready",
-    "none": "Ekhon kono opekkhaman chalan nei",
-    "ready": "Apnar chalan prostut",
+    "none": "There are no orders or invoices right now",
     "noPush": "Notifications could not be fully set up, keep this page open to follow your order",
-    "renderError": "The invoice could not be displayed"
+    "renderError": "The invoice could not be displayed",
+    "orderRenderError": "The order receipt could not be displayed",
+    "downloadPdf": "Download invoice as PDF",
+    "orderDownloadPdf": "Download order receipt as PDF",
+    "send": "Send notification",
+    "sent": "Notification sent to the customer",
+    "noDevice": "The customer has not enabled notifications for this invoice",
+    "sendFailed": "Could not send the notification",
+    "linkBranch": "Branch",
+    "pageLink": "Customer invoice page link (QR)",
+    "copied": "Kopi kora hayeeche",
+    "copyFailed": "Could not copy the link"
   },
   "posSim": {
     "dir": "ltr",

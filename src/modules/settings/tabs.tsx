@@ -1,5 +1,5 @@
 import type { ComponentType } from "react"
-import { Barcode, ChefHat, Clock, Coins, CreditCard, DollarSign, FileText, Grid3x3, Mail, MessageCircle, Monitor, Package, Percent, Printer, Receipt, Scissors, Send, ShoppingCart, SlidersHorizontal, Tag, Truck, Type, Users, type LucideIcon } from "lucide-react"
+import { BellRing, Barcode, ChefHat, Clock, Coins, CreditCard, DollarSign, FileText, Grid3x3, Mail, MessageCircle, Monitor, Package, Percent, Printer, Receipt, Scissors, Send, ShoppingCart, SlidersHorizontal, Tag, Truck, Type, Users, type LucideIcon } from "lucide-react"
 import type { ZodObject } from "zod"
 import { P, type Permission } from "@/shared/permissions/permissions"
 import type { FieldsProps } from "./components/fields"
@@ -34,6 +34,7 @@ export const TABS: Tab[] = [
   { id: "suppliers", page: "sales", icon: Truck, perm: P.settings.partners, schema: s.suppliersSchema, empty: s.emptySuppliers, Fields: sales.SuppliersFields },
   { id: "purchases_screen", page: "sales", icon: ShoppingCart, perm: P.settings.partners, schema: s.purchasesScreenSchema, empty: s.emptyPurchasesScreen, Fields: sales.PurchasesScreenFields },
   { id: "tables", page: "sales", icon: Grid3x3, perm: P.settings.sales },
+  { id: "notifications", page: "sales", icon: BellRing, perm: P.settings.sales, schema: s.notificationsSchema, empty: s.emptyNotifications, Fields: sales.NotificationsFields },
   { id: "items", page: "sales", icon: Package, perm: P.settings.items, schema: s.itemsSchema, empty: s.emptyItems, Fields: sales.ItemsFields },
   { id: "pricing_systems", page: "sales", icon: DollarSign, perm: P.settings.sales },
   { id: "category_discounts", page: "sales", icon: Tag, perm: P.settings.sales },
