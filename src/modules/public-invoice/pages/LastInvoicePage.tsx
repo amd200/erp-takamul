@@ -9,7 +9,7 @@ import { usePublicBranch } from "@/modules/pos/pos4/queries"
 import { invoiceRollDoc, type InvoiceRollOptions } from "@/modules/sales/print/invoiceRollDoc"
 import { printInvoiceOf } from "@/modules/sales/print/useInvoiceOutput"
 import { orderRequestDoc } from "@/modules/order-requests/print/orderRequestDoc"
-import { enableInvoiceNotifications, isNotificationSupported, needsAddToHomeScreen, type NotifyResult } from "../pushClient"
+import { enableInvoiceNotifications, isNotificationSupported, needsAddToHomeScreen, rememberBranchIcon, type NotifyResult } from "../pushClient"
 import { followedRecord, isFinalized, type FollowedRecord, type LastInvoice } from "../service"
 import { useLastInvoice } from "../queries"
 
@@ -120,7 +120,9 @@ function Tracking({ params }: { params: URLSearchParams }) {
     finally { setPdfBusy(false) }
   }
 
-  const notifyTexts = useMemo(() => ({ title: t("invTrack.created"), body: t("invTrack.notifyBody") }), [t])
+  const branchLogo = branch.data?.imageUrl?.trim() || null
+  const notifyTexts = useMemo(() => ({ title: t("invTrack.created"), body: t("invTrack.notifyBody"), icon: branchLogo }), [t, branchLogo])
+  useEffect(() => { if (branch.isSuccess) void rememberBranchIcon(branchLogo) }, [branch.isSuccess, branchLogo])
   const target = useMemo(() => locked ?? (record ? followedRecord(record) : null), [locked, record])
   const [enabling, setEnabling] = useState(false)
   const enable = async () => {

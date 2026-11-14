@@ -20,9 +20,24 @@ self.addEventListener("push", (event) => {
     } catch { /* keep the original link */ }
   }
   const title = payload.title || "Takamul";
-  event.waitUntil(self.registration.showNotification(title, {
+  event.waitUntil(show(title, payload, data));
+});
+
+/** The branch logo the /qr page stored (see rememberBranchIcon), or null. */
+async function branchIcon() {
+  try {
+    const res = await (await caches.open("push-meta")).match("/push-meta/branch-icon");
+    return res ? (await res.text()) || null : null;
+  } catch { return null; }
+}
+
+async function show(title, payload, data) {
+  // The server sends a fixed "/favicon.png"; any other icon it sends wins, else the branch logo, else the app's own icon.
+  const serverIcon = payload.icon && payload.icon !== "/favicon.png" ? payload.icon : null;
+  const icon = serverIcon || await branchIcon() || "/qr-icon-192.png";
+  return self.registration.showNotification(title, {
     body: payload.body || "",
-    icon: payload.icon || "/qr-icon-192.png",
+    icon,
     badge: payload.badge || "/qr-icon-192.png",
     tag: payload.tag,
     renotify: !!payload.tag,
@@ -31,8 +46,8 @@ self.addEventListener("push", (event) => {
     requireInteraction: true,
     timestamp: Date.now(),
     data,
-  }));
-});
+  });
+}
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();

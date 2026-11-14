@@ -24,6 +24,20 @@ const markShown = (r: FollowedRecord) => {
   try { localStorage.setItem(shownKey(r), "1") } catch { /* storage unavailable */ }
 }
 
+/** Where the service worker finds the branch logo it shows on pushes (the server's own payload icon is a fixed placeholder). */
+const ICON_CACHE = "push-meta"
+const ICON_KEY = "/push-meta/branch-icon"
+
+/** Keeps the branch logo for the service worker, so the "ready" pushes show it too. The last branch opened on this device wins. */
+export async function rememberBranchIcon(url: string | null | undefined) {
+  if (typeof caches === "undefined") return
+  try {
+    const cache = await caches.open(ICON_CACHE)
+    if (url) await cache.put(ICON_KEY, new Response(url))
+    else await cache.delete(ICON_KEY)
+  } catch { /* the push then shows the default icon */ }
+}
+
 function urlBase64ToUint8Array(base64: string) {
   const padded = (base64 + "=".repeat((4 - (base64.length % 4)) % 4)).replace(/-/g, "+").replace(/_/g, "/")
   return Uint8Array.from(atob(padded), (c) => c.charCodeAt(0))
@@ -33,7 +47,7 @@ function urlBase64ToUint8Array(base64: string) {
  * Registers the push subscription for `record`. Only a tap passes `local`, which shows the "order created" notification
  * once per record; the quiet re-registration (permission already granted) shows nothing.
  */
-export async function enableInvoiceNotifications(record: FollowedRecord, local?: { title: string; body: string }): Promise<NotifyResult> {
+export async function enableInvoiceNotifications(record: FollowedRecord, local?: { title: string; body: string; icon?: string | null }): Promise<NotifyResult> {
   if (!isNotificationSupported()) return "unsupported"
   try {
     const permission = Notification.permission === "default" ? await Notification.requestPermission() : Notification.permission
@@ -48,7 +62,7 @@ export async function enableInvoiceNotifications(record: FollowedRecord, local?:
     if (local && !wasShown(record)) {
       await registration.showNotification(local.title, {
         body: local.body,
-        icon: "/qr-icon-192.png",
+        icon: local.icon || "/qr-icon-192.png",
         badge: "/qr-icon-192.png",
         silent: false,
         requireInteraction: true,
