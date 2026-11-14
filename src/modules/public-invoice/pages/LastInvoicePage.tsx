@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { downloadPdf, renderDocument } from "@/shared/print"
 import { usePublicBranch } from "@/modules/pos/pos4/queries"
-import { invoiceRollDoc, type InvoiceRollOptions } from "@/modules/sales/print/invoiceRollDoc"
-import { printInvoiceOf } from "@/modules/sales/print/useInvoiceOutput"
+import { invoiceRollDoc } from "@/modules/sales/print/invoiceRollDoc"
+import { printInvoiceOf, rollOptionsOf } from "@/modules/sales/print/useInvoiceOutput"
+import { useAppSettings, useCurrency } from "@/modules/settings"
+import type { Branch } from "@/modules/branches/types"
 import { orderRequestDoc } from "@/modules/order-requests/print/orderRequestDoc"
 import { enableInvoiceNotifications, isNotificationSupported, needsAddToHomeScreen, rememberBranchIcon, type NotifyResult } from "../pushClient"
 import { followedRecord, isFinalized, type FollowedRecord, type LastInvoice } from "../service"
@@ -100,14 +102,21 @@ function Tracking({ params }: { params: URLSearchParams }) {
     : finalized ? "invTrack.orderPreparing" : "invTrack.created")
 
   const branch = usePublicBranch()
+  const settings = useAppSettings()
+  const currency = useCurrency()
+  // Drawn with the cashier's own roll template and settings, so the customer sees exactly the receipt that prints.
   const doc = useMemo(() => {
     if (!record?.data.items?.length) return null
-    const options: InvoiceRollOptions = {
-      branch: branch.data, customer: undefined, isExempt: false, showPaymentMethods: !isRequest, showPaidAndRemaining: !isRequest,
-      showBranchName: false, grid: false, showUnits: false, methodLabel: (m) => t(`sales.methods.${m}`, { defaultValue: m }),
+    const methodLabel = (m: string) => t(`sales.methods.${m}`, { defaultValue: m })
+    if (record.recordType === "OrderRequest") {
+      // As the order requests page prints it: no payments on an order.
+      const options = rollOptionsOf(settings, { branch: branch.data as Branch | undefined, customer: undefined, currency, methodLabel })
+      return orderRequestDoc(record.data, { ...options, showPaymentMethods: false, showPaidAndRemaining: false, showUnits: false })
     }
-    return record.recordType === "OrderRequest" ? orderRequestDoc(record.data, options) : invoiceRollDoc(printInvoiceOf(record.data), options)
-  }, [record, isRequest, branch.data, t])
+    // The invoice carries its own issuing branch and customer; the public branch info only fills in when it does not.
+    const branchOf = record.data.branch ?? (branch.data as Branch | undefined)
+    return invoiceRollDoc(printInvoiceOf(record.data), rollOptionsOf(settings, { branch: branchOf ?? undefined, customer: record.data.customer ?? undefined, currency, methodLabel }))
+  }, [record, branch.data, settings, currency, t])
   const html = useMemo(() => (doc ? withoutPhoneLinks(renderDocument(doc)) : null), [doc])
 
   // Built in the browser from the receipt on screen, so it needs no token or extra endpoint.

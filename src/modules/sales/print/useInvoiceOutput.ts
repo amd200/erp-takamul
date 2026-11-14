@@ -18,7 +18,9 @@ import type { PaymentMethod, SalesOrderDto } from "../types"
 import type { PrintInvoice } from "./printInvoice"
 import { invoiceA4Doc } from "./invoiceA4Doc"
 import { invoiceA5Doc } from "./invoiceA5Doc"
-import { invoiceRollDoc } from "./invoiceRollDoc"
+import { invoiceRollDoc, type InvoiceRollOptions } from "./invoiceRollDoc"
+import type { Settings } from "@/modules/settings/types"
+import type { Branch } from "@/modules/branches/types"
 import { claimVoucherDoc, stockVoucherDoc } from "./voucherDocs"
 
 type Output = "print" | "pdf" | "preview"
@@ -34,6 +36,20 @@ async function barcodesOf(qc: QueryClient, invoice: SalesOrderDto) {
 /** The customer's own eye measurements, when there are any to print. */
 const measurementOf = (c: Customer | undefined) => (c && EYE_FIELDS.some((k) => String(c[k] ?? "").trim() !== "") ? eyeText(c) : null)
 type Paper = "a4" | "a5" | "roll"
+
+/**
+ * The 80mm roll's options from the settings, the same for every place that draws an invoice on the roll (the cashier's
+ * print and PDF, the customer's /qr page), so they all look exactly alike.
+ */
+export const rollOptionsOf = (settings: Settings, o: { branch: Branch | undefined; customer: Customer | undefined; currency: string; methodLabel: (m: string) => string }): InvoiceRollOptions => ({
+  ...o,
+  isExempt: settings.taxSetting?.taxSetting === "Exempt",
+  showPaymentMethods: settings.paymentTab?.showPaymentMethods !== false,
+  showPaidAndRemaining: settings.paymentTab?.showPaidAndRemainingAmount !== false,
+  showBranchName: settings.printRollTab?.showBranchNameInPrint === true,
+  grid: settings.printRollTab?.invoiceDesign3 === true,
+  showUnits: settings.itemsTab?.enablePieceAndCartonSystem === true,
+})
 
 /** The saved invoice as the layouts print it: the server's own totals and line amounts. */
 export const printInvoiceOf = (o: SalesOrderDto): PrintInvoice => ({
@@ -77,7 +93,7 @@ export function useInvoiceOutput() {
       const doc = paper === "a5"
         ? invoiceA5Doc(doc0, { branch: b, customer: c, isExempt, qrImage, barcodes: await barcodesOf(qc, invoice), measurement: measurementOf(c), methodLabel })
         : paper === "roll"
-        ? invoiceRollDoc(doc0, { branch: b, customer: c, isExempt, showPaymentMethods, showPaidAndRemaining, showBranchName, grid: settings.printRollTab?.invoiceDesign3 === true, showUnits: settings.itemsTab?.enablePieceAndCartonSystem === true, methodLabel, currency })
+        ? invoiceRollDoc(doc0, rollOptionsOf(settings, { branch: b, customer: c, currency, methodLabel }))
         : invoiceA4Doc(doc0, { branch: b, customer: c, isExempt, qrImage, showPaymentMethods, showPaidAndRemaining, showBranchName, showHeaderAndFooter: settings.printA4Tab?.showHeaderAndFooterInPrint !== false, blue: settings.printA4Tab?.a4InvoiceType === "Design2", design: settings.printA4Tab?.a4InvoiceType === "Design3" || settings.printA4Tab?.a4InvoiceType === "Design4" ? settings.printA4Tab?.a4InvoiceType as "Design3" | "Design4" : undefined, methodLabel })
       // Preview: hand the finished document back; the caller shows it on screen instead of printing.
       if (as === "preview") return doc

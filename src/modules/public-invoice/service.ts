@@ -3,6 +3,8 @@ import { API_BASE_URL } from "@/shared/http/config"
 import { http } from "@/shared/http/request"
 import type { SalesOrderDto } from "@/modules/sales/types"
 import type { OrderRequestDetails } from "@/modules/order-requests/types"
+import type { Branch } from "@/modules/branches/types"
+import type { Customer } from "@/modules/customers/types"
 
 /**
  * Everything the customer's tracking page calls. The endpoints are anonymous, so a bare axios instance is used on
@@ -10,8 +12,8 @@ import type { OrderRequestDetails } from "@/modules/order-requests/types"
  */
 const publicClient = axios.create({ baseURL: API_BASE_URL })
 
-/** A sales order as /sales-orders sends it, plus the hold flags. */
-export type PublicSalesOrder = SalesOrderDto & { isHolding?: boolean | null; holdingOrderId?: number | null }
+/** A sales order as /sales-orders/{id} sends it: the hold flags, and the issuing branch and the customer for the receipt. */
+export type PublicSalesOrder = SalesOrderDto & { isHolding?: boolean | null; holdingOrderId?: number | null; branch?: Branch | null; customer?: Customer | null }
 
 /** `GET /public/invoices/last`: the latest record, a sales order or a customer's order request, in a typed envelope. */
 export type LastInvoice =
