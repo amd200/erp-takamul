@@ -658,6 +658,7 @@
     "account": "الحساب",
     "changePassword": "تغيير كلمة المرور",
     "currentPassword": "كلمة المرور الحالية",
+    "currentPasswordHint": "ادخل كلمة المرور الحالية",
     "newPassword": "كلمة المرور الجديدة",
     "newPasswordHint": "ادخل كلمة المرور الجديدة",
     "rewriteNewPassword": "اعد كتابة كلمة المرور الجديدة",

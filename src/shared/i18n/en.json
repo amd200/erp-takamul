@@ -653,6 +653,7 @@
     "account": "Account",
     "changePassword": "Change password",
     "currentPassword": "Current password",
+    "currentPasswordHint": "Enter the current password",
     "newPassword": "New password",
     "newPasswordHint": "Enter the new password",
     "rewriteNewPassword": "Re-enter the new password",

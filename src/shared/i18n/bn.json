@@ -653,6 +653,7 @@
     "account": "Hisab",
     "changePassword": "Password poriborton korun",
     "currentPassword": "Bortoman password",
+    "currentPasswordHint": "Bortoman password din",
     "newPassword": "Notun passward",
     "newPasswordHint": "Notun passward din",
     "rewriteNewPassword": "Notun passwardti punorai type korun",
