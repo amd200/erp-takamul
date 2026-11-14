@@ -1001,6 +1001,7 @@
     "digitsOnly": "Digits only",
     "branchRequired": "Branch is required",
     "roleRequired": "Role is required",
+    "currentPasswordRequired": "Enter the current password",
     "passwordMin": "Password needs at least 8 characters",
     "passwordSameAsOld": "New password can't be the same as the old one",
     "passwordMatch": "Passwords don't match",

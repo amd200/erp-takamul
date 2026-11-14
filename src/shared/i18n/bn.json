@@ -1001,6 +1001,7 @@
     "digitsOnly": "Sudhumatro sankhya",
     "branchRequired": "Sakha prayojon",
     "roleRequired": "Role prayojon",
+    "currentPasswordRequired": "Bortoman password likhun",
     "passwordMin": "Passward komopokkhe 8 okkhor hote hobe",
     "passwordSameAsOld": "Notun password ti apnar bortoman password theke alada hote hobe",
     "passwordMatch": "Passward mele na",
