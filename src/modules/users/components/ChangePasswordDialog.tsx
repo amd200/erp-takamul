@@ -15,14 +15,14 @@ export function ChangePasswordDialog({ open, onOpenChange }: { open: boolean; on
   const { t } = useTranslation()
   const userId = useAuthStore((s) => s.session?.userId)
   const change = useChangePassword()
-  const form = useForm<ChangePasswordForm>({ resolver: zodResolver(changePasswordSchema), defaultValues: { password: "", confirmPassword: "" } })
+  const form = useForm<ChangePasswordForm>({ resolver: zodResolver(changePasswordSchema), defaultValues: { currentPassword: "", password: "", confirmPassword: "" } })
 
   useEffect(() => {
-    if (open) form.reset({ password: "", confirmPassword: "" })
+    if (open) form.reset({ currentPassword: "", password: "", confirmPassword: "" })
   }, [open, form])
 
-  const submit = form.handleSubmit(({ password }) =>
-    change.mutate({ employeeId: Number(userId), password }, { onSuccess: () => onOpenChange(false) }))
+  const submit = form.handleSubmit(({ currentPassword, password }) =>
+    change.mutate({ employeeId: Number(userId), currentPassword, password }, { onSuccess: () => onOpenChange(false) }))
   const c = form.control
 
   return (
@@ -35,6 +35,7 @@ export function ChangePasswordDialog({ open, onOpenChange }: { open: boolean; on
         <DialogBody>
 
           <form id="change-password-form" onSubmit={submit} noValidate className="flex flex-col gap-4">
+            <FormInput control={c} name="currentPassword" type="password" required autoComplete="current-password" label={t("topbar.currentPassword")} placeholder={t("topbar.currentPasswordHint")} />
             <FormInput control={c} name="password" type="password" required autoComplete="new-password" label={t("topbar.newPassword")} placeholder={t("topbar.newPasswordHint")} />
             <FormInput control={c} name="confirmPassword" type="password" required autoComplete="new-password" label={t("oldUsers.confirmPassword")} placeholder={t("topbar.rewriteNewPassword")} />
           </form>

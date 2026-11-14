@@ -21,7 +21,7 @@ export const useSaveUser = () => {
 
 export const useChangePassword = () =>
   useMutation({
-    mutationFn: ({ employeeId, password }: { employeeId: number; password: string }) => usersApi.changePassword(employeeId, password),
+    mutationFn: ({ employeeId, currentPassword, password }: { employeeId: number;    currentPassword: string; password: string }) => usersApi.changePassword(employeeId, currentPassword, password),
     onSuccess: () => toast.success(i18n.t("common.saved")),
     onError: (e) => errorToast(e, "common.saveFailed"),
   })

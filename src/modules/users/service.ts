@@ -29,8 +29,8 @@ export const usersApi = {
       data: { userName, email, newPassword: password || undefined, roleName, mobile, branchId, isMultiBranch },
     }),
   // The signed-in user's own account: the id in the token is the employee id.
-  changePassword: (employeeId: number, newPassword: string) =>
-    http<{ message: string }>(`/employees/${employeeId}/user`, { method: "PUT", data: { newPassword } }),
+  changePassword: (employeeId: number, currentPassword: string, newPassword: string) =>
+    http<{ message: string }>(`/employees/${employeeId}/user`, { method: "PUT", data: { currentPassword, newPassword } }),
   // Deletes the employee together with their sign-in.
   remove: (id: number) => http<{ message: string }>(`/employees/${id}/with-user`, { method: "DELETE" }),
   /** The role names a user can be given. */
