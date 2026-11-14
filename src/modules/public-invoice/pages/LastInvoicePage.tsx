@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
+import { AlertTriangle, BellOff, BellRing, ChefHat, CheckCircle2, ClipboardCheck, Download, Loader2, PackageCheck, ReceiptText, Share, type LucideIcon } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import { downloadPdf, renderDocument } from "@/shared/print"
 import { usePublicBranch } from "@/modules/pos/pos4/queries"
 import { invoiceRollDoc, type InvoiceRollOptions } from "@/modules/sales/print/invoiceRollDoc"
@@ -119,7 +122,12 @@ function Tracking({ params }: { params: URLSearchParams }) {
 
   const notifyTexts = useMemo(() => ({ title: t("invTrack.created"), body: t("invTrack.notifyBody") }), [t])
   const target = useMemo(() => locked ?? (record ? followedRecord(record) : null), [locked, record])
-  const enable = async () => { if (target) setNotify(await enableInvoiceNotifications(target, notifyTexts)) }
+  const [enabling, setEnabling] = useState(false)
+  const enable = async () => {
+    if (!target || enabling) return
+    setEnabling(true)
+    try { setNotify(await enableInvoiceNotifications(target, notifyTexts)) } finally { setEnabling(false) }
+  }
 
   // Permission already granted earlier on this device: subscribe quietly, no tap and no local notification.
   useEffect(() => {
@@ -135,22 +143,41 @@ function Tracking({ params }: { params: URLSearchParams }) {
   const renderError = t(isRequest ? "invTrack.orderRenderError" : "invTrack.renderError")
 
   // Shown for held and final records alike. It never replaces the receipt: it only offers to turn notifications on.
+  const tone: Tone = green ? "success" : requestStatus === "orderreceived" ? "info" : "pending"
+  const StatusIcon = orderInvoiced ? ReceiptText : pickupReady ? PackageCheck : finalized ? ChefHat : requestStatus === "orderreceived" ? ClipboardCheck : CheckCircle2
+  const showDenied = blocked || (!supported && !showIosHint) || notify === "unsupported" || notify === "error"
   const notifyBar = record && (
-    <section className="mx-auto mb-3 max-w-sm rounded-2xl border bg-background p-4 text-center shadow-sm">
-      <h1 className={`text-base font-bold${green ? " text-green-600" : ""}`}>{title}</h1>
-      {!finalized && !isRequest && <p className="mt-1 text-sm text-muted-foreground">{t("invTrack.preparing")}</p>}
-      {hideControls ? null : notify === "enabled" ? (
-        !finalized && !isRequest && <p className="mt-3 text-sm text-green-600">{t("invTrack.orderPreparing")}</p>
-      ) : (
-        <>
-          {supported && !blocked && (
-            <button type="button" onClick={() => void enable()} className="mt-3 w-full rounded-lg bg-primary px-4 py-3 text-sm font-bold text-primary-foreground">{t("invTrack.enable")}</button>
-          )}
-          {notify === "no-push" && <p className="mt-3 text-sm text-amber-600">{t("invTrack.noPush")}</p>}
-          {(blocked || (!supported && !showIosHint) || notify === "unsupported" || notify === "error") && <p className="mt-3 text-sm text-amber-600">{t("invTrack.denied")}</p>}
-        </>
-      )}
-      {!hideControls && showIosHint && <p className="mt-3 text-sm text-amber-600">{t("invTrack.iosHint")}</p>}
+    <section className="mx-auto mb-4 w-full max-w-[340px] overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-sm">
+      <div className={cn("h-1 w-full", TONES[tone].bar)} />
+      <div className="flex flex-col items-center gap-3 p-5 text-center">
+        <span className={cn("flex size-14 items-center justify-center rounded-full", TONES[tone].icon)}><StatusIcon className="size-7" strokeWidth={2} /></span>
+        <div className="space-y-1">
+          <h1 className={cn("text-lg font-bold leading-snug", TONES[tone].title)}>{title}</h1>
+          {!finalized && !isRequest && <p className="text-sm leading-relaxed text-muted-foreground">{t("invTrack.preparing")}</p>}
+        </div>
+        {!hideControls && (
+          <div className="flex w-full flex-col gap-2.5 pt-1">
+            {notify === "enabled" ? (
+              !finalized && !isRequest && (
+                <div className="flex items-center justify-center gap-2 rounded-xl bg-emerald-50 px-3 py-2.5 text-sm font-medium text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400">
+                  <BellRing className="size-4 shrink-0" />{t("invTrack.orderPreparing")}
+                </div>
+              )
+            ) : (
+              <>
+                {supported && !blocked && (
+                  <Button type="button" size="lg" className="h-12 w-full gap-2 rounded-xl text-base font-bold" disabled={enabling} onClick={() => void enable()}>
+                    {enabling ? <Loader2 className="size-5 animate-spin" /> : <BellRing className="size-5" />}{t("invTrack.enable")}
+                  </Button>
+                )}
+                {notify === "no-push" && <Notice>{t("invTrack.noPush")}</Notice>}
+                {showDenied && <Notice icon={BellOff}>{t("invTrack.denied")}</Notice>}
+              </>
+            )}
+            {showIosHint && <Notice icon={Share}>{t("invTrack.iosHint")}</Notice>}
+          </div>
+        )}
+      </div>
     </section>
   )
 
@@ -163,18 +190,19 @@ function Tracking({ params }: { params: URLSearchParams }) {
         {notifyBar}
         {html ? <Receipt html={html} title={title} /> : <Message role="alert">{renderError}</Message>}
         {html && (
-          <div className="mx-auto mt-3 max-w-sm text-center">
-            <button type="button" onClick={() => void savePdf()} disabled={pdfBusy} className="w-full rounded-lg border bg-background px-4 py-3 text-sm font-bold disabled:opacity-60">
+          <div className="mx-auto mt-4 flex w-full max-w-[340px] flex-col gap-2.5">
+            <Button type="button" variant="outline" size="lg" className="h-12 w-full gap-2 rounded-xl bg-card font-bold" onClick={() => void savePdf()} disabled={pdfBusy}>
+              {pdfBusy ? <Loader2 className="size-5 animate-spin" /> : <Download className="size-5" />}
               {pdfBusy ? t("common.loading") : t(isRequest ? "invTrack.orderDownloadPdf" : "invTrack.downloadPdf")}
-            </button>
-            {pdfFailed && <p role="alert" className="mt-2 text-sm text-amber-600">{renderError}</p>}
+            </Button>
+            {pdfFailed && <Notice>{renderError}</Notice>}
           </div>
         )}
       </>
     )
   } else body = <Message role="status">{t("common.loading")}</Message>
 
-  return <main dir={i18n.dir()} className="min-h-screen bg-muted/30 p-4">{body}</main>
+  return <main dir={i18n.dir()} className="min-h-dvh bg-muted/40 px-4 py-6 text-foreground">{body}</main>
 }
 
 /** The roll receipt in a frame of its own, as tall as its content. */
@@ -182,13 +210,35 @@ function Receipt({ html, title }: { html: string; title: string }) {
   const ref = useRef<HTMLIFrameElement>(null)
   const [height, setHeight] = useState(600)
   const fit = () => {
-    const d = ref.current?.contentDocument
-    if (d) setHeight(d.documentElement.scrollHeight)
+    const f = ref.current
+    const d = f?.contentDocument
+    if (!f || !d) return
+    // Measured at a tiny height, so the frame's own viewport does not count as content (no blank tail under the receipt).
+    f.style.height = "1px"
+    setHeight(d.documentElement.scrollHeight + 12)
   }
   return (
-    <div className="mx-auto w-fit bg-white shadow-sm">
+    <div className="mx-auto w-fit overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-border">
       <iframe ref={ref} title={title} srcDoc={html} onLoad={fit} style={{ width: 302, height, border: 0, display: "block" }} />
     </div>
+  )
+}
+
+type Tone = "success" | "info" | "pending"
+/** The status card's colours: green once ready / final, blue for a received order, the brand colour while it is being made. */
+const TONES: Record<Tone, { bar: string; icon: string; title: string }> = {
+  success: { bar: "bg-emerald-500", icon: "bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400", title: "text-emerald-700 dark:text-emerald-400" },
+  info: { bar: "bg-sky-500", icon: "bg-sky-100 text-sky-600 dark:bg-sky-950/60 dark:text-sky-400", title: "text-foreground" },
+  pending: { bar: "bg-primary", icon: "bg-primary/10 text-primary", title: "text-foreground" },
+}
+
+/** A short warning under the status (notifications off, iPhone hint, ...). */
+function Notice({ children, icon: Icon = AlertTriangle }: { children: React.ReactNode; icon?: LucideIcon }) {
+  return (
+    <p role="status" className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-start text-[13px] leading-relaxed text-amber-800 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-300">
+      <Icon className="mt-0.5 size-4 shrink-0" />
+      <span>{children}</span>
+    </p>
   )
 }
 
