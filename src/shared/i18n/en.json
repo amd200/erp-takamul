@@ -3512,5 +3512,160 @@
     "log": "Log",
     "clearLog": "Clear",
     "reset": "Turn all off"
+  },
+  "tailoring": {
+    "title": "Tailoring screen",
+    "short": "Tailoring",
+    "orderNo": "Order no.",
+    "orders": "Orders",
+    "newOrder": "New order",
+    "home": "Home",
+    "customer": {
+      "search": "Search customer by name or phone",
+      "noResults": "No customers",
+      "add": "New customer",
+      "name": "Customer name",
+      "phone": "Phone",
+      "change": "Change customer",
+      "measures": "Measurements",
+      "measuresSaved": "Measurements saved ({{n}} of {{total}})",
+      "noMeasures": "No saved measurements for this customer",
+      "viewMeasures": "View & edit",
+      "takeMeasures": "Take measurements",
+      "newTitle": "Add new customer",
+      "measuresLater": "You can finish these later",
+      "saveNew": "Save customer"
+    },
+    "steps": {
+      "items": "Items",
+      "measurements": "Measurements",
+      "style": "Style"
+    },
+    "garments": {
+      "thobe": "Thobe",
+      "shirt": "Shirt",
+      "pants": "Trousers",
+      "bisht": "Bisht",
+      "abaya": "Abaya",
+      "suit": "Suit"
+    },
+    "products": {
+      "search": "Search by name or barcode",
+      "empty": "No products",
+      "notFound": "No product with this barcode",
+      "tailored": "Sewn",
+      "cats": {
+        "all": "All",
+        "sewing": "Tailoring",
+        "ready": "Ready-made",
+        "head": "Headwear",
+        "accessories": "Accessories"
+      }
+    },
+    "fabrics": {
+      "fabric": "Fabric",
+      "fabricPh": "Fabric (e.g. Japanese cotton)",
+      "color": "Colour",
+      "colorPh": "Colour"
+    },
+    "measures": {
+      "title": "Customer measurements",
+      "unit": "cm",
+      "filled": "{{n}} of {{total}}",
+      "fromSaved": "Saved measurements",
+      "clear": "Clear",
+      "noCustomer": "Pick the customer to load their saved measurements",
+      "body": "Body",
+      "details": "Details",
+      "length": "Length",
+      "shoulder": "Shoulder",
+      "chest": "Chest",
+      "waist": "Waist",
+      "hip": "Hip",
+      "sleeve": "Sleeve length",
+      "neck": "Neck",
+      "armhole": "Armhole",
+      "cuff": "Cuff",
+      "bottom": "Hem width",
+      "chestPocket": "Pocket position",
+      "collarHeight": "Collar height",
+      "savedHint": "These measurements are saved on {{name}}; any change is saved on them when you save the order."
+    },
+    "style": {
+      "noPiece": "Add a piece to the order to set its style",
+      "collar": "Collar",
+      "cuff": "Sleeve",
+      "pocket": "Pockets",
+      "placket": "Placket",
+      "note": "Notes for the tailor",
+      "notePh": "e.g. embroider the name on the sleeve",
+      "options": {
+        "chinese": "Mandarin",
+        "classic": "Classic",
+        "round": "Round",
+        "none": "None",
+        "single": "Plain",
+        "double": "French cuff",
+        "button": "Button",
+        "chest": "Chest",
+        "side": "Side",
+        "both": "Chest & side",
+        "hidden": "Hidden",
+        "visible": "Visible",
+        "zip": "Zip"
+      }
+    },
+    "pieces": {
+      "title": "Order pieces",
+      "empty": "Pick items on the screen to add them to the order",
+      "remove": "Remove piece"
+    },
+    "dates": {
+      "fitting": "Fitting date",
+      "delivery": "Delivery date",
+      "urgent": "Urgent order",
+      "note": "Order notes"
+    },
+    "payTitle": "Payment & dates",
+    "addFabric": "Add fabric & colour",
+    "editorTabs": {
+      "fabric": "Fabric",
+      "style": "Style",
+      "note": "Note"
+    },
+    "totals": {
+      "subtotal": "Subtotal before tax",
+      "tax": "VAT 15%",
+      "total": "Total",
+      "deposit": "Deposit",
+      "half": "Half",
+      "full": "Full",
+      "remaining": "Remaining",
+      "cash": "Cash",
+      "card": "Card"
+    },
+    "save": "Save order",
+    "saved": "Order {{number}} saved",
+    "needCustomer": "Pick the customer first",
+    "needPieces": "Add at least one product",
+    "needMeasures": "Enter the customer's measurements",
+    "needDelivery": "Set the delivery date",
+    "status": {
+      "all": "All",
+      "new": "New",
+      "cutting": "Cutting",
+      "sewing": "Sewing",
+      "ready": "Ready",
+      "delivered": "Delivered"
+    },
+    "board": {
+      "title": "Tailoring orders",
+      "search": "Search by order no., customer or phone",
+      "empty": "No orders",
+      "pieces": "{{n}} pcs",
+      "late": "Late",
+      "next": "Move to: {{status}}",
+      "count": "{{n}} orders"
+    }
   }
 }

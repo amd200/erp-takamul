@@ -14,6 +14,8 @@ export const posRoutes: RouteObject[] = [
     { path: "pos", lazy: lazyPage(() => import("./pages/PosPage")) },
     { path: "pos2", lazy: lazyPage(() => import("./pages/Pos2Page")) },
     { path: "pos-optics", lazy: lazyPage(() => import("./pages/PosOpticsPage")) },
+    // The tailoring shop's order screen: look only for now, on sample data (the back end has no tailoring data yet).
+    { path: "pos-tailoring", lazy: lazyPage(() => import("@/modules/tailoring/pages/TailoringPosPage")) },
   ] },
   // The kitchen screen belongs with the cashier screens: full window, no back-office menu.
   { element: <RequirePermission perm={P.sales.view} />, children: [

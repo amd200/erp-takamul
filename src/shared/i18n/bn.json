@@ -3512,5 +3512,160 @@
     "log": "Log",
     "clearLog": "Poriskar",
     "reset": "Sob bondho korun"
+  },
+  "tailoring": {
+    "title": "Darzi screen",
+    "short": "Darzi",
+    "orderNo": "Order no.",
+    "orders": "Order gulo",
+    "newOrder": "Notun order",
+    "home": "Home",
+    "customer": {
+      "search": "Naam ba phone diye customer khujun",
+      "noResults": "Kono customer nei",
+      "add": "Notun customer",
+      "name": "Customer er naam",
+      "phone": "Phone number",
+      "change": "Customer bodlan",
+      "measures": "Map",
+      "measuresSaved": "Map save kora ache ({{n}} / {{total}})",
+      "noMeasures": "Ei customer er kono map save nei",
+      "viewMeasures": "Dekhun o bodlan",
+      "takeMeasures": "Map nin",
+      "newTitle": "Notun customer jog korun",
+      "measuresLater": "Pore o puron korte paren",
+      "saveNew": "Customer save korun"
+    },
+    "steps": {
+      "items": "Item",
+      "measurements": "Map",
+      "style": "Design"
+    },
+    "garments": {
+      "thobe": "Thobe",
+      "shirt": "Shirt",
+      "pants": "Paijama",
+      "bisht": "Bisht",
+      "abaya": "Abaya",
+      "suit": "Suit"
+    },
+    "products": {
+      "search": "Naam ba barcode diye khujun",
+      "empty": "Kono item nei",
+      "notFound": "Ei barcode er kono item nei",
+      "tailored": "Selai",
+      "cats": {
+        "all": "Shob",
+        "sewing": "Selai",
+        "ready": "Ready kapor",
+        "head": "Shemagh o ghutra",
+        "accessories": "Accessories"
+      }
+    },
+    "fabrics": {
+      "fabric": "Kapor",
+      "fabricPh": "Kapor (jemon Japani cotton)",
+      "color": "Rong",
+      "colorPh": "Rong"
+    },
+    "measures": {
+      "title": "Customer er map",
+      "unit": "cm",
+      "filled": "{{n}} / {{total}}",
+      "fromSaved": "Save kora map",
+      "clear": "Muche felun",
+      "noCustomer": "Save kora map dekhte customer bachun",
+      "body": "Shorir",
+      "details": "Details",
+      "length": "Lomba",
+      "shoulder": "Kandh",
+      "chest": "Buk",
+      "waist": "Komor",
+      "hip": "Hip",
+      "sleeve": "Hatar lomba",
+      "neck": "Gola",
+      "armhole": "Bogol",
+      "cuff": "Cuff",
+      "bottom": "Nicher ghera",
+      "chestPocket": "Pocket er jayga",
+      "collarHeight": "Collar er uchchota",
+      "savedHint": "Ei map {{name}} er naame save ache; order save korle jekono bodol o tar naame save hobe."
+    },
+    "style": {
+      "noPiece": "Design thik korte order e ekta selai item jog korun",
+      "collar": "Collar",
+      "cuff": "Hata",
+      "pocket": "Pocket",
+      "placket": "Placket",
+      "note": "Darzi er jonno note",
+      "notePh": "Jemon: hatay naam embroidery",
+      "options": {
+        "chinese": "Chinese",
+        "classic": "Classic",
+        "round": "Gol",
+        "none": "Nei",
+        "single": "Shadharon",
+        "double": "Cuff",
+        "button": "Botam",
+        "chest": "Buk pocket",
+        "side": "Pash pocket",
+        "both": "Buk o pash",
+        "hidden": "Lukano",
+        "visible": "Dekha jay",
+        "zip": "Zip"
+      }
+    },
+    "pieces": {
+      "title": "Order er item",
+      "empty": "Screen theke item bachai kore order e jog korun",
+      "remove": "Item muche felun"
+    },
+    "dates": {
+      "fitting": "Trial er tarikh",
+      "delivery": "Delivery er tarikh",
+      "urgent": "Joruri order",
+      "note": "Order er note"
+    },
+    "payTitle": "Payment o tarikh",
+    "addFabric": "Kapor o rong din",
+    "editorTabs": {
+      "fabric": "Kapor",
+      "style": "Design",
+      "note": "Note"
+    },
+    "totals": {
+      "subtotal": "Tax er age mot",
+      "tax": "VAT 15%",
+      "total": "Mot",
+      "deposit": "Agrim",
+      "half": "Ordhek",
+      "full": "Purota",
+      "remaining": "Baki",
+      "cash": "Cash",
+      "card": "Card"
+    },
+    "save": "Order save korun",
+    "saved": "Order {{number}} save hoyeche",
+    "needCustomer": "Age customer bachun",
+    "needPieces": "Ontoto ekta item jog korun",
+    "needMeasures": "Customer er map din",
+    "needDelivery": "Delivery er tarikh din",
+    "status": {
+      "all": "Shob",
+      "new": "Notun",
+      "cutting": "Kata",
+      "sewing": "Selai",
+      "ready": "Ready",
+      "delivered": "Delivery hoyeche"
+    },
+    "board": {
+      "title": "Darzi order",
+      "search": "Order no., customer ba phone diye khujun",
+      "empty": "Kono order nei",
+      "pieces": "{{n}} ti",
+      "late": "Deri",
+      "next": "Pathan: {{status}}",
+      "count": "{{n}} ti order"
+    }
   }
 }
