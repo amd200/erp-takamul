@@ -2,9 +2,6 @@ import { http } from "@/shared/http/request"
 import { writeLocal } from "./local"
 import type { GroupKey, Settings, SettingValue } from "./types"
 
-/** Printers the QZ Tray agent reports on this machine. */
-export const PRINTERS = ["Kitchen-Epson-TM20", "Bar-Xprinter-80", "HP-LaserJet-A4"]
-
 /** A form's values: field values by the server group they belong to (or `local`, kept in this browser). */
 export type Values = Record<string, Record<string, SettingValue>>
 

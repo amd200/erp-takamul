@@ -98,7 +98,7 @@ export function useInvoiceOutput() {
       // Preview: hand the finished document back; the caller shows it on screen instead of printing.
       if (as === "preview") return doc
       if (as === "pdf") await downloadPdf(doc, doc0.number)
-      else await printDocument(doc)
+      else await printDocument(doc, paper === "roll" ? settings.print?.defultPrinter : null)
     },
     onError: (e, { as }) => errorToast(e, as === "pdf" ? "sales.pdfFailed" : as === "preview" ? "sales.previewFailed" : "sales.printFailed"),
   })

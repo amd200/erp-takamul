@@ -126,7 +126,7 @@ export default function PreparationPage() {
             {orders.map((o) => (
               <Ticket key={o.id} order={o} minutes={minutes} busy={markReady.isPending}
                 onReady={() => markReady.mutate(o.id)}
-                onPrint={() => printDocument(bonDoc(o, ticketOptions(settings, isReady(o) ? "ready" : "pending", "print")))} />
+                onPrint={() => printDocument(bonDoc(o, ticketOptions(settings, isReady(o) ? "ready" : "pending", "print")), settings.print?.defultPreparedPrinter)} />
             ))}
           </div>
         )}

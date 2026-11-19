@@ -1,0 +1,7 @@
+{
+  "name": "takamul-erp-desktop",
+  "productName": "Takamul ERP",
+  "version": "1.0.0",
+  "description": "Takamul ERP desktop app",
+  "main": "main.cjs"
+}

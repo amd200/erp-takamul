@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next"
 import { FormInput, FormSelect } from "@/components/form/FormFields"
 import { useAppSettings } from "../queries"
-import { PRINTERS } from "../service"
+import { usePrinterOptions } from "@/shared/printers/usePrinters"
 import { Choice, useLabel, type FieldsProps } from "./fields"
 
 /** The fields of each site-settings tab. Names are the server's. */
@@ -17,11 +17,13 @@ export function TobaccoFields({ form: { control } }: FieldsProps) {
 export function PrintRoutingFields({ form: { control } }: FieldsProps) {
   const { t } = useTranslation()
   const label = useLabel()
-  const options = PRINTERS.map((p) => ({ value: p, label: p }))
+  const print = useAppSettings().print
+  const invoicePrinters = usePrinterOptions(print?.defultPrinter)
+  const bonPrinters = usePrinterOptions(print?.defultPreparedPrinter)
   return (
     <Grid>
-      <FormSelect control={control} name="print.defultPrinter" label={label("defultPrinter")} allowEmpty={t("common.none")} options={options} />
-      <FormSelect control={control} name="print.defultPreparedPrinter" label={label("defultPreparedPrinter")} allowEmpty={t("common.none")} options={options} />
+      <FormSelect control={control} name="print.defultPrinter" label={label("defultPrinter")} allowEmpty={t("common.none")} options={invoicePrinters} />
+      <FormSelect control={control} name="print.defultPreparedPrinter" label={label("defultPreparedPrinter")} allowEmpty={t("common.none")} options={bonPrinters} />
     </Grid>
   )
 }

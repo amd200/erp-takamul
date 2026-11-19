@@ -68,7 +68,7 @@ export function useKitchenBon() {
       items: picked.lines.map((l) => ({ productName: l.name, quantity: l.quantity, notes: l.notes || null, additions: l.extras.map((e) => ({ additionNameAr: e.name })) })),
     }
     // The ticket comes after the save: a failed print must not look like a failed sale.
-    printDocument(bonDoc(order, { ...ticketOptions(settings, "pending", "print"), amended: picked.amended }))
+    printDocument(bonDoc(order, { ...ticketOptions(settings, "pending", "print"), amended: picked.amended }), settings.print?.defultPreparedPrinter)
       .catch(() => toast.error(i18n.t("posTables.bonFailed")))
   }, [settings])
 }

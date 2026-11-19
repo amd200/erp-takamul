@@ -5,7 +5,7 @@ import { printerKeys } from "./keys"
 export function usePrinterOptions(current?: string | null) {
   const { data = [] } = useQuery({
     queryKey: printerKeys.all,
-    queryFn: async () => (await import("./qz")).listPrinters(),
+    queryFn: async () => (window.desktop ? window.desktop.printers() : (await import("./qz")).listPrinters()),
     staleTime: 60_000,
     retry: false,
   })

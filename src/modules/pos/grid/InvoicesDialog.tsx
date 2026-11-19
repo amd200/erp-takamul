@@ -89,7 +89,7 @@ export function InvoicesDialog({ open, onOpenChange }: { open: boolean; onOpenCh
 
   const actions = (o: Order, pending: boolean) => (
     <>
-      <button type="button" title={t("pos2.printPrepTicket")} aria-label={t("pos2.printPrepTicket")} className={icon} onClick={() => printDocument(bonDoc(o, ticketOptions(settings, "pending", "print")))}><ChefHat size={13} /></button>
+      <button type="button" title={t("pos2.printPrepTicket")} aria-label={t("pos2.printPrepTicket")} className={icon} onClick={() => printDocument(bonDoc(o, ticketOptions(settings, "pending", "print")), settings.print?.defultPreparedPrinter)}><ChefHat size={13} /></button>
       {notificationsOn && !pending && !o.isHolding && (
         <button type="button" title={t("pos1.showQr")} aria-label={t("pos1.showQr")} className={icon} onClick={() => setQrId(o.id)}><QrCode size={13} /></button>
       )}

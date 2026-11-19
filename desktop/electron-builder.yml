@@ -1,0 +1,15 @@
+appId: com.takamul.erp
+productName: Takamul ERP
+directories:
+  app: desktop
+  output: release
+files:
+  - "**/*"
+  - "!electron-builder.yml"
+  - "!README.md"
+win:
+  target: nsis
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  perMachine: false
