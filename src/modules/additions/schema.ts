@@ -4,7 +4,7 @@ export const additionSchema = z.object({
   nameAr: z.string().trim().min(1, "validation.nameArRequired"),
   nameEn: z.string().trim(),
   nameUr: z.string().trim(),
-  categoryIds: z.array(z.number()).min(1, "validation.pickCategory"),
+  categoryIds: z.array(z.number()),
 })
 
 export type AdditionForm = z.infer<typeof additionSchema>

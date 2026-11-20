@@ -53,7 +53,7 @@ function AdditionDialog({ open, onOpenChange, addition }: { open: boolean; onOpe
               </div>
               <Controller control={form.control} name="categoryIds" render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel>{t("additions.showWith")}<span className="text-destructive">*</span></FieldLabel>
+                  <FieldLabel>{t("additions.showWith")}</FieldLabel>
                   <MultiPicker options={categories.map((c) => ({ value: c.id, label: c.categoryNameAr }))} value={field.value} onChange={field.onChange} listClassName="max-h-32" />
                   <FieldError errors={fieldState.error ? [{ message: t(fieldState.error.message!) }] : undefined} />
                 </Field>
