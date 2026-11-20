@@ -104,11 +104,11 @@ export function OptionsPanel() {
     <SectionCard title={t("products.sections.options")}>
       <FieldGroup className="gap-4">
         {rules.sells && <FormSwitch control={control} name="showInSalesScreen" label={t("products.showInSales")} />}
-        {rules.sells && (
+        {rules.sells && !rules.children && (
           <FormSelect control={control} name="printerName" label={t("products.printer")} allowEmpty={t("products.printerFromCategory")}
             options={printers} />
         )}
-        {rules.sells && <FormInput control={control} name="calories" type="number" label={t("products.calories")} placeholder={t("common.optional")} />}
+        {rules.sells && !rules.children && <FormInput control={control} name="calories" type="number" label={t("products.calories")} placeholder={t("common.optional")} />}
         <FormInput control={control} name="displayOrder" type="number" label={t("common.displayOrder")} />
       </FieldGroup>
     </SectionCard>
