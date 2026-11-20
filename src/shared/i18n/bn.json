@@ -3667,5 +3667,11 @@
       "next": "Pathan: {{status}}",
       "count": "{{n}} ti order"
     }
+  },
+  "desktopPrint": {
+    "sent": "\"{{printer}}\" printer-e print job pathano hoyeche ({{size}}). Eta sudhu confirm kore job printer queue-te gechhe, kagoj berohoyeche kina na. [{{info}}]",
+    "failed": "\"{{printer}}\" printer-e silent print hoyni: {{reason}}. Tar poriborte print dialog khola hoyeche. [{{info}}]",
+    "openLog": "Print log kholo",
+    "logHint": "Protiti silent print-er (printer, page size, result, build) record rakhe, support-ke pathanor jonno."
   }
 }

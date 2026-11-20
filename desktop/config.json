@@ -1,4 +1,5 @@
 {
-  "serverUrl": "http://localhost:5002",
-  "appPort": 5301
+  "serverUrl": "https://localhost:5002",
+  "appPort": 5301,
+  "printWidthMm": 72
 }

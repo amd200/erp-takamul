@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "desktop:build": "tsc -b && vite build --mode desktop --outDir desktop/web --emptyOutDir",
+    "desktop:build": "tsc -b && vite build --mode desktop --outDir desktop/web --emptyOutDir && node desktop/stamp.cjs",
     "desktop": "npm run desktop:build && electron desktop",
     "desktop:dist": "npm run desktop:build && electron-builder --config desktop/electron-builder.yml --win"
   },

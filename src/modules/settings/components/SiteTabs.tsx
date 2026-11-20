@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next"
+import { Button } from "@/components/ui/button"
 import { FormInput, FormSelect } from "@/components/form/FormFields"
 import { useAppSettings } from "../queries"
 import { usePrinterOptions } from "@/shared/printers/usePrinters"
@@ -24,6 +25,12 @@ export function PrintRoutingFields({ form: { control } }: FieldsProps) {
     <Grid>
       <FormSelect control={control} name="print.defultPrinter" label={label("defultPrinter")} allowEmpty={t("common.none")} options={invoicePrinters} />
       <FormSelect control={control} name="print.defultPreparedPrinter" label={label("defultPreparedPrinter")} allowEmpty={t("common.none")} options={bonPrinters} />
+      {window.desktop && (
+        <div className="flex flex-col items-start gap-1.5 md:col-span-2">
+          <Button type="button" variant="outline" onClick={() => window.desktop?.openPrintLog()}>{t("desktopPrint.openLog")}</Button>
+          <p className="text-xs text-muted-foreground">{t("desktopPrint.logHint")}</p>
+        </div>
+      )}
     </Grid>
   )
 }

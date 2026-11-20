@@ -36,4 +36,5 @@ dist-ssr
 
 # Desktop app build output
 /desktop/web
+/desktop/build.json
 /release

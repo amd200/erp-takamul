@@ -3667,5 +3667,11 @@
       "next": "Move to: {{status}}",
       "count": "{{n}} orders"
     }
+  },
+  "desktopPrint": {
+    "sent": "Print job handed to \"{{printer}}\" ({{size}}). This confirms the job reached the printer queue, not that paper came out. [{{info}}]",
+    "failed": "Silent print on \"{{printer}}\" failed: {{reason}}. The print dialog was opened instead. [{{info}}]",
+    "openLog": "Open print log",
+    "logHint": "Records every silent print (printer, page size, result, build), to send to support."
   }
 }
