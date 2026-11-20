@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Plus, Puzzle } from "lucide-react"
@@ -20,7 +20,7 @@ import { useCategories } from "@/modules/categories/queries"
 import { BranchSection } from "@/modules/branches/BranchSection"
 import { useFormBranch } from "@/modules/branches/useFormBranch"
 import { additionSchema, emptyAddition, type AdditionForm } from "../schema"
-import { useAdditionPage, useDeleteAddition, useSaveAddition } from "../queries"
+import { useAdditions, useDeleteAddition, useSaveAddition } from "../queries"
 import { SectionCard } from "@/components/SectionCard"
 import type { Addition } from "../types"
 
@@ -73,11 +73,8 @@ function AdditionDialog({ open, onOpenChange, addition }: { open: boolean; onOpe
 export default function AdditionsPage() {
   const { t } = useTranslation()
   const can = useCan()
-  const [page, setPage] = useState(0)
-  const [search, setSearch] = useState("")
-  const { sort, sortBy, sortDescending } = useTableSort(() => setPage(0))
-  const { data, isLoading, isFetching } = useAdditionPage({ page: page + 1, pageSize: 20, searchTerm: search, sortBy, sortDescending })
-  const onSearch = useCallback((value: string) => { setSearch((previous) => { if (previous !== value) setPage(0); return value }) }, [])
+  const { sort, sortBy, sortDescending } = useTableSort()
+  const { data = [], isLoading } = useAdditions(sortBy ? { SortBy: sortBy, SortDescending: sortDescending } : undefined)
   const del = useDeleteAddition()
   const [editing, setEditing] = useState<Addition | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -94,8 +91,7 @@ export default function AdditionsPage() {
       <PageHeader title={t("additions.title")} description={t("additions.description")}
         actions={<Can perm={P.additions.manage}><Button size="lg" onClick={() => open(null)}><Plus />{t("additions.add")}</Button></Can>} />
       <SectionCard>
-          <DataTable rows={data?.items ?? []} loading={isLoading} columns={columns} rowKey={(a) => a.id} sort={sort}
-            server={{ total: data?.totalCount ?? 0, page, pageSize: data?.pageSize ?? 20, onPage: setPage, onSearch, fetching: isFetching }} searchPlaceholder={t("additions.search")}
+          <DataTable rows={data} loading={isLoading} columns={columns} rowKey={(a) => a.id} sort={sort} searchPlaceholder={t("additions.search")}
             empty={<EmptyState icon={<Puzzle />} title={t("additions.empty")} hint={t("additions.emptyHint")} />} />
         </SectionCard>
       <AdditionDialog open={dialogOpen} onOpenChange={setDialogOpen} addition={editing} />

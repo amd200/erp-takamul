@@ -2,7 +2,6 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tansta
 import { toast } from "sonner"
 import i18n from "@/shared/i18n"
 import { errorToast, type ListSort } from "@/shared/api/errors"
-import type { AdditionQuery } from "./types"
 import { additionsApi } from "./service"
 import { additionKeys } from "./keys"
 
@@ -31,9 +30,3 @@ export const useDeleteAddition = () => {
     onError: (e) => errorToast(e, "common.deleteFailed"),
   })
 }
-
-export const useAdditionPage = (q: AdditionQuery) => useQuery({
-  queryKey: additionKeys.page(q),
-  queryFn: () => additionsApi.page(q),
-  placeholderData: keepPreviousData,
-})

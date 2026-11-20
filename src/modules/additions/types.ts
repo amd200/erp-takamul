@@ -13,4 +13,3 @@ export type Addition = {
 /** What the add / edit form holds. The server has no way to toggle isActive from the app. */
 export type AdditionInput = { nameAr: string; nameEn: string; nameUr: string; categoryIds: number[] }
 
-export type AdditionQuery = { page: number; pageSize: number; searchTerm?: string; sortBy?: string; sortDescending?: boolean }
