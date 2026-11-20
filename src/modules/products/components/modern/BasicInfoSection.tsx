@@ -32,15 +32,13 @@ export function BasicInfoSection({ branchField }: { branchField?: ReactNode }) {
           <FormInput control={control} name="nameEn" label={t("products.nameEn")} dir="ltr" />
           <FormInput control={control} name="nameUr" label={t("products.nameUr")} dir="ltr" />
         </div>
-        {rules.ownBarcodeAndPrice && (
-          <FormInput control={control} name="barcode" label={t("products.barcode")} dir="ltr" required
-            end={<Button type="button" variant="outline" onClick={() => setValue("barcode", randomBarcode(), { shouldValidate: true })}>{t("products.generate")}</Button>} />
-        )}
         {rules.ownBarcodeAndPrice ? (
-          <>
+          <div className="grid gap-4 sm:col-span-2 lg:grid-cols-3">
+            <FormInput control={control} name="barcode" label={t("products.barcode")} dir="ltr" required
+              end={<Button type="button" variant="outline" onClick={() => setValue("barcode", randomBarcode(), { shouldValidate: true })}>{t("products.generate")}</Button>} />
             {category}
-            <FormInput control={control} name="description" label={t("common.description")} placeholder={t("common.optional")} className="sm:col-span-2" />
-          </>
+            <FormInput control={control} name="description" label={t("common.description")} placeholder={t("common.optional")} />
+          </div>
         ) : (
           <div className={rules.unitInBasic ? "grid gap-4 sm:col-span-2 lg:grid-cols-3" : "grid gap-4 sm:col-span-2 sm:grid-cols-2"}>
             {category}

@@ -123,7 +123,7 @@ export default function InvoiceFormPage() {
             )} />
             <div className="flex items-start gap-3">
               <div className="min-w-0 flex-1">
-                <FormSelect control={form.control} name="customerId" numeric required label={t("sales.customer")}
+                <FormSelect control={form.control} name="customerId" numeric required searchable label={t("sales.customer")}
                   options={customers.map((c) => ({ value: String(c.id), label: c.customerName }))} />
                 {appSettings.customersTab?.showActualBalance && customer && <BalanceBox label={t("sales.balanceLabel")} value={customer.balance ?? 0} debitWhenPositive />}
               </div>

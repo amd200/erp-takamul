@@ -116,7 +116,7 @@ export default function PurchaseFormPage() {
               </Field>
             )} />
             <div>
-              <FormSelect control={form.control} name="supplierId" numeric required label={t("purchases.supplier")} placeholder={t("reports.pick")}
+              <FormSelect control={form.control} name="supplierId" numeric required searchable label={t("purchases.supplier")} placeholder={t("reports.pick")}
                 options={suppliers.map((s) => ({ value: String(s.id), label: s.supplierName }))} />
               {showBalance && supplier && <BalanceBox label={t("purchases.supplierBalance")} value={supplier.balance ?? 0} debitWhenPositive={false} />}
             </div>

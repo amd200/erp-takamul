@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Check, ChevronDown } from "lucide-react"
 
 /**
  * Thin react-hook-form wrappers over shadcn's Field. Error messages in schemas are i18n keys,
@@ -125,11 +128,13 @@ export function FormTextarea<T extends FieldValues>({ control, name, label, desc
 
 export type Option = { value: string; label: string }
 
-/** Select bound to a string or number field; `numeric` converts the chosen value back to a number. */
+/** Select bound to a string or number field; `numeric` converts the chosen value back to a number. `searchable` swaps the list for a search box + list (for long lists like customers). */
 export function FormSelect<T extends FieldValues>({
-  control, name, label, description, required, className, options, placeholder, numeric, disabled, allowEmpty, labelHidden,
-}: Base<T> & { options: Option[]; placeholder?: string; numeric?: boolean; disabled?: boolean; allowEmpty?: string }) {
+  control, name, label, description, required, className, options, placeholder, numeric, disabled, allowEmpty, labelHidden, searchable,
+}: Base<T> & { options: Option[]; placeholder?: string; numeric?: boolean; disabled?: boolean; allowEmpty?: string; searchable?: boolean }) {
   const err = useErrorText()
+  const { t } = useTranslation()
+  const [open, setOpen] = useState(false)
   const EMPTY = "__none__"
   return (
     <Controller
@@ -138,6 +143,35 @@ export function FormSelect<T extends FieldValues>({
       render={({ field, fieldState }) => (
         <Field data-invalid={fieldState.invalid} className={className}>
           <Label label={label} required={required} hidden={labelHidden} />
+          {searchable ? (
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger asChild>
+                <button type="button" id={name} disabled={disabled} aria-invalid={fieldState.invalid}
+                  className="flex h-10 w-full items-center justify-between gap-2 rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50 aria-invalid:border-destructive">
+                  <span className={cn("truncate", field.value == null || field.value === "" || field.value === 0 ? "text-muted-foreground" : "")}>
+                    {options.find((o) => o.value === String(field.value))?.label ?? placeholder ?? ""}
+                  </span>
+                  <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent align="start" className="w-(--radix-popover-trigger-width) p-0">
+                <Command>
+                  <CommandInput placeholder={t("common.search")} />
+                  <CommandList>
+                    <CommandEmpty>{t("common.noResults")}</CommandEmpty>
+                    <CommandGroup>
+                      {options.map((o) => (
+                        <CommandItem key={o.value} value={o.label} onSelect={() => { field.onChange(numeric ? Number(o.value) : o.value); setOpen(false) }}>
+                          <span className="flex-1 truncate">{o.label}</span>
+                          {String(field.value) === o.value && <Check />}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          ) : (
           <Select
             disabled={disabled}
             value={field.value == null || field.value === "" ? (allowEmpty ? EMPTY : "") : String(field.value)}
@@ -151,6 +185,7 @@ export function FormSelect<T extends FieldValues>({
               {options.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
             </SelectContent>
           </Select>
+          )}
           {description && <FieldDescription>{description}</FieldDescription>}
           <FieldError errors={err(fieldState.error?.message)} />
         </Field>

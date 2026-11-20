@@ -96,7 +96,7 @@ export default function QuoteFormPage() {
             <div>
               <div className="flex items-start gap-3">
               <div className="min-w-0 flex-1">
-              <FormSelect control={form.control} name="customerId" numeric required label={t("sales.customer")} placeholder={t("reports.pick")}
+              <FormSelect control={form.control} name="customerId" numeric required searchable label={t("sales.customer")} placeholder={t("reports.pick")}
                 options={customers.map((c) => ({ value: String(c.id), label: c.customerName }))} />
               </div>
               <Button type="button" variant="outline" size="icon-lg" className="mt-[27px] shrink-0" aria-label={t("customers.add")} title={t("customers.add")} onClick={() => setAddingCustomer(true)}><Plus /></Button>
