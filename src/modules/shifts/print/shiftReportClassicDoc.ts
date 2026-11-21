@@ -14,7 +14,7 @@ const CSS = `body{width:auto;padding:0 3mm;font-size:12px}
 .times{display:flex;align-items:stretch;padding:12px;margin-bottom:20px;border:1px solid #d4d4d4;border-radius:8px}.time{flex:1;text-align:center}.time+.time{border-inline-start:1px solid #d4d4d4}
 .time-value{display:block;margin-top:4px;font-size:12px;font-weight:700}
 .section{margin-bottom:16px}.section-title{margin:0 0 10px;font-size:14px;font-weight:700;break-after:avoid;page-break-after:avoid}
-.table-wrap{overflow:hidden;border:1px solid #d4d4d4;border-radius:8px;break-inside:avoid}
+.table-wrap{overflow:hidden;border:1px solid #d4d4d4;border-radius:8px}.table-wrap tr{break-inside:avoid;page-break-inside:avoid}.table-wrap thead{display:table-header-group}
 table{table-layout:fixed}th{padding:8px 4px;background:#f5f5f5;border-bottom:1px solid #d4d4d4;font-size:10px;text-align:center;white-space:nowrap}
 td{padding:9px 4px;border-bottom:1px solid #d4d4d4;font-size:11px;font-weight:500;text-align:center}tr:last-child td{border-bottom:0}
 .table-wrap th,.table-wrap td{padding-inline:4px;text-align:center;white-space:nowrap;direction:ltr}.table-wrap th:first-child,.table-wrap td:first-child{padding-inline-start:8px;text-align:start;white-space:normal;word-break:break-word;direction:rtl}.table-wrap td:nth-child(4){font-weight:700}
