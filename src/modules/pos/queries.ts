@@ -78,6 +78,15 @@ export function useSaveSale({ message }: { message?: string } = {}) {
   })
 }
 
+/** The POS orders list of a dialog: refetches on focus, and every 5s when it shows held orders. */
+export const usePosOrders = ({ queryKey, held, size, enabled, poll }: { queryKey: readonly unknown[]; held?: boolean; size?: number; enabled: boolean; poll: boolean }) => useQuery({
+  queryKey,
+  queryFn: () => posApi.orders(held, size),
+  enabled,
+  refetchInterval: poll ? 5000 : undefined,
+  refetchOnWindowFocus: true,
+})
+
 export const useDeleteHeld = () => {
   const qc = useQueryClient()
   return useMutation({

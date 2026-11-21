@@ -133,8 +133,8 @@ function Pos2Screen({ shift, optics }: { shift: Shift; optics: boolean }) {
         // "Save and print" prints on the paper the sales screen's invoice type setting names (2 roll, 3 A5, else A4).
         const type = appSettings.salesScreenTab?.sales2InvoiceType
         const paper = type === 2 ? "roll" : type === 3 ? "a5" : "a4"
-        if (action === "pdf" && res.id) printInvoice.mutate({ invoice: { id: res.id }, as: "pdf", paper })
-        else if (print && res.id) printInvoice.mutate({ invoice: { id: res.id }, as: "print", paper })
+        if (action === "pdf" && res.data?.id) printInvoice.mutate({ invoice: { id: res.data?.id }, as: "pdf", paper })
+        else if (print && res.data?.id) printInvoice.mutate({ invoice: { id: res.data?.id }, as: "print", paper })
       },
     })
   }

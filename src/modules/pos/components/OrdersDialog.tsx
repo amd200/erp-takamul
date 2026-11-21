@@ -2,41 +2,26 @@ import { useMemo, useState } from "react"
 import { BellRing, Clock, CreditCard, FileText, Loader2, Plus, Printer, QrCode, Search, Trash2, User, X } from "lucide-react"
 import { CurrencySymbol } from "./CurrencySymbol"
 import { InvoiceQrDialog } from "./InvoiceQrDialog"
-import { useQuery } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { formatDateTime } from "@/lib/format"
-import { http } from "@/shared/http/request"
-import type { PagedResult } from "@/shared/http/paged"
 import { errorToast } from "@/shared/api/errors"
 import { invoicesApi } from "@/modules/sales/service"
 import { editorLineOf } from "@/modules/sales/totals"
-import type { SalesOrderDto } from "@/modules/sales/types"
 import { useInvoiceOutput } from "@/modules/sales/print/useInvoiceOutput"
 import { useAppSettings } from "@/modules/settings"
 import { dineInLineOf, newLineKey } from "../cart"
-import { useDeleteHeld } from "../queries"
+import { useDeleteHeld, usePosOrders } from "../queries"
+import { badgeOf, matchesOrderSearch, statusLabel } from "../orderStatus"
+import type { Order } from "../types"
 import { usePosStore } from "../store"
 import { posKeys } from "../keys"
 import { salesKeys } from "@/modules/sales/keys"
 import { useSendInvoiceNotification } from "@/modules/public-invoice/queries"
 
-export type Order = SalesOrderDto & { isHolding?: boolean | null; orderType?: string | null; orderDeviceNumber?: number | string | null; employeeId?: number | null; tableId?: number | null }
 type Tab = "completed" | "pending" | "tables"
-
-/** The latest cashier invoices (10, as the current POS asks for) or the held ones, as /sales-orders sends them. */
-export const fetchOrders = async (held: boolean, size = held ? 100 : 10) =>
-  (await http<PagedResult<Order>>("/sales-orders", { params: { Page: 1, PageSize: size, OrderType: "POS", IsHold: held } })).items ?? []
-
-export const badgeOf = (status?: string | null) => {
-  const s = status?.toLowerCase()
-  if (s === "confirmed") return "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400"
-  if (s === "unconfirmed") return "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-400"
-  if (s === "cancelled") return "bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400"
-  return "bg-sky-100 text-sky-600"
-}
 
 /** A held order goes back to the cart as it was saved: lines, customer, discount, note, pager and service employee. */
 export function useOrderToCart(done: () => void) {
@@ -83,37 +68,25 @@ export function OrdersDialog({ open, onOpenChange, onlySuspended = false, onDisc
   const held = onlySuspended || tab === "pending"
   const showTables = useAppSettings().salesScreenTab?.isTables === true
   const tables = !onlySuspended && tab === "tables"
-  const { data = [] } = useQuery({
+  const { data = [] } = usePosOrders({
     queryKey: held ? posKeys.held : tables ? salesKeys.posTables : salesKeys.posLatest,
-    queryFn: () => fetchOrders(held, tables ? 100 : undefined),
+    held,
+    size: held || tables ? 100 : 10,
     enabled: open,
-    refetchInterval: held ? 5000 : undefined,
-    refetchOnWindowFocus: true,
+    poll: held,
   })
   const del = useDeleteHeld()
   const printInvoice = useInvoiceOutput()
 
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase()
     return data.filter((o) => {
       if (onlySuspended) return o.orderStatus === "UnConfirmed"
-      const match = !q || o.orderNumber?.toLowerCase().includes(q) || o.customerName?.toLowerCase().includes(q) || o.orderStatus?.toLowerCase().includes(q)
+      const match = matchesOrderSearch(o, search)
       if (tab === "tables") return o.orderType === "InDine" && !o.isHolding && match
       const status = tab === "completed" ? "Confirmed" : "UnConfirmed"
       return match && (o.orderStatus === status || (tab === "completed" && o.orderStatus?.toLowerCase() === "readyfordelivery"))
     })
   }, [data, search, tab, onlySuspended])
-
-  const statusLabel = (s?: string | null) => {
-    switch (s?.toLowerCase()) {
-      case "confirmed": return t("pos1.statusCompleted")
-      case "unconfirmed": return t("pos1.statusPending")
-      case "cancelled": return t("pos1.statusCancelled")
-      case "inprogress": return t("pos1.statusInProgress")
-      case "readyfordelivery": return t("pos1.readyForDelivery")
-      default: return s
-    }
-  }
 
   const toCart = useOrderToCart(() => onOpenChange(false))
 
@@ -159,7 +132,7 @@ export function OrdersDialog({ open, onOpenChange, onlySuspended = false, onDisc
             <div className="flex flex-col divide-y divide-border">
               {filtered.map((o) => {
                 const badge = badgeOf(o.orderStatus)
-                const label = statusLabel(o.orderStatus)
+                const label = statusLabel(t, o.orderStatus)
                 return (
                   <div key={o.id} className="flex w-full flex-col justify-between gap-3 border-b border-border/50 bg-card px-4 py-3.5 text-right transition-colors hover:bg-muted sm:flex-row sm:items-center">
                     <div className="flex min-w-0 flex-1 items-start gap-3 sm:items-center">

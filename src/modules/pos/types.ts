@@ -1,4 +1,4 @@
-import type { DiscountKind, InvoiceLine } from "@/modules/sales/types"
+import type { DiscountKind, InvoiceLine, SalesOrderDto } from "@/modules/sales/types"
 
 /** What the cashier sells from the point of sale; "InDine" is the dine-in (tables) flow. */
 export type OrderType = "TakeAway" | "InDine" | "Delivery"
@@ -51,4 +51,8 @@ export type SaleInput = {
 }
 
 /** `startNumber` is the running number of the order on the day (setting "salesOrderStartNumber"), shown on the kitchen ticket. */
-export type SaleResult = { id: number | null; number: string | null; startNumber?: string | number | null }
+/** What the save endpoints answer: the saved order under `data`. */
+export type SaleResult = { data?: { id?: number; orderNumber?: string | null; salesOrderStartNumber?: string | number | null } | null }
+
+/** A sales order as the POS lists it (latest invoices, held orders, table orders). */
+export type Order = SalesOrderDto & { isHolding?: boolean | null; orderType?: string | null; orderDeviceNumber?: number | string | null; employeeId?: number | null; tableId?: number | null }

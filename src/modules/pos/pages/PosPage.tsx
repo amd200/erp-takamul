@@ -105,8 +105,8 @@ function PosScreen({ shift }: { shift: Shift }) {
         setPayOpen(false)
         defaults()
         // "Save and print" prints the saved invoice on the roll, like the Print Roll action; the preparation ticket follows it, and is printed with "save only" too.
-        if (action === "pdf" && res.id) printInvoice.mutate({ invoice: { id: res.id }, as: "pdf", paper: "roll" }, { onSettled: () => printBon(bon, res) })
-        else if (print && res.id) printInvoice.mutate({ invoice: { id: res.id }, as: "print", paper: "roll" }, { onSettled: () => printBon(bon, res) })
+        if (action === "pdf" && res.data?.id) printInvoice.mutate({ invoice: { id: res.data?.id }, as: "pdf", paper: "roll" }, { onSettled: () => printBon(bon, res) })
+        else if (print && res.data?.id) printInvoice.mutate({ invoice: { id: res.data?.id }, as: "print", paper: "roll" }, { onSettled: () => printBon(bon, res) })
         else printBon(bon, res)
       },
     })

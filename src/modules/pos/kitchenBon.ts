@@ -58,11 +58,11 @@ export function useKitchenBon() {
     const picked = bonLines(sale.cart, sale.original ?? [])
     if (!picked) return
     const order: PrepOrder = {
-      id: sale.result.id ?? 0,
-      orderNumber: sale.result.number ?? sale.orderNumber ?? null,
+      id: sale.result.data?.id ?? 0,
+      orderNumber: sale.result.data?.orderNumber ?? sale.orderNumber ?? null,
       orderTypeName: sale.orderTypeName,
       tableNumber: sale.tableNumber,
-      salesOrderStartNumber: sale.result.startNumber ?? null,
+      salesOrderStartNumber: sale.result.data?.salesOrderStartNumber ?? null,
       customerName: sale.customerName,
       orderDeviceNumber: sale.orderDeviceNumber,
       items: picked.lines.map((l) => ({ productName: l.name, quantity: l.quantity, notes: l.notes || null, additions: l.extras.map((e) => ({ additionNameAr: e.name })) })),

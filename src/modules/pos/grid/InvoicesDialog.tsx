@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react"
 import { ChefHat, Clock, CreditCard, FileText, Play, Plus, Printer, QrCode, Search, Trash2, User, X } from "lucide-react"
 import { CurrencySymbol } from "../components/CurrencySymbol"
-import { useQuery } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useIsMobile } from "@/lib/use-mobile"
@@ -11,11 +10,11 @@ import { useInvoiceOutput } from "@/modules/sales/print/useInvoiceOutput"
 import { useAppSettings } from "@/modules/settings"
 import { bonDoc, ticketOptions } from "@/modules/preparation/bon"
 import { printDocument } from "@/shared/print"
-import { http } from "@/shared/http/request"
-import type { PagedResult } from "@/shared/http/paged"
-import { badgeOf, useOrderToCart, type Order } from "../components/OrdersDialog"
+import { useOrderToCart } from "../components/OrdersDialog"
+import { badgeOf, matchesOrderSearch, statusLabel } from "../orderStatus"
+import type { Order } from "../types"
 import { InvoiceQrDialog } from "../components/InvoiceQrDialog"
-import { useDeleteHeld } from "../queries"
+import { useDeleteHeld, usePosOrders } from "../queries"
 import { salesKeys } from "@/modules/sales/keys"
 
 type Tab = "all" | "completed" | "pending"
@@ -39,34 +38,14 @@ export function InvoicesDialog({ open, onOpenChange }: { open: boolean; onOpenCh
   const invoiceType = settings.salesScreenTab?.sales2InvoiceType
   const paper = invoiceType === 2 ? "roll" : invoiceType === 3 ? "a5" : "a4"
   const isHold = tab === "pending" ? true : tab === "completed" ? false : undefined
-  const { data = [], refetch } = useQuery({
-    queryKey: salesKeys.posInvoices(tab),
-    queryFn: async () => (await http<PagedResult<Order>>("/sales-orders", { params: { Page: 1, PageSize: 10, OrderType: "POS", ...(isHold === undefined ? {} : { IsHold: isHold }) } })).items ?? [],
-    enabled: open,
-    refetchInterval: open && tab === "pending" ? 5000 : undefined,
-    refetchOnWindowFocus: true,
-  })
+  const { data = [], refetch } = usePosOrders({ queryKey: salesKeys.posInvoices(tab), held: isHold, enabled: open, poll: open && tab === "pending" })
   const del = useDeleteHeld()
   const printInvoice = useInvoiceOutput()
   const toCart = useOrderToCart(() => onOpenChange(false))
 
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase()
-    return data.filter((o) => {
-      const type = STATUS[tab] == null || o.orderStatus === STATUS[tab]
-      return type && (!q || o.orderNumber?.toLowerCase().includes(q) || o.customerName?.toLowerCase().includes(q) || o.orderStatus?.toLowerCase().includes(q))
-    })
+    return data.filter((o) => (STATUS[tab] == null || o.orderStatus === STATUS[tab]) && matchesOrderSearch(o, search))
   }, [data, search, tab])
-
-  const statusLabel = (s?: string | null) => {
-    switch (s?.toLowerCase()) {
-      case "confirmed": case "completed": return t("pos1.statusCompleted")
-      case "unconfirmed": case "pending": return t("pos1.statusPending")
-      case "cancelled": return t("pos1.statusCancelled")
-      case "inprogress": return t("pos1.statusInProgress")
-      default: return s
-    }
-  }
 
   const navy = beauty ? "bg-primary text-primary-foreground" : "bg-[#000052] text-white"
   const icon = "flex size-7 shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
@@ -121,7 +100,7 @@ export function InvoicesDialog({ open, onOpenChange }: { open: boolean; onOpenCh
 
   const rows = filtered.map((o: Order) => {
     const badge = badgeOf(o.orderStatus)
-    const label = statusLabel(o.orderStatus)
+    const label = statusLabel(t, o.orderStatus)
     const pending = o.orderStatus !== "Confirmed"
     const key = `${o.isHolding ? "h" : "o"}${o.id}`
     const total = <span className="flex items-center gap-1 whitespace-nowrap text-[12px] font-bold text-foreground">{(o.grandTotal ?? 0).toFixed(2)}<CurrencySymbol size={11} /></span>
