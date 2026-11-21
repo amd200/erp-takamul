@@ -147,14 +147,14 @@ export const itemsSchema = z.object({
   itemsTab: z.object({
     allowSaleWithZeroStock: flag, showCoastPrice: flag, showItemInOneLine: flag,
     enablePieceAndCartonSystem: flag, allowPriceChangeOnSale: flag, showProductBalanceAtSale: flag,
-    showWarehouseItems: flag, showCostGreaterThanSalePriceMessage: flag,
+    showWarehouseItems: flag, showCostGreaterThanSalePriceMessage: flag, defaultUnitId: id, defaultCategoryId: id,
   }),
 })
 export const emptyItems: z.infer<typeof itemsSchema> = {
   itemsTab: {
     allowSaleWithZeroStock: false, showCoastPrice: false, showItemInOneLine: false,
     enablePieceAndCartonSystem: true, allowPriceChangeOnSale: true, showProductBalanceAtSale: true,
-    showWarehouseItems: false, showCostGreaterThanSalePriceMessage: true,
+    showWarehouseItems: false, showCostGreaterThanSalePriceMessage: true, defaultUnitId: null, defaultCategoryId: null,
   },
 }
 

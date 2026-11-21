@@ -34,7 +34,10 @@ export type CustomersTab = { defultCustomar: number; showActualBalance: boolean;
 export type ItemsTab = {
   allowSaleWithZeroStock: boolean; showItemInOneLine: boolean; showCostGreaterThanSalePriceMessage: boolean; showCoastPrice: boolean
   showWarehouseItems: boolean; allowPriceChangeOnSale: boolean
-  enablePieceAndCartonSystem: boolean; showProductBalanceAtSale: boolean;
+  enablePieceAndCartonSystem: boolean; showProductBalanceAtSale: boolean
+  defaultUnitId: number | null; defaultCategoryId: number | null
+  /** The server sends these two; neither the old system nor this one shows them. */
+  itemExpiry: boolean; enableSecondLanguageItemName: boolean
 }
 export type SuppliersTab = { showSupplierNameAndPhoneOnlyInPurchases: boolean; showActualSupplierBalance: boolean; defaultSupplier: number }
 export type NotificationsTab = { enableNotifications: boolean }

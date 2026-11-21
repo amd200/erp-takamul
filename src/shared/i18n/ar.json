@@ -1881,7 +1881,9 @@
       "showActualSupplierBalance": "إظهار الرصيد الفعلي للمورد",
       "defaultSupplier": "المورد الافتراضي",
       "showSupplierNameAndPhoneOnlyInPurchases": "بيانات المورد عند الإضافة",
-      "enableNotifications": "تفعيل إشعارات الفواتير للعملاء"
+      "enableNotifications": "تفعيل إشعارات الفواتير للعملاء",
+      "defaultCategoryId": "التصنيف الافتراضي",
+      "defaultUnitId": "الوحدة الافتراضية"
     },
     "o": {
       "taxSetting": {
@@ -2051,6 +2053,19 @@
       "customerOrders": "شاشة طلبات العميل",
       "orderTypes": "خيارات نوع الطلب",
       "itemEditTabs": "خيارات تبويبات تعديل الصنف"
+    },
+    "hint": {
+      "defaultCategoryId": "يُستخدم تلقائيًا عند إضافة الأصناف في النظام، ويمكن تغييره لكل صنف.",
+      "defaultUnitId": "تُستخدم تلقائيًا عند إضافة الأصناف في النظام، ويمكن تغييرها لكل صنف.",
+      "enablePieceAndCartonSystem": "يُظهر حقول الوحدات والباركود والسعر الإضافية عند إضافة الصنف."
+    },
+    "pick": {
+      "category": "اختر التصنيف",
+      "unit": "اختر الوحدة"
+    },
+    "loadFailed": {
+      "categories": "تعذر تحميل التصنيفات. حاول مرة أخرى.",
+      "units": "تعذر تحميل الوحدات. حاول مرة أخرى."
     }
   },
   "reports": {

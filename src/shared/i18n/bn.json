@@ -1875,7 +1875,9 @@
       "showActualSupplierBalance": "Sarborahokari prokrito balance dekhan",
       "defaultSupplier": "Difalt sarborahokari",
       "showSupplierNameAndPhoneOnlyInPurchases": "Jog korar somoy sarborahokari-r totho",
-      "enableNotifications": "Enable invoice notifications"
+      "enableNotifications": "Enable invoice notifications",
+      "defaultCategoryId": "Difalt bivag",
+      "defaultUnitId": "Difalt ekok"
     },
     "o": {
       "taxSetting": {
@@ -2045,6 +2047,19 @@
       "customerOrders": "Grahok order screen",
       "orderTypes": "Order type option",
       "itemEditTabs": "Item sampadana tab"
+    },
+    "hint": {
+      "defaultCategoryId": "Sisteme ponno jog korar shomoy swayongkriyabhabe byabohrito hay. protiti ponner jonno eti poriborton korte parben.",
+      "defaultUnitId": "Sisteme ponno jog korar shomoy swayongkriyabhabe byabohrito hay. protiti ponner jonno eti poriborton korte parben.",
+      "enablePieceAndCartonSystem": "Ekti ponno jog korar shomoy otirikto unit, barcode ebong mulyo khetra dekhay."
+    },
+    "pick": {
+      "category": "Bivag nirbachon korun",
+      "unit": "Unit nirbachon korun"
+    },
+    "loadFailed": {
+      "categories": "Bivag load kora jayni. Abar chesta korun.",
+      "units": "Unit load kora jayni. Abar chesta korun."
     }
   },
   "reports": {

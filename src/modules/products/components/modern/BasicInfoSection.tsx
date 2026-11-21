@@ -34,19 +34,21 @@ export function BasicInfoSection({ branchField }: { branchField?: ReactNode }) {
           <FormInput control={control} name="productNameUr" label={t("products.nameUr")} dir="ltr" />
         </div>
         {rules.ownBarcodeAndPrice ? (
-          <div className="grid gap-4 sm:col-span-2 lg:grid-cols-3">
+          <div className={"grid gap-4 sm:col-span-2 lg:grid-cols-3"}>
             <FormInput control={control} name="barcode" label={t("products.barcode")} dir="ltr" required
               end={<Button type="button" size="icon-lg" className="shrink-0 border-success/30 bg-success-soft text-success hover:bg-success/20 hover:text-success" aria-label={t("products.generate")} title={t("products.generate")} onClick={() => setValue("barcode", randomBarcode(), { shouldValidate: true })}><Barcode size={16} /></Button>} />
-            {category}
-            <FormInput control={control} name="description" label={t("common.description")} placeholder={t("common.optional")} />
-          </div>
-        ) : (
-          <div className={rules.unitInBasic ? "grid gap-4 sm:col-span-2 lg:grid-cols-3" : "grid gap-4 sm:col-span-2 sm:grid-cols-2"}>
             {category}
             {rules.unitInBasic && (
               <FormSelect control={control} name="baseUnitId" numeric required label={t("products.baseUnit")}
                 options={units.map((u) => ({ value: String(u.id), label: u.name }))} />
             )}
+            <div className={rules.unitInBasic ? "lg:col-span-3" : undefined}>
+              <FormInput control={control} name="description" label={t("common.description")} placeholder={t("common.optional")} />
+            </div>
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:col-span-2 sm:grid-cols-2">
+            {category}
             <FormInput control={control} name="description" label={t("common.description")} placeholder={t("common.optional")} />
           </div>
         )}

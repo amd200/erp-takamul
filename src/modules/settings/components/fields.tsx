@@ -18,7 +18,7 @@ export function useLabel() {
 const Star = () => <span className="text-red-500">*</span>
 
 /** An on/off setting, drawn as the old system does: a تمكين / تعطيل select. Other words can replace them. */
-export function Flag({ control, name, on, off }: { control: Control<FieldValues>; name: string; on?: string; off?: string }) {
+export function Flag({ control, name, on, off, hint }: { control: Control<FieldValues>; name: string; on?: string; off?: string; hint?: string }) {
   const { t } = useTranslation()
   const label = useLabel()
   return (
@@ -32,6 +32,7 @@ export function Flag({ control, name, on, off }: { control: Control<FieldValues>
             <SelectItem value="off">{off ?? t("settings.disable")}</SelectItem>
           </SelectContent>
         </Select>
+        {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
       </Field>
     )} />
   )

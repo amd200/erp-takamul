@@ -1881,7 +1881,9 @@
       "showActualSupplierBalance": "Show supplier's actual balance",
       "defaultSupplier": "Default supplier",
       "showSupplierNameAndPhoneOnlyInPurchases": "Supplier data when adding",
-      "enableNotifications": "Enable invoice notifications for customers"
+      "enableNotifications": "Enable invoice notifications for customers",
+      "defaultCategoryId": "Default category",
+      "defaultUnitId": "Default unit"
     },
     "o": {
       "taxSetting": {
@@ -2051,6 +2053,19 @@
       "customerOrders": "Customer orders screen",
       "orderTypes": "Order type options",
       "itemEditTabs": "Item edit tab options"
+    },
+    "hint": {
+      "defaultCategoryId": "Used automatically when adding products throughout the system. You can change it for each product.",
+      "defaultUnitId": "Used automatically when adding products throughout the system. You can change it for each product.",
+      "enablePieceAndCartonSystem": "Shows additional unit, barcode, and price fields when adding a product."
+    },
+    "pick": {
+      "category": "Select Category",
+      "unit": "Select Unit"
+    },
+    "loadFailed": {
+      "categories": "Could not load the categories. Try again.",
+      "units": "Could not load the units. Try again."
     }
   },
   "reports": {

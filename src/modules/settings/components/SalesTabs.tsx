@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useSession } from "@/shared/session/session"
 import { useAppSettings } from "../queries"
+import { useCategories } from "@/modules/categories/queries"
+import { useUnits } from "@/modules/units/queries"
 import { FormInput, FormSelect, FormSwitch } from "@/components/form/FormFields"
 import { fullName } from "@/modules/lookups/types"
 import { useBranches, useCustomers, useEmployees, useSuppliers, useTreasuries } from "@/modules/lookups/service"
@@ -232,14 +234,26 @@ export function PurchasesScreenFields({ form: { control } }: FieldsProps) {
 }
 
 export function ItemsFields({ form: { control } }: FieldsProps) {
+  const { t } = useTranslation()
+  const label = useLabel()
+  const { data: categories = [], isError: categoriesFailed } = useCategories()
+  const { data: units = [], isError: unitsFailed } = useUnits()
   return (
     <Grid>
+      <Flag control={control} name="itemsTab.showItemInOneLine" />
       <Flag control={control} name="itemsTab.allowSaleWithZeroStock" />
       <Flag control={control} name="itemsTab.showCoastPrice" />
-      <Flag control={control} name="itemsTab.showItemInOneLine" />
-      {["enablePieceAndCartonSystem", "allowPriceChangeOnSale", "showProductBalanceAtSale", "showWarehouseItems", "showCostGreaterThanSalePriceMessage"].map((k) => (
-        <Flag key={k} control={control} name={`itemsTab.${k}`} />
-      ))}
+      <Flag control={control} name="itemsTab.showCostGreaterThanSalePriceMessage" />
+      <FormSelect control={control} name="itemsTab.defaultCategoryId" numeric label={label("defaultCategoryId")} placeholder={t("settings.pick.category")} disabled={categoriesFailed}
+        description={categoriesFailed ? t("settings.loadFailed.categories") : t("settings.hint.defaultCategoryId")}
+        options={categories.filter((c) => c.parentCategoryId == null).map((c) => ({ value: String(c.id), label: c.categoryNameAr }))} />
+      <FormSelect control={control} name="itemsTab.defaultUnitId" numeric label={label("defaultUnitId")} placeholder={t("settings.pick.unit")} disabled={unitsFailed}
+        description={unitsFailed ? t("settings.loadFailed.units") : t("settings.hint.defaultUnitId")}
+        options={units.map((u) => ({ value: String(u.id), label: u.name }))} />
+      <Flag control={control} name="itemsTab.allowPriceChangeOnSale" />
+      <Flag control={control} name="itemsTab.showWarehouseItems" />
+      <Flag control={control} name="itemsTab.showProductBalanceAtSale" />
+      <Flag control={control} name="itemsTab.enablePieceAndCartonSystem" hint={t("settings.hint.enablePieceAndCartonSystem")} />
     </Grid>
   )
 }
