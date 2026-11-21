@@ -25,7 +25,7 @@ export type CustomerForm = z.infer<typeof customerSchema>
 export { COUNTRY_CODE, openingBalanceSchema, type OpeningBalanceForm } from "@/modules/partners/schema"
 
 export const emptyCustomer: CustomerForm = {
-  customerName: "", phone: "", address: "", isNational: true, taxNumber: "", commercialRegister: "",
+  customerName: "", phone: "", address: "", isNational: false, taxNumber: "", commercialRegister: "",
   countryName: COUNTRY_CODE, stateName: "", cityName: "", district: "", street: "", buildingNumber: "", additionalNumber: "", postalCode: "",
   openingBalance: 0, openingBalanceType: "Debit", openingBalanceDate: new Date().toISOString().slice(0, 10),
   fileNumber: "", ...emptyMeasurement, companions: [],

@@ -17,7 +17,7 @@ export const emptySupplier: SupplierForm = {
   phone: "",
   email: "",
   address: "",
-  isNational: true,
+  isNational: false,
   taxNumber: "",
   commercialRegister: "",
   countryName: COUNTRY_CODE,
@@ -33,3 +33,4 @@ export const emptySupplier: SupplierForm = {
   openingBalanceType: "Credit",
   openingBalanceDate: new Date().toISOString().slice(0, 10),
 };
+export { COUNTRY_CODE } from "@/modules/partners/schema"

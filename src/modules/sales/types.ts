@@ -51,7 +51,7 @@ export type ItemDto = {
   productId: number; productName?: string | null; unitId?: number | null; unitName?: string | null; quantity: number; unitPrice?: number | null
   priceBeforeTax?: number | null; taxPercentage?: number | null; taxAmount?: number | null; discountValue?: number | null; discountPercentage?: number | null; lineTotal?: number | null; taxCalculation?: number | null
 }
-export type PaymentDto = { id: number; amount: number; paymentMethod?: string | null; paymentDate?: string | null; notes?: string | null; treasuryId?: number | null; treasuryName?: string | null }
+export type PaymentDto = { id: number; paymentNumber?: string | null; amount: number; paymentMethod?: string | null; paymentDate?: string | null; notes?: string | null; treasuryId?: number | null; treasuryName?: string | null }
 export type InvoicePaymentItem = { id: number; paymentNumber?: string | null; paymentDate?: string | null; amount: number; paymentMethod?: string | null; status?: string | null; notes?: string | null; transactionName?: string | null }
 export type SalesOrderDto = {
   id: number; warehouseId?: number | null; orderNumber?: string | null; orderDate?: string | null; customerId?: number | null; customerName?: string | null; warehouseName?: string | null

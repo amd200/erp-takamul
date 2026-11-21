@@ -15,7 +15,7 @@ export type PurchaseItemDto = {
   lineTotal?: number | null
   returnedQuantity?: number | null
 }
-export type PurchasePaymentDto = { id?: number; amount: number; paymentDate?: string | null; paymentMethod?: string | null; paymentType?: string | null; notes?: string | null; treasuryId: number; treasuryName?: string | null }
+export type PurchasePaymentDto = { id?: number; paymentNumber?: string | null; amount: number; paymentDate?: string | null; paymentMethod?: string | null; paymentType?: string | null; notes?: string | null; treasuryId: number; treasuryName?: string | null }
 
 /** Mirrors /PurchaseOrder, as the server sends it. Creating one also confirms and receives it, so stock goes up straight away. */
 export type Purchase = {

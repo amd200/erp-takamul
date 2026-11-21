@@ -79,6 +79,10 @@ export const returnsApi = {
     }))
   },
   sendToZatca: (id: number) => http<unknown>("/zatca-invoices/sell-return", { method: "POST", data: { invoiceId: id } }),
+  /** A refund paid to the customer against one return (the server takes no date; it stamps it). */
+  recordRefund: (id: number, r: { treasuryId: number; amount: number }) =>
+    http<unknown>(`/sales-returns/${id}/record-refund`, { method: "POST", data: { treasuryId: r.treasuryId, amount: r.amount, paymentMethod: "Cash", notes: null } }),
+  deleteRefund: (id: number, paymentId: number) => http<unknown>(`/sales-returns/${id}/refunds/${paymentId}`, { method: "DELETE" }),
 }
 
 export const debitNotesApi = {

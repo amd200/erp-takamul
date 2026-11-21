@@ -1,7 +1,8 @@
 import { PageBox } from "@/components/PageBox"
 import { useCallback, useState } from "react"
 import { Link } from "react-router-dom"
-import { RotateCw, ShoppingCart } from "lucide-react"
+import { HandCoins, RotateCw, ShoppingCart } from "lucide-react"
+import { PurchasePaymentsDialog } from "../components/PurchasePaymentsDialog"
 import { useTranslation } from "react-i18next"
 import { RowActions } from "@/components/RowActions"
 import { Button } from "@/components/ui/button"
@@ -40,6 +41,7 @@ export default function PurchasesPage() {
   const { data, isLoading, isFetching, isError, refetch } = usePurchasePage({ page: page + 1, pageSize: PAGE_SIZE, searchTerm: search, sortBy, sortDescending })
   const cancel = useCancelPurchase()
   const [toCancel, setToCancel] = useState<Purchase | null>(null)
+  const [paymentsId, setPaymentsId] = useState<number | null>(null)
   const onSearch = useCallback((q: string) => { setSearch((prev) => { if (prev !== q) setPage(0); return q }) }, [])
 
   const columns: Column<Purchase>[] = [
@@ -50,7 +52,7 @@ export default function PurchasesPage() {
     { id: "total", sortKey: "grandTotal", header: t("purchases.colTotal"), cell: (p) => formatMoney(p.grandTotal ?? 0) },
     { id: "paid", sortKey: "paidAmount", header: t("purchases.colPaid"), cell: (p) => formatMoney(p.paidAmount ?? 0) },
     { id: "actions", header: t("purchases.colActions"), cell: (p) => (
-      <RowActions editTo={can(P.purchases.edit) ? `/purchases/${p.id}/edit` : undefined} onDelete={can(P.purchases.cancel) ? () => setToCancel(p) : undefined} />
+      <RowActions extra={[can(P.purchases.edit) && { key: "payments", label: t("purchases.payments"), icon: <HandCoins />, onSelect: () => setPaymentsId(p.id) }]} editTo={can(P.purchases.edit) ? `/purchases/${p.id}/edit` : undefined} onDelete={can(P.purchases.cancel) ? () => setToCancel(p) : undefined} />
     ) },
   ]
 
@@ -61,6 +63,7 @@ export default function PurchasesPage() {
           server={{ total: data?.totalCount ?? 0, page, pageSize: PAGE_SIZE, onPage: setPage, onSearch, fetching: isFetching && !isLoading }}
           empty={isError ? <EmptyState icon={<RotateCw />} title={t("common.loadFailed")} hint={t("common.loadFailedHint")} action={<Button variant="outline" onClick={() => refetch()}>{t("common.retry")}</Button>} /> : <EmptyState icon={<ShoppingCart />} title={t("purchases.empty")} hint={t("purchases.emptyHint")} />} />
       </PageBox>
+      <PurchasePaymentsDialog purchaseId={paymentsId} onOpenChange={(o) => !o && setPaymentsId(null)} />
       <ConfirmDialog open={!!toCancel} onOpenChange={(o) => !o && setToCancel(null)} pending={cancel.isPending}
         title={`${t("purchases.deleteInvoice")} ${toCancel?.purchaseOrderNumber ?? ""}`} description={t("purchases.deleteConfirm")} confirmLabel={t("purchases.confirmDelete")}
         onConfirm={() => toCancel && cancel.mutate(toCancel.id, { onSettled: () => setToCancel(null) })} />

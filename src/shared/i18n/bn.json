@@ -1246,7 +1246,13 @@
     "previewTitle": "Chalan {{number}} priview",
     "previewA4": "A4",
     "previewRoll": "Rol",
-    "previewFailed": "Chalan priview kora jayni"
+    "previewFailed": "Chalan priview kora jayni",
+    "refundsTitle": "Ferot er pement",
+    "refundSaved": "Ferot taka safalvabe nothibhukto hayeeche",
+    "addRefund": "Ferot nothibhukto korun",
+    "deleteRefundTitle": "Ferot muchhe felun",
+    "refundName": "Ferot",
+    "noRefunds": "Ei ferot er jonno ager kono pement nei"
   },
   "users": {
     "title": "Byabaharkarider",
@@ -2365,7 +2371,7 @@
     "receivable": "Grahokder kache mot pawna",
     "owingCount": "Dhari grahok",
     "showOwing": "Dhari",
-    "search": "Nam, fon ba VAT number anusandhan korun",
+    "search": "Nam ba fon anusandhan korun",
     "empty": "Kon grahok pawa jayani",
     "emptyHint": "Dhare ebong tax chalan jari korte grahok jog korun.",
     "deleteTitle": "Grahok muchun",
@@ -2399,7 +2405,7 @@
     "paymentTermsHint": "Shunyo mane delivery-te nogod.",
     "days": "{{count}} din",
     "cash": "Nogod",
-    "search": "Nam, fon ba VAT number anusandhan korun",
+    "search": "Nam ba fon anusandhan korun",
     "empty": "Kono sarborahokari nei",
     "emptyHint": "Kroy ebong pement rekard korte sarborahokari jog korun.",
     "deleteTitle": "Sarborahokari muchun",
@@ -2809,7 +2815,15 @@
     "returned": "{{count}} ti ferot",
     "creditHint": "Pement na thakle chalan sarborahokari-r hisabe jay.",
     "notesHint": "Chalan futar not",
-    "save": "Kroy chalan sanrakhon korun"
+    "save": "Kroy chalan sanrakhon korun",
+    "payments": "পেমেন্টসমূহ",
+    "paymentsTitle": "সরবরাহকারীকে পেমেন্ট যোগ করুন",
+    "paymentSaved": "পেমেন্ট সফলভাবে রেকর্ড হয়েছে",
+    "deletePayment": "পেমেন্ট মুছুন",
+    "paymentName": "পেমেন্ট",
+    "addPayment": "পেমেন্ট রেকর্ড করুন",
+    "remaining": "অবশিষ্ট",
+    "paymentNote": "চালান নং {{number}} এর উপর পেমেন্ট"
   },
   "warehouses": {
     "title": "Gudamghor",

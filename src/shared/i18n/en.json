@@ -1246,7 +1246,13 @@
     "previewTitle": "Invoice {{number}} preview",
     "previewA4": "A4",
     "previewRoll": "Roll",
-    "previewFailed": "Could not preview the invoice"
+    "previewFailed": "Could not preview the invoice",
+    "refundsTitle": "Return payments",
+    "refundSaved": "Refund recorded successfully",
+    "addRefund": "Record refund",
+    "deleteRefundTitle": "Delete refund",
+    "refundName": "Refund",
+    "noRefunds": "No previous payments for this return"
   },
   "users": {
     "title": "Users",
@@ -2365,7 +2371,7 @@
     "receivable": "Total owed by customers",
     "owingCount": "Customers who owe",
     "showOwing": "Owing",
-    "search": "Search name, phone or VAT number",
+    "search": "Search name or phone",
     "empty": "No customers",
     "emptyHint": "Add customers to issue credit and tax invoices.",
     "deleteTitle": "Delete customer",
@@ -2399,7 +2405,7 @@
     "paymentTermsHint": "Zero means cash on delivery.",
     "days": "{{count}} days",
     "cash": "Cash",
-    "search": "Search name, phone or VAT number",
+    "search": "Search name or phone",
     "empty": "No suppliers",
     "emptyHint": "Add suppliers to record purchases and payments.",
     "deleteTitle": "Delete supplier",
@@ -2809,7 +2815,15 @@
     "returned": "{{count}} returned",
     "creditHint": "With no payments the invoice goes on the supplier's account.",
     "notesHint": "Notes on the invoice",
-    "save": "Save purchase invoice"
+    "save": "Save purchase invoice",
+    "payments": "Payments",
+    "paymentsTitle": "Add Supplier Payment",
+    "paymentSaved": "Payment recorded successfully",
+    "deletePayment": "Delete Payment",
+    "paymentName": "Payment",
+    "addPayment": "Record Payment",
+    "remaining": "Remaining",
+    "paymentNote": "Payment on invoice no. {{number}}"
   },
   "warehouses": {
     "title": "Warehouses",

@@ -85,7 +85,7 @@ export default function QuoteFormPage() {
           actions={<Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/5 hover:text-primary"><Link to="/quotes"><List />{t("quotes.backToList")}</Link></Button>} />
 
         <SectionCard title={t("sales.basics")}>
-          <div className={`grid grid-cols-1 items-start gap-6 sm:grid-cols-2 ${formBranch.show ? "lg:grid-cols-[repeat(3,minmax(0,1fr))_minmax(0,2fr)]" : "lg:grid-cols-[repeat(2,minmax(0,1fr))_minmax(0,2fr)]"}`}>
+          <div className={`grid grid-cols-1 items-start gap-6 sm:grid-cols-2 ${formBranch.show ? "lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,2fr)_minmax(0,2fr)]" : "lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_minmax(0,2fr)]"}`}>
             {formBranch.show && <BranchSection plain value={formBranch.branchId} onChange={changeBranch} />}
             <Controller control={form.control} name="date" render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
@@ -103,7 +103,7 @@ export default function QuoteFormPage() {
               </div>
               {customersTab?.showActualBalance && customer && <BalanceBox label={t("sales.balanceLabel")} value={customer.balance ?? 0} debitWhenPositive />}
             </div>
-            <div className="min-w-0 sm:col-span-2 lg:col-span-1"><FormInput control={form.control} name="notes" label={t("common.notes")} placeholder={t("quotes.notesHint")} /></div>
+            <div className="min-w-0 sm:col-span-2 lg:col-span-1"><FormInput control={form.control} name="notes" label={t("common.notes")} placeholder={t("purchases.notesHint")} /></div>
           </div>
         </SectionCard>
 

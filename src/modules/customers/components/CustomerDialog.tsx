@@ -93,8 +93,10 @@ export function CustomerDialog({ open, onOpenChange, customer, onCreated, withMe
               {part !== "companions" && <>
               {formBranch.show && <BranchSection className="col-span-full" value={formBranch.branchId} onChange={formBranch.pick} />}
               {withMeasurements && <FormInput control={c} name="fileNumber" label={t("custDialog.fileNumber")} />}
-              <FormInput control={c} name="customerName" required label={t("custDialog.name")} />
-              <FormInput control={c} name="phone" label={t("custDialog.mobile")} />
+              <div className={cn("grid grid-cols-1 gap-3 sm:grid-cols-2", withMeasurements ? "col-span-full sm:col-span-2" : "col-span-full")}>
+                <FormInput control={c} name="customerName" required label={t("custDialog.name")} />
+                <FormInput control={c} name="phone" label={t("custDialog.mobile")} />
+              </div>
 
               {!hideDetails && (
                 <>

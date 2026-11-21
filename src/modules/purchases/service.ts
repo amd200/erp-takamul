@@ -34,4 +34,8 @@ export const purchasesApi = {
   create: (p: PurchaseInput, key?: string) => retryWhileInProgress(() => http<{ data?: Purchase; message?: string }>("/PurchaseOrder", { method: "POST", headers: idempotencyHeaders(key), data: body(p) })),
   update: (id: number, p: PurchaseInput) => http<unknown>(`/PurchaseOrder/${id}`, { method: "PUT", data: { ...body(p), expectedDeliveryDate: null } }),
   cancel: (id: number) => http<unknown>(`/PurchaseOrder/${id}`, { method: "DELETE" }),
+  /** A payment to the supplier against one purchase (the server takes no date; it stamps it). */
+  recordPayment: (id: number, p: { treasuryId: number; amount: number; notes?: string }) =>
+    http<unknown>(`/PurchaseOrder/${id}/record-payment`, { method: "POST", data: { paymentType: "Cash", treasuryId: p.treasuryId, amount: p.amount, notes: p.notes || null } }),
+  deletePayment: (paymentId: number) => http<unknown>(`/PurchaseOrder/payments/${paymentId}`, { method: "DELETE" }),
 }

@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useBranchColumn } from "@/modules/branches/useBranchColumn"
 import { Link } from "react-router-dom"
-import { Eye, FileText, Printer, ScrollText, Send, Undo2 } from "lucide-react"
+import { Eye, FileText, HandCoins, Printer, ScrollText, Send, Undo2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useAppSettings } from "@/modules/settings"
 import { RowMenu } from "@/components/RowActions"
@@ -15,6 +15,7 @@ import { useCan } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
 import { ZatcaBadge } from "../components/StatusBadges"
 import { ZatcaResponseDialog } from "../components/ZatcaResponseDialog"
+import { ReturnRefundsDialog } from "../components/ReturnRefundsDialog"
 import { useReturns, useSendReturn } from "../queries"
 import { usePrintReturn } from "../print/usePrintReturn"
 import type { SalesReturnDto } from "../types"
@@ -28,6 +29,7 @@ export default function ReturnsPage() {
   const send = useSendReturn()
   const print = usePrintReturn()
   const [zatcaDoc, setZatcaDoc] = useState<SalesReturnDto | null>(null)
+  const [refundsId, setRefundsId] = useState<number | null>(null)
 
   const branchColumn = useBranchColumn<SalesReturnDto>((r) => ({ id: r.branchId, name: r.branchShortName }))
   const columns: Column<SalesReturnDto>[] = [
@@ -44,6 +46,7 @@ export default function ReturnsPage() {
       { key: "roll", label: t("sales.actions.printRoll"), icon: <Printer />, disabled: print.isPending, onSelect: () => print.mutate({ ret: r, paper: "roll" }) },
       stage2 && can(P.sales.zatca) && r.zatcaStatus !== "Sent" && { key: "resend", label: t("sales.actions.resend"), icon: <Send />, disabled: send.isPending, onSelect: () => send.mutate(r.id) },
       stage2 && { key: "zatca", label: t("sales.menu.zatcaResponse"), icon: <ScrollText />, onSelect: () => setZatcaDoc(r) },
+      can(P.sales.returnsAdd) && { key: "refunds", label: t("sales.menu.payments"), icon: <HandCoins />, onSelect: () => setRefundsId(r.id) },
       { key: "view", label: t("common.view"), icon: <Eye />, to: `/sales/returns/${r.id}` },
     ]} /> },
   ]
@@ -56,6 +59,7 @@ export default function ReturnsPage() {
           searchText={(r) => `${r.returnNumber} ${r.salesOrderNumber} ${r.customerName}`} searchPlaceholder={t("sales.searchReturns")}
           empty={<EmptyState icon={<Undo2 />} title={t("sales.emptyReturns")} hint={t("sales.emptyReturnsHint")} />} />
       </SectionCard>
+      <ReturnRefundsDialog returnId={refundsId} onOpenChange={(o) => !o && setRefundsId(null)} />
       <ZatcaResponseDialog doc={zatcaDoc && { number: zatcaDoc.returnNumber, zatcaStatus: zatcaDoc.zatcaStatus, zatcaResponse: zatcaDoc.zatcaResponse }} onOpenChange={(o) => !o && setZatcaDoc(null)} />
     </>
   )

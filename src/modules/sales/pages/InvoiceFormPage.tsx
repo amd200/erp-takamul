@@ -92,8 +92,10 @@ export default function InvoiceFormPage() {
     payments.append({ amount: (cents - share * (n - 1)) / 100, method: "Cash", treasuryId: pickTreasury(treasuries, appSettings.sales?.defaultSalesVault)?.id ?? 0, notes: "" })
   }
 
-  // Date, party (and branch / warehouse when shown) in equal columns, notes taking the rest of the row.
-  const topCols: Record<number, string> = { 2: "lg:grid-cols-[repeat(2,minmax(0,1fr))_minmax(0,2fr)]", 3: "lg:grid-cols-[repeat(3,minmax(0,1fr))_minmax(0,2fr)]", 4: "lg:grid-cols-[repeat(4,minmax(0,1fr))_minmax(0,2fr)]" }
+  // Date, a wider customer column (branch / warehouse when shown), notes taking the rest of the row.
+  const topCols = (branch: boolean, wh: boolean) => branch
+    ? (wh ? "lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,2fr)_minmax(0,1fr)_minmax(0,2fr)]" : "lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,2fr)_minmax(0,2fr)]")
+    : (wh ? "lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_minmax(0,1fr)_minmax(0,2fr)]" : "lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_minmax(0,2fr)]")
   // Laid out as in the current system: basic data, invoice details, payments beside the summary, then one box with the two buttons.
   return (
     <FormProvider {...form}>
@@ -102,7 +104,7 @@ export default function InvoiceFormPage() {
           actions={<Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/5 hover:text-primary"><Link to="/sales/invoices"><List />{t("sales.invoicesList")}</Link></Button>} />
 
         <SectionCard title={t("sales.basics")}>
-          <div className={`grid grid-cols-1 items-start gap-6 sm:grid-cols-2 ${topCols[2 + (formBranch.show ? 1 : 0) + (warehouses.length > 1 ? 1 : 0)]}`}>
+          <div className={`grid grid-cols-1 items-start gap-6 sm:grid-cols-2 ${topCols(formBranch.show, warehouses.length > 1)}`}>
             {formBranch.show && <BranchSection plain value={formBranch.branchId} onChange={changeBranch} />}
             <Controller control={form.control} name="date" render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
@@ -112,14 +114,14 @@ export default function InvoiceFormPage() {
             )} />
             <div className="flex items-start gap-3">
               <div className="min-w-0 flex-1">
-                <FormSelect control={form.control} name="customerId" numeric required searchable label={t("sales.customer")}
+                <FormSelect control={form.control} name="customerId" numeric required searchable label={t("sales.customer")} placeholder={t("reports.pick")}
                   options={customers.map((c) => ({ value: String(c.id), label: c.customerName }))} />
                 {appSettings.customersTab?.showActualBalance && customer && <BalanceBox label={t("sales.balanceLabel")} value={customer.balance ?? 0} debitWhenPositive />}
               </div>
               <Button type="button" variant="outline" size="icon-lg" className="mt-[27px] shrink-0" aria-label={t("customers.add")} title={t("customers.add")} onClick={() => setAddingCustomer(true)}><Plus /></Button>
             </div>
             {warehouses.length > 1 && <FormSelect control={form.control} name="warehouseId" numeric required label={t("sales.warehouse")} options={warehouses.map((w) => ({ value: String(w.id), label: w.warehouseName ?? "" }))} />}
-            <div className="min-w-0 sm:col-span-2 lg:col-span-1"><FormInput control={form.control} name="notes" label={t("common.notes")} placeholder={t("sales.notesHint")} /></div>
+            <div className="min-w-0 sm:col-span-2 lg:col-span-1"><FormInput control={form.control} name="notes" label={t("common.notes")} placeholder={t("purchases.notesHint")} /></div>
           </div>
         </SectionCard>
 

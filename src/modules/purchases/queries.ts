@@ -40,6 +40,18 @@ export function useSavePurchase() {
   })
 }
 
+/** Adding, changing or deleting a payment moves the purchase's paid / remaining, the supplier balance and the treasury. */
+export function usePaymentMutation<V>(fn: (v: V) => Promise<unknown>, doneKey: string) {
+  const refresh = useRefresh()
+  return useMutation({
+    mutationFn: fn,
+    onSuccess: () => { refresh(); toast.success(i18n.t(doneKey)) },
+    onError: (e) => errorToast(e, "common.saveFailed"),
+  })
+}
+export const useRecordPurchasePayment = () => usePaymentMutation(({ id, ...p }: { id: number; treasuryId: number; amount: number; notes?: string }) => purchasesApi.recordPayment(id, p), "purchases.paymentSaved")
+export const useDeletePurchasePayment = () => usePaymentMutation((paymentId: number) => purchasesApi.deletePayment(paymentId), "common.deleted")
+
 export function useCancelPurchase() {
   const refresh = useRefresh()
   return useMutation({

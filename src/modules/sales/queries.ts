@@ -7,6 +7,8 @@ import { debitNotesApi, invoicesApi, returnsApi } from "./service"
 import type { InvoiceQuery } from "./types"
 import type { DebitNoteInput, InvoiceInput, Payment, ReturnInput } from "./types"
 import { salesKeys } from "./keys"
+import { customerKeys } from "@/modules/customers/keys"
+import { treasuryKeys } from "@/modules/treasuries/keys"
 
 /** One page of an invoice list; the previous page stays on screen while the next loads. */
 export const useInvoicePage = (q: InvoiceQuery) =>
@@ -147,3 +149,18 @@ export function useSendDebitNote() {
     onError: (e) => errorToast(e, "common.saveFailed"),
   })
 }
+
+/** A refund moves the return's refunded amount, the customer balance and the treasury. */
+function useRefundMutation<V>(fn: (v: V) => Promise<unknown>, doneKey: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: fn,
+    onSuccess: () => {
+      for (const queryKey of [salesKeys.all, customerKeys.all, treasuryKeys.all]) qc.invalidateQueries({ queryKey })
+      toast.success(i18n.t(doneKey))
+    },
+    onError: (e) => errorToast(e, "common.saveFailed"),
+  })
+}
+export const useRecordRefund = () => useRefundMutation(({ id, ...r }: { id: number; treasuryId: number; amount: number }) => returnsApi.recordRefund(id, r), "sales.refundSaved")
+export const useDeleteRefund = () => useRefundMutation(({ id, paymentId }: { id: number; paymentId: number }) => returnsApi.deleteRefund(id, paymentId), "common.deleted")
