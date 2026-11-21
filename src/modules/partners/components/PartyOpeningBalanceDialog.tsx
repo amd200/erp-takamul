@@ -40,13 +40,15 @@ export function PartyOpeningBalanceDialog({ party, title, defaultType, pending, 
 
   return (
     <Dialog open={!!party} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-primary"><WalletCards size={20} />{title}</DialogTitle>
         </DialogHeader>
         <form id="party-opening-form" onSubmit={form.handleSubmit(onSave)} noValidate className="grid gap-4 py-2">
-          <FormInput control={form.control} name="openingBalance" type="number" label={t("partners.openingBalance")} />
-          <FormInput control={form.control} name="openingBalanceDate" type="date" label={t("common.date")} />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <FormInput control={form.control} name="openingBalance" type="number" label={t("partners.openingBalance")} />
+            <FormInput control={form.control} name="openingBalanceDate" type="date" label={t("common.date")} />
+          </div>
           <Controller control={form.control} name="openingBalanceType" render={({ field }) => (
             <Field>
               <FieldLabel>{t("partners.balanceSide")}</FieldLabel>

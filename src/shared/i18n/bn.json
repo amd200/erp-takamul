@@ -1134,7 +1134,7 @@
       "downloadPdf": "PDF download korun",
       "printA5": "A5 print korun"
     },
-    "receiptTitle": "Grahok shongroho jog korun",
+    "receiptTitle": "গ্রাহকের পেমেন্ট যোগ করুন",
     "receiptSaved": "Sangroho voucher safalvabe jog kora hayeeche",
     "customerName": "Grahker nam",
     "currentBalance": "Bortoman balens",
@@ -1142,13 +1142,11 @@
     "noPayments": "Ei chalaner jonno ekhono kono payment nibondhito hayani",
     "paymentNumber": "Pement nang",
     "paymentDate": "Orthprodaner tarikh",
-    "saveReceipt": "Sangroho voucher sanrakkhan korun",
-    "receiptName": "Grahok shongroho lenden",
-    "deleteReceiptTitle": "Muche fela nischito korun",
+    "saveReceipt": "পেমেন্ট রেকর্ড করুন",
+    "receiptName": "পেমেন্ট",
+    "deleteReceiptTitle": "পেমেন্ট মুছুন",
     "deleteReceiptBody": "Ei criyati purbabosthay ferano jabe na",
     "receiptNote": "Chalan nong {{number}}-er upor pement",
-    "editReceiptTitle": "Rosid songshodhon",
-    "receiptUpdated": "Rosid update hoyeche",
     "amount": "Poriman",
     "method": "Pement poddhoti",
     "treasury": "Koshagar",
@@ -1791,6 +1789,7 @@
       "showServiceEmployeeSales": "Sift closing a seba karmachari bikroy dekhan",
       "defaultServiceEmployeeId": "Difalt porisheba kormochari",
       "showReturnsInShiftPrint": "Sift reporte return dekhan",
+      "showExpensesInShiftReport": "Sift reporte kharcha dekhan",
       "categorySize": "Catagori",
       "itemNameSize": "Itemer nam",
       "itemPriceSize": "Item-er dam",
@@ -2547,7 +2546,9 @@
     "emptyHint": "Bikray rekard korte prothom shift kholun.",
     "start": "Shuru",
     "end": "Shesh",
-    "employee": "Kormochari",
+    "employee": "Byabaharkarir nam",
+    "date": "Tarikh",
+    "time": "Samay",
     "branch": "Sakha",
     "device": "Device",
     "openingBalance": "Opening balens",
@@ -2562,8 +2563,8 @@
     "export": "Eksport",
     "exportFailed": "Report eksport kora jayni",
     "openTitle": "Notun shift kholun",
-    "openHint": "Kormochari ebong device beche nin ebong drayare nogod likhun.",
-    "fillAll": "Age kormochari ebong device beche nin.",
+    "openHint": "Byabaharkarir nam ebong device beche nin ebong drayare nogod likhun.",
+    "fillAll": "Age byabaharkarir nam ebong device beche nin.",
     "closeTitle": "Shift bondho korun",
     "closeBody": "Shift #{{id}} bondho hobe ebong ar bikray rekard kora jabe na.",
     "print": "Print",
@@ -2718,7 +2719,9 @@
       "editCustomer": "Grahok sampadana korun",
       "pickToEdit": "সম্পাদনার জন্য গ্রাহক বেছে নিন",
       "searchCustomer": "Ekjon grahoker jonno anusandhan korun...",
-      "selectedMeasurement": "নির্বাচিত মাপ"
+      "selectedMeasurement": "নির্বাচিত মাপ",
+      "expenses": "Kharcha",
+      "noExpensesToday": "Aaj kono kharcha nei"
     }
   },
   "quotes": {
@@ -3683,5 +3686,12 @@
       "next": "Pathan: {{status}}",
       "count": "{{n}} ti order"
     }
+  },
+  "datePicker": {
+    "pick": "Tarikh nirbachon korun",
+    "today": "Aaj",
+    "clear": "Poriskar",
+    "prevMonth": "Ager mash",
+    "nextMonth": "Porer mash"
   }
 }

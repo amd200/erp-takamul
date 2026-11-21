@@ -10,7 +10,7 @@ import { SectionCard } from "@/components/SectionCard"
 import { formatDateTime, formatMoney } from "@/lib/format"
 import { Can } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
-import { PaymentsDialog } from "../components/PaymentsDialog"
+import { InvoicePaymentsDialog } from "../components/InvoicePaymentsDialog"
 import { PaymentBadge, ZatcaBadge } from "../components/StatusBadges"
 import { TotalsPanel } from "../components/TotalsPanel"
 import { useAppSettings } from "@/modules/settings"
@@ -94,7 +94,7 @@ export default function InvoiceDetailPage() {
           <SectionCard title={t("sales.summary")}><TotalsPanel totals={{ subTotal: inv.subTotal ?? 0, discount: inv.discountAmount ?? 0, tax: inv.taxAmount ?? 0, grandTotal: inv.grandTotal ?? 0 }} paid={paid} /></SectionCard>
         </aside>
       </div>
-      <PaymentsDialog invoice={payments ? inv : null} onOpenChange={setPayments} />
+      <InvoicePaymentsDialog invoice={payments ? inv : null} onOpenChange={setPayments} />
     </>
   )
 }

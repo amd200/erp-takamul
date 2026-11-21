@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogBody, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -31,6 +31,7 @@ export function OpenShiftDialog({ open, onOpenChange }: { open: boolean; onOpenC
   const [deviceId, setDeviceId] = useState(0)
   const [balance, setBalance] = useState("0")
   const [submitted, setSubmitted] = useState(false)
+  const now = useMemo(() => new Date(), [open])
 
   const { data: branches = [] } = useShiftBranches(open && multi)
   const { data: employees = [] } = useShiftEmployees(branchId)
@@ -69,6 +70,17 @@ export function OpenShiftDialog({ open, onOpenChange }: { open: boolean; onOpenC
         <DialogBody>
           <form id="open-shift" noValidate onSubmit={(e) => { e.preventDefault(); submit() }}>
             <FieldGroup className="gap-4">
+              {/* Shown only: the server stamps the shift with its own date and time. */}
+              <div className="grid grid-cols-2 gap-3">
+                <Field>
+                  <FieldLabel>{t("shifts.date")}</FieldLabel>
+                  <Input readOnly className="h-10 bg-muted" value={now.toLocaleDateString("en-EG")} />
+                </Field>
+                <Field>
+                  <FieldLabel>{t("shifts.time")}</FieldLabel>
+                  <Input readOnly className="h-10 bg-muted" value={now.toLocaleTimeString("en-EG", { hour: "2-digit", minute: "2-digit" })} />
+                </Field>
+              </div>
               {multi && <Pick id="shift-branch" label={t("shifts.branch")} value={branchId} onChange={(v) => { setBranchId(v); setEmployeeId(0) }} options={branches.map((b) => ({ id: b.id, name: b.name || String(b.id) }))} placeholder={t("reports.pick")} />}
               <Pick id="shift-employee" label={t("shifts.employee")} value={employeeId} onChange={setEmployeeId} options={employees.map((e) => ({ id: e.id, name: e.firstName }))} placeholder={t("reports.pick")} />
               <Pick id="shift-device" label={t("shifts.device")} value={deviceId} onChange={setDeviceId} options={devices.map((x) => ({ id: x.id, name: x.deviceName }))} placeholder={t("reports.pick")} />

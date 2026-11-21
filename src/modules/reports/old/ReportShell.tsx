@@ -3,7 +3,7 @@ import type { ReactNode } from "react"
 import { FileSpreadsheet, FileText, Loader2, Printer, RotateCcw, Search, type LucideIcon } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { DatePicker } from "@/components/ui/date-picker"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
@@ -92,11 +92,11 @@ export function FiscalFilters({ f, loading, extra, withFiscal = true, dates = tr
           <>
         <div className={field}>
           <Label className={label}>{t("oldReports.from_date")}</Label>
-          <Input type="date" className="h-10" value={f.filters.from} onChange={(e) => f.set({ from: e.target.value })} />
+          <DatePicker value={f.filters.from} onChange={(v) => f.set({ from: v })} />
         </div>
         <div className={field}>
           <Label className={label}>{t("oldReports.to_date")}</Label>
-          <Input type="date" className="h-10" value={f.filters.to} onChange={(e) => f.set({ to: e.target.value })} />
+          <DatePicker value={f.filters.to} onChange={(v) => f.set({ to: v })} />
         </div>
           </>
         )}

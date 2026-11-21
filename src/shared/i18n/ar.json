@@ -1134,7 +1134,7 @@
       "downloadPdf": "تحميل PDF",
       "printA5": "طباعة A5"
     },
-    "receiptTitle": "إضافة سند قبض",
+    "receiptTitle": "تسجيل دفعة للعميل",
     "receiptSaved": "تم إضافة سند القبض بنجاح",
     "customerName": "اسم العميل",
     "currentBalance": "الرصيد الحالي",
@@ -1142,13 +1142,11 @@
     "noPayments": "لا توجد مدفوعات سابقة لهذه الفاتورة",
     "paymentNumber": "رقم الدفعة",
     "paymentDate": "تاريخ الدفع",
-    "saveReceipt": "حفظ سند القبض",
-    "receiptName": "سند قبض",
-    "deleteReceiptTitle": "تأكيد الحذف",
+    "saveReceipt": "تسجيل الدفعة",
+    "receiptName": "الدفعة",
+    "deleteReceiptTitle": "حذف الدفعة",
     "deleteReceiptBody": "هذا الإجراء لا يمكن التراجع عنه",
     "receiptNote": "دفعة على الفاتورة رقم {{number}}",
-    "editReceiptTitle": "تعديل سند القبض",
-    "receiptUpdated": "تم تعديل سند القبض",
     "amount": "المبلغ",
     "method": "طريقة الدفع",
     "treasury": "الخزينة",
@@ -1252,7 +1250,13 @@
     "addRefund": "تسجيل المبلغ",
     "deleteRefundTitle": "حذف المبلغ المسترد",
     "refundName": "المبلغ المسترد",
-    "noRefunds": "لا توجد مدفوعات سابقة لهذا المرتجع"
+    "noRefunds": "لا توجد مدفوعات سابقة لهذا المرتجع",
+    "previewHint": "معاينة قبل الطباعة",
+    "previewPaper": "حجم الورقة",
+    "previewZoomIn": "تكبير",
+    "previewZoomOut": "تصغير",
+    "previewFit": "ملاءمة العرض",
+    "previewLoading": "جاري تجهيز الفاتورة..."
   },
   "users": {
     "title": "المستخدمون",
@@ -1791,6 +1795,7 @@
       "showServiceEmployeeSales": "إظهار مبيعات موظفي الخدمة عند غلق الوردية",
       "defaultServiceEmployeeId": "موظف الخدمة الافتراضي",
       "showReturnsInShiftPrint": "إظهار المرتجعات في تقرير الوردية",
+      "showExpensesInShiftReport": "إظهار المصروفات في تقرير الوردية",
       "categorySize": "التصنيفات",
       "itemNameSize": "اسم الصنف",
       "itemPriceSize": "سعر الصنف",
@@ -2547,7 +2552,9 @@
     "emptyHint": "افتح أول وردية لتبدأ تسجيل المبيعات عليها.",
     "start": "البداية",
     "end": "النهاية",
-    "employee": "الموظف",
+    "employee": "اسم المستخدم",
+    "date": "التاريخ",
+    "time": "الوقت",
     "branch": "الفرع",
     "device": "الجهاز",
     "openingBalance": "رصيد الافتتاح",
@@ -2562,8 +2569,8 @@
     "export": "تصدير",
     "exportFailed": "معرفناش نصدّر التقرير",
     "openTitle": "فتح وردية جديدة",
-    "openHint": "اختر الموظف والجهاز وأدخل النقدية الموجودة في الدرج.",
-    "fillAll": "اختر الموظف والجهاز أولًا.",
+    "openHint": "اختر اسم المستخدم والجهاز وأدخل النقدية الموجودة في الدرج.",
+    "fillAll": "اختر اسم المستخدم والجهاز أولًا.",
     "closeTitle": "إغلاق الوردية",
     "closeBody": "هتتقفل الوردية #{{id}} ومش هتقدر تسجّل عليها مبيعات بعد كده.",
     "print": "طباعة",
@@ -2718,7 +2725,9 @@
       "editCustomer": "تعديل العميل",
       "pickToEdit": "اختر عميل لتعديله",
       "searchCustomer": "ابحث عن عميل...",
-      "selectedMeasurement": "المقاس المختار"
+      "selectedMeasurement": "المقاس المختار",
+      "expenses": "المصروفات",
+      "noExpensesToday": "لا توجد مصروفات اليوم"
     }
   },
   "quotes": {
@@ -3683,5 +3692,12 @@
       "next": "نقل إلى: {{status}}",
       "count": "{{n}} طلب"
     }
+  },
+  "datePicker": {
+    "pick": "اختر التاريخ",
+    "today": "اليوم",
+    "clear": "مسح",
+    "prevMonth": "الشهر السابق",
+    "nextMonth": "الشهر التالي"
   }
 }

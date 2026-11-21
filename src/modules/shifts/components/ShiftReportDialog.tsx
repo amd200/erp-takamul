@@ -45,12 +45,14 @@ export function ShiftReportDialog({ shift, onOpenChange, onClose }: Props) {
   const { t, i18n } = useTranslation()
   const appSettings = useAppSettings()
   const withVouchers = !!appSettings.shiftsTab?.enableShiftStatement
+  const showReturns = !!appSettings.shiftsTab?.showReturnsInShiftPrint
+  const showExpenses = !!appSettings.shiftsTab?.showExpensesInShiftReport
   const showByEmployee = appSettings.salonsTab?.showServiceEmployeeSales === true
   const exempt = appSettings.taxSetting?.taxSetting === "Exempt"
   const { data: r, isLoading } = useShiftReport(shift?.id)
   const output = useShiftReportOutput()
   const clock = (v: string | null | undefined) => (v ? formatClock(v, i18n.language) : "---")
-  const returnTreasuries = (r?.treasuries ?? []).filter((x) => x.totalReturns > 0)
+  const returnTreasuries = !showReturns ? [] : (r?.treasuries ?? []).filter((x) => x.totalReturns > 0)
 
   return (
     <Dialog open={!!shift} onOpenChange={onOpenChange}>
@@ -196,22 +198,26 @@ export function ShiftReportDialog({ shift, onOpenChange, onClose }: Props) {
                           <span className="text-[10px] font-bold text-muted-foreground">{e.employeeName || "—"} ({e.salesInvoicesCount} {t("shiftOld.orders")})</span>
                           <span className="text-sm font-black">{t("shiftOld.net")} {fmt(e.netSales)}</span>
                         </div>
-                        <div className="flex items-center justify-between gap-3 text-xs">
-                          <span className="font-semibold text-muted-foreground">{t("shiftOld.totalReturns")} ({e.returnInvoicesCount ?? 0} {t("shiftOld.returnsUnit")})</span>
-                          <span className="font-black">{fmt(e.totalReturns)}</span>
-                        </div>
+                        {showReturns && (
+                          <div className="flex items-center justify-between gap-3 text-xs">
+                            <span className="font-semibold text-muted-foreground">{t("shiftOld.totalReturns")} ({e.returnInvoicesCount ?? 0} {t("shiftOld.returnsUnit")})</span>
+                            <span className="font-black">{fmt(e.totalReturns)}</span>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
                 </Section>
               )}
 
-              {((r.totalExpenses ?? 0) > 0 || (r.totalPurchases ?? 0) > 0) && (
+              {((showExpenses && (r.totalExpenses ?? 0) > 0) || (r.totalPurchases ?? 0) > 0) && (
                 <div>
                   <div className="mb-3 flex items-center gap-2"><ReceiptText size={16} className="text-primary" /><h3 className="text-sm font-bold">{t("shiftOld.purchasesExpenses")}</h3></div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="flex flex-col items-center justify-center gap-1 rounded-xl border border-border bg-muted/50 px-3 py-2"><span className="text-[10px] font-bold text-muted-foreground">{t("shiftOld.totalPurchases")}</span><span className="text-sm font-black">{fmt(r.totalPurchases)}</span></div>
-                    <div className="flex flex-col items-center justify-center gap-1 rounded-xl border border-border bg-muted/50 px-3 py-2"><span className="text-[10px] font-bold text-muted-foreground">{t("shiftOld.totalExpenses")}</span><span className="text-sm font-black">{fmt(r.totalExpenses)}</span></div>
+                    {showExpenses && (
+                      <div className="flex flex-col items-center justify-center gap-1 rounded-xl border border-border bg-muted/50 px-3 py-2"><span className="text-[10px] font-bold text-muted-foreground">{t("shiftOld.totalExpenses")}</span><span className="text-sm font-black">{fmt(r.totalExpenses)}</span></div>
+                    )}
                   </div>
                 </div>
               )}

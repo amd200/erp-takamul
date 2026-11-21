@@ -38,7 +38,7 @@ export default function CustomersPage() {
     { id: "phone", sortKey: "phone", header: t("customers.mobile"), cell: (c) => <span dir="ltr">{c.phone || "—"}</span> },
     { id: "openingBalance", sortKey: "openingBalance", header: t("partners.openingBalance"), cell: (c) => <span dir="ltr">{formatMoney(c.openingBalance ?? 0)}</span> },
     { id: "actions", header: "", align: "end", cell: (c) => (
-      <div className="flex items-center justify-end gap-0.5">
+      <div className="flex items-center justify-center gap-0.5">
         <RowActions extra={[can(P.customers.edit) && { key: "opening", label: t("partners.openingBalance"), icon: <WalletCards />, onSelect: () => setOpening(c) }]}
           onEdit={can(P.customers.edit) ? () => setForm({ customer: c }) : undefined}
           onDelete={can(P.customers.delete) && c.id !== 1 ? () => setToDelete(c) : undefined} />

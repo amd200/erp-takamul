@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useBranchColumn } from "@/modules/branches/useBranchColumn"
 import { Link } from "react-router-dom"
-import { Eye, FileText, HandCoins, Printer, ScrollText, Send, Undo2 } from "lucide-react"
+import { Eye, FileText, DollarSign, Printer, ScrollText, Send, Undo2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useAppSettings } from "@/modules/settings"
 import { RowMenu } from "@/components/RowActions"
@@ -22,6 +22,7 @@ import type { SalesReturnDto } from "../types"
 
 export default function ReturnsPage() {
   const { t, i18n } = useTranslation()
+  const ops = useAppSettings().operationsTab
   const stage2 = useAppSettings().taxSetting?.taxSetting === "SecondStage"
   const can = useCan()
   const { sort, sortBy, sortDescending } = useTableSort()
@@ -46,7 +47,7 @@ export default function ReturnsPage() {
       { key: "roll", label: t("sales.actions.printRoll"), icon: <Printer />, disabled: print.isPending, onSelect: () => print.mutate({ ret: r, paper: "roll" }) },
       stage2 && can(P.sales.zatca) && r.zatcaStatus !== "Sent" && { key: "resend", label: t("sales.actions.resend"), icon: <Send />, disabled: send.isPending, onSelect: () => send.mutate(r.id) },
       stage2 && { key: "zatca", label: t("sales.menu.zatcaResponse"), icon: <ScrollText />, onSelect: () => setZatcaDoc(r) },
-      can(P.sales.returnsAdd) && { key: "refunds", label: t("sales.menu.payments"), icon: <HandCoins />, onSelect: () => setRefundsId(r.id) },
+      ops?.allowViewInvoicePayments && { key: "refunds", label: t("sales.menu.payments"), icon: <DollarSign />, onSelect: () => setRefundsId(r.id) },
       { key: "view", label: t("common.view"), icon: <Eye />, to: `/sales/returns/${r.id}` },
     ]} /> },
   ]

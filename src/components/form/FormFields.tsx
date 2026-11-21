@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, type ComponentProps, type ReactNode } from
 import { Controller, type Control, type FieldPath, type FieldValues } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
+import { DatePicker } from "@/components/ui/date-picker"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
@@ -81,6 +82,11 @@ export function FormInput<T extends FieldValues>({
                 value={field.value} onValue={field.onChange} empty={emptyNumber(name)}
                 id={name} step="any" inputMode="decimal" dir={dir} autoComplete={autoComplete} placeholder={placeholder}
                 disabled={disabled} readOnly={readOnly} aria-invalid={fieldState.invalid} className={cn("h-10", inputClassName)}
+              />
+            ) : type === "date" ? (
+              <DatePicker
+                id={name} name={field.name} value={field.value ?? ""} onChange={field.onChange} onBlur={field.onBlur}
+                disabled={disabled} aria-invalid={fieldState.invalid} className={inputClassName}
               />
             ) : (
             <Input

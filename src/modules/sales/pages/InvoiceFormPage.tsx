@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { CustomerDialog } from "@/modules/customers/components/CustomerDialog"
 import { Field, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import { DatePicker } from "@/components/ui/date-picker"
 import { GlobalDiscountField } from "@/modules/sales/components/GlobalDiscountField"
 import { FormInput, FormSelect } from "@/components/form/FormFields"
 import { PageHeader } from "@/components/PageHeader"
@@ -109,7 +109,7 @@ export default function InvoiceFormPage() {
             <Controller control={form.control} name="date" render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="date">{t("common.date")}<span className="text-destructive">*</span></FieldLabel>
-                <Input id="date" type="date" {...field} />
+                <DatePicker id="date" value={field.value} onChange={field.onChange} onBlur={field.onBlur} aria-invalid={fieldState.invalid} />
               </Field>
             )} />
             <div className="flex items-start gap-3">

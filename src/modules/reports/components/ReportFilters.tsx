@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next"
 import { fullName } from "@/modules/lookups/types"
 import { Field, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import { DatePicker } from "@/components/ui/date-picker"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useCategories } from "@/modules/categories/queries"
@@ -87,9 +87,9 @@ export function ReportFilters({ keys, required, value, preset, onChange, onPrese
           </Field>
           <div className="flex items-end gap-1.5">
             <Field className="w-36"><FieldLabel htmlFor="from">{t("sales.from")}</FieldLabel>
-              <Input id="from" type="date" className="h-10" value={value.from} max={value.to} onChange={(e) => { onPreset("custom"); onChange({ ...value, from: e.target.value }) }} /></Field>
+              <DatePicker id="from" value={value.from} max={value.to} onChange={(v) => { onPreset("custom"); onChange({ ...value, from: v }) }} /></Field>
             <Field className="w-36"><FieldLabel htmlFor="to">{t("sales.to")}</FieldLabel>
-              <Input id="to" type="date" className="h-10" value={value.to} min={value.from} onChange={(e) => { onPreset("custom"); onChange({ ...value, to: e.target.value }) }} /></Field>
+              <DatePicker id="to" value={value.to} min={value.from} onChange={(v) => { onPreset("custom"); onChange({ ...value, to: v }) }} /></Field>
           </div>
         </>
       )}

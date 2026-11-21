@@ -41,18 +41,6 @@ export type InvoiceForm = z.infer<typeof invoiceSchema>
 export const paymentFormSchema = paymentSchema
 export type PaymentForm = z.infer<typeof paymentSchema>
 
-/** The receipt voucher form of the payments dialog: the date is only checked, the server stamps the payment. */
-export const receiptFormSchema = z.object({
-  date: z.string().min(1, "validation.dateRequired"),
-  treasuryId: num("validation.treasuryRequired").min(1, "validation.treasuryRequired"),
-  amount: num().positive("validation.amountPositive"),
-})
-export type ReceiptForm = z.infer<typeof receiptFormSchema>
-
-/** Editing the amount of a recorded receipt. */
-export const receiptAmountSchema = z.object({ amount: num().positive("validation.amountPositive") })
-export type ReceiptAmountForm = z.infer<typeof receiptAmountSchema>
-
 export const debitNoteSchema = z.object({
   invoiceId: num("validation.invoiceRequired").min(1, "validation.invoiceRequired"),
   date: z.string().min(1, "validation.dateRequired"),

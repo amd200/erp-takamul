@@ -7,7 +7,7 @@ type Enum = string | null
 
 export type GeneralTab = { showReturnedItemsDetails: boolean; rowsPerPage: number; salesOrderStartNumber: boolean }
 export type PaymentTab = { showPaymentMethods: boolean; showPaidAndRemainingAmount: boolean; paymentScreenType: Enum; mobilePaymentScreenType: Enum; posPurcherstype: Enum; postype: Enum }
-export type ShiftsTab = { enableShiftStatement: boolean; showReturnsInShiftPrint: boolean }
+export type ShiftsTab = { enableShiftStatement: boolean; showReturnsInShiftPrint: boolean; showExpensesInShiftReport: boolean }
 export type PrintA4Tab = { showHeaderAndFooterInPrint: boolean; a4InvoiceType: Enum }
 export type OperationsTab = {
   btnHolding: boolean; whatsappSending: boolean; emailSending: boolean; isClaimVoucher: boolean; isStockVoucher: boolean; allowPrintA3: boolean

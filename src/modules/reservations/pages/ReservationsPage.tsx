@@ -8,13 +8,14 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
+import { DatePicker } from "@/components/ui/date-picker"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
 import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
-import { FormInput, FormSelect, FormTextarea } from "@/components/form/FormFields"
+import { FormInput, FormSelect } from "@/components/form/FormFields"
 import { PageHeader } from "@/components/PageHeader"
 import { RowActions } from "@/components/RowActions"
 import { useCan } from "@/shared/permissions/usePermission"
@@ -50,19 +51,20 @@ function ReservationDialog({ open, onOpenChange, reservation }: { open: boolean;
           <form id="reservation-form" onSubmit={submit} noValidate>
             <FieldGroup className="gap-4">
               {formBranch.show && <BranchSection value={formBranch.branchId} onChange={formBranch.pick} />}
-              <FormInput control={form.control} name="customerName" required label={t("reservations.customerName")} />
-              <FormInput control={form.control} name="customerPhone" required label={t("users.mobile")} dir="ltr" />
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Controller control={form.control} name="date" render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}><FieldLabel htmlFor="r-date">{t("common.date")}</FieldLabel><Input id="r-date" type="date" className="h-10" {...field} />{fieldState.error?.message && <FieldError>{t(fieldState.error.message)}</FieldError>}</Field>
+                  <Field data-invalid={fieldState.invalid}><FieldLabel htmlFor="r-date">{t("common.date")}</FieldLabel><DatePicker id="r-date" value={field.value} onChange={field.onChange} onBlur={field.onBlur} aria-invalid={fieldState.invalid} />{fieldState.error?.message && <FieldError>{t(fieldState.error.message)}</FieldError>}</Field>
                 )} />
                 <Controller control={form.control} name="time" render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}><FieldLabel htmlFor="r-time">{t("reservations.time")}</FieldLabel><Input id="r-time" type="time" className="h-10" dir="ltr" {...field} />{fieldState.error?.message && <FieldError>{t(fieldState.error.message)}</FieldError>}</Field>
                 )} />
               </div>
-              {reservation && <FormSelect control={form.control} name="status" label={t("common.status")} options={BOOKING_STATUSES.map((s) => ({ value: s, label: t(`reservations.statuses.${s}`) }))} />}
-              <FormTextarea control={form.control} name="notes" label={t("common.notes")} />
-            </FieldGroup>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <FormInput control={form.control} name="customerName" required label={t("reservations.customerName")} />
+                <FormInput control={form.control} name="customerPhone" required label={t("users.mobile")} dir="ltr" />
+                <FormInput control={form.control} name="notes" label={t("common.notes")} />
+              </div>
+              {reservation && <FormSelect control={form.control} name="status" label={t("common.status")} options={BOOKING_STATUSES.map((s) => ({ value: s, label: t(`reservations.statuses.${s}`) }))} />}            </FieldGroup>
           </form>
         </DialogBody>
         <DialogFooter>
@@ -123,9 +125,9 @@ export default function ReservationsPage() {
                 </SelectContent>
               </Select>
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} aria-label={t("sales.from")} className="h-10 w-36" />
+                <DatePicker clearable value={from} max={to || undefined} onChange={setFrom} className="w-44" />
                 {t("sales.to")}
-                <Input type="date" value={to} onChange={(e) => setTo(e.target.value)} aria-label={t("sales.to")} className="h-10 w-36" />
+                <DatePicker clearable value={to} min={from || undefined} onChange={setTo} className="w-44" />
               </div>
             </>
           }

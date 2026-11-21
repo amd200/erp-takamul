@@ -6,7 +6,7 @@ import { List, Plus, Trash2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import { DatePicker } from "@/components/ui/date-picker"
 import { FormInput, FormSelect } from "@/components/form/FormFields"
 import { PageHeader } from "@/components/PageHeader"
 import { SectionCard } from "@/components/SectionCard"
@@ -120,7 +120,7 @@ export default function PurchaseFormPage() {
             <Controller control={form.control} name="date" render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="p-date">{t("common.date")}<span className="text-destructive">*</span></FieldLabel>
-                <Input id="p-date" type="date" {...field} />
+                <DatePicker id="p-date" value={field.value} onChange={field.onChange} onBlur={field.onBlur} aria-invalid={fieldState.invalid} />
               </Field>
             )} />
             <div>

@@ -36,7 +36,7 @@ export default function SuppliersPage() {
     { id: "phone", sortKey: "phone", header: t("suppliers.mobile"), cell: (s) => <span dir="ltr">{s.phone || "—"}</span> },
     { id: "openingBalance", sortKey: "openingBalance", header: t("partners.openingBalance"), cell: (s) => <span dir="ltr">{formatMoney(s.openingBalance ?? 0)}</span> },
     { id: "actions", header: "", align: "end", cell: (s) => (
-      <div className="flex items-center justify-end gap-0.5">
+      <div className="flex items-center justify-center gap-0.5">
         <RowActions extra={[can(P.suppliers.edit) && { key: "opening", label: t("partners.openingBalance"), icon: <WalletCards />, onSelect: () => setOpening(s) }]} onEdit={can(P.suppliers.edit) ? () => setForm({ supplier: s }) : undefined} onDelete={can(P.suppliers.delete) ? () => setToDelete(s) : undefined} />
       </div>
     ) },

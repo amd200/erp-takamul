@@ -12,7 +12,7 @@ import { InvoiceActions } from "../components/InvoiceActions"
 import { InvoicePreviewDialog } from "../components/InvoicePreviewDialog"
 import { NotesDialog } from "../components/NotesDialog"
 import { ZatcaResponseDialog } from "../components/ZatcaResponseDialog"
-import { PaymentsDialog } from "../components/PaymentsDialog"
+import { InvoicePaymentsDialog } from "../components/InvoicePaymentsDialog"
 import { PaymentBadge, ZatcaBadge } from "../components/StatusBadges"
 import { useInvoicePage } from "../queries"
 import { SectionCard } from "@/components/SectionCard"
@@ -68,7 +68,7 @@ export default function InvoicesPage({ channel }: { channel: Channel }) {
         </SectionCard>
 
       {/* Read from the page data so a recorded payment shows up without closing the dialog. */}
-      <PaymentsDialog invoice={payments && (data?.items.find((i) => i.id === payments.id) ?? payments)} onOpenChange={(o) => !o && setPayments(null)} />
+      <InvoicePaymentsDialog invoice={payments && (data?.items.find((i) => i.id === payments.id) ?? payments)} onOpenChange={(o) => !o && setPayments(null)} />
       <InvoicePreviewDialog invoice={preview} onOpenChange={(o) => !o && setPreview(null)} />
       <NotesDialog invoice={notes} onOpenChange={(o) => !o && setNotes(null)} />
       <ZatcaResponseDialog doc={zatcaDoc && { number: zatcaDoc.orderNumber, zatcaStatus: zatcaDoc.zatcaStatus, zatcaResponse: zatcaDoc.zatcaResponse }} onOpenChange={(o) => !o && setZatcaDoc(null)} />

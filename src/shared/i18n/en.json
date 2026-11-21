@@ -1134,7 +1134,7 @@
       "downloadPdf": "Download PDF",
       "printA5": "Print A5"
     },
-    "receiptTitle": "Add Customer Collection",
+    "receiptTitle": "Add Customer Payment",
     "receiptSaved": "Collection voucher added successfully",
     "customerName": "Customer Name",
     "currentBalance": "Current Balance",
@@ -1142,13 +1142,11 @@
     "noPayments": "No payments registered yet for this invoice",
     "paymentNumber": "Payment No.",
     "paymentDate": "Payment Date",
-    "saveReceipt": "Save Collection Voucher",
-    "receiptName": "Collection voucher",
-    "deleteReceiptTitle": "Confirm Delete",
+    "saveReceipt": "Record Payment",
+    "receiptName": "Payment",
+    "deleteReceiptTitle": "Delete Payment",
     "deleteReceiptBody": "This action cannot be undone",
     "receiptNote": "Payment on invoice no. {{number}}",
-    "editReceiptTitle": "Edit Receipt",
-    "receiptUpdated": "Receipt updated",
     "amount": "Amount",
     "method": "Method",
     "treasury": "Treasury",
@@ -1252,7 +1250,13 @@
     "addRefund": "Record refund",
     "deleteRefundTitle": "Delete refund",
     "refundName": "Refund",
-    "noRefunds": "No previous payments for this return"
+    "noRefunds": "No previous payments for this return",
+    "previewHint": "Preview before printing",
+    "previewPaper": "Paper size",
+    "previewZoomIn": "Zoom in",
+    "previewZoomOut": "Zoom out",
+    "previewFit": "Fit to width",
+    "previewLoading": "Preparing the invoice..."
   },
   "users": {
     "title": "Users",
@@ -1791,6 +1795,7 @@
       "showServiceEmployeeSales": "Show service employee sales",
       "defaultServiceEmployeeId": "Default service employee",
       "showReturnsInShiftPrint": "Show returns on shift report",
+      "showExpensesInShiftReport": "Show Expenses in the Shift Report",
       "categorySize": "Categories",
       "itemNameSize": "Item name",
       "itemPriceSize": "Item price",
@@ -2547,7 +2552,9 @@
     "emptyHint": "Open the first shift to start recording sales on it.",
     "start": "Start",
     "end": "End",
-    "employee": "Employee",
+    "employee": "Username",
+    "date": "Date",
+    "time": "Time",
     "branch": "Branch",
     "device": "Device",
     "openingBalance": "Opening balance",
@@ -2562,8 +2569,8 @@
     "export": "Export",
     "exportFailed": "Couldn't export the report",
     "openTitle": "Open a new shift",
-    "openHint": "Pick the employee and device and enter the cash in the drawer.",
-    "fillAll": "Pick the employee and device first.",
+    "openHint": "Pick the username and device and enter the cash in the drawer.",
+    "fillAll": "Pick the username and device first.",
     "closeTitle": "Close shift",
     "closeBody": "Shift #{{id}} will be closed and no more sales can be recorded on it.",
     "print": "Print",
@@ -2718,7 +2725,9 @@
       "editCustomer": "Edit Customer",
       "pickToEdit": "Choose a customer to edit",
       "searchCustomer": "Search for a customer...",
-      "selectedMeasurement": "Selected measurement"
+      "selectedMeasurement": "Selected measurement",
+      "expenses": "Expenses",
+      "noExpensesToday": "No expenses today"
     }
   },
   "quotes": {
@@ -3683,5 +3692,12 @@
       "next": "Move to: {{status}}",
       "count": "{{n}} orders"
     }
+  },
+  "datePicker": {
+    "pick": "Pick a date",
+    "today": "Today",
+    "clear": "Clear",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month"
   }
 }

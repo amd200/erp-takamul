@@ -43,7 +43,6 @@ export const invoicesApi = {
     data: { salesOrderId: invoiceId, treasuryId: p.treasuryId, amount: p.amount, paymentMethod: p.method, notes: p.notes || null },
   })),
   payments: (invoiceId: number) => http<InvoicePaymentItem[]>(`/sales-orders/order/${invoiceId}`),
-  updatePayment: (paymentId: number, amount: number) => http<unknown>(`/sales-orders/payments/${paymentId}`, { method: "PUT", data: { amount } }),
   deletePayment: (paymentId: number) => http<unknown>(`/sales-orders/delete-payment/${paymentId}`, { method: "DELETE" }),
   updateNotes: (invoiceId: number, notes: string) => http<unknown>(`/sales-orders/${invoiceId}/notes`, { method: "PUT", data: { notes } }),
   sendToZatca: (invoiceId: number) => http<unknown>("/zatca-invoices/sell", { method: "POST", data: { invoiceId } }),

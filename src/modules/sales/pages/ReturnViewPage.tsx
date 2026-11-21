@@ -1,6 +1,7 @@
+import { useState } from "react"
 import { PageBox } from "@/components/PageBox"
 import { Link, useParams } from "react-router-dom"
-import { ArrowLeft, FileText, Printer, Undo2 } from "lucide-react"
+import { ArrowLeft, DollarSign, FileText, Printer, Undo2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,6 +11,7 @@ import { EmptyState } from "@/components/EmptyState"
 import { formatMoney } from "@/lib/format"
 import { useAppSettings } from "@/modules/settings"
 import { useReturn } from "../queries"
+import { ReturnRefundsDialog } from "../components/ReturnRefundsDialog"
 import { usePrintReturn } from "../print/usePrintReturn"
 
 const box = "inner-box"
@@ -20,7 +22,9 @@ export default function ReturnViewPage() {
   const { id } = useParams()
   const { data: r, isLoading } = useReturn(Number(id))
   const print = usePrintReturn()
-  const exempt = useAppSettings().taxSetting?.taxSetting === "Exempt"
+  const [refunds, setRefunds] = useState(false)
+  const settings = useAppSettings()
+  const exempt = settings.taxSetting?.taxSetting === "Exempt"
 
   if (isLoading) return <div className="h-64 animate-pulse rounded-xl bg-muted" />
   if (!r) return <EmptyState icon={<Undo2 />} title={t("sales.notFound")} action={<Button asChild variant="outline"><Link to="/sales/returns">{t("viewDoc.backToReturns")}</Link></Button>} />
@@ -32,6 +36,7 @@ export default function ReturnViewPage() {
   return (
     <PageBox title={t("viewDoc.returnInvoice")}
       action={<div className="flex flex-wrap gap-2">
+        {settings.operationsTab?.allowViewInvoicePayments && <Button variant="outline" onClick={() => setRefunds(true)}><DollarSign size={16} />{t("sales.menu.payments")}</Button>}
         <Button variant="outline" disabled={print.isPending} onClick={() => print.mutate({ ret: r, paper: "a4" })}><FileText size={16} />{t("sales.actions.printA4")}</Button>
         <Button variant="outline" disabled={print.isPending} onClick={() => print.mutate({ ret: r, paper: "roll" })}><Printer size={16} />{t("sales.actions.printRoll")}</Button>
         <Button asChild variant="outline"><Link to="/sales/returns">{t("viewDoc.backToReturns")}<ArrowLeft size={16} /></Link></Button>
@@ -113,6 +118,7 @@ export default function ReturnViewPage() {
           </div>
         </div>
       </div>
+      <ReturnRefundsDialog returnId={refunds ? r.id : null} onOpenChange={setRefunds} />
     </PageBox>
   )
 }

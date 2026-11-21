@@ -5,7 +5,7 @@ import { EmbeddedDialog } from "@/components/EmbeddedDialog"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Field, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import { DatePicker } from "@/components/ui/date-picker"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Pager } from "@/components/Pager"
 import { formatMoney, formatNumber } from "@/lib/format"
@@ -89,9 +89,9 @@ export function CustomerMovementDialog({ open, onOpenChange, customerId, embedde
               placeholder={t("reports.pick")} searchPlaceholder={t("customers.search")} empty={t("pos.noCustomer")} />
           </Field>
           <Field className="w-36"><FieldLabel htmlFor="mv-from">{t("sales.from")}</FieldLabel>
-            <Input id="mv-from" type="date" className="h-10" value={filters.from} max={filters.to} onChange={(e) => setFilters((f) => ({ ...f, from: e.target.value }))} /></Field>
+            <DatePicker id="mv-from" value={filters.from} max={filters.to} onChange={(v) => setFilters((f) => ({ ...f, from: v }))} /></Field>
           <Field className="w-36"><FieldLabel htmlFor="mv-to">{t("sales.to")}</FieldLabel>
-            <Input id="mv-to" type="date" className="h-10" value={filters.to} min={filters.from} onChange={(e) => setFilters((f) => ({ ...f, to: e.target.value }))} /></Field>
+            <DatePicker id="mv-to" value={filters.to} min={filters.from} onChange={(v) => setFilters((f) => ({ ...f, to: v }))} /></Field>
           <div className="flex gap-2">
             <Button type="button" size="lg" disabled={!filters.customerId || isFetching} onClick={search}><Search />{t("common.search")}</Button>
             <Button type="button" size="lg" variant="outline" aria-label={t("reports.movement.reset")} title={t("reports.movement.reset")} onClick={reset}><RotateCcw /></Button>

@@ -2,6 +2,7 @@ import { Banknote, CalendarCheck, CalendarClock, CreditCard, Zap } from "lucide-
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { DatePicker } from "@/components/ui/date-picker"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { CurrencySymbol } from "@/modules/settings"
@@ -39,11 +40,11 @@ export function PayDialog({ open, onOpenChange, onConfirm }: { open: boolean; on
           <div className="grid grid-cols-2 gap-2">
             <label className="space-y-1">
               <span className="flex items-center gap-1.5 text-xs text-muted-foreground"><CalendarClock className="size-3.5" />{t("tailoring.dates.fitting")}</span>
-              <Input type="date" min={today} value={s.fitting} onChange={(e) => s.set({ fitting: e.target.value })} className="h-10 bg-background text-xs" />
+              <DatePicker clearable min={today} value={s.fitting} onChange={(v) => s.set({ fitting: v })} />
             </label>
             <label className="space-y-1">
               <span className="flex items-center gap-1.5 text-xs text-muted-foreground"><CalendarCheck className="size-3.5" />{t("tailoring.dates.delivery")}{s.pieces.length > 0 && <span className="text-destructive">*</span>}</span>
-              <Input type="date" min={s.fitting || today} value={s.delivery} onChange={(e) => s.set({ delivery: e.target.value })} className="h-10 bg-background text-xs" />
+              <DatePicker min={s.fitting || today} value={s.delivery} onChange={(v) => s.set({ delivery: v })} />
             </label>
           </div>
           <label className="flex cursor-pointer items-center justify-between rounded-lg border border-border bg-background px-3 py-2">

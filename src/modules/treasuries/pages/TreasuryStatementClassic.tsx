@@ -5,7 +5,7 @@ import { FileSpreadsheet, FileText, Filter, Printer, RotateCcw, Search, WalletCa
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import { DatePicker } from "@/components/ui/date-picker"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { DataTable, type Column } from "@/components/DataTable"
 import { useTableSort } from "@/components/useTableSort"
@@ -91,8 +91,8 @@ export default function TreasuryStatementClassic() {
                 <SelectContent>{treasuries.map((x) => <SelectItem key={x.id} value={String(x.id)}>{x.name}</SelectItem>)}</SelectContent>
               </Select>
             </Field>
-            <Field><FieldLabel htmlFor="st-from">{t("oldStatement.from")}</FieldLabel><Input id="st-from" type="date" value={filters.from} onChange={(e) => setFilters((f) => ({ ...f, from: e.target.value }))} /></Field>
-            <Field><FieldLabel htmlFor="st-to">{t("oldStatement.to")}</FieldLabel><Input id="st-to" type="date" value={filters.to} onChange={(e) => setFilters((f) => ({ ...f, to: e.target.value }))} /></Field>
+            <Field><FieldLabel htmlFor="st-from">{t("oldStatement.from")}</FieldLabel><DatePicker id="st-from" value={filters.from} max={filters.to || undefined} onChange={(v) => setFilters((f) => ({ ...f, from: v }))} /></Field>
+            <Field><FieldLabel htmlFor="st-to">{t("oldStatement.to")}</FieldLabel><DatePicker id="st-to" value={filters.to} min={filters.from || undefined} onChange={(v) => setFilters((f) => ({ ...f, to: v }))} /></Field>
             <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-end">
               <Button type="button" className="w-full sm:w-auto" onClick={() => setApplied(filters)}><Search size={18} />{t("oldStatement.show")}</Button>
               <Button type="button" variant="outline" className="w-full sm:w-auto" onClick={clear}><RotateCcw size={16} />{t("oldStatement.clear")}</Button>

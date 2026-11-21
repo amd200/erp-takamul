@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Eye, Pencil, UserPlus } from "lucide-react"
+import { Eye, Pencil, Plus, UserPlus, Wallet } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -8,6 +8,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CustomerDialog } from "@/modules/customers/components/CustomerDialog"
 import { useCustomer } from "@/modules/customers/queries"
 import { useCustomers } from "@/modules/lookups/service"
+import { ExpenseDialog } from "@/modules/expenses/pages/ExpensesPage"
+import { useDeleteExpense, useExpenses } from "@/modules/expenses/queries"
+import { DataTable, type Column } from "@/components/DataTable"
+import { ConfirmDialog } from "@/components/ConfirmDialog"
+import { RowActions } from "@/components/RowActions"
+import { EmptyState } from "@/components/EmptyState"
+import { formatMoney } from "@/lib/format"
+import type { Expense } from "@/modules/expenses/types"
 import { VoucherDialog } from "@/modules/vouchers/components/VoucherDialog"
 import { P } from "@/shared/permissions/permissions"
 import { useCan } from "@/shared/permissions/usePermission"
@@ -16,7 +24,7 @@ import { usePosStore } from "../store"
 import { CustomerMeasurementsDialog } from "./CustomerMeasurementsDialog"
 import { CustomerMovementDialog } from "./CustomerMovementDialog"
 
-type Tab = "customer" | "companion" | "measurements" | "movement" | "receipt"
+type Tab = "customer" | "companion" | "measurements" | "movement" | "receipt" | "expenses"
 
 /** Picks the customer the tab works on; the pick is shared with the sale. */
 function CustomerSelect({ customerId, placeholder }: { customerId: number | null; placeholder: string }) {
@@ -69,6 +77,42 @@ function CompanionTab({ customerId, onClose }: { customerId: number | null; onCl
     onSaved={() => usePosStore.getState().setMeasurement(null)} />
 }
 
+/** Today's expenses with the add form of the Expenses page; the server attaches a new one to the cashier's open shift. */
+function ExpensesTab() {
+  const { t } = useTranslation()
+  const can = useCan()
+  const { data, isLoading } = useExpenses()
+  const del = useDeleteExpense()
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [editing, setEditing] = useState<Expense | null>(null)
+  const [toDelete, setToDelete] = useState<Expense | null>(null)
+  const open = (x: Expense | null) => { setEditing(x); setDialogOpen(true) }
+  const today = new Date().toLocaleDateString("sv")
+  const rows = (data ?? []).filter((x) => (x.date ?? "").slice(0, 10) === today)
+  const columns: Column<Expense>[] = [
+    { id: "name", header: t("expenses.colName"), cell: (x) => <span className="font-semibold">{x.name}</span> },
+    { id: "treasury", header: t("expenses.treasury"), cell: (x) => x.treasuryName || "—" },
+    { id: "item", header: t("expenses.item"), cell: (x) => x.itemName || "—" },
+    { id: "amount", header: t("expenses.amount"), cell: (x) => <span className="tabular-nums">{formatMoney(x.amount ?? 0)}</span> },
+    { id: "notes", header: t("expenses.colNotes"), cell: (x) => x.notes || "—" },
+    { id: "actions", header: t("expenses.colActions"), cell: (x) => (can(P.expenses.edit) || can(P.expenses.delete)) && (
+      <RowActions onEdit={can(P.expenses.edit) ? () => open(x) : undefined} onDelete={can(P.expenses.delete) ? () => setToDelete(x) : undefined} />
+    ) },
+  ]
+  return (
+    <>
+      {can(P.expenses.add) && <div className="flex shrink-0"><Button type="button" className="h-10 gap-2" onClick={() => open(null)}><Plus size={16} />{t("expenses.add")}</Button></div>}
+      <div className="min-h-0 flex-1 overflow-auto">
+        <DataTable rows={rows} loading={isLoading} columns={columns} rowKey={(x) => x.id} empty={<EmptyState icon={<Wallet />} title={t("pos.optics.noExpensesToday")} />} />
+      </div>
+      <ExpenseDialog open={dialogOpen} onOpenChange={setDialogOpen} expense={editing} />
+      <ConfirmDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)} pending={del.isPending}
+        title={t("expenses.deleteTitle")} description={t("expenses.deleteBody", { name: toDelete?.name })}
+        onConfirm={() => toDelete && del.mutate(toDelete.id, { onSuccess: () => setToDelete(null) })} />
+    </>
+  )
+}
+
 /**
  * The optics screen's customer tools in one window, as in the current POS: add or edit the customer, their companions,
  * their measurements (pick whose go on the invoice), their movement report and a receipt from them.
@@ -77,9 +121,10 @@ export function OpticsToolsDialog({ open, onOpenChange }: { open: boolean; onOpe
   const { t } = useTranslation()
   const can = useCan()
   const canMovement = can(P.reports.customers)
+  const canExpenses = can(P.expenses.view)
   const customerId = usePosStore((s) => s.customerId)
   const [tab, setTab] = useState<Tab>("customer")
-  const active = tab === "movement" && !canMovement ? "customer" : tab
+  const active = (tab === "movement" && !canMovement) || (tab === "expenses" && !canExpenses) ? "customer" : tab
   const close = () => onOpenChange(false)
 
   useEffect(() => { if (open) setTab("customer") }, [open])
@@ -91,19 +136,21 @@ export function OpticsToolsDialog({ open, onOpenChange }: { open: boolean; onOpe
           <DialogTitle className="flex items-center gap-2 text-primary"><Eye size={20} />{t("pos.optics.tools")}</DialogTitle>
           <DialogDescription className="sr-only">{t("pos.optics.tools")}</DialogDescription>
         </DialogHeader>
-        <Tabs value={active} onValueChange={(v) => { if (v !== "movement" || canMovement) setTab(v as Tab) }} className="min-h-0 flex-1 gap-3">
+        <Tabs value={active} onValueChange={(v) => { if ((v !== "movement" || canMovement) && (v !== "expenses" || canExpenses)) setTab(v as Tab) }} className="min-h-0 flex-1 gap-3">
           <TabsList className="h-auto w-full shrink-0 justify-start overflow-x-auto overflow-y-hidden sm:w-fit">
             <TabsTrigger value="customer" className="px-4 py-1.5">{t("pos.optics.customer")}</TabsTrigger>
             <TabsTrigger value="companion" className="px-4 py-1.5">{t("pos.optics.companion")}</TabsTrigger>
             <TabsTrigger value="measurements" className="px-4 py-1.5">{t("pos.optics.measurements")}</TabsTrigger>
             {canMovement && <TabsTrigger value="movement" className="px-4 py-1.5">{t("pos.optics.movement")}</TabsTrigger>}
             <TabsTrigger value="receipt" className="px-4 py-1.5">{t("pos.optics.receipt")}</TabsTrigger>
+            {canExpenses && <TabsTrigger value="expenses" className="px-4 py-1.5">{t("pos.optics.expenses")}</TabsTrigger>}
           </TabsList>
           <TabsContent value="customer" className="flex min-h-0 flex-1 flex-col gap-3"><CustomerTab key={open ? "open" : "closed"} customerId={customerId} onClose={close} /></TabsContent>
           <TabsContent value="companion" className="flex min-h-0 flex-1 flex-col gap-3"><CompanionTab customerId={customerId} onClose={close} /></TabsContent>
           <TabsContent value="measurements" className="flex min-h-0 flex-1 flex-col"><CustomerMeasurementsDialog embedded open={open} onOpenChange={(o) => { if (!o) close() }} customerId={customerId} /></TabsContent>
           {canMovement && <TabsContent value="movement" className="flex min-h-0 flex-1 flex-col"><CustomerMovementDialog embedded open={open && active === "movement"} onOpenChange={(o) => { if (!o) close() }} customerId={customerId} /></TabsContent>}
           <TabsContent value="receipt" className="flex min-h-0 flex-1 flex-col"><VoucherDialog key={customerId ?? "none"} kind="receipt" embedded open={open} onOpenChange={(o) => { if (!o) close() }} customerId={customerId} /></TabsContent>
+        {canExpenses && <TabsContent value="expenses" className="flex min-h-0 flex-1 flex-col gap-3"><ExpensesTab /></TabsContent>}
         </Tabs>
       </DialogContent>
     </Dialog>

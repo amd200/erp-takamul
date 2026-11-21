@@ -190,7 +190,7 @@ export function DataTable<T extends RowData>({
             <TableHeader>
               <TableRow className="hover:bg-transparent">
                 {columns.map((c) => (
-                  <TableHead key={c.id} style={c.width ? { width: c.width } : undefined} aria-sort={c.sortKey && sort?.key === c.sortKey ? (sort.desc ? "descending" : "ascending") : undefined}
+                  <TableHead key={c.id} style={colWidth(c) ? { width: colWidth(c) } : undefined} aria-sort={c.sortKey && sort?.key === c.sortKey ? (sort.desc ? "descending" : "ascending") : undefined}
                     className="font-medium text-muted-foreground">
                     {c.sortKey && sort ? <SortButton column={c} sort={sort} onSorted={() => setPage(0)} /> : c.id === "actions" && !c.header ? t("common.actions") : c.header}
                   </TableHead>
@@ -223,6 +223,10 @@ export function DataTable<T extends RowData>({
     </div>
   )
 }
+
+/** The operations column is always compact (fits its icons / "⋯" button); other columns share the rest unless they set a width. */
+const ACTIONS_WIDTH = "88px"
+const colWidth = <T,>(c: Column<T>) => c.width ?? (c.id === "actions" ? ACTIONS_WIDTH : undefined)
 
 function SortButton<T>({ column, sort, onSorted }: { column: Column<T>; sort: TableSort; onSorted: () => void }) {
   const active = sort.key === column.sortKey

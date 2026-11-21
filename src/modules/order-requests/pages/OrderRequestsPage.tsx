@@ -3,7 +3,7 @@ import { CheckCheck, ClipboardList, Eye, Printer, Trash2, Wallet } from "lucide-
 import { useTranslation } from "react-i18next"
 import { StatusBadge } from "@/components/StatusBadge"
 import { Dialog, DialogBody, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
+import { DatePicker } from "@/components/ui/date-picker"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { RowMenu } from "@/components/RowActions"
@@ -118,9 +118,9 @@ export default function OrderRequestsPage() {
           server={{ total: data?.totalCount ?? 0, page, pageSize: PAGE_SIZE, onPage: setPage, onSearch, fetching: isFetching && !isLoading }}
           filters={
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Input type="date" value={from} onChange={(e) => { setFrom(e.target.value); setPage(0) }} aria-label={t("sales.from")} className="h-10 w-36" />
+              <DatePicker clearable value={from} max={to || undefined} onChange={(v) => { setFrom(v); setPage(0) }} className="w-44" />
               {t("sales.to")}
-              <Input type="date" value={to} onChange={(e) => { setTo(e.target.value); setPage(0) }} aria-label={t("sales.to")} className="h-10 w-36" />
+              <DatePicker clearable value={to} min={from || undefined} onChange={(v) => { setTo(v); setPage(0) }} className="w-44" />
             </div>
           }
           empty={<EmptyState icon={<ClipboardList />} title={t("orderRequests.empty")} hint={t("orderRequests.emptyHint")} />} />

@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import { DatePicker } from "@/components/ui/date-picker"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
 import { useTableSort } from "@/components/useTableSort"
@@ -25,7 +25,7 @@ import { emptyExpense, expenseSchema, type ExpenseForm } from "../schema"
 import { useDeleteExpense, useExpenseItems, useExpenses, useSaveExpense } from "../queries"
 import type { Expense } from "../types"
 
-function ExpenseDialog({ open, onOpenChange, expense }: { open: boolean; onOpenChange: (o: boolean) => void; expense: Expense | null }) {
+export function ExpenseDialog({ open, onOpenChange, expense }: { open: boolean; onOpenChange: (o: boolean) => void; expense: Expense | null }) {
   const { t } = useTranslation()
   const formBranch = useFormBranch(open && !expense)
   const { data: treasuries = [] } = useTreasuryList()
@@ -66,22 +66,22 @@ function ExpenseDialog({ open, onOpenChange, expense }: { open: boolean; onOpenC
           <form id="expense-form" onSubmit={submit} noValidate>
             <FieldGroup className="gap-4">
               {formBranch.show && <BranchSection value={formBranch.branchId} onChange={changeBranch} />}
-              <FormInput control={form.control} name="name" label={t("expenses.name")} placeholder={t("expenses.namePlaceholder")} required />
-              <div className="grid gap-3 sm:grid-cols-2">
-                <FormInput control={form.control} name="amount" type="number" required label={t("expenses.amount")} />
+              <div className="grid gap-3 sm:grid-cols-3">
                 <Controller control={form.control} name="date" render={({ field, fieldState }) => (
                   <Field data-invalid={!!fieldState.error}>
                     <FieldLabel htmlFor="expense-date">{t("common.date")}</FieldLabel>
-                    <Input id="expense-date" type="date" className="h-10" {...field} />
+                    <DatePicker id="expense-date" value={field.value} onChange={field.onChange} onBlur={field.onBlur} />
                   </Field>
                 )} />
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <FormSelect control={form.control} name="treasuryId" numeric required label={t("expenses.treasury")} options={treasuryOptions} placeholder={t("expenses.pickTreasury")} />
                 <FormSelect control={form.control} name="itemId" numeric label={t("expenses.item")} options={itemOptions} allowEmpty={t("expenses.noItem")} />
+                <FormInput control={form.control} name="name" label={t("expenses.name")} placeholder={t("expenses.namePlaceholder")} required />
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <FormInput control={form.control} name="amount" type="number" required label={t("expenses.amount")} />
+                <FormSelect control={form.control} name="treasuryId" numeric required label={t("expenses.treasury")} options={treasuryOptions} placeholder={t("expenses.pickTreasury")} />
+                <FormTextarea control={form.control} name="notes" label={t("common.notes")} className="[&_textarea]:h-10 [&_textarea]:min-h-10" />
               </div>
               {over && <p className="text-sm text-destructive">{t("treasuries.errors.insufficient")}</p>}
-              <FormTextarea control={form.control} name="notes" label={t("common.notes")} />
             </FieldGroup>
           </form>
         </DialogBody>

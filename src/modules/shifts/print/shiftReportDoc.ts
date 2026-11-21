@@ -5,7 +5,7 @@ import type { ShiftReport } from "../types"
 
 const fmt = (v: number | null | undefined) => (typeof v === "number" && !Number.isNaN(v) ? v.toFixed(2) : "00.00")
 
-type Opts = { withVouchers: boolean; byEmployee: boolean; exempt: boolean }
+type Opts = { showReturns: boolean; showExpenses: boolean; withVouchers: boolean; byEmployee: boolean; exempt: boolean }
 
 const CSS = `body{width:auto;padding:0 3mm;font-size:12px}
 .sheet{width:100%;border-collapse:collapse}.sheet>thead>tr>td,.sheet>tfoot>tr>td,.sheet>tbody>tr>td{padding:0;border:0;text-align:start;direction:inherit;font-size:inherit;font-weight:inherit;white-space:normal}.sheet-gap{height:5mm}
@@ -36,7 +36,7 @@ export function shiftReportDoc(r: ShiftReport, o: Opts): PrintDoc {
   const t = (k: string) => i18n.t(`shiftOld.${k}`)
   const clock = (v: string | null | undefined) => (v ? formatClock(v, i18n.language) : "---")
   const treasuries = r.treasuries ?? []
-  const returns = treasuries.filter((x) => x.totalReturns > 0)
+  const returns = o.showReturns ? treasuries.filter((x) => x.totalReturns > 0) : []
 
   const items = (r.soldItems ?? []).map((x) => `<tr><td>${esc(x.productName)}</td><td>${fmt(x.unitPrice)}</td><td>${esc(x.quantity)}</td><td>${fmt(x.lineTotal)}</td></tr>`).join("")
 
@@ -54,8 +54,8 @@ ${(r.deferredSalesInvoicesCount ?? 0) > 0 ? section(t("deferred"), `<div class="
 ${treasuries.length ? section(`${t("treasuriesDaily")} (${t("sales")})`, `<div class="cards">${treasuries.map((x) => `<div class="card"><div class="card-name">${esc(x.treasuryName)}</div>${row(t("invoicesCount"), x.invoicesCount)}${row(t("totalSales"), fmt(x.totalSales))}</div>`).join("")}</div>`) : ""}
 ${returns.length ? section(t("returns"), `<div class="cards">${returns.map((x) => `<div class="card"><div class="card-name">${esc(x.treasuryName)}</div>${row(t("totalReturns"), fmt(x.totalReturns))}</div>`).join("")}</div>`) : ""}
 ${returns.length || (o.withVouchers && treasuries.some((x) => (x.paymentCount ?? 0) > 0)) ? section(`${t("netSection")} (${t("sales")} - ${t("returns")})`, `<div class="cards">${treasuries.map((x) => `<div class="card"><div class="card-name">${esc(x.treasuryName)}</div>${row(t("netSales"), fmt(x.netTotal))}${o.withVouchers ? row(t("voucherCount"), x.paymentCount ?? "—") + row(t("voucherTotal"), fmt(x.paymentTotal)) + row(t("treasuryNet"), fmt(x.paymentTotal == null ? null : x.netTotal + x.paymentTotal)) : ""}</div>`).join("")}</div>`) : ""}
-${o.byEmployee && (r.employeeSalesSummary?.length ?? 0) > 0 ? section(t("employeeDaily"), `<div class="cards">${(r.employeeSalesSummary ?? []).map((e) => `<div class="card"><div class="emp-head"><span>${esc(e.employeeName || "—")} (${esc(e.salesInvoicesCount)} ${t("orders")})</span><strong>${t("net")} ${fmt(e.netSales)}</strong></div>${row(`${t("totalReturns")} (${e.returnInvoicesCount ?? 0} ${t("returnsUnit")})`, fmt(e.totalReturns))}</div>`).join("")}</div>`) : ""}
-${(r.totalExpenses ?? 0) > 0 || (r.totalPurchases ?? 0) > 0 ? section(t("purchasesExpenses"), `<div class="cards two"><div class="card card-center"><span class="meta-label">${t("totalPurchases")}</span><strong>${fmt(r.totalPurchases)}</strong></div><div class="card card-center"><span class="meta-label">${t("totalExpenses")}</span><strong>${fmt(r.totalExpenses)}</strong></div></div>`) : ""}`
+${o.byEmployee && (r.employeeSalesSummary?.length ?? 0) > 0 ? section(t("employeeDaily"), `<div class="cards">${(r.employeeSalesSummary ?? []).map((e) => `<div class="card"><div class="emp-head"><span>${esc(e.employeeName || "—")} (${esc(e.salesInvoicesCount)} ${t("orders")})</span><strong>${t("net")} ${fmt(e.netSales)}</strong></div>${o.showReturns ? row(`${t("totalReturns")} (${e.returnInvoicesCount ?? 0} ${t("returnsUnit")})`, fmt(e.totalReturns)) : ""}</div>`).join("")}</div>`) : ""}
+${(o.showExpenses && (r.totalExpenses ?? 0) > 0) || (r.totalPurchases ?? 0) > 0 ? section(t("purchasesExpenses"), `<div class="cards two"><div class="card card-center"><span class="meta-label">${t("totalPurchases")}</span><strong>${fmt(r.totalPurchases)}</strong></div>${o.showExpenses ? `<div class="card card-center"><span class="meta-label">${t("totalExpenses")}</span><strong>${fmt(r.totalExpenses)}</strong></div>` : ""}</div>`) : ""}`
 
   // thead/tfoot repeat on every printed page, so each page (not just the first) gets top and bottom padding even with browser margins = None.
   const body = `<table class="sheet"><thead><tr><td><div class="sheet-gap"></div></td></tr></thead><tfoot><tr><td><div class="sheet-gap"></div></td></tr></tfoot><tbody><tr><td>${content}</td></tr></tbody></table>`

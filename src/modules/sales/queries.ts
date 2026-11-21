@@ -54,18 +54,6 @@ export function useRecordPayment() {
   })
 }
 
-export function useUpdatePayment() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: ({ paymentId, amount }: { paymentId: number; amount: number }) => invoicesApi.updatePayment(paymentId, amount),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: salesKeys.all })
-      toast.success(i18n.t("sales.receiptUpdated"))
-    },
-    onError: (e) => errorToast(e, "common.saveFailed"),
-  })
-}
-
 export function useDeletePayment() {
   const qc = useQueryClient()
   return useMutation({

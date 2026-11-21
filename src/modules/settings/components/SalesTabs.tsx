@@ -49,6 +49,7 @@ export function ShiftsFields({ form: { control } }: FieldsProps) {
     <Grid>
       <Flag control={control} name="shiftsTab.enableShiftStatement" />
       <Flag control={control} name="shiftsTab.showReturnsInShiftPrint" />
+      <Flag control={control} name="shiftsTab.showExpensesInShiftReport" />
     </Grid>
   )
 }

@@ -1,10 +1,11 @@
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { UserPlus } from "lucide-react"
+import { Info, UserPlus } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Switch } from "@/components/ui/switch"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Dialog, DialogBody, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { FormInput, FormSelect } from "@/components/form/FormFields"
 import { useSession } from "@/shared/session/session"
@@ -49,23 +50,27 @@ export function UserDialog({ open, onOpenChange, user }: { open: boolean; onOpen
             <FormInput control={c} name="userName" required label={t("oldUsers.userName")} placeholder={t("oldUsers.userNameHint")} />
             <FormInput control={c} name="mobile" label={t("oldUsers.mobile")} placeholder={t("oldUsers.mobileExample")} />
             <FormInput control={c} name="email" required label={t("oldUsers.email")} placeholder="example@email.com" />
-            <FormSelect control={c} name="branchId" numeric required label={t("oldUsers.branch")} placeholder={t("oldUsers.chooseBranch")}
-              options={branches.map((b) => ({ value: String(b.id), label: b.name || String(b.id) }))} />
+            <div className="flex items-end gap-2">
+              <div className="min-w-0 flex-1">
+                <FormSelect control={c} name="branchId" numeric required label={t("oldUsers.branch")} placeholder={t("oldUsers.chooseBranch")}
+                  options={branches.map((b) => ({ value: String(b.id), label: b.name || String(b.id) }))} />
+              </div>
+              <TooltipProvider>
+                <label htmlFor="user-multi-branch" className="flex h-10 shrink-0 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-3 text-sm font-medium">
+                  <Switch id="user-multi-branch" size="sm" checked={multi === true} onCheckedChange={(v) => form.setValue("isMultiBranch", v === true)} />
+                  <span className="whitespace-nowrap">{t("oldUsers.multiBranch")}</span>
+                  <Tooltip>
+                    <TooltipTrigger asChild><Info size={14} className="text-muted-foreground" /></TooltipTrigger>
+                    <TooltipContent>{t("oldUsers.multiBranchHint")}</TooltipContent>
+                  </Tooltip>
+                </label>
+              </TooltipProvider>
+            </div>
             <div className={`grid grid-cols-1 gap-4 sm:col-span-2 ${user ? "" : "sm:grid-cols-3"}`}>
               <FormSelect control={c} name="roleName" required label={t("oldUsers.permission")} placeholder={t("oldUsers.choosePermission")}
                 options={roles.map((r) => ({ value: r, label: r }))} />
               {!user && <FormInput control={c} name="password" type="password" required label={t("oldUsers.password")} placeholder={t("oldUsers.passwordHint")} />}
               {!user && <FormInput control={c} name="confirmPassword" type="password" required label={t("oldUsers.confirmPassword")} placeholder={t("oldUsers.rewritePassword")} />}
-            </div>
-
-            <div className="rounded-lg border border-border p-3 sm:col-span-2">
-              <div className="flex items-start gap-3">
-                <Checkbox id="user-multi-branch" className="mt-0.5" checked={multi === true} onCheckedChange={(v) => form.setValue("isMultiBranch", v === true)} />
-                <div className="space-y-1">
-                  <label htmlFor="user-multi-branch" className="cursor-pointer text-sm font-medium">{t("oldUsers.multiBranch")}</label>
-                  <p className="text-xs text-muted-foreground">{t("oldUsers.multiBranchHint")}</p>
-                </div>
-              </div>
             </div>
           </form>
         </DialogBody>

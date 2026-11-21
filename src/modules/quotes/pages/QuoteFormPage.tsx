@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next"
 import { List, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import { DatePicker } from "@/components/ui/date-picker"
 import { GlobalDiscountField } from "@/modules/sales/components/GlobalDiscountField"
 import { FormInput, FormSelect } from "@/components/form/FormFields"
 import { BalanceBox } from "@/components/BalanceBox"
@@ -90,7 +90,7 @@ export default function QuoteFormPage() {
             <Controller control={form.control} name="date" render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="q-date">{t("common.date")}<span className="text-destructive">*</span></FieldLabel>
-                <Input id="q-date" type="date" {...field} />
+                <DatePicker id="q-date" value={field.value} onChange={field.onChange} onBlur={field.onBlur} aria-invalid={fieldState.invalid} />
               </Field>
             )} />
             <div>

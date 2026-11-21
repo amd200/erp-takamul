@@ -4,7 +4,7 @@ import { BarChart3, DollarSign, FileText, RotateCcw, Search } from "lucide-react
 import { useTranslation } from "react-i18next"
 import type { Column } from "@/components/DataTable"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { DatePicker } from "@/components/ui/date-picker"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { currentBranchId } from "@/shared/auth/currentBranchId"
@@ -75,8 +75,8 @@ export default function NetSalesReport() {
     <ReportShell title={title} icon={FileText} onPrint={exportWith(printReport)} onExcel={exportWith(excelReport)} pdfBusy={busy} onPdf={exportWith(pdfReport)}>
       <SummaryCards cards={cards} />
       <form onSubmit={(e) => { e.preventDefault(); search() }} className="grid grid-cols-1 items-end gap-4 rounded-xl border border-slate-200/80 bg-slate-50/50 p-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] lg:p-5 dark:bg-slate-900/40">
-        <div className="grid min-w-0 gap-2"><Label className="text-xs font-semibold text-slate-500">{t("oldReports.from_date")}</Label><Input type="date" className="h-11" value={filters.from} onChange={(e) => setFilters((p) => ({ ...p, from: e.target.value }))} /></div>
-        <div className="grid min-w-0 gap-2"><Label className="text-xs font-semibold text-slate-500">{t("oldReports.to_date")}</Label><Input type="date" className="h-11" value={filters.to} onChange={(e) => setFilters((p) => ({ ...p, to: e.target.value }))} /></div>
+        <div className="grid min-w-0 gap-2"><Label className="text-xs font-semibold text-slate-500">{t("oldReports.from_date")}</Label><DatePicker className="h-11" value={filters.from} onChange={(v) => setFilters((p) => ({ ...p, from: v }))} /></div>
+        <div className="grid min-w-0 gap-2"><Label className="text-xs font-semibold text-slate-500">{t("oldReports.to_date")}</Label><DatePicker className="h-11" value={filters.to} onChange={(v) => setFilters((p) => ({ ...p, to: v }))} /></div>
         <div className="grid min-w-0 gap-2">
           <Label className="text-xs font-semibold text-slate-500">{t("oldReports.document_type")}</Label>
           <Select value={filters.type} onValueChange={(v) => setFilters((p) => ({ ...p, type: v as DocType }))}>

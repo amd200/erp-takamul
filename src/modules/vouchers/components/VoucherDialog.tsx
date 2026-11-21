@@ -9,6 +9,7 @@ import { EmbeddedDialog } from "@/components/EmbeddedDialog"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Field, FieldLabel } from "@/components/ui/field"
+import { DatePicker } from "@/components/ui/date-picker"
 import { Input } from "@/components/ui/input"
 import { FormSelect } from "@/components/form/FormFields"
 import { useCustomerList } from "@/modules/customers/queries"
@@ -74,7 +75,7 @@ export function VoucherDialog({ kind, open, onOpenChange, embedded = false, cust
           {formBranch.show && <BranchSection value={formBranch.branchId} onChange={formBranch.pick} />}
           <div className="grid min-h-[76px] grid-cols-2 items-start gap-3">
             <Controller control={form.control} name="date" render={({ field }) => (
-              <Field><FieldLabel htmlFor="v-date">{t("common.date")}</FieldLabel><Input id="v-date" type="date" className="h-9" {...field} /></Field>
+              <Field><FieldLabel htmlFor="v-date">{t("common.date")}</FieldLabel><DatePicker id="v-date" value={field.value} onChange={field.onChange} onBlur={field.onBlur} className="h-9" /></Field>
             )} />
             <FormSelect control={form.control} name="treasuryId" numeric label={t("sales.treasury")} placeholder={t("vouchers.selectTreasury")}
               options={treasuries.map((x) => ({ value: String(x.id), label: x.name }))} />

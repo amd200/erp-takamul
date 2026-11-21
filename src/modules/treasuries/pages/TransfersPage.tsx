@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import { DatePicker } from "@/components/ui/date-picker"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { DataTable, type Column } from "@/components/DataTable"
 import { useTableSort } from "@/components/useTableSort"
@@ -49,7 +49,7 @@ function TransferDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (
               <div className="grid grid-cols-2 gap-3">
                 <FormInput control={form.control} name="amount" type="number" required label={t("sales.amount")} />
                 <Controller control={form.control} name="date" render={({ field }) => (
-                  <Field><FieldLabel htmlFor="tr-date">{t("common.date")}</FieldLabel><Input id="tr-date" type="date" className="h-10" {...field} /></Field>
+                  <Field><FieldLabel htmlFor="tr-date">{t("common.date")}</FieldLabel><DatePicker id="tr-date" value={field.value} onChange={field.onChange} onBlur={field.onBlur} /></Field>
                 )} />
               </div>
               {over && <p className="text-sm text-destructive">{t("treasuries.errors.insufficient")}</p>}
