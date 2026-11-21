@@ -51,8 +51,8 @@ export function SupplierDialog({ open, onOpenChange, supplier, onSaved }: { open
 
               {!nameAndPhoneOnly && (
                 <>
-                  <div className="col-span-full grid grid-cols-2 gap-3 sm:grid-cols-[minmax(0,0.5fr)_repeat(4,minmax(0,1fr))]">
-                    <FormInput control={c} name="countryName" label={t("custDialog.country")} disabled />
+                  <div className="col-span-full grid grid-cols-2 gap-3 sm:grid-cols-[60px_minmax(0,0.7fr)_minmax(0,0.7fr)_minmax(0,1fr)_minmax(0,1.6fr)]">
+                    <FormInput control={c} name="countryName" label={t("custDialog.country")} disabled inputClassName="text-center px-1" />
                     <FormInput control={c} name="stateName" label={t("custDialog.region")} />
                     <FormInput control={c} name="cityName" label={t("custDialog.city")} />
                     <FormInput control={c} name="district" label={t("custDialog.district")} />
