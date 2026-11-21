@@ -133,7 +133,7 @@
   --table-header-text: #98a1b8;
   --table-header-border: #242d49;
   --table-row-hover: #1d2540;
-  --brand-navy: #000052;
+  --brand-navy: var(--sidebar);
 }
 
 /* The salon (beauty) theme: warm rose over blush, as in the previous system. Switched on for the sales screens
