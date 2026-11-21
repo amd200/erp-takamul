@@ -114,7 +114,7 @@ export function BarcodeUnitFields() {
     <>
       {rules.ownBarcodeAndPrice && (
         <FormInput control={control} name="barcode" dir="ltr" required label={t("productForm.barcode")} placeholder={t("productForm.barcodeHint")}
-          end={<Button type="button" variant="outline" size="icon-lg" aria-label={t("products.generate")} className="shrink-0" onClick={() => setValue("barcode", randomBarcode(), { shouldValidate: true })}><Barcode size={16} /></Button>} />
+          end={<Button type="button" size="icon-lg" className="shrink-0 border-success/30 bg-success-soft text-success hover:bg-success/20 hover:text-success" aria-label={t("products.generate")} title={t("products.generate")} onClick={() => setValue("barcode", randomBarcode(), { shouldValidate: true })}><Barcode size={16} /></Button>} />
       )}
       {type !== "Branched" && <FormSelect control={control} name="baseUnitId" numeric required label={t("productForm.unit")} placeholder={t("productForm.pickUnit")} options={unitOptions} />}
       {rules.holdsStock && (

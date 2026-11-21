@@ -133,7 +133,7 @@ export function DeviceWizard({ open, onOpenChange, device }: { open: boolean; on
                   <FormSelect control={form.control} name="branchId" numeric required label={t("users.branch")} options={branches.map((b) => ({ value: String(b.id), label: b.name ?? "" }))} />
                   <FormInput control={form.control} name="serialNumber" required label={t("devices.serial")} dir="ltr" disabled={locked}
                     description={locked ? t("devices.lockedAfterCsr") : undefined}
-                    end={!locked && <Button type="button" variant="outline" size="icon-lg" aria-label={t("devices.newSerial")}
+                    end={!locked && <Button type="button" size="icon-lg" className="shrink-0 border-success/30 bg-success-soft text-success hover:bg-success/20 hover:text-success" aria-label={t("devices.newSerial")} title={t("devices.newSerial")}
                       onClick={() => devicesApi.generateSerial().then((s) => form.setValue("serialNumber", s, { shouldValidate: true }))}><Wand2 /></Button>} />
                   <FormInput control={form.control} name="invoiceSequence" required label={t("devices.sequence")} dir="ltr" placeholder="CAI-3" description={t("devices.sequenceHint")} />
                 </div>

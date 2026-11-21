@@ -1,6 +1,7 @@
 import type { ReactNode } from "react"
 import { useFormContext, useWatch } from "react-hook-form"
 import { useTranslation } from "react-i18next"
+import { Barcode } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { FormInput, FormSelect } from "@/components/form/FormFields"
 import { SectionCard } from "@/components/SectionCard"
@@ -35,7 +36,7 @@ export function BasicInfoSection({ branchField }: { branchField?: ReactNode }) {
         {rules.ownBarcodeAndPrice ? (
           <div className="grid gap-4 sm:col-span-2 lg:grid-cols-3">
             <FormInput control={control} name="barcode" label={t("products.barcode")} dir="ltr" required
-              end={<Button type="button" variant="outline" onClick={() => setValue("barcode", randomBarcode(), { shouldValidate: true })}>{t("products.generate")}</Button>} />
+              end={<Button type="button" size="icon-lg" className="shrink-0 border-success/30 bg-success-soft text-success hover:bg-success/20 hover:text-success" aria-label={t("products.generate")} title={t("products.generate")} onClick={() => setValue("barcode", randomBarcode(), { shouldValidate: true })}><Barcode size={16} /></Button>} />
             {category}
             <FormInput control={control} name="description" label={t("common.description")} placeholder={t("common.optional")} />
           </div>
