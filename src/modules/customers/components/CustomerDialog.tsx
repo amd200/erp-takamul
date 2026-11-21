@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Controller, FormProvider, useForm, useWatch } from "react-hook-form"
+import { FormProvider, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQueryClient } from "@tanstack/react-query"
 import { ChevronDown, ChevronUp, UserPlus } from "lucide-react"
@@ -8,9 +8,9 @@ import { cn } from "@/lib/utils"
 import { EmbeddedDialog } from "@/components/EmbeddedDialog"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Switch } from "@/components/ui/switch"
 import { FormInput } from "@/components/form/FormFields"
 import { useAppSettings } from "@/modules/settings"
+import { PartyAddressFields } from "@/modules/partners/components/PartyAddressFields"
 import { BranchSection } from "@/modules/branches/BranchSection"
 import { useFormBranch } from "@/modules/branches/useFormBranch"
 import { customersApi } from "../service"
@@ -47,7 +47,6 @@ export function CustomerDialog({ open, onOpenChange, customer, onCreated, withMe
   const qc = useQueryClient()
   const save = useSaveCustomer()
   const form = useForm<CustomerForm>({ resolver: zodResolver(customerSchema), defaultValues: emptyCustomer })
-  const national = useWatch({ control: form.control, name: "isNational" })
   // With the name-and-phone setting only those two show.
   const nameAndPhoneOnly = useAppSettings().customersTab?.showCustomerNameAndPhoneOnlyInQuotations === true
   const [showFull, setShowFull] = useState(false)
@@ -100,29 +99,7 @@ export function CustomerDialog({ open, onOpenChange, customer, onCreated, withMe
 
               {!hideDetails && (
                 <>
-                  <div className="col-span-full grid grid-cols-2 gap-3 sm:grid-cols-[60px_minmax(0,0.7fr)_minmax(0,0.7fr)_minmax(0,1fr)_minmax(0,1.6fr)]">
-                    <FormInput control={c} name="countryName" label={t("custDialog.country")} disabled inputClassName="text-center px-1" />
-                    <FormInput control={c} name="stateName" label={t("custDialog.region")} />
-                    <FormInput control={c} name="cityName" label={t("custDialog.city")} />
-                    <FormInput control={c} name="district" label={t("custDialog.district")} />
-                    <FormInput control={c} name="street" label={t("custDialog.street")} />
-                  </div>
-
-                  <div className="rounded-lg border border-border p-4 col-span-full">
-                    <div className="flex items-center justify-between gap-4">
-                      <h3 className="text-sm font-bold text-foreground">{t("custDialog.nationalAddress")}</h3>
-                      <Controller control={c} name="isNational" render={({ field }) => <Switch className="shrink-0 cursor-pointer" checked={field.value} onCheckedChange={field.onChange} />} />
-                    </div>
-                    {national && (
-                      <div className="mt-4 grid grid-cols-1 gap-3 border-t border-border pt-4 sm:grid-cols-3">
-                        <FormInput control={c} name="taxNumber" required label={t("custDialog.taxNumber")} dir="ltr" />
-                        <FormInput control={c} name="commercialRegister" required label={t("custDialog.commercialRegister")} dir="ltr" />
-                        <FormInput control={c} name="additionalNumber" required label={t("custDialog.additionalNumber")} />
-                        <FormInput control={c} name="buildingNumber" required label={t("custDialog.buildingNumber")} />
-                        <FormInput control={c} name="postalCode" required label={t("custDialog.postalCode")} />
-                      </div>
-                    )}
-                  </div>
+                  <PartyAddressFields control={c} />
                 </>
               )}
 
