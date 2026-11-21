@@ -11,7 +11,7 @@ import { useAppSettings } from "@/modules/settings"
 import { BranchSection } from "@/modules/branches/BranchSection"
 import { useFormBranch } from "@/modules/branches/useFormBranch"
 import { useSaveSupplier } from "../queries"
-import { emptySupplier, supplierSchema, type SupplierForm } from "../schema"
+import { COUNTRY_CODE, emptySupplier, supplierSchema, type SupplierForm } from "../schema"
 import type { Supplier } from "../types"
 
 /**
@@ -29,7 +29,7 @@ export function SupplierDialog({ open, onOpenChange, supplier, onSaved }: { open
   // The purchase screen adds to the branch it is working on; only the suppliers list picks one.
   const formBranch = useFormBranch(open && !editing && !onSaved)
 
-  useEffect(() => { if (open) form.reset(supplier ? { ...emptySupplier, ...supplier } : emptySupplier) }, [open, supplier, form])
+  useEffect(() => { if (open) form.reset(supplier ? { ...emptySupplier, ...supplier, countryName: COUNTRY_CODE } : emptySupplier) }, [open, supplier, form])
 
   const submit = form.handleSubmit((data) => save.mutate({ id: supplier?.id, data }, { onSuccess: (saved) => { onOpenChange(false); onSaved?.(saved) } }))
   const c = form.control

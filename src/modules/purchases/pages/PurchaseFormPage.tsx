@@ -103,8 +103,10 @@ export default function PurchaseFormPage() {
   const supplier = supplierList.find((x) => x.id === supplierId)
   const addPayment = () => payments.append({ amount: remaining, method: "Cash", treasuryId: pickTreasury(treasuries, defaultVault)?.id ?? 0, notes: "" })
 
-  // Date, party (and branch / warehouse when shown) in equal columns, notes taking the rest of the row.
-  const topCols: Record<number, string> = { 2: "lg:grid-cols-[repeat(2,minmax(0,1fr))_minmax(0,2fr)]", 3: "lg:grid-cols-[repeat(3,minmax(0,1fr))_minmax(0,2fr)]", 4: "lg:grid-cols-[repeat(4,minmax(0,1fr))_minmax(0,2fr)]" }
+  // Date, a wider supplier column (branch / warehouse when shown), notes taking the rest of the row.
+  const topCols = (branch: boolean, wh: boolean) => branch
+    ? (wh ? "lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,2fr)_minmax(0,1fr)_minmax(0,2fr)]" : "lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,2fr)_minmax(0,2fr)]")
+    : (wh ? "lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_minmax(0,1fr)_minmax(0,2fr)]" : "lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_minmax(0,2fr)]")
   // Laid out as in the current system: basic data, invoice details, payments beside the summary, then one box with the two buttons.
   return (
     <FormProvider {...form}>
@@ -113,7 +115,7 @@ export default function PurchaseFormPage() {
           actions={<Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/5 hover:text-primary"><Link to="/purchases"><List />{t("purchases.backToPurchases")}</Link></Button>} />
 
         <SectionCard title={t("sales.basics")}>
-          <div className={`grid grid-cols-1 items-start gap-6 sm:grid-cols-2 ${topCols[2 + (formBranch.show ? 1 : 0) + (warehouses.length > 1 ? 1 : 0)]}`}>
+          <div className={`grid grid-cols-1 items-start gap-6 sm:grid-cols-2 ${topCols(formBranch.show, warehouses.length > 1)}`}>
             {formBranch.show && <BranchSection plain value={formBranch.branchId} onChange={changeBranch} />}
             <Controller control={form.control} name="date" render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>

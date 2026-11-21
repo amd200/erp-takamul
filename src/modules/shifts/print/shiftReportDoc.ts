@@ -32,7 +32,7 @@ const row = (label: string, value: string | number, strong = "") => `<div class=
 const section = (title: string, content: string) => `<section class="section"><h2 class="section-title">${esc(title)}</h2>${content}</section>`
 
 /** The shift statement as the old system prints it: a header, the start/end box, the sold items, the totals, then a card per treasury / employee. */
-export function shiftReportClassicDoc(r: ShiftReport, o: Opts): PrintDoc {
+export function shiftReportDoc(r: ShiftReport, o: Opts): PrintDoc {
   const t = (k: string) => i18n.t(`shiftOld.${k}`)
   const clock = (v: string | null | undefined) => (v ? formatClock(v, i18n.language) : "---")
   const treasuries = r.treasuries ?? []

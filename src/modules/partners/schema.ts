@@ -1,5 +1,8 @@
 import { z } from "zod"
 
+/** The country field is read-only and always the ISO code. */
+export const COUNTRY_CODE = "SA"
+
 /** Customer / supplier fields with the same names on the server. A Saudi party with a VAT number must have a valid one and a full national address. */
 export const partyShape = {
   phone: z.string().trim().regex(/^\d*$/, "validation.digitsOnly").nullish(),

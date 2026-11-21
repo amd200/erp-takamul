@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { partyShape, refineParty } from "@/modules/partners/schema"
+import { COUNTRY_CODE, partyShape, refineParty } from "@/modules/partners/schema"
 
 /** The add / edit form holds the server's own field names (CreateSupplierDto / UpdateSupplierDto). */
 export const supplierSchema = z
@@ -20,7 +20,7 @@ export const emptySupplier: SupplierForm = {
   isNational: true,
   taxNumber: "",
   commercialRegister: "",
-  countryName: "السعودية",
+  countryName: COUNTRY_CODE,
   stateName: "",
   cityName: "",
   district: "",

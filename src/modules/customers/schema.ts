@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { partyShape, refineParty } from "@/modules/partners/schema"
+import { COUNTRY_CODE, partyShape, refineParty } from "@/modules/partners/schema"
 import { EYE_FIELDS, type Companion, type Measurement } from "./types"
 
 export const emptyMeasurement: Measurement = Object.fromEntries(EYE_FIELDS.map((k) => [k, ""])) as Measurement
@@ -22,10 +22,7 @@ export const customerSchema = z.object({
 }).superRefine(refineParty)
 export type CustomerForm = z.infer<typeof customerSchema>
 
-export { openingBalanceSchema, type OpeningBalanceForm } from "@/modules/partners/schema"
-
-/** The country field is read-only and always the ISO code. */
-export const COUNTRY_CODE = "SA"
+export { COUNTRY_CODE, openingBalanceSchema, type OpeningBalanceForm } from "@/modules/partners/schema"
 
 export const emptyCustomer: CustomerForm = {
   customerName: "", phone: "", address: "", isNational: true, taxNumber: "", commercialRegister: "",
