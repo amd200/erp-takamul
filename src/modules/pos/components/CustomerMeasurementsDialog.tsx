@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { eyeText } from "@/modules/customers/form"
+import { eyeText } from "@/modules/customers/eye"
 import { Eye } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { EmbeddedDialog } from "@/components/EmbeddedDialog"

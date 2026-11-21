@@ -12,8 +12,8 @@ export const newBuyKey = () => `b${Date.now().toString(36)}${(seq++).toString(36
  * The unit cost that makes a line come to `total` with its tax on top. Kept at full precision (as the current
  * system does) so the line total is exactly what was typed; screens only show it with two decimals.
  */
-export function costFromTotal(total: number, quantity: number, taxRate: number) {
-  return quantity > 0 ? total / (1 + taxRate / 100) / quantity : 0
+export function costFromTotal(total: number, quantity: number, taxPercentage: number) {
+  return quantity > 0 ? total / (1 + taxPercentage / 100) / quantity : 0
 }
 
 /**

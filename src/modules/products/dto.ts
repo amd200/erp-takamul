@@ -1,8 +1,6 @@
 /**
- * Shapes the server sends for items (see ProductsController). Enums may arrive as names or
- * numbers depending on the endpoint, so the mapper accepts both.
+ * Shapes the server sends for items (see ProductsController). `taxCalculation` is a number there; `productType` an enum name.
  */
-type Enumish = string | number | null | undefined
 import type { ProductType } from "./types"
 
 export type UnitDto = {
@@ -26,6 +24,7 @@ type Common = {
   balance?: number | null
   imageUrl?: string | null
   printerName?: string | null
+  baseUnitId?: number | null
 }
 
 /** GET /Products and GET /Products/{id}. */
@@ -37,7 +36,7 @@ export type ProductDto = Common & {
   priceBeforeTax?: number | null
   priceAfterTax?: number | null
   taxId?: number | null
-  taxCalculation?: Enumish
+  taxCalculation?: number | null
   taxExemptionReasonId?: number | null
   taxPercentage?: number | null
   /** Set on the items a branched item groups. */
@@ -56,7 +55,6 @@ export type RawMaterialDto = Common & {
   costPrice?: number | null; baseUnitId?: number | null; purchaseUnitId?: number | null; conversionFactor?: number | null; minStockLevel?: number | null
 }
 export type BranchedProductDto = Common & {
-  baseUnit?: number | null
   children?: { id: number; productCode?: number; productNameAr: string; productNameEn?: string | null; barcode?: string | null; costPrice?: number | null; sellingPrice?: number | null }[] | null
 }
 

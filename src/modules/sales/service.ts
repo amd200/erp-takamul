@@ -7,9 +7,11 @@ import { lineAmounts } from "./totals"
 import type { InvoicePaymentItem, DebitNoteDto, DebitNoteInput, InvoiceInput, InvoiceLine, Payment, ReturnInput, SalesOrderDto, SalesOrderRow, SalesReturnDto, InvoiceQuery } from "./types"
 
 
+// The server takes the unit price before tax and a flat discount per unit, as the POS sends them.
 const itemBody = (l: InvoiceLine) => ({
-  productId: l.productId, unitId: l.unitId, quantity: l.quantity, unitPrice: l.unitPrice,
-  discountValue: l.discountKind === "value" ? l.discount : 0, discountPercentage: l.discountKind === "percent" ? l.discount : 0,
+  productId: l.productId, unitId: l.unitId, quantity: l.quantity,
+  unitPrice: l.taxCalculation === 1 ? Math.round((l.unitPrice / (1 + l.taxPercentage / 100)) * 10000) / 10000 : l.unitPrice,
+  discountValue: l.discountKind === "value" && l.quantity > 0 ? l.discount / l.quantity : 0, discountPercentage: l.discountKind === "percent" ? l.discount : 0,
 })
 
 export const invoicesApi = {
@@ -20,7 +22,7 @@ export const invoicesApi = {
   /** Recent invoices of both kinds, for the screens that pick one (returns, debit notes). */
   list: async (): Promise<SalesOrderRow[]> => {
     const [a4, pos] = await Promise.all((["A4", "POS"] as const).map(async (channel) => (await invoicesApi.page({ page: 1, pageSize: 100, channel })).items.map((d) => ({ ...d, channel }))))
-    return [...a4, ...pos].sort((a, b) => (b.orderDate ?? "").localeCompare(a.orderDate ?? ""))
+    return [...a4, ...pos]
   },
   get: (id: number) => http<SalesOrderDto>(`/sales-orders/${id}`),
 
@@ -28,7 +30,7 @@ export const invoicesApi = {
     method: "POST",
     headers: idempotencyHeaders(idempotencyKey),
     data: {
-      customerId: input.customerId, warehouseId: input.warehouseId, employeeId: input.employeeId, notes: input.notes || null, orderDate: input.date,
+      customerId: input.customerId, warehouseId: input.warehouseId, notes: input.notes || null, orderDate: input.date,
       globalDiscountValue: input.globalDiscountKind === "value" ? input.globalDiscount : 0, globalDiscountPercentage: input.globalDiscountKind === "percent" ? input.globalDiscount : 0,
       isHolding: false, holdingOrderId: 0,
       items: input.lines.map(itemBody),
@@ -55,8 +57,7 @@ export const invoicesApi = {
 /** The warehouse a return goes back to is the invoice's; older answers only name it, so the name is matched. */
 async function warehouseIdOf(order: SalesOrderDto) {
   if (order.warehouseId) return order.warehouseId
-  const res = await http<{ id: number; warehouseName?: string | null }[] | { data?: { id: number; warehouseName?: string | null }[] }>("/Warehouse")
-  const rows = Array.isArray(res) ? res : res.data ?? []
+  const rows = await http<{ id: number; warehouseName?: string | null }[]>("/Warehouse")
   return rows.find((w) => w.warehouseName === order.warehouseName)?.id ?? 0
 }
 

@@ -116,7 +116,7 @@ export function invoiceA5Doc(inv: PrintInvoice, o: InvoiceA5Options): PrintDoc {
   const paid = inv.paid
   const remaining = (o.previousBalance ?? 0) + t.grandTotal - paid
   const totalQty = lines.reduce((s, { l }) => s + l.quantity, 0)
-  const paymentNames = [...new Set(inv.payments.map((p) => o.methodLabel(p.method)))].join(" + ")
+  const paymentNames = [...new Set(inv.payments.map((p) => o.methodLabel(p.paymentMethod ?? "")))].join(" + ")
   const d = new Date(inv.date)
   const dateText = Number.isNaN(d.getTime()) ? clean(inv.date) : d.toLocaleDateString("en-GB")
   const seller = clean(inv.employeeName) || clean(inv.createdBy)
@@ -127,7 +127,7 @@ export function invoiceA5Doc(inv: PrintInvoice, o: InvoiceA5Options): PrintDoc {
   const rows = lines.map(({ l, total }, i) => {
     const qty = l.quantity
     const unit = qty ? total / qty : l.unitPrice
-    return `<tr><td>${i + 1}</td><td class="barcode"><span dir="ltr">${esc(o.barcodes.get(l.productId) ?? "")}</span></td><td class="name">${esc(l.name)}</td><td class="unit">${esc(l.unitName)}</td><td>${plain(qty)}</td><td>${plain(unit)}</td><td>${n2(total)}</td></tr>`
+    return `<tr><td>${i + 1}</td><td class="barcode"><span dir="ltr">${esc(o.barcodes.get(l.productId) ?? "")}</span></td><td class="name">${esc(l.productName)}</td><td class="unit">${esc(l.unitName)}</td><td>${plain(qty)}</td><td>${plain(unit)}</td><td>${n2(total)}</td></tr>`
   }).join("")
 
   const info = [

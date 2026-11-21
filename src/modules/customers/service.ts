@@ -1,26 +1,22 @@
 import type { ListSort } from "@/shared/api/errors"
 import { http } from "@/shared/http/request"
 import { fetchAllPages } from "@/shared/http/paged"
-import { currentBranchId, partyToBody } from "@/modules/partners/mappers"
-import { EYE_FIELDS, TEXT_EYE_FIELDS, type Customer, type CustomerInput, type Measurement } from "./types"
-
-// The server stores the measurements as numbers; an empty or unreadable box is sent as null.
-const eyeToBody = (m: Measurement) => Object.fromEntries(EYE_FIELDS.map((k) => {
-  if (TEXT_EYE_FIELDS.includes(k)) return [k, m[k].trim() || null]
-  const n = m[k].trim() === "" ? NaN : Number(m[k])
-  return [k, Number.isFinite(n) ? n : null]
-}))
-
-// The server has no customer e-mail or active flag; deleting is what deactivates.
-const body = (c: CustomerInput) => ({
-  customerName: c.name, ...partyToBody(c), fileNumber: c.fileNumber.trim() || null, ...eyeToBody(c),
-  companions: c.companions.map((k) => ({ ...(k.id ? { id: k.id } : {}), name: k.name, phone: k.phone.trim() || null, ...eyeToBody(k) })),
-})
+import { currentBranchId } from "@/shared/auth/currentBranchId"
+import type { CustomerForm, OpeningBalanceForm } from "./schema"
+import type { Customer } from "./types"
 
 export const customersApi = {
   list: (sort?: ListSort) => fetchAllPages<Customer>("/Customer", { pageSize: 100, params: { ...sort } }),
   get: (id: number) => http<Customer>(`/Customer/${id}`),
-  create: (data: CustomerInput) => http<unknown>("/Customer", { method: "POST", data: { ...body(data), branchId: currentBranchId() } }),
-  update: (id: number, data: CustomerInput) => http<unknown>(`/Customer/${id}`, { method: "PUT", data: body(data) }),
+  create: (data: CustomerForm) => http<unknown>("/Customer", { method: "POST", data: { ...data, branchId: currentBranchId() } }),
+  update: (id: number, data: CustomerForm) => http<unknown>(`/Customer/${id}`, { method: "PUT", data }),
+  /**
+   * The server has no opening-balance endpoint: PUT /Customer/{id} replaces the whole record, so the current one is read first and sent back
+   * with only these three fields changed. Companions are left out (the server leaves them alone when the list is missing).
+   */
+  setOpeningBalance: async (id: number, values: OpeningBalanceForm) => {
+    const { companions: _companions, ...current } = await http<Customer>(`/Customer/${id}`)
+    return http<unknown>(`/Customer/${id}`, { method: "PUT", data: { ...current, ...values } })
+  },
   remove: (id: number) => http<unknown>(`/Customer/${id}`, { method: "DELETE" }),
 }

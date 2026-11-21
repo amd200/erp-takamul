@@ -9,7 +9,7 @@ import { Field, FieldLabel } from "@/components/ui/field"
 import { EmptyState } from "@/components/EmptyState"
 import { formatMoney } from "@/lib/format"
 import { useAppSettings } from "@/modules/settings"
-import { useReturns } from "../queries"
+import { useReturn } from "../queries"
 import { usePrintReturn } from "../print/usePrintReturn"
 
 const box = "inner-box"
@@ -18,10 +18,9 @@ const box = "inner-box"
 export default function ReturnViewPage() {
   const { t } = useTranslation()
   const { id } = useParams()
-  const { data, isLoading } = useReturns()
+  const { data: r, isLoading } = useReturn(Number(id))
   const print = usePrintReturn()
   const exempt = useAppSettings().taxSetting?.taxSetting === "Exempt"
-  const r = data?.find((x) => x.id === Number(id))
 
   if (isLoading) return <div className="h-64 animate-pulse rounded-xl bg-muted" />
   if (!r) return <EmptyState icon={<Undo2 />} title={t("sales.notFound")} action={<Button asChild variant="outline"><Link to="/sales/returns">{t("viewDoc.backToReturns")}</Link></Button>} />
@@ -79,9 +78,20 @@ export default function ReturnViewPage() {
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className={`${box} lg:col-span-2`}>
-            <h2 className="mb-6 text-xl font-bold">{t("sales.refund")}</h2>
-            <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-muted/30 p-3 sm:flex-row">
-              <div className="w-full flex-1"><label className="mb-1 block text-xs text-muted-foreground">{t("viewDoc.amount")}</label><Input disabled value={r.refundedAmount ?? 0} /></div>
+            <h2 className="mb-6 text-xl font-bold">{t("sales.payments")}</h2>
+            <div className="space-y-4">
+              {/* One locked row per refund the server returns (same row as the A4 invoice); the total alone when it sends none. */}
+              {((r.payments?.length ?? 0) > 0 ? r.payments! : [{ id: 0, amount: r.refundedAmount ?? 0, treasuryName: null }]).map((p) => (
+                <div key={p.id} className="flex flex-col items-center gap-3 rounded-lg border border-border bg-muted/30 p-3 sm:flex-row">
+                  <div className="w-full flex-1">
+                    <div className="mb-1 hidden grid-cols-2 gap-3 text-xs text-muted-foreground sm:grid"><span>{t("sales.amount")}</span><span>{t("sales.treasury")}</span></div>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      <Input disabled value={p.amount} />
+                      <Input disabled value={p.treasuryName ?? ""} />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
           <div className={box}>

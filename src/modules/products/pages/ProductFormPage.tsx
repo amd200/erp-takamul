@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react"
-import { productFormOf, typeOf } from "../mappers"
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { FormProvider, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -21,7 +20,7 @@ import { StockUnitsSection } from "../components/modern/StockUnitsSection"
 import { ProductTypePicker as ModernTypePicker } from "../components/modern/ProductTypePicker"
 import { ImagePanel as SideImagePanel, OptionsPanel, PriceSummary } from "../components/modern/SidePanels"
 import { parseProductType, useProduct, useSaveProduct } from "../queries"
-import { emptyProduct, kindRules, productSchema, type ProductForm } from "../schema"
+import { emptyProduct, kindRules, productFormOf, productSchema, type ProductForm } from "../schema"
 import type { ProductType } from "../types"
 import { productKeys } from "../keys"
 
@@ -38,11 +37,11 @@ export default function ProductFormPage() {
   const save = useSaveProduct()
 
   const form = useForm<ProductForm>({ resolver: zodResolver(productSchema), defaultValues: emptyProduct() })
-  const [type, components, baseUnitId, taxId] = useWatch({ control: form.control, name: ["type", "components", "baseUnitId", "taxId"] })
+  const [type, components, baseUnitId, taxId] = useWatch({ control: form.control, name: ["productType", "components", "baseUnitId", "taxId"] })
   const rules = kindRules(type)
 
   useEffect(() => {
-    if (existing) form.reset({ ...emptyProduct(typeOf(existing.productType)), ...productFormOf(existing) })
+    if (existing) form.reset({ ...emptyProduct(existing.productType ?? "Direct"), ...productFormOf(existing) })
   }, [existing, form])
 
   // New items start on the first unit and the first tax the branch has.
@@ -53,7 +52,7 @@ export default function ProductFormPage() {
   }, [editId, units, taxes, baseUnitId, taxId, form])
 
   // The server prices the recipe: it knows each material's unit costs.
-  const valid = components.filter((c) => c.productId && c.unitId && c.quantity > 0)
+  const valid = components.filter((c) => c.componentProductId && c.unitId && c.quantity > 0)
   const { data: serverCost } = useQuery({
     queryKey: productKeys.preparedCost(valid),
     queryFn: () => productsApi.preparedCost(valid),
@@ -67,18 +66,18 @@ export default function ProductFormPage() {
   useEffect(() => {
     if (lastBranch.current === formBranch.branchId) return
     lastBranch.current = formBranch.branchId
-    const empty = emptyProduct(form.getValues("type"))
+    const empty = emptyProduct(form.getValues("productType"))
     for (const k of ["categoryId", "baseUnitId", "taxId", "taxExemptionReasonId", "purchaseUnitId", "units", "components", "children"] as const) form.setValue(k, empty[k] as never)
   }, [formBranch.branchId, form])
 
   const changeType = (next: ProductType) => {
     const keep = form.getValues()
-    form.reset({ ...emptyProduct(next), nameAr: keep.nameAr, nameEn: keep.nameEn, categoryId: keep.categoryId, description: keep.description })
+    form.reset({ ...emptyProduct(next), productNameAr: keep.productNameAr, productNameEn: keep.productNameEn, categoryId: keep.categoryId, description: keep.description })
   }
 
   // Tax rules: a tax is required, and a 0% tax needs an exemption reason.
   const checkTax = (data: ProductForm) => {
-    if (!kindRules(data.type).sells) return true
+    if (!kindRules(data.productType).sells) return true
     if (!data.taxId) form.setError("taxId", { message: "validation.taxRequired" })
     else if (taxes.find((x) => x.id === data.taxId)?.amount === 0 && !data.taxExemptionReasonId) form.setError("taxExemptionReasonId", { message: "validation.exemptionRequired" })
     else return true

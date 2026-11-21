@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react"
-import { enteredPrice, showsInSales, taxCalcOf } from "@/modules/products/mappers"
+import { enteredPrice, showsInSales, taxCalcOf } from "@/modules/products/pricing"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { useCategories } from "@/modules/categories/queries"
 import { useDebounced } from "@/modules/products/lookup"
@@ -35,8 +35,8 @@ export function useSellLine() {
   return useCallback((p: Product, opts: { unitId?: number; price?: number; name?: string } = {}): SellLine => {
     const unitId = opts.unitId ?? p.baseUnitId ?? 0
     return {
-      productId: p.id, unitId, name: opts.name ?? p.productNameAr, unitName: unitName(unitId), quantity: 1, unitPrice: opts.price ?? enteredPrice(p),
-      taxRate: rateOf(p), taxCalculation: taxCalcOf(p), discountKind: "value", discount: 0, imageUrl: p.imageUrl ?? null,
+      productId: p.id, unitId, productName: opts.name ?? p.productNameAr, unitName: unitName(unitId), quantity: 1, unitPrice: opts.price ?? enteredPrice(p),
+      taxPercentage: rateOf(p), taxCalculation: taxCalcOf(p), discountKind: "value", discount: 0, imageUrl: p.imageUrl ?? null,
       ...categoryDiscountOf(p.categoryId),
     }
   }, [unitName, rateOf, categoryDiscountOf])

@@ -20,6 +20,18 @@ export const useSaveSupplier = () => {
   })
 }
 
+export const useSetSupplierOpeningBalance = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Parameters<typeof suppliersApi.setOpeningBalance>[1] }) => suppliersApi.setOpeningBalance(id, data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: supplierKeys.all })
+      toast.success(i18n.t("common.saved"))
+    },
+    onError: (e) => errorToast(e, "common.saveFailed"),
+  })
+}
+
 export const useDeleteSupplier = () => {
   const qc = useQueryClient()
   return useMutation({

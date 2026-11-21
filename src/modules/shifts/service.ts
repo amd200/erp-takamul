@@ -3,9 +3,6 @@ import { ApiError } from "@/shared/http/ApiError"
 import { http } from "@/shared/http/request"
 import type { Shift, ShiftListResponse, ShiftReport, OpenShiftInput, ShiftEmployee, ShiftDevice } from "./types"
 
-/** Lists come back as a bare array, or wrapped as `items` / `data`, depending on the endpoint. */
-const rows = <T,>(res: T[] | { items?: T[]; data?: T[] } | null | undefined): T[] => (Array.isArray(res) ? res : res?.items ?? res?.data ?? [])
-
 const pad = (v: number) => String(v).padStart(2, "0")
 const localDay = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
 const localTime = (d: Date) => `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
@@ -30,16 +27,15 @@ export const shiftsApi = {
 
   // Pick-lists for the "open a shift" form, as the server sends them.
   branches: async () => (await branchesApi.list()).filter((b) => b.isActive !== false),
-  employees: async (branchId: number) => rows(await http<{ data?: ShiftEmployee[] }>(`/Shifts/EmployeeBybranch/${branchId}`).then((r) => r?.data)),
-  devices: async () => rows(await http<{ data?: ShiftDevice[] }>("/pos-devices").then((r) => r?.data)),
+  employees: (branchId: number) => http<{ data: ShiftEmployee[] }>(`/Shifts/EmployeeBybranch/${branchId}`).then((r) => r.data),
+  devices: () => http<{ data: ShiftDevice[] }>("/pos-devices").then((r) => r.data),
 }
 
 /** The shift the signed-in cashier has open right now, or null when there is none. */
 export async function currentShift(): Promise<Shift | null> {
   try {
-    const d = await http<Shift | { data?: Shift | null } | null>("/Shifts/open-shift")
-    const row = d && "data" in d ? d.data : (d as Shift | null)
-    return row && row.id ? row : null
+    const { data } = await http<{ data: Shift | null }>("/Shifts/open-shift")
+    return data
   } catch (e) {
     if (e instanceof ApiError && e.status === 404) return null
     throw e

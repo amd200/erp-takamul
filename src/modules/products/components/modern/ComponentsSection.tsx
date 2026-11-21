@@ -29,7 +29,7 @@ export function ComponentsSection({ computedCost }: { computedCost: number }) {
       action={
         // A new material starts in its own base unit.
         <ProductSearchPicker align="end" type="RawMatrial" price={(p) => p.costPrice ?? 0}
-          onPick={(p) => rows.append({ productId: p.id, unitId: p.baseUnitId ?? 0, quantity: 1, name: p.productNameAr }, { shouldFocus: false })}>
+          onPick={(p) => rows.append({ componentProductId: p.id, unitId: p.baseUnitId ?? 0, quantity: 1, componentNameAr: p.productNameAr }, { shouldFocus: false })}>
           <Button type="button" variant="outline"><Plus />{t("products.addRaw")}</Button>
         </ProductSearchPicker>
       }
@@ -43,7 +43,7 @@ export function ComponentsSection({ computedCost }: { computedCost: number }) {
         headers={[t("products.rawMaterial"), t("products.unit"), t("products.quantityPerItem")]}
         renderRow={(i) => (
           <>
-            <span className="flex h-10 items-center font-medium">{rows.fields[i].name || `#${rows.fields[i].productId}`}</span>
+            <span className="flex h-10 items-center font-medium">{rows.fields[i].componentNameAr || `#${rows.fields[i].componentProductId}`}</span>
             <FormSelect control={control} name={`components.${i}.unitId`} numeric label={t("products.unit")} labelHidden
               options={units.map((u) => ({ value: String(u.id), label: u.name }))} />
             <FormInput control={control} name={`components.${i}.quantity`} type="number" label={t("products.quantityPerItem")} labelHidden />

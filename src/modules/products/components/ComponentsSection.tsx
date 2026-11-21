@@ -28,7 +28,7 @@ export function ComponentsSection({ computedCost: _cost }: { computedCost: numbe
         <h3 className="text-lg font-bold text-foreground">{t("productForm.usedRaw")}</h3>
         {/* A new material starts in its own base unit. */}
         <ProductSearchPicker align="end" type="RawMatrial" price={(p) => p.costPrice ?? 0}
-          onPick={(p) => rows.append({ productId: p.id, unitId: p.baseUnitId ?? 0, quantity: 1, name: p.productNameAr }, { shouldFocus: false })}>
+          onPick={(p) => rows.append({ componentProductId: p.id, unitId: p.baseUnitId ?? 0, quantity: 1, componentNameAr: p.productNameAr }, { shouldFocus: false })}>
           <Button type="button" variant="outline" size="sm" className="flex items-center gap-2"><Plus size={16} />{t("productForm.addRaw")}</Button>
         </ProductSearchPicker>
       </div>
@@ -40,7 +40,7 @@ export function ComponentsSection({ computedCost: _cost }: { computedCost: numbe
           <div className="lg:col-span-5">
             <Field>
               <FieldLabel>{t("productForm.rawMaterial")} <span className="text-red-500">*</span></FieldLabel>
-              <Input readOnly tabIndex={-1} className="h-10 bg-background" value={f.name || `#${f.productId}`} />
+              <Input readOnly tabIndex={-1} className="h-10 bg-background" value={f.componentNameAr || `#${f.componentProductId}`} />
             </Field>
           </div>
           <div className="lg:col-span-3">

@@ -8,13 +8,13 @@ import { branchKeys } from "@/modules/branches/keys"
 import { branchesApi } from "@/modules/branches/service"
 import { customerKeys } from "@/modules/customers/keys"
 import { customersApi } from "@/modules/customers/service"
-import { eyeText } from "@/modules/customers/form"
+import { eyeText } from "@/modules/customers/eye"
 import { EYE_FIELDS, type Customer } from "@/modules/customers/types"
 import { fetchProduct } from "@/modules/products/lookup"
 import { useAppSettings, useCurrency } from "@/modules/settings"
 import { invoicesApi } from "../service"
-import { editorLineOf, orderTotals } from "../totals"
-import type { PaymentMethod, SalesOrderDto } from "../types"
+import { editorLineOf } from "../totals"
+import type { SalesOrderDto } from "../types"
 import type { PrintInvoice } from "./printInvoice"
 import { invoiceA4Doc } from "./invoiceA4Doc"
 import { invoiceA5Doc } from "./invoiceA5Doc"
@@ -56,8 +56,8 @@ export const printInvoiceOf = (o: SalesOrderDto): PrintInvoice => ({
   id: o.id, number: o.orderNumber ?? "", date: o.orderDate ?? "", customerName: o.customerName ?? "", warehouseName: o.warehouseName ?? "",
   employeeName: o.employeeName ?? null, createdBy: o.createdBy ?? "", notes: o.notes ?? "",
   lines: (o.items ?? []).map((l) => ({ ...editorLineOf(l), amounts: { discount: l.discountValue ?? 0, tax: l.taxAmount ?? 0, total: l.lineTotal ?? 0 } })),
-  totals: orderTotals(o),
-  payments: (o.payments ?? []).map((p) => ({ method: p.paymentMethod as PaymentMethod, amount: p.amount })),
+  totals: { subTotal: o.subTotal ?? 0, discount: o.discountAmount ?? 0, tax: o.taxAmount ?? 0, grandTotal: o.grandTotal ?? 0 },
+  payments: o.payments ?? [],
   paid: o.totalPaid ?? 0,
 })
 
@@ -79,7 +79,7 @@ export function useInvoiceOutput() {
         invoice.customerId ? qc.fetchQuery({ queryKey: customerKeys.detail(invoice.customerId), queryFn: () => customersApi.get(invoice.customerId!) }).catch(() => undefined) : undefined,
       ])
       if (voucher) {
-        const opts = { branch: b, customerPhone: c?.mobile || c?.phone }
+        const opts = { branch: b, customerPhone: c?.phone }
         return printDocument(voucher === "stock" ? stockVoucherDoc(invoice, opts) : claimVoucherDoc(invoice, opts))
       }
       const isExempt = settings.taxSetting?.taxSetting === "Exempt"

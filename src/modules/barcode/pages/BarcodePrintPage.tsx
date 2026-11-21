@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { enteredPrice } from "@/modules/products/mappers"
+import { enteredPrice } from "@/modules/products/pricing"
 import { Minus, Plus, Printer, X } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"

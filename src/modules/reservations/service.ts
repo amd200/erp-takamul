@@ -1,5 +1,5 @@
 import { http } from "@/shared/http/request"
-import { currentBranchId } from "@/modules/partners/mappers"
+import { currentBranchId } from "@/shared/auth/currentBranchId"
 import type { BookingStatus, Reservation, ReservationInput, ReservationQuery } from "./types"
 
 
@@ -10,10 +10,8 @@ const body = (r: ReservationInput) => ({
 })
 
 export const reservationsApi = {
-  list: async (q: ReservationQuery) => {
-    const res = await http<Reservation[] | { data?: Reservation[] }>("/bookings", { params: { status: q.status, dateFrom: q.dateFrom || undefined, dateTo: q.dateTo || undefined, search: q.search || undefined, SortBy: q.sortBy, SortDescending: q.sortBy ? q.sortDescending : undefined } })
-    return Array.isArray(res) ? res : res?.data ?? []
-  },
+  /** GET /api/bookings returns a plain array. It reads only status, dateFrom, dateTo and search (no sorting). */
+  list: (q: ReservationQuery) => http<Reservation[]>("/bookings", { params: { status: q.status, dateFrom: q.dateFrom || undefined, dateTo: q.dateTo || undefined, search: q.search || undefined } }),
   create: (r: ReservationInput) => http<unknown>("/bookings", { method: "POST", data: { ...body(r), branchId: currentBranchId() } }),
   update: (id: number, r: ReservationInput) => http<unknown>(`/bookings/${id}`, { method: "PUT", data: body(r) }),
   setStatus: (id: number, status: BookingStatus) => http<unknown>(`/bookings/${id}/status`, { method: "PATCH", data: { status } }),

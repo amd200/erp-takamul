@@ -1,10 +1,10 @@
-import type { DiscountKind, InvoiceLine, ItemDto, Payment, PaymentStatus, SalesOrderDto, Totals } from "./types"
+import type { DiscountKind, InvoiceLine, ItemDto, Payment, PaymentStatus, Totals } from "./types"
 
 const round = (n: number) => Math.round(n * 100) / 100
 
 /** One line, after its own discount: net (before tax), tax, total. */
-export function lineAmounts(l: Pick<InvoiceLine, "quantity" | "unitPrice" | "taxRate" | "taxCalculation" | "discountKind" | "discount" | "categoryDiscount">) {
-  const unitNet = l.taxCalculation === 1 ? l.unitPrice / (1 + l.taxRate / 100) : l.unitPrice
+export function lineAmounts(l: Pick<InvoiceLine, "quantity" | "unitPrice" | "taxPercentage" | "taxCalculation" | "discountKind" | "discount" | "categoryDiscount">) {
+  const unitNet = l.taxCalculation === 1 ? l.unitPrice / (1 + l.taxPercentage / 100) : l.unitPrice
   const gross = unitNet * (l.quantity || 0)
   const c = l.categoryDiscount
   const want = c
@@ -12,7 +12,7 @@ export function lineAmounts(l: Pick<InvoiceLine, "quantity" | "unitPrice" | "tax
     : l.discountKind === "percent" ? (gross * (l.discount || 0)) / 100 : l.discount || 0
   const discount = Math.min(gross, want)
   const net = gross - discount
-  const tax = (net * l.taxRate) / 100
+  const tax = (net * l.taxPercentage) / 100
   return { gross: round(gross), discount: round(discount), net: round(net), tax: round(tax), total: round(net + tax) }
 }
 
@@ -38,12 +38,8 @@ export function paymentStatus(grandTotal: number, paid: number, returnedTotal = 
   return paid + 0.005 >= grandTotal - returnedTotal ? "Paid" : "Partial"
 }
 
-/** The totals the server worked out for a saved invoice, in the shape the totals panel shows. */
-export const orderTotals = (o: Pick<SalesOrderDto, "subTotal" | "discountAmount" | "taxAmount" | "grandTotal">): Totals =>
-  ({ subTotal: o.subTotal ?? 0, discount: o.discountAmount ?? 0, tax: o.taxAmount ?? 0, grandTotal: o.grandTotal ?? 0 })
-
 /** A saved invoice item as an editable line (held sales and debit notes start from the invoice's items). */
 export const editorLineOf = (d: ItemDto): InvoiceLine => ({
-  productId: d.productId, unitId: d.unitId ?? 0, name: d.productName ?? "", unitName: d.unitName ?? "", quantity: d.quantity,
-  unitPrice: d.unitPrice ?? 0, taxRate: d.taxPercentage ?? 0, taxCalculation: d.taxCalculation === 3 ? 2 : 1, discountKind: "value", discount: d.discountValue ?? 0,
+  productId: d.productId, unitId: d.unitId ?? 0, productName: d.productName ?? "", unitName: d.unitName ?? "", quantity: d.quantity,
+  unitPrice: d.unitPrice ?? 0, taxPercentage: d.taxPercentage ?? 0, taxCalculation: d.taxCalculation === 3 ? 2 : 1, discountKind: "value", discount: d.discountValue ?? 0,
 })

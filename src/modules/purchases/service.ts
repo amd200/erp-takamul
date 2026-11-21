@@ -11,7 +11,7 @@ const itemBody = (l: InvoiceLine) => ({
   productId: l.productId,
   unitId: l.unitId,
   quantity: l.quantity,
-  unitPrice: l.taxCalculation === 1 ? Math.round((l.unitPrice / (1 + l.taxRate / 100)) * 10000) / 10000 : l.unitPrice,
+  unitPrice: l.taxCalculation === 1 ? Math.round((l.unitPrice / (1 + l.taxPercentage / 100)) * 10000) / 10000 : l.unitPrice,
   discountPercentage: l.discountKind === "percent" ? l.discount : 0,
   discountValue: l.discountKind === "value" && l.quantity > 0 ? l.discount / l.quantity : 0,
   taxId: l.taxId,

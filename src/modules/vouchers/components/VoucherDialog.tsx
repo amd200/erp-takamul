@@ -97,7 +97,7 @@ export function VoucherDialog({ kind, open, onOpenChange, embedded = false, cust
             </div>
           </div>}
 
-          <div className="grid min-h-[76px] grid-cols-[2fr_1fr_1fr] items-start gap-3">
+          <div className="grid min-h-[76px] grid-cols-2 items-start gap-3 sm:grid-cols-[2fr_1fr_1fr_1fr]">
             <FormSelect control={form.control} name="partyId" numeric disabled={!!customerId} label={t(partyType === "customer" ? "vouchers.customerName" : "vouchers.supplierName")} placeholder={t(partyType === "customer" ? "vouchers.selectCustomer" : "vouchers.selectSupplier")}
               options={parties.map((p) => ({ value: String(p.id), label: p.name }))} />
             <Field><FieldLabel>{t("vouchers.currentBalance")}</FieldLabel><Input readOnly value={num(balance)} className="h-9 bg-gray-50 text-center" /></Field>
@@ -109,9 +109,8 @@ export function VoucherDialog({ kind, open, onOpenChange, embedded = false, cust
                   onChange={(e) => field.onChange(e.target.value === "" ? 0 : Number(e.target.value))} />
               </Field>
             )} />
+            <Field><FieldLabel>{t("vouchers.balanceAfter")}</FieldLabel><Input readOnly value={num(balanceAfter)} className="h-9 bg-gray-50 text-center font-semibold text-primary" /></Field>
           </div>
-
-          <Field><FieldLabel>{t("vouchers.balanceAfter")}</FieldLabel><Input readOnly value={num(balanceAfter)} className="h-9 bg-gray-50 text-center font-semibold text-primary" /></Field>
           {overdraw && <p className="text-sm text-destructive">{t("vouchers.overdraw", { amount: num(treasury!.currentBalance!) })}</p>}
 
           <Controller control={form.control} name="description" render={({ field }) => (

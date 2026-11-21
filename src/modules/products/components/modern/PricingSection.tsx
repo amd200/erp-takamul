@@ -9,7 +9,7 @@ import { kindRules, type ProductForm } from "../../schema"
 export function PricingSection({ computedCost }: { computedCost: number }) {
   const { t } = useTranslation()
   const { control, setValue, getValues } = useFormContext<ProductForm>()
-  const [type, taxId] = useWatch({ control, name: ["type", "taxId"] })
+  const [type, taxId] = useWatch({ control, name: ["productType", "taxId"] })
   const { data: taxes = [] } = useTaxes()
   const { data: reasons = [] } = useExemptionReasons()
   const rules = kindRules(type)

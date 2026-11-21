@@ -97,8 +97,8 @@ export function ItemEditor({ line, additions, onClose, onQty, onPatch, hidePrice
     <Dialog open={!!line} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="w-full max-w-sm gap-0 overflow-hidden p-0">
         <DialogHeader className="px-4 pt-4 pb-0">
-          <DialogTitle className="truncate text-right text-sm font-semibold text-foreground/80">{line?.name}</DialogTitle>
-          <DialogDescription className="sr-only">{line?.name}</DialogDescription>
+          <DialogTitle className="truncate text-right text-sm font-semibold text-foreground/80">{line?.productName}</DialogTitle>
+          <DialogDescription className="sr-only">{line?.productName}</DialogDescription>
         </DialogHeader>
 
         <div className="mt-3 flex border-b border-border">

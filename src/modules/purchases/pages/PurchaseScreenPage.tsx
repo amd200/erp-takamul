@@ -95,8 +95,8 @@ export default function PurchaseScreenPage() {
   const search = useMemo(() => results.map((p) => ({ id: p.id, name: i18n.language === "bn" ? p.productNameUr || p.productNameEn || p.productNameAr : i18n.language === "en" && p.productNameEn ? p.productNameEn : p.productNameAr, code: p.barcode ?? "", price: p.costPrice ?? 0 })), [results, i18n.language])
 
   const toLine = (p: Product): BuyLine => ({
-    key: newBuyKey(), barcode: p.barcode ?? "", productId: p.id, unitId: p.baseUnitId ?? 0, name: p.productNameAr, unitName: units.find((u) => u.id === p.baseUnitId)?.name ?? "",
-    quantity: 1, unitPrice: p.costPrice ?? 0, taxId: p.taxId || undefined, taxRate: taxes.find((x) => x.id === p.taxId)?.amount ?? 0, taxCalculation: 2, discountKind: "value", discount: 0,
+    key: newBuyKey(), barcode: p.barcode ?? "", productId: p.id, unitId: p.baseUnitId ?? 0, productName: p.productNameAr, unitName: units.find((u) => u.id === p.baseUnitId)?.name ?? "",
+    quantity: 1, unitPrice: p.costPrice ?? 0, taxId: p.taxId || undefined, taxPercentage: taxes.find((x) => x.id === p.taxId)?.amount ?? 0, taxCalculation: 2, discountKind: "value", discount: 0,
   })
   // Scanning an item already on the purchase raises its quantity instead of adding a second row.
   const add = (p: Product) => setLines((all) => {
@@ -139,7 +139,7 @@ export default function PurchaseScreenPage() {
       data: {
         supplierId, warehouseId: warehouse, date, notes,
         lines: spreadDiscount(lines, discount).map(({ key: _k, barcode: _b, lineNote: _n, ...l }) => l),
-        payments: payments.map((p) => ({ amount: p.amount, method: p.method, treasuryId: p.treasuryId, notes: "" })),
+        payments: payments.map((p) => ({ amount: p.amount, method: p.paymentMethod, treasuryId: p.treasuryId, notes: "" })),
       },
     }, { onSuccess: () => { setPayOpen(false); reset(); setDate(nowLocal()) }, onError: renewIfReused(key) })
   }

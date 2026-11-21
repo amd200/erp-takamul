@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react"
-import { listedPrice, showsInSales } from "@/modules/products/mappers"
+import { listedPrice, showsInSales } from "@/modules/products/pricing"
 import { useQueryClient } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 import { useFindByBarcode } from "@/modules/products/queries"

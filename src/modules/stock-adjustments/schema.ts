@@ -7,7 +7,7 @@ export const adjustmentSchema = z.object({
     .array(z.object({
       stockInventoryId: z.number().min(1, "validation.itemRequired"),
       unitId: z.number().nullable(),
-      operation: z.enum(["Add", "Remove"]),
+      operationType: z.enum(["Add", "Remove"]),
       quantity: z.number({ error: "validation.number" }).positive("validation.qtyPositive"),
     }))
     .min(1, "validation.linesRequired"),

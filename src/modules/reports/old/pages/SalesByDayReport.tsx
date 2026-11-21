@@ -1,6 +1,6 @@
 import { Calendar, DollarSign, Percent, Receipt, TrendingUp } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { currentBranchId } from "@/modules/partners/mappers"
+import { currentBranchId } from "@/shared/auth/currentBranchId"
 import { useAppSettings } from "@/modules/settings"
 import { dailySales, type DailySalesRow } from "../api"
 import { dayText, money } from "../output"

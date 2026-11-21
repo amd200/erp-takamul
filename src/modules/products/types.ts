@@ -9,19 +9,19 @@ export type TaxCalculation = 1 | 2
 
 /** `id` is the existing unit row when editing; the server needs it to update instead of adding. */
 export type SaleUnit = { id?: number; unitId: number; conversionFactor: number; barcode: string; sellingPrice: number }
-/** `name` is the material's name as the server sends it with the recipe; the form only shows it. */
-export type Component = { productId: number; unitId: number; quantity: number; name?: string }
+/** A recipe line as the server sends it; `componentNameAr` comes with the recipe and the form only shows it. */
+export type Component = { componentProductId: number; unitId: number; quantity: number; componentNameAr?: string }
 /** A branched item groups existing items; these are the chosen ones. */
-export type BranchChild = { id: number; nameAr: string; barcode: string; sellingPrice: number }
+export type BranchChild = { id: number; productNameAr: string; barcode: string; sellingPrice: number }
 
 /** What the product form holds. */
 type ProductFields = {
   id: number
   code: number
-  type: ProductType
-  nameAr: string
-  nameEn: string
-  nameUr: string
+  productType: ProductType
+  productNameAr: string
+  productNameEn: string
+  productNameUr: string
   description: string
   barcode: string
   categoryId: number | null
@@ -45,7 +45,7 @@ type ProductFields = {
   components: Component[]
   children: BranchChild[]
   purchaseUnitId: number | null
-  purchaseConversionFactor: number | null
+  conversionFactor: number | null
 }
 
 /** What the form sends; `image` is a new file, or the current image's URL to keep it. */
@@ -57,6 +57,6 @@ export type ProductQuery = { page: number; pageSize: number; searchTerm?: string
 
 /**
  * An item as the server sends it. Each kind has its own endpoint with a few fields of its own, so this is the union of them:
- * prepared items add `components`, raw materials `purchaseUnitId` and `conversionFactor`, branched items `baseUnit` and `children`.
+ * prepared items add `components`, raw materials `purchaseUnitId` and `conversionFactor`, branched items `children`.
  */
-export type Product = ProductDto & Partial<Pick<PreparedProductDto, "components">> & Partial<Omit<RawMaterialDto, keyof ProductDto>> & Partial<Pick<BranchedProductDto, "baseUnit" | "children">>
+export type Product = ProductDto & Partial<Pick<PreparedProductDto, "components">> & Partial<Omit<RawMaterialDto, keyof ProductDto>> & Partial<Pick<BranchedProductDto, "children">>

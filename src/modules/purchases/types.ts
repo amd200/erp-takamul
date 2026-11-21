@@ -37,8 +37,6 @@ export type Purchase = {
   payments?: PurchasePaymentDto[] | null
 }
 
-export type PurchaseLine = InvoiceLine & { returnedQuantity: number }
-
 export type PurchaseInput = {
   supplierId: number
   warehouseId: number

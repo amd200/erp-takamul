@@ -96,11 +96,11 @@ export function invoiceRollDoc(inv: PrintInvoice, o: InvoiceRollOptions): PrintD
 
   const itemRows = lines.map(({ l, total: lt, unit }) => o.grid
     ? `<div class="item-row item-row-grid">
-<span class="grid-product"><span>${esc(l.name)}</span>${o.showUnits && l.unitName ? `<span class="grid-extra">الوحدة: ${esc(l.unitName)}</span>` : ""}</span>
+<span class="grid-product"><span>${esc(l.productName)}</span>${o.showUnits && l.unitName ? `<span class="grid-extra">الوحدة: ${esc(l.unitName)}</span>` : ""}</span>
 <span class="grid-labels"><span>الكمية</span><span>السعر</span><span>الإجمالي</span></span>
 <div class="grid-values"><span>${l.quantity}</span><span>${money(unit)}</span><span>${money(lt)}</span></div></div>`
     : `<div class="item-row">
-<div class="item-name"><span class="item-name-product">${esc(l.name)}</span>${o.showUnits && l.unitName ? `<span class="item-additions">الوحدة: ${esc(l.unitName)}</span>` : ""}</div>
+<div class="item-name"><span class="item-name-product">${esc(l.productName)}</span>${o.showUnits && l.unitName ? `<span class="item-additions">الوحدة: ${esc(l.unitName)}</span>` : ""}</div>
 <div class="item-meta">
 <span class="meta-block"><span class="meta-label">كمية</span><span class="meta-val">${l.quantity}</span></span>
 <span class="meta-block"><span class="meta-label">سعر</span><span class="meta-val">${money(unit)}</span></span>
@@ -138,7 +138,7 @@ ${info("الرمز البريدي", clean(c?.postalCode))}
 ${t.discount > 0 ? total("اجمالي الخصم", t.discount) : ""}
 ${o.isExempt ? "" : total("اجمالي قبل الضريبة", t.grandTotal - t.tax) + total("اجمالي الضريبة", t.tax)}
 ${total("الاجمالي النهائي", t.grandTotal)}
-${o.showPaymentMethods ? inv.payments.map((p) => total(`نوع الدفع (${o.methodLabel(p.method)})`, p.amount)).join("") : ""}
+${o.showPaymentMethods ? inv.payments.map((p) => total(`نوع الدفع (${o.methodLabel(p.paymentMethod ?? "")})`, p.amount)).join("") : ""}
 ${o.showPaidAndRemaining ? total("المدفوع", inv.paid) + total("المتبقي", remaining) : ""}
 </div>
 

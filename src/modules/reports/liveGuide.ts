@@ -1,6 +1,6 @@
 import * as api from "./old/api"
 import { productsApi } from "@/modules/products/service"
-import { currentBranchId } from "@/modules/partners/mappers"
+import { currentBranchId } from "@/shared/auth/currentBranchId"
 import type { Cell, Filters, ReportResult, Row } from "./types"
 
 /**

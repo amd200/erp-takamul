@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Field, FieldLabel } from "@/components/ui/field"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { PaymentFields } from "../components/PaymentFields"
 import { EmptyState } from "@/components/EmptyState"
 import { cn } from "@/lib/utils"
 import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
@@ -147,34 +147,19 @@ export default function ReturnFormPage() {
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className={cn(box, "rounded-xl lg:col-span-2")}>
-            <h2 className="mb-6 text-xl font-bold text-foreground">{t("oldDebit.payments")}</h2>
+            <h2 className="mb-6 text-xl font-bold text-foreground">{t("sales.payments")}</h2>
             <div className="space-y-4">
               {payments.fields.map((f, i) => (
                 <div key={f.id} className="flex flex-col items-center gap-3 rounded-lg border border-border bg-muted/30 p-3 sm:flex-row">
+                  {/* Same row as the A4 invoice: amount and treasury side by side under small grey captions. */}
                   <div className="w-full flex-1">
-                    <label className="mb-1 block text-xs text-muted-foreground">{t("viewDoc.amount")}</label>
-                    <Controller control={form.control} name={`payments.${i}.amount`} render={({ field, fieldState }) => (
-                      <Field data-invalid={fieldState.invalid}>
-                        <Input type="number" step="any" placeholder="0.00" value={field.value ?? 0} onChange={(e) => field.onChange(Number(e.target.value))} />
-                        {fieldState.error && <p className="text-xs text-destructive">{t(fieldState.error.message ?? "")}</p>}
-                      </Field>
-                    )} />
+                    <div className="mb-1 hidden grid-cols-2 gap-3 text-xs text-muted-foreground sm:grid"><span>{t("sales.amount")}</span><span>{t("sales.treasury")}</span></div>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2"><PaymentFields control={form.control} prefix={`payments.${i}`} compact /></div>
                   </div>
-                  <div className="w-full flex-1">
-                    <label className="mb-1 block text-xs text-muted-foreground">{t("oldDebit.paymentMethod")}</label>
-                    <Controller control={form.control} name={`payments.${i}.treasuryId`} render={({ field }) => (
-                      <Select value={field.value ? String(field.value) : ""} onValueChange={(v) => field.onChange(Number(v))}>
-                        <SelectTrigger className="w-full"><SelectValue placeholder={t("oldStatement.pickTreasury")} /></SelectTrigger>
-                        <SelectContent>{treasuries.map((x) => <SelectItem key={x.id} value={String(x.id)}>{x.name}</SelectItem>)}</SelectContent>
-                      </Select>
-                    )} />
-                  </div>
-                  <div className="shrink-0 pt-5">
-                    <button type="button" onClick={() => payments.remove(i)} disabled={payments.fields.length === 1} aria-label={t("common.remove")} className="rounded-md border border-transparent p-2 text-red-500 transition-colors hover:border-red-100 hover:bg-red-50 disabled:opacity-30"><Trash2 size={18} /></button>
-                  </div>
+                  <Button type="button" variant="ghost-destructive" size="icon" aria-label={t("common.remove")} disabled={payments.fields.length === 1} onClick={() => payments.remove(i)}><Trash2 /></Button>
                 </div>
               ))}
-              <Button type="button" size="lg" variant="secondary" onClick={addPayment} className="w-max rounded-lg px-4 text-sm font-medium transition-colors"><Plus size={16} strokeWidth={2} />{t("oldDebit.addPayment")}</Button>
+              <Button type="button" size="lg" variant="secondary" onClick={addPayment} className="w-max rounded-lg px-4 text-sm font-medium transition-colors"><Plus size={16} strokeWidth={2} />{t("sales.addPayment")}</Button>
             </div>
           </div>
 

@@ -52,7 +52,7 @@ export default function AdjustmentFormPage() {
   useEffect(() => {
     if (!isEdit || !adjustment) return
     const items = adjustment.items ?? []
-    form.reset({ date: toLocal(adjustment.operationDate), notes: adjustment.notes ?? "", lines: items.map((l) => ({ stockInventoryId: l.id ?? 0, unitId: l.unitId ?? null, operation: l.operationType ?? "Add", quantity: l.quantityChanged ?? 0 })) })
+    form.reset({ date: toLocal(adjustment.operationDate), notes: adjustment.notes ?? "", lines: items.map((l) => ({ stockInventoryId: l.id ?? 0, unitId: l.unitId ?? null, operationType: l.operationType ?? "Add", quantity: l.quantityChanged ?? 0 })) })
     setPicked(new Map(items.map((l) => [l.id ?? 0, {
       id: l.id ?? 0, productId: l.productId ?? 0, productName: l.productName ?? "", barcode: l.barcode, warehouseId: 0, quantityAvailable: l.quantityBefore ?? 0,
       productUnits: l.unitId ? [{ unitId: l.unitId, unitName: l.unitName, isBaseUnit: true }] : [],
@@ -71,7 +71,7 @@ export default function AdjustmentFormPage() {
   const available = (r: StockRowDto) => !values.some((l) => l.stockInventoryId === r.id)
   const add = (r: StockRowDto) => {
     setPicked((all) => new Map(all).set(r.id, r))
-    lines.append({ stockInventoryId: r.id, unitId: r.productUnits?.find((u) => u.isBaseUnit)?.unitId ?? null, operation: "Add", quantity: 1 })
+    lines.append({ stockInventoryId: r.id, unitId: r.productUnits?.find((u) => u.isBaseUnit)?.unitId ?? null, operationType: "Add", quantity: 1 })
   }
   const linesError = form.formState.errors.lines?.message ?? form.formState.errors.lines?.root?.message
   const done = { onSuccess: () => nav("/products/quantity-adjustments") }
@@ -82,7 +82,7 @@ export default function AdjustmentFormPage() {
     ? (adjustment?.items ?? []).map((l) => ({ key: l.productId ?? 0, name: l.productName ?? "", barcode: l.barcode ?? "", unit: l.unitName ?? "", before: l.quantityBefore ?? 0, operation: l.operationType ?? "Add", quantity: l.quantityChanged ?? 0 }))
     : lines.fields.map((f, i) => {
         const row = picked.get(values[i]?.stockInventoryId)
-        return { key: f.id, name: row ? `${row.productName}${row.warehouseName ? ` - ${row.warehouseName}` : ""}` : "", barcode: row?.barcode ?? "", unit: row?.productUnits?.find((u) => u.isBaseUnit)?.unitName ?? "", before: row?.quantityAvailable ?? 0, operation: values[i]?.operation ?? "Add", quantity: values[i]?.quantity || 0 }
+        return { key: f.id, name: row ? `${row.productName}${row.warehouseName ? ` - ${row.warehouseName}` : ""}` : "", barcode: row?.barcode ?? "", unit: row?.productUnits?.find((u) => u.isBaseUnit)?.unitName ?? "", before: row?.quantityAvailable ?? 0, operation: values[i]?.operationType ?? "Add", quantity: values[i]?.quantity || 0 }
       })
 
   return (
@@ -137,7 +137,7 @@ export default function AdjustmentFormPage() {
                       <Select value={r.operation} disabled><SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
                         <SelectContent><SelectItem value="Add">{t("adjForm.opAdd")}</SelectItem><SelectItem value="Remove">{t("adjForm.opRemove")}</SelectItem></SelectContent></Select>
                     ) : (
-                      <Controller control={form.control} name={`lines.${i}.operation`} render={({ field }) => (
+                      <Controller control={form.control} name={`lines.${i}.operationType`} render={({ field }) => (
                         <Select value={field.value} onValueChange={field.onChange}>
                           <SelectTrigger className="w-full"><SelectValue placeholder={t("adjForm.chooseOperation")} /></SelectTrigger>
                           <SelectContent><SelectItem value="Add">{t("adjForm.opAdd")}</SelectItem><SelectItem value="Remove">{t("adjForm.opRemove")}</SelectItem></SelectContent>

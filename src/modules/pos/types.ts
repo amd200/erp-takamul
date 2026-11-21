@@ -20,7 +20,7 @@ export type HeldOrder = { id: number; orderNumber?: string | null; orderDate?: s
 /** A delivery company, as /settings/delivery-companies sends it. */
 export type DeliveryCompany = { id: number; name?: string | null }
 
-export type PosPayment = { treasuryId: number; amount: number; method: import("@/modules/sales/types").PaymentMethod }
+export type PosPayment = { treasuryId: number; amount: number; paymentMethod: import("@/modules/sales/types").PaymentMethod }
 
 export type SaleInput = {
   orderType: OrderType

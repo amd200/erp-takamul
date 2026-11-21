@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react"
-import { enteredPrice, taxCalcOf } from "@/modules/products/mappers"
+import { enteredPrice, taxCalcOf } from "@/modules/products/pricing"
 import type { Product } from "@/modules/products/types"
 import { usePosStore } from "../store"
 import type { CartLine } from "../types"
@@ -9,8 +9,8 @@ type NewLine = Omit<CartLine, "key" | "notes" | "extras">
 
 /** An item as a cart line. The tax rate is the one the server sends with the item, so no tax list is read. */
 const lineOf = (p: Product, name: string): NewLine => ({
-  productId: p.id, unitId: p.baseUnitId ?? 0, name, unitName: "", quantity: 1, unitPrice: enteredPrice(p),
-  taxRate: p.taxPercentage ?? 0, taxCalculation: taxCalcOf(p), discountKind: "value", discount: 0, imageUrl: p.imageUrl ?? null, categoryId: p.categoryId ?? null,
+  productId: p.id, unitId: p.baseUnitId ?? 0, productName: name, unitName: "", quantity: 1, unitPrice: enteredPrice(p),
+  taxPercentage: p.taxPercentage ?? 0, taxCalculation: taxCalcOf(p), discountKind: "value", discount: 0, imageUrl: p.imageUrl ?? null, categoryId: p.categoryId ?? null,
 })
 
 /** What picking an item does: adds it, or opens the list of the items a branched item groups. */
@@ -44,7 +44,7 @@ export function useOrderActions(productName: (p: Pick<Product, "productNameAr" |
 
   // The server sends a child with its price only; it works the tax and the unit out from the item itself.
   const pickChild = (child: NonNullable<Product["children"]>[number]) =>
-    add({ productId: child.id, unitId: 0, name: productName(child), unitName: "", quantity: 1, unitPrice: child.sellingPrice ?? 0, taxRate: 0, taxCalculation: 2, discountKind: "value", discount: 0, imageUrl: null })
+    add({ productId: child.id, unitId: 0, productName: productName(child), unitName: "", quantity: 1, unitPrice: child.sellingPrice ?? 0, taxPercentage: 0, taxCalculation: 2, discountKind: "value", discount: 0, imageUrl: null })
   const childPrice = (child: NonNullable<Product["children"]>[number]) => child.sellingPrice ?? 0
 
   return { pick, decrease, quantityOf, parent, closeParent: () => setParentId(null), pickChild, childPrice }

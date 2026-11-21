@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useRef } from "react"
-import { purchaseLineOf, purchasePaymentsOf } from "../form"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { Controller, FormProvider, useFieldArray, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Link, useNavigate, useParams } from "react-router-dom"
@@ -8,13 +7,16 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { FormSelect, FormTextarea } from "@/components/form/FormFields"
+import { FormInput, FormSelect } from "@/components/form/FormFields"
 import { PageHeader } from "@/components/PageHeader"
 import { SectionCard } from "@/components/SectionCard"
 import { BalanceBox } from "@/components/BalanceBox"
 import { BranchSection } from "@/modules/branches/BranchSection"
 import { useFormBranch } from "@/modules/branches/useFormBranch"
 import { useSupplierList } from "@/modules/suppliers/queries"
+import { SupplierDialog } from "@/modules/suppliers/components/SupplierDialog"
+import { Can } from "@/shared/permissions/usePermission"
+import { P } from "@/shared/permissions/permissions"
 import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
 import { useAutoPayment } from "@/modules/sales/useAutoPayment"
 import { pickTreasury, useSuppliers, useTreasuries, useWarehouses } from "@/modules/lookups/service"
@@ -25,7 +27,8 @@ import { TotalsPanel } from "@/modules/sales/components/TotalsPanel"
 import { invoiceTotals, paidOf } from "@/modules/sales/totals"
 import { useTaxes } from "@/modules/taxes/service"
 import { usePurchase, useSavePurchase } from "../queries"
-import { emptyPurchase, purchaseSchema, type PurchaseForm } from "../schema"
+import { emptyPurchase, purchaseLineOf, purchaseSchema, type PurchaseForm } from "../schema"
+import type { Payment } from "@/modules/sales/types"
 
 /** A purchase invoice: supplier, warehouse, the items with their cost, and what is paid now. Saving receives it into stock. */
 export default function PurchaseFormPage() {
@@ -45,6 +48,7 @@ export default function PurchaseFormPage() {
   const exempt = useAppSettings().taxSetting?.taxSetting === "Exempt"
   const defaultVault =useAppSettings().sales?.defaultPurchasesVault
   const { data: taxes = [] } = useTaxes()
+  const [addingSupplier, setAddingSupplier] = useState(false)
   const save = useSavePurchase()
   // One key per invoice being written, so a double click or a retry after a dropped connection saves it once.
   const key = useRef(newIdempotencyKey())
@@ -63,8 +67,8 @@ export default function PurchaseFormPage() {
     if (!existing || !taxes.length) return
     form.reset({
       supplierId: existing.supplierId ?? undefined, warehouseId: existing.warehouseId ?? undefined, date: (existing.orderDate ?? "").slice(0, 10), notes: existing.notes ?? "",
-      lines: (existing.items ?? []).map(purchaseLineOf).map((l) => ({ ...l, taxRate: taxes.find((x) => x.id === l.taxId)?.amount ?? 0 })),
-      payments: purchasePaymentsOf(existing).map((p) => ({ amount: p.amount, method: p.method, treasuryId: p.treasuryId, notes: p.notes })),
+      lines: (existing.items ?? []).map(purchaseLineOf).map((l) => ({ ...l, taxPercentage: taxes.find((x) => x.id === l.taxId)?.amount ?? 0 })),
+      payments: (existing.payments ?? []).map((p) => ({ amount: p.amount, method: (p.paymentMethod ?? "Other") as Payment["method"], treasuryId: p.treasuryId, notes: p.notes ?? "" })),
     })
   }, [existing, taxes, form])
 
@@ -99,6 +103,8 @@ export default function PurchaseFormPage() {
   const supplier = supplierList.find((x) => x.id === supplierId)
   const addPayment = () => payments.append({ amount: remaining, method: "Cash", treasuryId: pickTreasury(treasuries, defaultVault)?.id ?? 0, notes: "" })
 
+  // Date, party (and branch / warehouse when shown) in equal columns, notes taking the rest of the row.
+  const topCols: Record<number, string> = { 2: "lg:grid-cols-[repeat(2,minmax(0,1fr))_minmax(0,2fr)]", 3: "lg:grid-cols-[repeat(3,minmax(0,1fr))_minmax(0,2fr)]", 4: "lg:grid-cols-[repeat(4,minmax(0,1fr))_minmax(0,2fr)]" }
   // Laid out as in the current system: basic data, invoice details, payments beside the summary, then one box with the two buttons.
   return (
     <FormProvider {...form}>
@@ -107,7 +113,7 @@ export default function PurchaseFormPage() {
           actions={<Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/5 hover:text-primary"><Link to="/purchases"><List />{t("purchases.backToPurchases")}</Link></Button>} />
 
         <SectionCard title={t("sales.basics")}>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className={`grid grid-cols-1 items-start gap-6 sm:grid-cols-2 ${topCols[2 + (formBranch.show ? 1 : 0) + (warehouses.length > 1 ? 1 : 0)]}`}>
             {formBranch.show && <BranchSection plain value={formBranch.branchId} onChange={changeBranch} />}
             <Controller control={form.control} name="date" render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
@@ -116,13 +122,20 @@ export default function PurchaseFormPage() {
               </Field>
             )} />
             <div>
-              <FormSelect control={form.control} name="supplierId" numeric required searchable label={t("purchases.supplier")} placeholder={t("reports.pick")}
-                options={suppliers.map((s) => ({ value: String(s.id), label: s.supplierName }))} />
+              <div className="flex items-start gap-3">
+                <div className="min-w-0 flex-1">
+                  <FormSelect control={form.control} name="supplierId" numeric required searchable label={t("purchases.supplier")} placeholder={t("reports.pick")}
+                    options={suppliers.map((s) => ({ value: String(s.id), label: s.supplierName }))} />
+                </div>
+                <Can perm={P.suppliers.add}>
+                  <Button type="button" variant="outline" size="icon-lg" className="mt-[27px] shrink-0" aria-label={t("suppliers.add")} title={t("suppliers.add")} onClick={() => setAddingSupplier(true)}><Plus /></Button>
+                </Can>
+              </div>
               {showBalance && supplier && <BalanceBox label={t("purchases.supplierBalance")} value={supplier.balance ?? 0} debitWhenPositive={false} />}
             </div>
             {warehouses.length > 1 && <FormSelect control={form.control} name="warehouseId" numeric required label={t("sales.warehouse")} options={warehouses.map((w) => ({ value: String(w.id), label: w.warehouseName ?? "" }))} />}
+            <div className="min-w-0 sm:col-span-2 lg:col-span-1"><FormInput control={form.control} name="notes" label={t("common.notes")} placeholder={t("purchases.notesHint")} /></div>
           </div>
-          <div className="mt-6"><FormTextarea control={form.control} name="notes" label={t("common.notes")} placeholder={t("purchases.notesHint")} /></div>
         </SectionCard>
 
         <SectionCard title={t("sales.invoiceDetails")}>
@@ -160,6 +173,11 @@ export default function PurchaseFormPage() {
           <Button type="submit" size="xl" disabled={save.isPending || overpaid}>{editId ? t("common.saveChanges") : t("sales.saveInvoice")}</Button>
         </div>
       </form>
+      <SupplierDialog open={addingSupplier} onOpenChange={setAddingSupplier} onSaved={(saved) => {
+        const made = saved as { id?: number; data?: { id?: number } } | null | undefined
+        const newId = made?.id ?? made?.data?.id
+        if (newId) form.setValue("supplierId", newId, { shouldValidate: true })
+      }} />
     </FormProvider>
   )
 }

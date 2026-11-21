@@ -10,8 +10,8 @@ const printLineOf = (d: OrderRequestItem): InvoiceLine => {
   const discount = percent > 0 ? (gross * percent) / 100 : d.discountValue ?? 0
   const total = d.lineTotal ?? 0
   return {
-    productId: d.productId ?? 0, unitId: d.unitId ?? 0, name: d.productName ?? "", unitName: "", quantity: d.quantity,
-    unitPrice: d.unitPrice ?? 0, taxRate: d.taxPercentage ?? 0, taxCalculation: 2,
+    productId: d.productId ?? 0, unitId: d.unitId ?? 0, productName: d.productName ?? "", unitName: "", quantity: d.quantity,
+    unitPrice: d.unitPrice ?? 0, taxPercentage: d.taxPercentage ?? 0, taxCalculation: 2,
     discountKind: percent > 0 ? "percent" : "value", discount: percent > 0 ? percent : discount,
     amounts: { discount, tax: total - (gross - discount), total },
   }

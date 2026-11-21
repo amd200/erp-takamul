@@ -5,7 +5,6 @@ export type QuoteItemDto = {
   productName?: string | null
   baseUnitId?: number | null
   baseUnitName?: string | null
-  unitId?: number | null
   quantity: number
   unitPrice?: number | null
   priceBeforeTax?: number | null

@@ -1,6 +1,6 @@
 import { CreditCard, DollarSign, FileText, Percent, Receipt, TrendingUp, Wallet } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { currentBranchId } from "@/modules/partners/mappers"
+import { currentBranchId } from "@/shared/auth/currentBranchId"
 import { useAppSettings } from "@/modules/settings"
 import { salesInvoices, type SalesInvoiceRow } from "../api"
 import { dayText, money } from "../output"

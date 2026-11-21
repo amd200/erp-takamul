@@ -1,4 +1,4 @@
-import type { InvoiceLine, Payment, Totals } from "../types"
+import type { InvoiceLine, PaymentDto, Totals } from "../types"
 
 /**
  * What the invoice layouts print. Invoices, quotations and debit notes all print through the same layouts,
@@ -15,6 +15,6 @@ export type PrintInvoice = {
   lines: InvoiceLine[]
   totals: Totals
   notes: string
-  payments: Pick<Payment, "method" | "amount">[]
+  payments: Pick<PaymentDto, "paymentMethod" | "amount">[]
   paid: number
 }

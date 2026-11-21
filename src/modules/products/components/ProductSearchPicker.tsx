@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react"
-import { enteredPrice } from "../mappers"
+import { enteredPrice } from "../pricing"
 import { useTranslation } from "react-i18next"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"

@@ -1,7 +1,7 @@
 import type { ListSort } from "@/shared/api/errors"
 import { http } from "@/shared/http/request"
 import { idempotencyHeaders, retryWhileInProgress } from "@/shared/http/idempotency"
-import { currentBranchId } from "@/modules/partners/mappers"
+import { currentBranchId } from "@/shared/auth/currentBranchId"
 import type { Treasury, TreasuryInput, Transfer, TransferInput, StatementRow } from "./types"
 
 const body = (t: TreasuryInput) => ({ name: t.name, openingBalance: t.openingBalance, openingBalanceDate: t.openingBalanceDate || null, showInSalesScreen: t.showInSalesScreen })

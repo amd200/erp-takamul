@@ -116,7 +116,7 @@ export function invoiceA4Doc(inv: PrintInvoice, o: InvoiceA4Options): PrintDoc {
   const showUnits = lines.some(({ l }) => l.unitName)
 
   const rows = lines.map(({ l, a }) => `<tr>
-<td style="text-align:center;font-size:8.5pt;word-spacing:2px">${dash(l.name)}</td>
+<td style="text-align:center;font-size:8.5pt;word-spacing:2px">${dash(l.productName)}</td>
 ${showUnits ? `<td>${dash(l.unitName)}</td>` : ""}<td>${l.quantity}</td><td>${money(l.unitPrice)}</td>
 ${o.isExempt ? "" : `<td>${money(a.net)}</td><td>${money(a.tax)}</td>`}<td>${money(a.total)}</td></tr>`).join("")
 
@@ -142,13 +142,13 @@ ${o.isExempt ? "" : `<td>${money(a.net)}</td><td>${money(a.tax)}</td>`}<td>${mon
         isSupplier: false, name: orDash(inv.customerName), phone: orDash(c?.phone), taxNo: orDash(taxNo), commercial: orDash(c?.commercialRegister),
         city: plain(c?.cityName), district: plain(c?.district), street: plain(c?.street), building: orDash(c?.buildingNumber), subNo: orDash(c?.additionalNumber), postal: orDash(c?.postalCode),
       },
-      rows: lines.map(({ l, a }) => ({ name: l.name, additionsText: "", note: "", price: l.unitPrice, qty: l.quantity, subTotal: a.net, discount: a.discount, vatPct: l.taxRate, taxAmt: a.tax, netTotal: a.total })),
+      rows: lines.map(({ l, a }) => ({ name: l.productName, additionsText: "", note: "", price: l.unitPrice, qty: l.quantity, subTotal: a.net, discount: a.discount, vatPct: l.taxPercentage, taxAmt: a.tax, netTotal: a.total })),
       isExempt: o.isExempt,
       showHeaderAndFooterInPrint: o.showHeaderAndFooter,
       branchNames: { showBranchName: o.showBranchName },
       totals: { taxable: t.subTotal, discount: t.discount, vat: t.tax, final: t.grandTotal, paid, remaining },
       showPaidAndRemaining: o.showPaidAndRemaining,
-      payments: o.showPaymentMethods ? inv.payments.map((p) => ({ name: o.methodLabel(p.method), amount: p.amount })) : [],
+      payments: o.showPaymentMethods ? inv.payments.map((p) => ({ name: o.methodLabel(p.paymentMethod ?? ""), amount: p.amount })) : [],
       qr: o.isExempt ? null : { src: o.qrImage ?? null },
     }
     const html = o.design === "Design4" ? renderDesign4A4({ ...input, partyAddress: customerAddress, invNoLabel: o.documentNumberLabel ? [o.documentNumberLabel.en, o.documentNumberLabel.ar] : ["Invoice number", "رقم الفاتورة"] }) : renderDesign3A4(input)
@@ -200,7 +200,7 @@ ${o.isExempt ? "" : `<td>${money(a.net)}</td><td>${money(a.tax)}</td>`}<td>${mon
     ${o.isExempt ? "" : tr("اجمالي السعر قبل الضريبة", money(baseBeforeVat), "Tot Before VAT") + tr("ضريبة القيمة المضافة", money(t.tax), "Total VAT")}
     ${tr("الإجمالي النهائي", money(t.grandTotal), "NET TOTAL", "net-total-row")}
     ${o.showPaidAndRemaining ? tr("المدفوع", money(paid), "PAID AMOUNT", "net-total-row") : ""}
-    ${o.showPaymentMethods ? inv.payments.map((p) => tr(`نوع الدفع (${esc(o.methodLabel(p.method))})`, money(p.amount), "Payment Type")).join("") : ""}
+    ${o.showPaymentMethods ? inv.payments.map((p) => tr(`نوع الدفع (${esc(o.methodLabel(p.paymentMethod ?? ""))})`, money(p.amount), "Payment Type")).join("") : ""}
     ${o.showPaidAndRemaining ? tr("المتبقي", money(remaining), "REMAINING", "net-total-row") : ""}
   </table>
 </div>

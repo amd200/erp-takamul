@@ -5,15 +5,15 @@ import { lineAmounts } from "@/modules/sales/totals"
 import type { InvoiceLine } from "@/modules/sales/types"
 import type { Quote, QuoteInput } from "./types"
 
-/** The server takes the price before tax and the discount per unit. */
+/** The server takes the price before tax; a fixed discount is the line total (not per unit), as QuotationItem adds it. */
 const itemBody = (l: InvoiceLine) => ({
   productId: l.productId,
   unitId: l.unitId || null,
   quantity: l.quantity,
-  unitPrice: Math.round((l.taxCalculation === 1 ? l.unitPrice / (1 + l.taxRate / 100) : l.unitPrice) * 10000) / 10000,
+  unitPrice: Math.round((l.taxCalculation === 1 ? l.unitPrice / (1 + l.taxPercentage / 100) : l.unitPrice) * 10000) / 10000,
   discountPercentage: l.discountKind === "percent" ? l.discount : 0,
-  discountValue: l.discountKind === "value" && l.quantity > 0 ? l.discount / l.quantity : 0,
-  taxPercentage: l.taxRate,
+  discountValue: l.discountKind === "value" ? l.discount : 0,
+  taxPercentage: l.taxPercentage,
 })
 
 const stamp = (day: string, key?: string) => `${day}T${pinnedTo(key, () => new Date().toTimeString().slice(0, 8))}`
@@ -45,5 +45,8 @@ export const quotesApi = {
   duplicate: (id: number, key?: string) => retryWhileInProgress(() => http<unknown>(`/Quotation/${id}/duplicate`, { method: "POST", headers: idempotencyHeaders(key) })),
 }
 
-/** What a line comes to, preferring the server's own figure when the line came from a saved quotation. */
-export const lineTotal = (l: InvoiceLine) => l.amounts?.total ?? lineAmounts(l).total
+/** The invoice-level discount of a saved quotation: what the server took off beyond the lines' own discounts. */
+export const quoteGlobalDiscount = (q: Quote) => {
+  const lineDiscounts = (q.items ?? []).reduce((s, l) => s + (l.discountAmount ?? 0), 0)
+  return Math.max(0, Math.round(((q.discountAmount ?? 0) - lineDiscounts) * 100) / 100)
+}

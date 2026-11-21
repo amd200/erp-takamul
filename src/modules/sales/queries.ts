@@ -20,7 +20,10 @@ export const useInvoice = (id: number | undefined) =>
 export const useInvoicePayments = (id: number | undefined) =>
   useQuery({ queryKey: salesKeys.invoicePayments(id ?? 0), queryFn: () => invoicesApi.payments(id!), enabled: !!id })
 export const useReturns = (sort?: ListSort) => useQuery({ queryKey: sort?.SortBy ? [...salesKeys.returns, sort] : salesKeys.returns, queryFn: () => returnsApi.list(sort), placeholderData: keepPreviousData })
-export const useDebitNotes = (sort?: ListSort) => useQuery({ queryKey: sort?.SortBy ? [...salesKeys.debitNotes, sort] : salesKeys.debitNotes, queryFn: () => debitNotesApi.list(sort), placeholderData: keepPreviousData })
+/** One return, as the server sends it (items with unit and tax, payments, branch, customer). */
+export const useReturn = (id: number | undefined) =>
+  useQuery({ queryKey: salesKeys.return(id ?? 0), queryFn: () => returnsApi.get(id!), enabled: !!id })
+export const useDebitNotes =(sort?: ListSort) => useQuery({ queryKey: sort?.SortBy ? [...salesKeys.debitNotes, sort] : salesKeys.debitNotes, queryFn: () => debitNotesApi.list(sort), placeholderData: keepPreviousData })
 
 // Any sales write can change invoices, returns and balances together, so each one refreshes the whole module (["sales"]).
 

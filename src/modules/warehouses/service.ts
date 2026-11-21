@@ -1,15 +1,12 @@
 import type { ListSort } from "@/shared/api/errors"
 import { http } from "@/shared/http/request"
-import { currentBranchId } from "@/modules/partners/mappers"
+import { currentBranchId } from "@/shared/auth/currentBranchId"
 import type { Warehouse, WarehouseInput } from "./types"
 
 const blank = (s: string) => s.trim() || null
 
 export const warehousesApi = {
-  list: async (sort?: ListSort) => {
-    const res = await http<Warehouse[] | { data?: Warehouse[] }>("/Warehouse", { params: { ...sort } })
-    return Array.isArray(res) ? res : res?.data ?? []
-  },
+  list: (sort?: ListSort) => http<Warehouse[]>("/Warehouse", { params: { ...sort } }),
   get: (id: number) => http<Warehouse>(`/Warehouse/${id}`),
   create: (w: WarehouseInput) => http<unknown>("/Warehouse", { method: "POST", data: { warehouseCode: w.warehouseCode, warehouseName: w.warehouseName, address: blank(w.address), branchId: currentBranchId() } }),
   // The update body takes no code: it is fixed once the warehouse exists.

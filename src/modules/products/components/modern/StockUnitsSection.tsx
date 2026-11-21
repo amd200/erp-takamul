@@ -12,7 +12,7 @@ import { RepeatRows } from "./RepeatRows"
 export function StockUnitsSection() {
   const { t } = useTranslation()
   const { control } = useFormContext<ProductForm>()
-  const type = useWatch({ control, name: "type" })
+  const type = useWatch({ control, name: "productType" })
   const { data: units = [] } = useUnits()
   const extra = useFieldArray({ control, name: "units" })
   const rules = kindRules(type)
@@ -27,7 +27,7 @@ export function StockUnitsSection() {
         {rules.purchaseUnit && (
           <>
             <FormSelect control={control} name="purchaseUnitId" numeric required label={t("products.purchaseUnit")} options={unitOptions} />
-            <FormInput control={control} name="purchaseConversionFactor" type="number" required label={t("products.conversionFactor")} description={t("products.conversionHint")} />
+            <FormInput control={control} name="conversionFactor" type="number" required label={t("products.conversionFactor")} description={t("products.conversionHint")} />
           </>
         )}
         {rules.holdsStock && (

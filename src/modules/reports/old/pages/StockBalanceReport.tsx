@@ -1,6 +1,6 @@
 import { BarChart3, DollarSign, Wallet } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { currentBranchId } from "@/modules/partners/mappers"
+import { currentBranchId } from "@/shared/auth/currentBranchId"
 import { inventoryStock, type StockRow } from "../api"
 import { money } from "../output"
 import { PagedReport } from "../PagedReport"

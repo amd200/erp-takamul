@@ -44,12 +44,12 @@ export function LinesEditor({ allowFreeText, purchase, simple, hideDiscount }: {
   const rootError = errors.lines?.message ?? errors.lines?.root?.message
 
   const add = (line: InvoiceLine) => {
-    const i = getValues("lines").findIndex((l) => l.productId === line.productId && l.name === line.name && l.unitName === line.unitName)
+    const i = getValues("lines").findIndex((l) => l.productId === line.productId && l.productName === line.productName && l.unitName === line.unitName)
     if (i >= 0) setValue(`lines.${i}.quantity`, getValues(`lines.${i}.quantity`) + 1, { shouldValidate: true })
     // Keep focus in the barcode box so the next scan doesn't land in the new row.
     else rows.append(line, { shouldFocus: false })
   }
-  const addService = () => rows.append({ productId: 0, unitId: 0, name: "", unitName: t("sales.serviceUnit"), quantity: 1, unitPrice: 0, taxRate: 15, taxCalculation: 2, discountKind: "value", discount: 0 })
+  const addService = () => rows.append({ productId: 0, unitId: 0, productName: "", unitName: t("sales.serviceUnit"), quantity: 1, unitPrice: 0, taxPercentage: 15, taxCalculation: 2, discountKind: "value", discount: 0 })
 
   // A tax-exempt branch has no tax to show, so the tax type, the amount before tax and the tax itself are left out.
   const settings = useAppSettings()
@@ -64,7 +64,7 @@ export function LinesEditor({ allowFreeText, purchase, simple, hideDiscount }: {
     const l = getValues(`lines.${i}`)
     if (editTotal) setValue(`lines.${i}.unitPrice`, costFromTotal(lineAmounts(l).total, l.quantity, rate), { shouldValidate: true })
     setValue(`lines.${i}.taxId`, taxId, { shouldValidate: true })
-    setValue(`lines.${i}.taxRate`, rate, { shouldValidate: true })
+    setValue(`lines.${i}.taxPercentage`, rate, { shouldValidate: true })
   }
   const has = (id: ColumnId) => shown.some((c) => c.id === id)
   const template = shown.map((c) => (c.width.endsWith("px") ? c.width : `minmax(0,${c.width})`)).join(" ")
@@ -101,9 +101,9 @@ export function LinesEditor({ allowFreeText, purchase, simple, hideDiscount }: {
                 <div key={f.id} className="grid grid-cols-1 items-center gap-3 rounded-xl border bg-muted/40 p-4 md:rounded-none md:border-none md:bg-transparent md:p-2 md:[grid-template-columns:var(--cols)] md:[&_[data-slot=field]]:relative md:[&_[data-slot=field-error]]:absolute md:[&_[data-slot=field-error]]:top-full md:[&_[data-slot=field-error]]:start-0 md:[&_[data-slot=field-error]]:text-xs md:[&_[data-slot=field-error]]:whitespace-nowrap">
                   <div className="min-w-0">
                     {l.productId === 0 ? (
-                      <FormInput control={control} name={`lines.${i}.name`} label={t("sales.serviceName")} labelHidden placeholder={t("sales.serviceName")} />
+                      <FormInput control={control} name={`lines.${i}.productName`} label={t("sales.serviceName")} labelHidden placeholder={t("sales.serviceName")} />
                     ) : (
-                      <div className="font-semibold text-foreground">{l.name}</div>
+                      <div className="font-semibold text-foreground">{l.productName}</div>
                     )}
                     {!has("discount") && <CategoryDiscountBadge line={l} className="mt-1" />}
                   </div>
@@ -114,7 +114,7 @@ export function LinesEditor({ allowFreeText, purchase, simple, hideDiscount }: {
                   <div><Caption>{L.qty}</Caption>{editTotal ? (
                     <NumberInput value={l.quantity} positive label={L.qty} className="w-full" onChange={(n) => {
                       // The line keeps its total and the cost moves.
-                      setValue(`lines.${i}.unitPrice`, costFromTotal(a.total, n, l.taxRate), { shouldValidate: true })
+                      setValue(`lines.${i}.unitPrice`, costFromTotal(a.total, n, l.taxPercentage), { shouldValidate: true })
                       setValue(`lines.${i}.quantity`, n, { shouldValidate: true })
                     }} />
                   ) : <FormInput control={control} name={`lines.${i}.quantity`} type="number" inputClassName="text-center" label={t("products.quantity")} labelHidden />}</div>
@@ -148,11 +148,11 @@ export function LinesEditor({ allowFreeText, purchase, simple, hideDiscount }: {
                         <SelectContent>{taxes.map((x) => <SelectItem key={x.id} value={String(x.id)}>{x.name}</SelectItem>)}</SelectContent>
                       </Select>
                     </div>
-                  ) : <div className="text-center font-medium text-foreground tabular-nums"><Caption>{L.taxType}</Caption>{l.taxRate}% {l.taxCalculation === 1 ? t("sales.inclusive") : t("sales.exclusive")}</div>)}
+                  ) : <div className="text-center font-medium text-foreground tabular-nums"><Caption>{L.taxType}</Caption>{l.taxPercentage}% {l.taxCalculation === 1 ? t("sales.inclusive") : t("sales.exclusive")}</div>)}
                   {has("before") && <div className="text-center font-medium text-foreground tabular-nums"><Caption>{L.before}</Caption>{formatMoney(a.net)}</div>}
                   {has("vat") && <div className="text-center font-medium text-orange-500 tabular-nums"><Caption>{L.vat}</Caption>{formatMoney(a.tax)}</div>}
                   <div className="text-center font-bold text-success tabular-nums"><Caption>{L.total}</Caption>{editTotal
-                    ? <NumberInput value={a.total} decimals={2} label={L.total} className="w-full font-bold text-success" onChange={(n) => setValue(`lines.${i}.unitPrice`, costFromTotal(n, l.quantity, l.taxRate), { shouldValidate: true })} />
+                    ? <NumberInput value={a.total} decimals={2} label={L.total} className="w-full font-bold text-success" onChange={(n) => setValue(`lines.${i}.unitPrice`, costFromTotal(n, l.quantity, l.taxPercentage), { shouldValidate: true })} />
                     : formatMoney(a.total)}</div>
                   <div className="flex items-center justify-center gap-2">
                     <button type="button" aria-label={t("common.remove")} onClick={() => rows.remove(i)} className="p-2 text-muted-foreground transition-colors hover:text-red-500"><Trash2 size={18} /></button>

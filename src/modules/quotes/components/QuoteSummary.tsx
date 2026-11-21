@@ -49,7 +49,7 @@ export function QuoteSummary({ totals, customerName, date, lines, notes }: { tot
                   {lines.map((l, i) => (
                     <li key={i} className="flex items-start justify-between gap-2">
                       <span className="min-w-0">
-                        <span className="block truncate font-medium">{l.name}</span>
+                        <span className="block truncate font-medium">{l.productName}</span>
                         <span className="text-xs text-muted-foreground">{l.quantity} × {formatMoney(l.unitPrice)} {l.unitName}</span>
                       </span>
                       <span className="shrink-0 font-semibold tabular-nums">{formatMoney(lineAmounts(l).total)}</span>

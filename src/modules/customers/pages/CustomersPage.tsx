@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Plus, UsersRound } from "lucide-react"
+import { Plus, UsersRound, WalletCards } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
@@ -14,6 +14,7 @@ import { formatMoney } from "@/lib/format"
 import type { Customer } from "../types"
 import { SectionCard } from "@/components/SectionCard"
 import { CustomerDialog } from "../components/CustomerDialog"
+import { OpeningBalanceDialog } from "../components/OpeningBalanceDialog"
 import { useCustomerList, useDeleteCustomer } from "../queries"
 
 export default function CustomersPage() {
@@ -26,6 +27,9 @@ export default function CustomersPage() {
   // The add / edit pop-up: `{}` adds, `{ customer }` edits the selected row.
   const [form, setForm] = useState<{ customer?: Customer } | null>(null)
 
+  // The separate opening-balance pop-up for the selected row.
+  const [opening, setOpening] = useState<Customer | null>(null)
+
   const all = data ?? []
 
   const columns: Column<Customer>[] = [
@@ -35,7 +39,8 @@ export default function CustomersPage() {
     { id: "openingBalance", sortKey: "openingBalance", header: t("partners.openingBalance"), cell: (c) => <span dir="ltr">{formatMoney(c.openingBalance ?? 0)}</span> },
     { id: "actions", header: "", align: "end", cell: (c) => (
       <div className="flex items-center justify-end gap-0.5">
-        <RowActions onEdit={can(P.customers.edit) ? () => setForm({ customer: c }) : undefined}
+        <RowActions extra={[can(P.customers.edit) && { key: "opening", label: t("partners.openingBalance"), icon: <WalletCards />, onSelect: () => setOpening(c) }]}
+          onEdit={can(P.customers.edit) ? () => setForm({ customer: c }) : undefined}
           onDelete={can(P.customers.delete) && c.id !== 1 ? () => setToDelete(c) : undefined} />
       </div>
     ) },
@@ -51,6 +56,7 @@ export default function CustomersPage() {
             empty={<EmptyState icon={<UsersRound />} title={t("customers.empty")} hint={t("customers.emptyHint")} />} />
         </SectionCard>
       <CustomerDialog open={!!form} onOpenChange={(o) => !o && setForm(null)} customer={form?.customer} />
+      <OpeningBalanceDialog customer={opening} onOpenChange={(o) => !o && setOpening(null)} />
       <ConfirmDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)} pending={del.isPending}
         title={t("customers.deleteTitle")} description={t("customers.deleteBody", { name: toDelete?.customerName })}
         onConfirm={() => toDelete && del.mutate(toDelete.id, { onSuccess: () => setToDelete(null) })} />

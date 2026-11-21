@@ -96,7 +96,7 @@ export function ImagePanel() {
 export function OptionsPanel() {
   const { t } = useTranslation()
   const { control } = useFormContext<ProductForm>()
-  const type = useWatch({ control, name: "type" })
+  const type = useWatch({ control, name: "productType" })
   const printers = usePrinterOptions(useWatch({ control, name: "printerName" }))
   const rules = kindRules(type)
 

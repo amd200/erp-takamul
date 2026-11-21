@@ -16,7 +16,6 @@ import { TotalsPanel } from "../components/TotalsPanel"
 import { useAppSettings } from "@/modules/settings"
 import { useInvoice } from "../queries"
 import { useInvoiceOutput } from "../print/useInvoiceOutput"
-import { orderTotals } from "../totals"
 
 export default function InvoiceDetailPage() {
   const { t, i18n } = useTranslation()
@@ -92,7 +91,7 @@ export default function InvoiceDetailPage() {
           </SectionCard>
         </div>
         <aside className="lg:sticky lg:top-20 lg:self-start">
-          <SectionCard title={t("sales.summary")}><TotalsPanel totals={orderTotals(inv)} paid={paid} /></SectionCard>
+          <SectionCard title={t("sales.summary")}><TotalsPanel totals={{ subTotal: inv.subTotal ?? 0, discount: inv.discountAmount ?? 0, tax: inv.taxAmount ?? 0, grandTotal: inv.grandTotal ?? 0 }} paid={paid} /></SectionCard>
         </aside>
       </div>
       <PaymentsDialog invoice={payments ? inv : null} onOpenChange={setPayments} />

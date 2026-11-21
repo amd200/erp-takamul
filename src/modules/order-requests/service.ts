@@ -13,6 +13,6 @@ export const orderRequestsApi = {
   markReady: (id: number) => http<unknown>(`/sales-orders/requests/${id}/mark-ready`, { method: "POST" }),
   checkout: (id: number, payments: PosPayment[], key: string) => retryWhileInProgress(() => http<unknown>("/sales-orders/requests/checkout", {
     method: "POST", headers: idempotencyHeaders(key),
-    data: { requestOrderId: id, payments: payments.map((p) => ({ paymentMethod: p.method, treasuryId: p.treasuryId, amount: p.amount, notes: null })) },
+    data: { requestOrderId: id, payments: payments.map((p) => ({ ...p, notes: null })) },
   })),
 }

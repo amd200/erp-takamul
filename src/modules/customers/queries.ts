@@ -20,6 +20,18 @@ export const useSaveCustomer = () => {
   })
 }
 
+export const useSetOpeningBalance = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Parameters<typeof customersApi.setOpeningBalance>[1] }) => customersApi.setOpeningBalance(id, data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: customerKeys.all })
+      toast.success(i18n.t("common.saved"))
+    },
+    onError: (e) => errorToast(e, "common.saveFailed"),
+  })
+}
+
 export const useDeleteCustomer = () => {
   const qc = useQueryClient()
   return useMutation({

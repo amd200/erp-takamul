@@ -2338,7 +2338,7 @@
     "additionalNumber": "Additional no.",
     "postalCode": "Postal code",
     "openingBalance": "Opening balance",
-    "balanceSide": "Balance side",
+    "balanceSide": "Balance type",
     "debit": "Debit (they owe)",
     "credit": "Credit (we owe)",
     "openingHint": "The balance before you started using the system. It starts the statement.",
@@ -2382,7 +2382,8 @@
     "companionPhone": "Companion phone",
     "removeCompanion": "Remove companion",
     "showFullData": "Show full details",
-    "hideFullData": "Hide full details"
+    "hideFullData": "Hide full details",
+    "openingTitle": "Opening balance – {{name}}"
   },
   "suppliers": {
     "title": "Suppliers",
@@ -2402,7 +2403,8 @@
     "empty": "No suppliers",
     "emptyHint": "Add suppliers to record purchases and payments.",
     "deleteTitle": "Delete supplier",
-    "deleteBody": "“{{name}}” will be deleted. Past purchases stay as they are."
+    "deleteBody": "“{{name}}” will be deleted. Past purchases stay as they are.",
+    "openingTitle": "Opening balance – {{name}}"
   },
   "vouchers": {
     "accountType": "Account type",

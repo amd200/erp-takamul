@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { enteredPrice } from "@/modules/products/mappers"
+import { enteredPrice } from "@/modules/products/pricing"
 import { Handbag, Plus, Trash2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
@@ -26,7 +26,7 @@ function unitChoices(p: Product | undefined, unitName: (id: number) => string): 
 }
 
 /** The unit price before tax, whichever way the item's price is entered. */
-const priceBeforeTax = (l: CartLine) => (l.taxCalculation === 1 ? l.unitPrice / (1 + l.taxRate / 100) : l.unitPrice)
+const priceBeforeTax = (l: CartLine) => (l.taxCalculation === 1 ? l.unitPrice / (1 + l.taxPercentage / 100) : l.unitPrice)
 
 type Props = {
   lines: CartLine[]
@@ -159,7 +159,7 @@ export function SalesLines({ lines, options: o, search, onPick, onCode, onQuery,
                   <header className="flex items-start gap-3 border-b border-[#e7edf3] bg-[#f8fbfe] px-3 py-2.5 dark:border-border dark:bg-muted/20">
                     <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-[#082b66] text-[11px] font-black text-white">{idx + 1}</span>
                     <div className="min-w-0 flex-1">
-                      <h3 className="truncate text-sm font-extrabold text-[#17375f] dark:text-foreground">{l.name}</h3>
+                      <h3 className="truncate text-sm font-extrabold text-[#17375f] dark:text-foreground">{l.productName}</h3>
                       <p className="mt-0.5 truncate text-[10px] text-muted-foreground" dir="ltr">{codeOf(l)}</p>
                       <CategoryDiscountBadge line={l} className="mt-1" />
                     </div>
@@ -266,7 +266,7 @@ export function SalesLines({ lines, options: o, search, onPick, onCode, onQuery,
                 <tr key={l.key} className={cn("h-10.5 transition-colors [&>td]:border-b [&>td]:border-border", idx % 2 === 0 ? "bg-card" : "bg-muted/20")}>
                   <td>{idx + 1}</td>
                   <td dir="ltr">{codeOf(l)}</td>
-                  <td className="px-2.25 text-start"><span className="block truncate">{l.name}</span><CategoryDiscountBadge line={l} className="mt-0.5" /></td>
+                  <td className="px-2.25 text-start"><span className="block truncate">{l.productName}</span><CategoryDiscountBadge line={l} className="mt-0.5" /></td>
                   <td className="px-1.5">
                     {canSwitch(l)
                       ? <UnitCell line={l} choices={units(l)} enabled locked={locked} className="mx-auto h-6.75! w-[84px] rounded-[6px] border-[#dfe7f1] bg-white text-[13px] font-semibold text-[#17375f] dark:border-border dark:bg-background dark:text-foreground" />

@@ -1,5 +1,4 @@
 import { Link, useParams } from "react-router-dom"
-import { purchaseTotals } from "../form"
 import { Pencil, Printer, ShoppingBag } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { StatusBadge } from "@/components/StatusBadge"
@@ -98,7 +97,7 @@ export default function PurchaseViewPage() {
             </SectionCard>
           )}
         </div>
-        <aside className="lg:sticky lg:top-20 lg:self-start"><SectionCard title={t("sales.summary")}><TotalsPanel totals={purchaseTotals(p)} paid={p.paidAmount ?? 0} /></SectionCard></aside>
+        <aside className="lg:sticky lg:top-20 lg:self-start"><SectionCard title={t("sales.summary")}><TotalsPanel totals={{ subTotal: p.subTotal ?? 0, discount: p.discountAmount ?? 0, tax: p.taxAmount ?? 0, grandTotal: p.grandTotal ?? 0 }} paid={p.paidAmount ?? 0} /></SectionCard></aside>
       </div>
     </>
   )

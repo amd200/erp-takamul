@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
-import { quoteGlobalDiscount, quoteLineOf } from "../form"
+import { quoteGlobalDiscount } from "../service"
 import { Controller, FormProvider, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Link, useNavigate, useParams } from "react-router-dom"
@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { GlobalDiscountField } from "@/modules/sales/components/GlobalDiscountField"
-import { FormSelect, FormTextarea } from "@/components/form/FormFields"
+import { FormInput, FormSelect } from "@/components/form/FormFields"
 import { BalanceBox } from "@/components/BalanceBox"
 import { PageHeader } from "@/components/PageHeader"
 import { SectionCard } from "@/components/SectionCard"
@@ -23,7 +23,7 @@ import { BranchSection } from "@/modules/branches/BranchSection"
 import { useFormBranch } from "@/modules/branches/useFormBranch"
 import { useQuote, useSaveQuote } from "../queries"
 import { useAppSettings } from "@/modules/settings"
-import { emptyQuote, quoteSchema, type QuoteForm } from "../schema"
+import { emptyQuote, quoteLineOf, quoteSchema, type QuoteForm } from "../schema"
 
 /** New or edited quotation: who it is for, the lines, and what it comes to with delivery. */
 export default function QuoteFormPage() {
@@ -85,7 +85,7 @@ export default function QuoteFormPage() {
           actions={<Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/5 hover:text-primary"><Link to="/quotes"><List />{t("quotes.backToList")}</Link></Button>} />
 
         <SectionCard title={t("sales.basics")}>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className={`grid grid-cols-1 items-start gap-6 sm:grid-cols-2 ${formBranch.show ? "lg:grid-cols-[repeat(3,minmax(0,1fr))_minmax(0,2fr)]" : "lg:grid-cols-[repeat(2,minmax(0,1fr))_minmax(0,2fr)]"}`}>
             {formBranch.show && <BranchSection plain value={formBranch.branchId} onChange={changeBranch} />}
             <Controller control={form.control} name="date" render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
@@ -103,9 +103,7 @@ export default function QuoteFormPage() {
               </div>
               {customersTab?.showActualBalance && customer && <BalanceBox label={t("sales.balanceLabel")} value={customer.balance ?? 0} debitWhenPositive />}
             </div>
-          </div>
-          <div className="mt-6">
-            <FormTextarea control={form.control} name="notes" label={t("common.notes")} placeholder={t("quotes.notesHint")} />
+            <div className="min-w-0 sm:col-span-2 lg:col-span-1"><FormInput control={form.control} name="notes" label={t("common.notes")} placeholder={t("quotes.notesHint")} /></div>
           </div>
         </SectionCard>
 

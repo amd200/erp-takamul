@@ -13,7 +13,7 @@ const randomBarcode = () => String(6221100000000 + Math.floor(Math.random() * 99
 export function BasicInfoSection({ branchField }: { branchField?: ReactNode }) {
   const { t } = useTranslation()
   const { control, setValue } = useFormContext<ProductForm>()
-  const type = useWatch({ control, name: "type" })
+  const type = useWatch({ control, name: "productType" })
   const { data: categories = [] } = useCategories()
   const { data: units = [] } = useUnits()
   const rules = kindRules(type)
@@ -28,9 +28,9 @@ export function BasicInfoSection({ branchField }: { branchField?: ReactNode }) {
       <div className="grid gap-4 sm:grid-cols-2">
         {branchField}
         <div className="grid gap-4 sm:col-span-2 lg:grid-cols-3">
-          <FormInput control={control} name="nameAr" label={t("products.nameAr")} required />
-          <FormInput control={control} name="nameEn" label={t("products.nameEn")} dir="ltr" />
-          <FormInput control={control} name="nameUr" label={t("products.nameUr")} dir="ltr" />
+          <FormInput control={control} name="productNameAr" label={t("products.nameAr")} required />
+          <FormInput control={control} name="productNameEn" label={t("products.nameEn")} dir="ltr" />
+          <FormInput control={control} name="productNameUr" label={t("products.nameUr")} dir="ltr" />
         </div>
         {rules.ownBarcodeAndPrice ? (
           <div className="grid gap-4 sm:col-span-2 lg:grid-cols-3">

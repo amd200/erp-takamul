@@ -1,5 +1,6 @@
 import { create } from "zustand"
-import { quoteGlobalDiscount, quoteLineOf } from "@/modules/quotes/form"
+import { quoteLineOf } from "@/modules/quotes/schema"
+import { quoteGlobalDiscount } from "@/modules/quotes/service"
 import { createJSONStorage, persist } from "zustand/middleware"
 import { toast } from "sonner"
 import i18n from "@/shared/i18n"

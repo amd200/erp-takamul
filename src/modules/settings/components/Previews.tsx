@@ -112,11 +112,11 @@ const SAMPLE_INVOICE: PrintInvoice = {
   id: 0, number: "INV-000123", date: "2026-10-26T13:05:30", customerName: "شركة النور للتوريدات", warehouseName: "المخزن الرئيسي",
   employeeName: null, createdBy: "admin", paid: 120, notes: "",
   lines: [
-    { productId: 1, unitId: 1, name: "صنف تجريبي (1)", unitName: "حبة", quantity: 2, unitPrice: 50, taxRate: 15, taxCalculation: 2, discountKind: "value", discount: 0, amounts: { discount: 0, tax: 15, total: 115 } },
-    { productId: 2, unitId: 1, name: "صنف تجريبي (2)", unitName: "حبة", quantity: 1, unitPrice: 30, taxRate: 15, taxCalculation: 2, discountKind: "value", discount: 0, amounts: { discount: 0, tax: 4.5, total: 34.5 } },
+    { productId: 1, unitId: 1, productName: "صنف تجريبي (1)", unitName: "حبة", quantity: 2, unitPrice: 50, taxPercentage: 15, taxCalculation: 2, discountKind: "value", discount: 0, amounts: { discount: 0, tax: 15, total: 115 } },
+    { productId: 2, unitId: 1, productName: "صنف تجريبي (2)", unitName: "حبة", quantity: 1, unitPrice: 30, taxPercentage: 15, taxCalculation: 2, discountKind: "value", discount: 0, amounts: { discount: 0, tax: 4.5, total: 34.5 } },
   ],
   totals: { subTotal: 130, discount: 0, tax: 19.5, grandTotal: 149.5 },
-  payments: [{ amount: 120, method: "Cash" }],
+  payments: [{ amount: 120, paymentMethod: "Cash" }],
 }
 const SAMPLE_BRANCH = { name: "مؤسسة المثال التجارية", nameEn: "Example Trading Est.", shortName: "المثال", shortNameEn: "Example", taxNumber: "300000000000003", commercialRegister: "1010000000", phone: "0500000000", cityName: "الرياض", district: "العليا", street: "شارع الملك فهد", postalCode: "12211", buildingNumber: "1234", subNumber: "5678", imageUrl: null, stampImageUrl: null, iban: "SA0000000000000000000000", footerNote: "", locationAddress: "" } as unknown as Branch
 const SAMPLE_CUSTOMER = { phone: "0555555555", taxNumber: "300000000000009", commercialRegister: "1010111111", city: "الرياض", district: "النخيل", street: "طريق الملك عبدالله", postalCode: "12345", buildingNumber: "4321", additionalNumber: "8765", country: "السعودية" } as unknown as Customer

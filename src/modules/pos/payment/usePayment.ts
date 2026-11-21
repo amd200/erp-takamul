@@ -129,7 +129,7 @@ export function usePayment({ open, total, hasCustomer, purchase, requestCheckout
     return rows.map((r) => {
       const amount = round(Math.min(amountOf(r.raw), room))
       room = round(room - amount)
-      return { treasuryId: r.treasuryId, method: "Cash" as const, amount }
+      return { treasuryId: r.treasuryId, paymentMethod: "Cash" as const, amount }
     }).filter((p) => p.amount > 0)
   }, [credit, mode, singleId, singleRaw, splits, total])
 

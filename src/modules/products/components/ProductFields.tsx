@@ -22,12 +22,12 @@ const randomBarcode = () => String(6221100000000 + Math.floor(Math.random() * 99
 export function NamesFields() {
   const { t } = useTranslation()
   const { control } = useFormContext<ProductForm>()
-  const type = useWatch({ control, name: "type" })
+  const type = useWatch({ control, name: "productType" })
   return (
     <>
-      <FormInput control={control} name="nameAr" required label={t("productForm.nameAr")} placeholder={t("productForm.nameArHint")} />
-      <FormInput control={control} name="nameEn" dir="ltr" label={t("productForm.nameEn")} placeholder={t("productForm.nameEnHint")} />
-      <FormInput control={control} name="nameUr" dir="ltr" label={t("productForm.nameUr")} placeholder={t("productForm.nameUrHint")} />
+      <FormInput control={control} name="productNameAr" required label={t("productForm.nameAr")} placeholder={t("productForm.nameArHint")} />
+      <FormInput control={control} name="productNameEn" dir="ltr" label={t("productForm.nameEn")} placeholder={t("productForm.nameEnHint")} />
+      <FormInput control={control} name="productNameUr" dir="ltr" label={t("productForm.nameUr")} placeholder={t("productForm.nameUrHint")} />
       {type !== "RawMatrial" && <FormInput control={control} name="displayOrder" type="number" label={t("productForm.displayOrder")} placeholder={t("productForm.displayOrder")} />}
     </>
   )
@@ -47,7 +47,7 @@ export function CategoryField() {
 export function PricingFields({ computedCost }: { computedCost: number }) {
   const { t } = useTranslation()
   const { control, setValue, getValues } = useFormContext<ProductForm>()
-  const [type, taxId, price, calc] = useWatch({ control, name: ["type", "taxId", "sellingPrice", "taxCalculation"] })
+  const [type, taxId, price, calc] = useWatch({ control, name: ["productType", "taxId", "sellingPrice", "taxCalculation"] })
   const { data: taxes = [] } = useTaxes()
   const { data: reasons = [] } = useExemptionReasons()
   const rules = kindRules(type)
@@ -106,7 +106,7 @@ export function PricingFields({ computedCost }: { computedCost: number }) {
 export function BarcodeUnitFields() {
   const { t } = useTranslation()
   const { control, setValue } = useFormContext<ProductForm>()
-  const type = useWatch({ control, name: "type" })
+  const type = useWatch({ control, name: "productType" })
   const { data: units = [] } = useUnits()
   const rules = kindRules(type)
   const unitOptions = units.map((u) => ({ value: String(u.id), label: u.name }))
@@ -123,7 +123,7 @@ export function BarcodeUnitFields() {
       {rules.purchaseUnit && (
         <>
           <FormSelect control={control} name="purchaseUnitId" numeric required label={t("products.purchaseUnit")} options={unitOptions} />
-          <FormInput control={control} name="purchaseConversionFactor" type="number" required label={t("products.conversionFactor")} description={t("products.conversionHint")} />
+          <FormInput control={control} name="conversionFactor" type="number" required label={t("products.conversionFactor")} description={t("products.conversionHint")} />
         </>
       )}
     </>
@@ -189,7 +189,7 @@ export function DescriptionField() {
 export function ShowInSalesBox() {
   const { t } = useTranslation()
   const { control, setValue } = useFormContext<ProductForm>()
-  const [type, on] = useWatch({ control, name: ["type", "showInSalesScreen"] })
+  const [type, on] = useWatch({ control, name: ["productType", "showInSalesScreen"] })
   if (!kindRules(type).sells) return null
   return (
     <div className="flex items-center gap-3 rounded-lg border border-border p-4 lg:col-span-2">

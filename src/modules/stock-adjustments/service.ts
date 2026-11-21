@@ -9,7 +9,7 @@ const bodyOf = (input: AdjustmentInput) => ({
   // The server currently stamps its own time; the chosen date is sent so it is used once the endpoint accepts it.
   operationDate: input.date || undefined,
   notes: input.notes || null,
-  items: input.lines.map((l) => ({ stockInventoryId: l.stockInventoryId, unitId: l.unitId, operationType: l.operation, quantity: l.quantity })),
+  items: input.lines,
 })
 
 // Real endpoints: GET /StockInventory (item per warehouse), GET /StockInventory/bulk-adjustments, GET /StockInventory/{id}, POST /StockInventory/bulk-adjust, PUT /StockInventory/{id}, DELETE /StockInventory/{id}

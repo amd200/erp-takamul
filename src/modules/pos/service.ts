@@ -4,7 +4,7 @@ import { idempotencyHeaders, retryWhileInProgress } from "@/shared/http/idempote
 import type { CartLine, DeliveryCompany, HeldOrder, Order, PosPayment, SaleInput, SaleResult } from "./types"
 
 // The server takes the unit price before tax; a line priced with tax (calculation 1) is divided by it first, as the old POS does.
-const priceBeforeTax = (l: CartLine) => (l.taxCalculation === 1 ? Math.round((l.unitPrice / (1 + l.taxRate / 100)) * 10000) / 10000 : l.unitPrice)
+const priceBeforeTax = (l: CartLine) => (l.taxCalculation === 1 ? Math.round((l.unitPrice / (1 + l.taxPercentage / 100)) * 10000) / 10000 : l.unitPrice)
 
 // A flat discount on a line is sent per unit, a percentage as is: the way the point-of-sale endpoints take it.
 const itemBody = (l: CartLine) => ({
@@ -18,8 +18,6 @@ const itemBody = (l: CartLine) => ({
   additionIds: l.extras.map((e) => e.id),
 })
 
-const paymentBody = (p: PosPayment) => ({ paymentMethod: p.method, treasuryId: p.treasuryId, amount: p.amount, notes: null })
-
 function body(s: SaleInput) {
   const common = {
     customerId: s.customerId, ...(s.customerCompanionId ? { customerCompanionId: s.customerCompanionId } : {}), warehouseId: s.warehouseId, employeeId: s.employeeId, orderDate: s.orderDate, notes: s.note || null,
@@ -28,7 +26,7 @@ function body(s: SaleInput) {
     orderDeviceNumber: s.orderDeviceNumber ? Number(s.orderDeviceNumber) : null, TableNumber: s.tableNumber || null,
     // Gift cards are not here.
     posDeviceName: s.posDeviceName ?? null, giftCardId: null,
-    items: s.lines.map(itemBody), payments: s.payments.map(paymentBody),
+    items: s.lines.map(itemBody), payments: s.payments.map((p) => ({ ...p, notes: null })),
   }
   return s.orderType === "Delivery"
     ? { ...common, deliveryCompanyId: s.deliveryCompanyId }
@@ -55,7 +53,7 @@ const dineIn = {
       data: {
         tableId: s.tableId, orderDate: s.orderDate, giftCardId: null,
         globalDiscountValue: s.discount.kind === "value" ? s.discount.value : 0, globalDiscountPercentage: s.discount.kind === "percent" ? s.discount.value : 0,
-        payments: s.payments.map(paymentBody),
+        payments: s.payments.map((p) => ({ ...p, notes: null })),
       },
     })),
   /** The open order of a busy table, as /sales-orders sends one. */
@@ -74,7 +72,7 @@ export const posApi = {
   /** Turns a held order into a real sale by paying it. */
   release: (id: number, payments: PosPayment[], key: string): Promise<SaleResult> =>
     retryWhileInProgress(() => http<SaleResult>(`/sales-orders/${id}/release-holding`, {
-      method: "POST", headers: idempotencyHeaders(key), data: payments.map(paymentBody), timeout: 60_000,
+      method: "POST", headers: idempotencyHeaders(key), data: payments.map((p) => ({ ...p, notes: null })), timeout: 60_000,
     })),
 
   held: async (): Promise<HeldOrder[]> => {

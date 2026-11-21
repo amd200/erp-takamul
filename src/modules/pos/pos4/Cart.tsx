@@ -90,7 +90,7 @@ export function Cart({ onContinueShopping }: { onContinueShopping?: () => void }
               return (
                 <article key={l.key} className="flex min-h-32 gap-4 border-b border-border bg-card px-4 py-3">
                   <div className="flex min-w-0 flex-1 flex-col items-start py-1 text-start">
-                    <h3 className="text-base leading-7 font-bold text-foreground">{l.name}</h3>
+                    <h3 className="text-base leading-7 font-bold text-foreground">{l.productName}</h3>
                     {l.extras.length > 0 && <p className="mt-0.5 text-xs leading-5 text-muted-foreground">+ {l.extras.map((e) => e.name).join("، ")}</p>}
                     <div className="mt-auto flex flex-row-reverse items-center gap-1 font-bold text-foreground">
                       <CurrencySymbol size={13} />
@@ -98,7 +98,7 @@ export function Cart({ onContinueShopping }: { onContinueShopping?: () => void }
                     </div>
                   </div>
                   <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-xl bg-muted/40">
-                    {l.imageUrl ? <img src={l.imageUrl} alt={l.name} className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center text-muted-foreground/40"><Handbag size={30} /></div>}
+                    {l.imageUrl ? <img src={l.imageUrl} alt={l.productName} className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center text-muted-foreground/40"><Handbag size={30} /></div>}
                     <div className="absolute right-2 bottom-2 left-2 flex h-8 items-center justify-between rounded-lg border border-border bg-card px-1 text-foreground shadow-sm" dir="ltr">
                       <button type="button" disabled={locked} onClick={() => setQty(l.key, l.quantity + 1)} aria-label={t("pos4.increaseQuantity")} className="flex size-7 items-center justify-center rounded-md hover:bg-primary/10 hover:text-primary disabled:opacity-40"><Plus size={16} strokeWidth={2.5} /></button>
                       <span className="min-w-6 text-center text-xs font-bold tabular-nums">{l.quantity}</span>

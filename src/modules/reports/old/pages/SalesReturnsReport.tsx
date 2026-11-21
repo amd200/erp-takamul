@@ -1,6 +1,6 @@
 import { Receipt, RotateCcw } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { currentBranchId } from "@/modules/partners/mappers"
+import { currentBranchId } from "@/shared/auth/currentBranchId"
 import { salesReturns, type SalesReturnRow } from "../api"
 import { dayText, money } from "../output"
 import { PagedReport, slice } from "../PagedReport"

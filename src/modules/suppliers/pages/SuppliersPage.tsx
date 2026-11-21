@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Plus, Truck } from "lucide-react"
+import { Plus, Truck, WalletCards } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
@@ -13,6 +13,7 @@ import { P } from "@/shared/permissions/permissions"
 import { formatMoney } from "@/lib/format"
 import type { Supplier } from "../types"
 import { SectionCard } from "@/components/SectionCard"
+import { OpeningBalanceDialog } from "../components/OpeningBalanceDialog"
 import { SupplierDialog } from "../components/SupplierDialog"
 import { useDeleteSupplier, useSupplierList } from "../queries"
 
@@ -25,6 +26,8 @@ export default function SuppliersPage() {
   const [toDelete, setToDelete] = useState<Supplier | null>(null)
   // The add / edit pop-up: `{}` adds, `{ supplier }` edits the selected row.
   const [form, setForm] = useState<{ supplier?: Supplier } | null>(null)
+  // The separate opening-balance pop-up for the selected row.
+  const [opening, setOpening] = useState<Supplier | null>(null)
   const all = data ?? []
 
   const columns: Column<Supplier>[] = [
@@ -34,7 +37,7 @@ export default function SuppliersPage() {
     { id: "openingBalance", sortKey: "openingBalance", header: t("partners.openingBalance"), cell: (s) => <span dir="ltr">{formatMoney(s.openingBalance ?? 0)}</span> },
     { id: "actions", header: "", align: "end", cell: (s) => (
       <div className="flex items-center justify-end gap-0.5">
-        <RowActions onEdit={can(P.suppliers.edit) ? () => setForm({ supplier: s }) : undefined} onDelete={can(P.suppliers.delete) ? () => setToDelete(s) : undefined} />
+        <RowActions extra={[can(P.suppliers.edit) && { key: "opening", label: t("partners.openingBalance"), icon: <WalletCards />, onSelect: () => setOpening(s) }]} onEdit={can(P.suppliers.edit) ? () => setForm({ supplier: s }) : undefined} onDelete={can(P.suppliers.delete) ? () => setToDelete(s) : undefined} />
       </div>
     ) },
   ]
@@ -49,6 +52,7 @@ export default function SuppliersPage() {
             empty={<EmptyState icon={<Truck />} title={t("suppliers.empty")} hint={t("suppliers.emptyHint")} />} />
         </SectionCard>
       <SupplierDialog open={!!form} onOpenChange={(o) => !o && setForm(null)} supplier={form?.supplier} />
+      <OpeningBalanceDialog supplier={opening} onOpenChange={(o) => !o && setOpening(null)} />
       <ConfirmDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)} pending={del.isPending}
         title={t("suppliers.deleteTitle")} description={t("suppliers.deleteBody", { name: toDelete?.supplierName })}
         onConfirm={() => toDelete && del.mutate(toDelete.id, { onSuccess: () => setToDelete(null) })} />

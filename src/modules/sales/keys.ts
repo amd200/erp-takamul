@@ -5,6 +5,7 @@ export const salesKeys = {
   invoicePayments: (id: number) => ["sales", "invoices", id, "payments"] as const,
   nextPosNumber: ["sales", "invoices", "next-pos"] as const,
   returns: ["sales", "returns"] as const,
+  return: (id: number) => ["sales", "returns", id] as const,
   debitNotes: ["sales", "debit-notes"] as const,
   posTables: ["sales", "pos-tables"] as const,
   posLatest: ["sales", "pos-latest"] as const,

@@ -2,22 +2,25 @@ export const BOOKING_STATUSES = ["Confirmed", "Deferred", "Cancelled"] as const
 
 export type BookingStatus = (typeof BOOKING_STATUSES)[number]
 
-/** Mirrors /bookings, as the server sends it. */
+/** Mirrors BookingResponseDto, as GET /api/bookings sends it. */
 export type Reservation = {
   id: number
-  bookingNumber?: string | null
-  customerId?: number | null
-  customerName?: string | null
-  customerPhone?: string | null
-  bookingDate?: string | null
-  /** HH:mm:ss as the booking was entered. */
-  bookingTime?: string | null
-  /** The moment of the booking (date and time together). */
-  bookingDateTime?: string | null
-  status?: string | null
-  notes?: string | null
+  branchId: number
+  /** The backend sends no branch name, only branchId. */
   branchName?: string | null
-  createdBy?: string | null
+  bookingNumber: string
+  customerId: number | null
+  customerName: string
+  customerPhone: string
+  bookingDate: string
+  /** HH:mm:ss as the booking was entered. */
+  bookingTime: string
+  /** The moment of the booking (date and time together). */
+  bookingDateTime: string
+  status: BookingStatus
+  notes: string | null
+  createdAt: string
+  createdBy: string | null
 }
 
 export type ReservationInput = { customerName: string; customerPhone: string; date: string; time: string; status: BookingStatus; notes: string; customerId: number | null }

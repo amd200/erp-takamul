@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
-import { showsInSales } from "@/modules/products/mappers"
+import { showsInSales } from "@/modules/products/pricing"
 import { productsApi } from "@/modules/products/service"
 import type { Product } from "@/modules/products/types"
 import { pos4Api } from "./service"

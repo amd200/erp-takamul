@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { customerFormOf } from "../form"
 import { Controller, FormProvider, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQueryClient } from "@tanstack/react-query"
@@ -16,7 +15,7 @@ import { BranchSection } from "@/modules/branches/BranchSection"
 import { useFormBranch } from "@/modules/branches/useFormBranch"
 import { customersApi } from "../service"
 import { useSaveCustomer } from "../queries"
-import { customerSchema, emptyCustomer, type CustomerForm } from "../schema"
+import { COUNTRY_CODE, customerSchema, emptyCustomer, type CustomerForm } from "../schema"
 import type { Customer } from "../types"
 import { CompanionsBlock, EyePrescriptionBox } from "./EyePrescriptionBox"
 import { customerKeys } from "../keys"
@@ -61,7 +60,7 @@ export function CustomerDialog({ open, onOpenChange, customer, onCreated, withMe
 
   useEffect(() => {
     if (!open) return
-    form.reset(customer ? customerFormOf(customer) : { ...emptyCustomer, fileNumber: nextFileNumber ?? emptyCustomer.fileNumber })
+    form.reset(customer ? { ...emptyCustomer, ...customer, countryName: COUNTRY_CODE } : { ...emptyCustomer, fileNumber: nextFileNumber ?? emptyCustomer.fileNumber })
     setShowFull(false)
   }, [open, customer, form]) // eslint-disable-line react-hooks/exhaustive-deps -- the next file number is read once, when the form opens
 
@@ -70,7 +69,7 @@ export function CustomerDialog({ open, onOpenChange, customer, onCreated, withMe
       qc.invalidateQueries({ queryKey: customerKeys.all })
       if (!editing && onCreated) {
         // The server answers with a message only, so the new customer is found by name and phone.
-        const created = (await customersApi.list()).filter((c) => c.customerName === data.name && (c.phone ?? "") === data.phone).sort((a, b) => b.id - a.id)[0]
+        const created = (await customersApi.list()).filter((c) => c.customerName === data.customerName && (c.phone ?? "") === data.phone).sort((a, b) => b.id - a.id)[0]
         if (created) onCreated(created.id, created.customerName)
       }
       onSaved?.()
@@ -78,7 +77,7 @@ export function CustomerDialog({ open, onOpenChange, customer, onCreated, withMe
     },
   }), (errors) => {
     // Don't leave an error hidden inside the collapsed details.
-    if (Object.keys(errors).some((k) => k !== "name" && k !== "phone" && k !== "companions" && k !== "fileNumber")) setShowFull(true)
+    if (Object.keys(errors).some((k) => k !== "customerName" && k !== "phone" && k !== "companions" && k !== "fileNumber")) setShowFull(true)
   })
 
   const c = form.control
@@ -94,16 +93,18 @@ export function CustomerDialog({ open, onOpenChange, customer, onCreated, withMe
               {part !== "companions" && <>
               {formBranch.show && <BranchSection className="col-span-full" value={formBranch.branchId} onChange={formBranch.pick} />}
               {withMeasurements && <FormInput control={c} name="fileNumber" label={t("custDialog.fileNumber")} />}
-              <FormInput control={c} name="name" required label={t("custDialog.name")} />
+              <FormInput control={c} name="customerName" required label={t("custDialog.name")} />
               <FormInput control={c} name="phone" label={t("custDialog.mobile")} />
 
               {!hideDetails && (
                 <>
-                  <FormInput control={c} name="country" label={t("custDialog.country")} disabled />
-                  <FormInput control={c} name="state" label={t("custDialog.region")} />
-                  <FormInput control={c} name="city" label={t("custDialog.city")} />
-                  <FormInput control={c} name="district" label={t("custDialog.district")} />
-                  <div className="sm:col-span-2"><FormInput control={c} name="street" label={t("custDialog.street")} /></div>
+                  <div className="col-span-full grid grid-cols-2 gap-3 sm:grid-cols-5">
+                    <FormInput control={c} name="countryName" label={t("custDialog.country")} disabled />
+                    <FormInput control={c} name="stateName" label={t("custDialog.region")} />
+                    <FormInput control={c} name="cityName" label={t("custDialog.city")} />
+                    <FormInput control={c} name="district" label={t("custDialog.district")} />
+                    <FormInput control={c} name="street" label={t("custDialog.street")} />
+                  </div>
 
                   <div className="rounded-lg border border-border p-4 col-span-full">
                     <div className="flex items-center justify-between gap-4">

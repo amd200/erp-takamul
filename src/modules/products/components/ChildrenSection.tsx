@@ -1,5 +1,5 @@
 import { useFieldArray, useFormContext, useFormState } from "react-hook-form"
-import { enteredPrice } from "../mappers"
+import { enteredPrice } from "../pricing"
 import { X } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Field, FieldLabel } from "@/components/ui/field"
@@ -23,12 +23,12 @@ export function ChildrenSection({ selfId }: { selfId?: number }) {
     <Field data-invalid={!!rootError}>
       <FieldLabel>{t("productForm.children")}<span className="text-red-500">*</span></FieldLabel>
       <ProductSearchPicker align="start" accept={(p) => (p.productType === "Direct" || p.productType === "Prepared") && p.id !== selfId && !chosen.has(p.id)}
-        onPick={(p) => rows.append({ id: p.id, nameAr: p.productNameAr, barcode: p.barcode ?? "", sellingPrice: enteredPrice(p) }, { shouldFocus: false })}>
+        onPick={(p) => rows.append({ id: p.id, productNameAr: p.productNameAr, barcode: p.barcode ?? "", sellingPrice: enteredPrice(p) }, { shouldFocus: false })}>
         <div role="combobox" aria-expanded={false} tabIndex={0}
           className={cn("flex min-h-10 w-full cursor-text flex-wrap items-center gap-1.5 rounded-md border border-input bg-transparent px-2.5 py-1.5 text-sm", rootError && "border-destructive")}>
           {rows.fields.map((c, i) => (
             <span key={c.id} className="flex items-center gap-1 rounded-sm bg-muted px-2 py-0.5 text-sm">
-              {c.nameAr}
+              {c.productNameAr}
               <button type="button" aria-label={t("common.remove")} className="text-muted-foreground hover:text-foreground"
                 onClick={(e) => { e.stopPropagation(); rows.remove(i) }}><X size={12} /></button>
             </span>

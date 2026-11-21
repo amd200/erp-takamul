@@ -51,12 +51,12 @@ export function UserDialog({ open, onOpenChange, user }: { open: boolean; onOpen
             <FormInput control={c} name="email" required label={t("oldUsers.email")} placeholder="example@email.com" />
             <FormSelect control={c} name="branchId" numeric required label={t("oldUsers.branch")} placeholder={t("oldUsers.chooseBranch")}
               options={branches.map((b) => ({ value: String(b.id), label: b.name || String(b.id) }))} />
-            <div className="sm:col-span-2">
+            <div className={`grid grid-cols-1 gap-4 sm:col-span-2 ${user ? "" : "sm:grid-cols-3"}`}>
               <FormSelect control={c} name="roleName" required label={t("oldUsers.permission")} placeholder={t("oldUsers.choosePermission")}
                 options={roles.map((r) => ({ value: r, label: r }))} />
+              {!user && <FormInput control={c} name="password" type="password" required label={t("oldUsers.password")} placeholder={t("oldUsers.passwordHint")} />}
+              {!user && <FormInput control={c} name="confirmPassword" type="password" required label={t("oldUsers.confirmPassword")} placeholder={t("oldUsers.rewritePassword")} />}
             </div>
-            {!user && <FormInput control={c} name="password" type="password" required label={t("oldUsers.password")} placeholder={t("oldUsers.passwordHint")} />}
-            {!user && <FormInput control={c} name="confirmPassword" type="password" required label={t("oldUsers.confirmPassword")} placeholder={t("oldUsers.rewritePassword")} />}
 
             <div className="rounded-lg border border-border p-3 sm:col-span-2">
               <div className="flex items-start gap-3">

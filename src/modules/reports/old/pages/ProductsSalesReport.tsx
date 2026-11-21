@@ -1,6 +1,6 @@
 import { Barcode, DollarSign } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { currentBranchId } from "@/modules/partners/mappers"
+import { currentBranchId } from "@/shared/auth/currentBranchId"
 import { productsSales, type ProductsSalesRow } from "../api"
 import { money } from "../output"
 import { PagedReport } from "../PagedReport"

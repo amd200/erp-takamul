@@ -8,8 +8,8 @@ export const cartTotals = (lines: CartLine[], discount: CartDiscount) => invoice
 export const cartCount = (lines: CartLine[]) => lines.reduce((s, l) => s + l.quantity, 0)
 
 /** Two lines are the same line when they sell the same item and unit at the same price, with the same additions and note. */
-export const sameLine = (a: Pick<CartLine, "productId" | "unitId" | "name" | "extras" | "notes" | "unitPrice">, b: typeof a) =>
-  a.productId === b.productId && a.unitId === b.unitId && a.unitPrice === b.unitPrice && a.name === b.name && a.notes === b.notes
+export const sameLine = (a: Pick<CartLine, "productId" | "unitId" | "productName" | "extras" | "notes" | "unitPrice">, b: typeof a) =>
+  a.productId === b.productId && a.unitId === b.unitId && a.unitPrice === b.unitPrice && a.productName === b.productName && a.notes === b.notes
   && a.extras.map((e) => e.id).sort().join() === b.extras.map((e) => e.id).sort().join()
 
 let seq = 0
@@ -24,7 +24,7 @@ export const dineInLineOf = (d: ItemDto): CartLine => {
   const price = d.unitPrice ?? 0
   const inclusive = line.taxCalculation === 1
   return {
-    ...line, unitPrice: inclusive ? Math.round(price * (1 + line.taxRate / 100) * 10000) / 10000 : price,
+    ...line, unitPrice: inclusive ? Math.round(price * (1 + line.taxPercentage / 100) * 10000) / 10000 : price,
     ...(d.discountPercentage ? { discountKind: "percent" as const, discount: d.discountPercentage } : { discountKind: "value" as const, discount: (d.discountValue ?? 0) * d.quantity }),
     key: newLineKey(), notes: d.notes ?? "", extras: [], imageUrl: null,
   }

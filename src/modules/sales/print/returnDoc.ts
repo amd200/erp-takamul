@@ -1,4 +1,4 @@
-import type { InvoiceLine, PaymentMethod, ReturnItemDto, SalesReturnDto } from "../types"
+import type { InvoiceLine, ReturnItemDto, SalesReturnDto } from "../types"
 import type { PrintInvoice } from "./printInvoice"
 import { invoiceA4Doc, type InvoiceA4Options } from "./invoiceA4Doc"
 import { invoiceRollDoc, type InvoiceRollOptions } from "./invoiceRollDoc"
@@ -12,8 +12,8 @@ const printLineOf = (d: ReturnItemDto): InvoiceLine => {
   const total = d.lineTotal ?? 0
   const net = total - tax + discount
   return {
-    productId: d.productId, unitId: d.unitId ?? 0, name: d.productName ?? "", unitName: d.unitName ?? "", quantity: d.quantity,
-    unitPrice: d.quantity > 0 ? net / d.quantity : d.unitPrice ?? 0, taxRate: d.taxPercentage ?? 0, taxCalculation: 2, discountKind: "value", discount,
+    productId: d.productId, unitId: d.unitId ?? 0, productName: d.productName ?? "", unitName: d.unitName ?? "", quantity: d.quantity,
+    unitPrice: d.quantity > 0 ? net / d.quantity : d.unitPrice ?? 0, taxPercentage: d.taxPercentage ?? 0, taxCalculation: 2, discountKind: "value", discount,
     amounts: { discount, tax, total },
   }
 }
@@ -26,7 +26,7 @@ export function returnDoc(r: SalesReturnDto, paper: "a4" | "roll", options: Retu
     lines: (r.items ?? []).map(printLineOf),
     totals: { subTotal: r.subTotal ?? 0, discount: r.discountAmount ?? 0, tax: r.taxAmount ?? 0, grandTotal: r.grandTotal ?? 0 },
     notes: r.reason ?? "",
-    payments: (r.payments ?? []).map((p) => ({ method: p.paymentMethod as PaymentMethod, amount: p.amount })), paid: r.refundedAmount ?? 0,
+    payments: r.payments ?? [], paid: r.refundedAmount ?? 0,
   }
   const labels = {
     documentTitle: { ar: "إشعار دائن (مرتجع مبيعات)", en: "CREDIT NOTE" },

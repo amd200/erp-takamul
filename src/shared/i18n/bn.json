@@ -2338,7 +2338,7 @@
     "additionalNumber": "Atirikto nombor",
     "postalCode": "Postal cod",
     "openingBalance": "Opening balens",
-    "balanceSide": "Bharsamyo-r dik",
+    "balanceSide": "Balens dharon",
     "debit": "Debit (tara dhare)",
     "credit": "Cradit (amra dhari)",
     "openingHint": "System byabohar shuru korar age-r bharsamyo. Eta bibriti shuru kore.",
@@ -2382,7 +2382,8 @@
     "companionPhone": "Sangir fon",
     "removeCompanion": "Sangi soran",
     "showFullData": "সম্পূর্ণ তথ্য দেখান",
-    "hideFullData": "সম্পূর্ণ তথ্য লুকান"
+    "hideFullData": "সম্পূর্ণ তথ্য লুকান",
+    "openingTitle": "Opening balens – {{name}}"
   },
   "suppliers": {
     "title": "Sarborahokari",
@@ -2402,7 +2403,8 @@
     "empty": "Kono sarborahokari nei",
     "emptyHint": "Kroy ebong pement rekard korte sarborahokari jog korun.",
     "deleteTitle": "Sarborahokari muchun",
-    "deleteBody": "“{{name}}” muche fela hobe. Purono kroy ager moto thakbe."
+    "deleteBody": "“{{name}}” muche fela hobe. Purono kroy ager moto thakbe.",
+    "openingTitle": "Opening balens – {{name}}"
   },
   "vouchers": {
     "accountType": "Hisab-er dhoron",

@@ -26,7 +26,7 @@ export function ChildrenSection({ selfId }: { selfId?: number }) {
       description={t("products.childrenHint")}
       action={
         <ProductSearchPicker align="end" type="Direct" accept={(p) => p.id !== selfId && !chosen.has(p.id)}
-          onPick={(p) => rows.append({ id: p.id, nameAr: p.productNameAr, barcode: p.barcode ?? "", sellingPrice: p.sellingPrice ?? 0 }, { shouldFocus: false })}>
+          onPick={(p) => rows.append({ id: p.id, productNameAr: p.productNameAr, barcode: p.barcode ?? "", sellingPrice: p.sellingPrice ?? 0 }, { shouldFocus: false })}>
           <Button type="button" variant="outline"><Plus />{t("products.addChild")}</Button>
         </ProductSearchPicker>
       }
@@ -42,7 +42,7 @@ export function ChildrenSection({ selfId }: { selfId?: number }) {
           const c = rows.fields[i]
           return (
             <>
-              <span className="flex h-10 items-center rounded-md border border-input bg-muted/40 px-3 text-sm font-medium">{c.nameAr}</span>
+              <span className="flex h-10 items-center rounded-md border border-input bg-muted/40 px-3 text-sm font-medium">{c.productNameAr}</span>
               <span className="flex h-10 items-center rounded-md border border-input bg-muted/40 px-3 text-sm"><bdi>{c.barcode || "—"}</bdi></span>
               <span className="flex h-10 items-center rounded-md border border-input bg-muted/40 px-3 text-sm tabular-nums">{formatMoney(c.sellingPrice)}</span>
             </>

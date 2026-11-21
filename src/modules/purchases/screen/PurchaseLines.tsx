@@ -45,11 +45,11 @@ export function PurchaseLines({ lines, taxes, exempt, editTotal, showErrors, sea
     const rate = taxes.find((x) => x.id === taxId)?.amount ?? 0
     // In total mode the line keeps its total and the cost moves; otherwise the cost stays and the total moves.
     const unitPrice = editTotal ? costFromTotal(lineAmounts(l).total, l.quantity, rate) : l.unitPrice
-    onChange(l.key, { taxId, taxRate: rate, unitPrice })
+    onChange(l.key, { taxId, taxPercentage: rate, unitPrice })
   }
   const setQty = (l: BuyLine, quantity: number) =>
-    onChange(l.key, editTotal ? { quantity, unitPrice: costFromTotal(lineAmounts(l).total, quantity, l.taxRate) } : { quantity })
-  const setTotal = (l: BuyLine, total: number) => onChange(l.key, { unitPrice: costFromTotal(total, l.quantity, l.taxRate) })
+    onChange(l.key, editTotal ? { quantity, unitPrice: costFromTotal(lineAmounts(l).total, quantity, l.taxPercentage) } : { quantity })
+  const setTotal = (l: BuyLine, total: number) => onChange(l.key, { unitPrice: costFromTotal(total, l.quantity, l.taxPercentage) })
 
   const taxCell = (l: BuyLine) => {
     const bad = showErrors && !l.taxId
@@ -96,7 +96,7 @@ export function PurchaseLines({ lines, taxes, exempt, editTotal, showErrors, sea
     switch (key) {
       case "n": return i + 1
       case "code": return <span dir="ltr">{codeOf(l)}</span>
-      case "name": return <span className="block truncate">{l.name}</span>
+      case "name": return <span className="block truncate">{l.productName}</span>
       case "unit": return l.unitName || "—"
       case "cost": return <NumberInput value={l.unitPrice} decimals={editTotal ? 2 : 4} label={t("pos3.unitCost")} onChange={(n) => onChange(l.key, { unitPrice: n })} className={cn(small, "mx-auto w-20")} />
       case "qty": return <NumberInput value={l.quantity} positive label={t("products.quantity")} onChange={(n) => setQty(l, n)} className={cn(small, "mx-auto w-16")} />
@@ -154,7 +154,7 @@ export function PurchaseLines({ lines, taxes, exempt, editTotal, showErrors, sea
                 <article key={l.key} className="space-y-3 rounded-xl border bg-card p-3">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold">{l.name}</p>
+                      <p className="truncate text-sm font-semibold">{l.productName}</p>
                       <p className="mt-0.5 truncate text-xs text-muted-foreground"><span dir="ltr">{codeOf(l)}</span> · {l.unitName || "—"}</p>
                     </div>
                     {del(l)}

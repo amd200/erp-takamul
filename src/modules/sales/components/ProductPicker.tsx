@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react"
-import { enteredPrice, taxCalcOf } from "@/modules/products/mappers"
+import { enteredPrice, taxCalcOf } from "@/modules/products/pricing"
 import { ScanBarcode } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Input } from "@/components/ui/input"
@@ -31,13 +31,13 @@ export function ProductPicker({ onAdd, purchase, noCategoryDiscount }: { onAdd: 
 
   const unitName = (id: number) => units.find((u) => u.id === id)?.name ?? ""
   const rateOf = (p: Product) => taxes.find((x) => x.id === p.taxId)?.amount ?? 0
-  const base = (p: Product, unitId = p.baseUnitId ?? 0): Omit<InvoiceLine, "name" | "unitName" | "unitPrice"> =>
-    ({ productId: p.id, taxId: p.taxId ?? undefined, unitId, quantity: 1, taxRate: rateOf(p), taxCalculation: purchase ? 2 : taxCalcOf(p), discountKind: "value", discount: 0, ...(purchase || noCategoryDiscount ? {} : categoryDiscountOf(p.categoryId)) })
+  const base = (p: Product, unitId = p.baseUnitId ?? 0): Omit<InvoiceLine, "productName" | "unitName" | "unitPrice"> =>
+    ({ productId: p.id, taxId: p.taxId ?? undefined, unitId, quantity: 1, taxPercentage: rateOf(p), taxCalculation: purchase ? 2 : taxCalcOf(p), discountKind: "value", discount: 0, ...(purchase || noCategoryDiscount ? {} : categoryDiscountOf(p.categoryId)) })
   const priceOf = (p: Product, factor = 1) => (purchase ? (p.costPrice ?? 0) * factor : enteredPrice(p))
 
   // A branched item only groups existing items, and those are sold on their own, so it is not listed.
   const sellable = (p: Product) => p.isActive !== false && p.productType !== "Branched" && (purchase ? p.productType !== "Prepared" : p.productType !== "RawMatrial")
-  const lineOf = (p: Product): InvoiceLine => ({ ...base(p), name: p.productNameAr, unitName: unitName(p.baseUnitId ?? 0), unitPrice: priceOf(p) })
+  const lineOf = (p: Product): InvoiceLine => ({ ...base(p), productName: p.productNameAr, unitName: unitName(p.baseUnitId ?? 0), unitPrice: priceOf(p) })
 
   // Whatever is typed or scanned drops the list down (the server searches names and barcodes); Enter on an exact barcode adds it.
   const query = q.trim()
@@ -57,7 +57,7 @@ export function ProductPicker({ onAdd, purchase, noCategoryDiscount }: { onAdd: 
     if (!hit) return matches[active] ? pick(matches[active]) : setNotFound(true)
     const { product: p, unit: u } = hit
     onAdd(u
-      ? { ...base(p, u.unitId), name: p.productNameAr, unitName: unitName(u.unitId), unitPrice: purchase ? priceOf(p, u.conversionFactor) : u.sellingPrice ?? 0 }
+      ? { ...base(p, u.unitId), productName: p.productNameAr, unitName: unitName(u.unitId), unitPrice: purchase ? priceOf(p, u.conversionFactor) : u.sellingPrice ?? 0 }
       : lineOf(p))
     reset()
   }

@@ -1,6 +1,6 @@
 import { TrendingUp } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { currentBranchId } from "@/modules/partners/mappers"
+import { currentBranchId } from "@/shared/auth/currentBranchId"
 import { topSelling, type TopSellingRow } from "../api"
 import { money } from "../output"
 import { PagedReport, slice } from "../PagedReport"

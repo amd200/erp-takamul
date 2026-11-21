@@ -33,12 +33,12 @@ export const CartLineRow = memo(function CartLineRow({ line: l, index, locked, o
   const edit = () => { if (!locked) onEdit(l.key) }
 
   return (
-    <li role="button" tabIndex={0} aria-label={`${l.name}: ${t("pos.lineOptions")}`} onClick={edit} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); edit() } }}
+    <li role="button" tabIndex={0} aria-label={`${l.productName}: ${t("pos.lineOptions")}`} onClick={edit} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); edit() } }}
       className={cn(CART_GRID, "cursor-pointer items-center border-b border-border py-2 text-start outline-none transition-colors odd:bg-card even:bg-muted/40 hover:bg-primary/5 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset", locked && "cursor-default")}>
       <span className="text-xs font-medium text-faint tabular-nums">{index + 1}</span>
 
       <div className="min-w-0">
-        <div className="text-xs leading-snug font-bold">{l.name}</div>
+        <div className="text-xs leading-snug font-bold">{l.productName}</div>
         {l.extras.length > 0 && <div className="text-[10px] text-gray-400">+ {l.extras.map((e) => e.name).join("، ")}</div>}
         {l.categoryDiscount && <CategoryDiscountBadge line={l} className="mt-0.5" />}
         {!l.categoryDiscount && l.discount > 0 && <div className="text-[10px] font-semibold text-primary">{l.discountKind === "percent" ? `${l.discount}% ${t("pos.off")}` : `-${formatMoney(l.discount)}`}</div>}

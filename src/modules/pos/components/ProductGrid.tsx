@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { EmptyState } from "@/components/EmptyState"
 import { formatMoney } from "@/lib/format"
 import { cn } from "@/lib/utils"
-import { listedPrice } from "@/modules/products/mappers"
+import { listedPrice } from "@/modules/products/pricing"
 import type { Product } from "@/modules/products/types"
 
 /** Two columns on a phone, four from tablet width, five on very wide screens, as in the current POS. */

@@ -2338,7 +2338,7 @@
     "additionalNumber": "الرقم الإضافي",
     "postalCode": "الرمز البريدي",
     "openingBalance": "الرصيد الافتتاحي",
-    "balanceSide": "طبيعة الرصيد",
+    "balanceSide": "نوع الرصيد",
     "debit": "مدين (عليه)",
     "credit": "دائن (له)",
     "openingHint": "الرصيد قبل بداية العمل على النظام. يبدأ به كشف الحساب.",
@@ -2382,7 +2382,8 @@
     "companionPhone": "رقم تليفون المرافق",
     "removeCompanion": "حذف المرافق",
     "showFullData": "إظهار البيانات الكاملة",
-    "hideFullData": "إخفاء البيانات الكاملة"
+    "hideFullData": "إخفاء البيانات الكاملة",
+    "openingTitle": "الرصيد الافتتاحي – {{name}}"
   },
   "suppliers": {
     "title": "الموردين",
@@ -2402,7 +2403,8 @@
     "empty": "لا يوجد موردون",
     "emptyHint": "أضف مورديك لتسجل فواتير الشراء والدفعات.",
     "deleteTitle": "حذف المورد",
-    "deleteBody": "سيُحذف «{{name}}». فواتير الشراء السابقة تبقى كما هي."
+    "deleteBody": "سيُحذف «{{name}}». فواتير الشراء السابقة تبقى كما هي.",
+    "openingTitle": "الرصيد الافتتاحي – {{name}}"
   },
   "vouchers": {
     "accountType": "نوع الحساب",
@@ -2721,8 +2723,8 @@
     "number": "رقم العرض",
     "validUntil": "ساري حتى",
     "expired": "منتهي",
-    "duplicate": "نسخ العرض",
-    "duplicated": "تم نسخ العرض",
+    "duplicate": "تكرار العرض",
+    "duplicated": "تم تكرار العرض",
     "openInPos": "فتح في نقطة البيع",
     "print": "طباعة عرض السعر",
     "printFailed": "معرفناش نطبع عرض السعر",

@@ -1,6 +1,6 @@
 import { AlertTriangle, Boxes, Package, PackageMinus } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { currentBranchId } from "@/modules/partners/mappers"
+import { currentBranchId } from "@/shared/auth/currentBranchId"
 import { stockAlerts, type StockAlertRow } from "../api"
 import { money } from "../output"
 import { PagedReport } from "../PagedReport"
