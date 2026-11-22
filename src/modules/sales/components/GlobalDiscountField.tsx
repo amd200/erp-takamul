@@ -8,15 +8,17 @@ export function GlobalDiscountField() {
   const { control } = useFormContext()
   const { t } = useTranslation()
   return (
-    <div className="mb-4 flex items-center gap-2">
-      <span className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">{t("sales.invoiceDiscount")}</span>
-      <FormInput control={control} name="globalDiscount" type="number" label={t("sales.invoiceDiscount")} labelHidden className="w-24" inputClassName="h-9 text-center" />
-      <Controller control={control} name="globalDiscountKind" render={({ field }) => (
-        <Select value={field.value} onValueChange={field.onChange}>
-          <SelectTrigger className="h-9 w-20" aria-label={t("sales.discountKind")}><SelectValue /></SelectTrigger>
-          <SelectContent><SelectItem value="value">{t("sales.kindValue")}</SelectItem><SelectItem value="percent">{t("sales.kindPercent")}</SelectItem></SelectContent>
-        </Select>
-      )} />
+    <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center">
+      <span className="text-sm font-medium text-foreground sm:min-w-0 sm:flex-1 sm:truncate">{t("sales.invoiceDiscount")}</span>
+      <div className="flex items-center gap-2">
+        <FormInput control={control} name="globalDiscount" type="number" label={t("sales.invoiceDiscount")} labelHidden className="min-w-0 flex-1 sm:w-24 sm:flex-none" inputClassName="h-9 text-center" />
+        <Controller control={control} name="globalDiscountKind" render={({ field }) => (
+          <Select value={field.value} onValueChange={field.onChange}>
+            <SelectTrigger className="h-9 w-28 sm:w-20" aria-label={t("sales.discountKind")}><SelectValue /></SelectTrigger>
+            <SelectContent><SelectItem value="value">{t("sales.kindValue")}</SelectItem><SelectItem value="percent">{t("sales.kindPercent")}</SelectItem></SelectContent>
+          </Select>
+        )} />
+      </div>
     </div>
   )
 }

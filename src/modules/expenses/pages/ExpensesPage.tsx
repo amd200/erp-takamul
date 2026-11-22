@@ -107,12 +107,12 @@ export default function ExpensesPage() {
 
   // The same seven columns, in the same order, as the current system.
   const columns: Column<Expense>[] = [
-    { id: "date", sortKey: "date", header: t("expenses.colDate"), cell: (x) => (x.date ? formatDateTime(x.date + "T12:00:00", i18n.language) : "—") },
-    { id: "name", sortKey: "name", header: t("expenses.colName"), cell: (x) => <span className="font-semibold">{x.name}</span> },
-    { id: "treasury", sortKey: "treasuryName", header: t("expenses.treasury"), cell: (x) => x.treasuryName || "—" },
-    { id: "item", sortKey: "itemName", header: t("expenses.item"), cell: (x) => x.itemName || "—" },
-    { id: "amount", sortKey: "amount", header: t("expenses.amount"), cell: (x) => <span className="tabular-nums">{formatMoney(x.amount ?? 0)}</span> },
-    { id: "notes", sortKey: "notes", header: t("expenses.colNotes"), cell: (x) => x.notes || "—" },
+    { id: "date", sortable: true, header: t("expenses.colDate"), cell: (x) => (x.date ? formatDateTime(x.date + "T12:00:00", i18n.language) : "—") },
+    { id: "name", sortable: true, header: t("expenses.colName"), cell: (x) => <span className="font-semibold">{x.name}</span> },
+    { id: "treasuryName", sortable: true, header: t("expenses.treasury"), cell: (x) => x.treasuryName || "—" },
+    { id: "itemName", sortable: true, header: t("expenses.item"), cell: (x) => x.itemName || "—" },
+    { id: "amount", sortable: true, header: t("expenses.amount"), cell: (x) => <span className="tabular-nums">{formatMoney(x.amount ?? 0)}</span> },
+    { id: "notes", sortable: true, header: t("expenses.colNotes"), cell: (x) => x.notes || "—" },
     { id: "actions", header: t("expenses.colActions"), cell: (x) => (can(P.expenses.edit) || can(P.expenses.delete)) && (
       <RowActions onEdit={can(P.expenses.edit) ? () => open(x) : undefined} onDelete={can(P.expenses.delete) ? () => setToDelete(x) : undefined} />
     ) },

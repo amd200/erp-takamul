@@ -36,15 +36,15 @@ export default function InvoicesPage({ channel }: { channel: Channel }) {
 
   const branchColumn = useBranchColumn<SalesOrderDto>((i) => ({ id: i.branchId, name: i.branchShortName }))
   const columns: Column<SalesOrderDto>[] = [
-    { id: "number", sortKey: "orderNumber", header: t("sales.number"), cell: (i) => <span className="font-semibold">{i.orderNumber}</span> },
-    { id: "date", sortKey: "orderDate", className: "min-w-44", header: t("common.dateTime"), cell: (i) => <span className="text-muted-foreground">{formatDateTime(i.orderDate ?? "", i18n.language)}</span> },
+    { id: "orderNumber", sortable: true, header: t("sales.number"), cell: (i) => <span className="font-semibold">{i.orderNumber}</span> },
+    { id: "orderDate", sortable: true, className: "min-w-44", header: t("common.dateTime"), cell: (i) => <span className="text-muted-foreground">{formatDateTime(i.orderDate ?? "", i18n.language)}</span> },
     ...branchColumn,
-    { id: "customer", sortKey: "customerName", header: t("sales.customer"), cell: (i) => i.customerName },
-    { id: "employee", sortKey: "employeeName", header: t("users.userName"), cell: (i) => i.employeeName || "—" },
-    ...(stage2 ? [{ id: "zatca", sortKey: "zatcaStatus", header: t("sales.zatcaStatus"), cell: (i: SalesOrderDto) => <ZatcaBadge status={i.zatcaStatus} message={i.zatcaStatus === "Rejected" ? i.zatcaResponse : null} /> }] : []),
-    { id: "total", sortKey: "grandTotal", header: t("sales.grandTotal"), cell: (i) => <span className="font-semibold">{formatMoney(i.grandTotal ?? 0)}</span> },
-    { id: "pay", sortKey: "orderStatus", header: t("sales.paymentStatus"), cell: (i) => <PaymentBadge status={i.paymentStatus} /> },
-    { id: "paid", sortKey: "paidAmount", header: t("sales.paid"), cell: (i) => formatMoney(i.totalPaid ?? 0) },
+    { id: "customerName", sortable: true, header: t("sales.customer"), cell: (i) => i.customerName },
+    { id: "employeeName", sortable: true, header: t("users.userName"), cell: (i) => i.employeeName || "—" },
+    ...(stage2 ? [{ id: "zatcaStatus", sortable: true, header: t("sales.zatcaStatus"), cell: (i: SalesOrderDto) => <ZatcaBadge status={i.zatcaStatus} message={i.zatcaStatus === "Rejected" ? i.zatcaResponse : null} /> }] : []),
+    { id: "grandTotal", sortable: true, header: t("sales.grandTotal"), cell: (i) => <span className="font-semibold">{formatMoney(i.grandTotal ?? 0)}</span> },
+    { id: "paymentStatus", sortable: true, header: t("sales.paymentStatus"), cell: (i) => <PaymentBadge status={i.paymentStatus} /> },
+    { id: "totalPaid", sortable: true, header: t("sales.paid"), cell: (i) => formatMoney(i.totalPaid ?? 0) },
     { id: "actions", header: "", align: "end", cell: (i) => <InvoiceActions invoice={i} channel={channel} onPayments={() => setPayments(i)} onNotes={() => setNotes(i)} onZatcaResponse={() => setZatcaDoc(i)} onPreview={() => setPreview(i)} /> },
   ]
 

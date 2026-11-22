@@ -236,7 +236,9 @@
     "selected": "নির্বাচিত",
     "all": "Sab",
     "serial": "#",
-    "loading": "Lod hocche..."
+    "loading": "Lod hocche...",
+    "amount": "Poriman",
+    "selectedTreasury": "Nirbachito trejari"
   },
   "shiftOld": {
     "dailyStatement": "Dainik bibriti",
@@ -254,27 +256,28 @@
     "total": "Mot",
     "beforeTax": "Taxer age mot",
     "totalTax": "Mot tax",
-    "grandTotal": "Grand total",
+    "grandTotal": "Mot bikroy",
     "deferred": "Bakite bikroyer chalan",
     "invoicesCount": "Chalan ganona",
     "treasuriesDaily": "Koshagar dainik",
     "totalSales": "Mot bikray",
     "returns": "Reternos",
     "totalReturns": "Mot retern",
-    "netSection": "Net",
-    "netSales": "Nit bikroy",
-    "voucherCount": "চালানের সাথে সংযুক্ত নয় এমন ভাউচার",
-    "voucherTotal": "মোট ভাউচার",
     "treasuryNet": "Koshagarer dainik nit mot",
     "employeeDaily": "Seba karmachari dainik bikray",
     "orders": "Adesh",
     "net": "Net",
     "returnsUnit": "Reternos",
-    "purchasesExpenses": "Cray ebong kharch",
-    "totalPurchases": "Mot cray",
     "totalExpenses": "Mot kharch",
     "noData": "Kono shift deta pawa jayani",
-    "previewHint": "Mudroner age tapiyo mudran purborup"
+    "previewHint": "Mudroner age tapiyo mudran purborup",
+    "expenses": "Kharch",
+    "expensesCount": "Kharcher songkhya",
+    "vouchers": "Songrihito voucher",
+    "vouchersCount": "Voucherer songkhya",
+    "netTreasuries": "Dainik khajanar net",
+    "salesInvoiceNumbers": "Bikroy chalan nombor",
+    "returnInvoiceNumbers": "Ferot chalan nombor"
   },
   "oldUsers": {
     "title": "Byabaharkarider",
@@ -2380,7 +2383,6 @@
   },
   "customers": {
     "title": "Grahokder",
-    "code": "Cod",
     "mobile": "Mobil nombor",
     "description": "Apni nicher report customaij korte paren",
     "add": "Grahok jog korun",
@@ -2412,7 +2414,6 @@
   },
   "suppliers": {
     "title": "Sarborahokari",
-    "code": "Cod",
     "mobile": "Mobil nombor",
     "description": "Sarborahokarider porichalona korun",
     "add": "Sarborahokari jog korun",
@@ -3384,7 +3385,8 @@
     "show_coast_price": "Bikray screene kharoch mulyo dekhan",
     "حجم خط التصنيفات": "Shreni font size",
     "حجم خط اسم الصنف المتفرع": "Sakhajukto item-er nam font size",
-    "products_purchases_report": "Ponno kroy report"
+    "products_purchases_report": "Ponno kroy report",
+    "record_in_open_shift": "Khola shift e kharch nothibhukto korun"
   },
   "pos1": {
     "searchProducts": "Ponno anusandhan korun...",

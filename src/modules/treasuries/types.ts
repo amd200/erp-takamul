@@ -33,6 +33,5 @@ export type TransferInput = {
   notes: string
 }
 
-/** One line of a treasury statement. debit brings money in, credit takes it out. */
-/** A treasury statement row as the server sends it: incoming and outgoing amounts with a running balance. */
-export type StatementRow = { date: string; documentType: string; documentNumber: string; incomingAmount: number; outgoingAmount: number; balance: number; description: string | null }
+/** A treasury statement row as GET /Treasurys/statement sends it (TreasuryStatementDto). debit takes money out, credit brings it in; balance is the running total. */
+export type StatementRow = { date: string; type: string; number: string; debit: number; credit: number; balance: number; partyName: string | null; paymentMethod: string | null }

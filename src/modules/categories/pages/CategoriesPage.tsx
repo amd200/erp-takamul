@@ -32,11 +32,11 @@ export default function CategoriesPage() {
 
   const branchColumn = useBranchColumn<Category>((c) => ({ id: c.branchId }))
   const columns: Column<Category>[] = [
-    { id: "name", sortKey: "categoryNameAr", header: t("categories.name"), cell: (c) => c.parentCategoryId ? (
+    { id: "categoryNameAr", sortable: true, header: t("categories.name"), cell: (c) => c.parentCategoryId ? (
       <span className="inline-flex items-center gap-1.5 ps-4 text-muted-foreground"><CornerDownLeft className="size-3.5 text-faint ltr:-scale-x-100" />{c.categoryNameAr}</span>
     ) : <span className="font-semibold">{c.categoryNameAr}</span> },
     ...branchColumn,
-    { id: "desc", sortKey: "description", header: t("common.description"), cell: (c) => <span className="text-muted-foreground">{c.description || "—"}</span> },
+    { id: "description", sortable: true, header: t("common.description"), cell: (c) => <span className="text-muted-foreground">{c.description || "—"}</span> },
     { id: "actions", header: "", align: "end", cell: (c) => can(P.categories.manage) && <RowActions onEdit={() => open(c)} onDelete={() => setToDelete(c)} /> },
   ]
 

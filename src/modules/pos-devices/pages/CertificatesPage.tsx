@@ -28,10 +28,10 @@ export default function CertificatesPage() {
   const [toRevoke, setToRevoke] = useState<CertificateSummary | null>(null)
 
   const columns: Column<CertificateSummary>[] = [
-    { id: "device", sortKey: "deviceName", header: t("devices.name"), cell: (c) => <span className="font-semibold">{c.deviceName}</span> },
-    { id: "type", sortKey: "currentCertificateType", header: t("devices.certType"), cell: (c) => (c.currentCertificateType ? <StatusBadge tone={c.currentCertificateType === "PCSID" ? "success" : "warning"}>{t(`devices.certTypes.${c.currentCertificateType}`, { defaultValue: c.currentCertificateType })}</StatusBadge> : <span className="text-faint">—</span>) },
-    { id: "status", sortKey: "hasActiveCertificate", header: t("devices.registration"), cell: (c) => (c.isExpired ? <StatusBadge tone="danger">{t("devices.expired")}</StatusBadge> : c.hasActiveCertificate ? <StatusBadge tone="success">{t("common.active")}</StatusBadge> : <StatusBadge tone="danger">{t("common.inactive")}</StatusBadge>) },
-    { id: "expiry", sortKey: "expiresAt", header: t("devices.certExpiry"), cell: (c) => <ExpiryBadge expiresAt={c.expiresAt} daysLeft={c.daysUntilExpiry} expired={c.isExpired} /> },
+    { id: "deviceName", sortable: true, header: t("devices.name"), cell: (c) => <span className="font-semibold">{c.deviceName}</span> },
+    { id: "currentCertificateType", sortable: true, header: t("devices.certType"), cell: (c) => (c.currentCertificateType ? <StatusBadge tone={c.currentCertificateType === "PCSID" ? "success" : "warning"}>{t(`devices.certTypes.${c.currentCertificateType}`, { defaultValue: c.currentCertificateType })}</StatusBadge> : <span className="text-faint">—</span>) },
+    { id: "hasActiveCertificate", sortable: true, header: t("devices.registration"), cell: (c) => (c.isExpired ? <StatusBadge tone="danger">{t("devices.expired")}</StatusBadge> : c.hasActiveCertificate ? <StatusBadge tone="success">{t("common.active")}</StatusBadge> : <StatusBadge tone="danger">{t("common.inactive")}</StatusBadge>) },
+    { id: "expiresAt", sortable: true, header: t("devices.certExpiry"), cell: (c) => <ExpiryBadge expiresAt={c.expiresAt} daysLeft={c.daysUntilExpiry} expired={c.isExpired} /> },
     { id: "actions", header: "", align: "end", cell: (c) => (
       <div className="flex items-center justify-end gap-1">
         {can(P.posDevices.edit) && <Button variant="ghost" size="sm" onClick={() => setToRenew(c)}><RefreshCw />{t("devices.renew")}</Button>}

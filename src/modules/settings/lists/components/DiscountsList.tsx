@@ -54,10 +54,10 @@ export function DiscountsList({ readOnly }: { readOnly: boolean }) {
   const label = (k: string) => t(`settings.lists.category_discounts.${k}`)
 
   const columns: Column<CategoryDiscount>[] = [
-    { id: "category", sortKey: "categoryNameAr", header: label("categoryId"), cell: (r) => <span className="font-semibold">{r.categoryNameAr}</span> },
-    { id: "value", sortKey: "discountValue", header: label("discountValue"), cell: (r) => <span className="tabular-nums">{r.discountValue}{r.discountType === "Percentage" ? "%" : ""}</span> },
-    { id: "type", sortKey: "discountType", header: label("discountType"), cell: (r) => <span className="text-muted-foreground">{label(`o.discountType.${r.discountType}`)}</span> },
-    { id: "active", sortKey: "isActive", header: label("isActive"), cell: (r) => <StatusBadge tone={r.isActive ? "success" : "danger"}>{t(r.isActive ? "common.active" : "common.inactive")}</StatusBadge> },
+    { id: "categoryNameAr", sortable: true, header: label("categoryId"), cell: (r) => <span className="font-semibold">{r.categoryNameAr}</span> },
+    { id: "discountValue", sortable: true, header: label("discountValue"), cell: (r) => <span className="tabular-nums">{r.discountValue}{r.discountType === "Percentage" ? "%" : ""}</span> },
+    { id: "discountType", sortable: true, header: label("discountType"), cell: (r) => <span className="text-muted-foreground">{label(`o.discountType.${r.discountType}`)}</span> },
+    { id: "isActive", sortable: true, header: label("isActive"), cell: (r) => <StatusBadge tone={r.isActive ? "success" : "danger"}>{t(r.isActive ? "common.active" : "common.inactive")}</StatusBadge> },
     { id: "actions", header: "", align: "end", cell: (r) => !readOnly && r.isActive && <RowActions onEdit={() => open(r)} onDelete={() => setToDelete(r)} /> },
   ]
   return (

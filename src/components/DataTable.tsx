@@ -18,7 +18,9 @@ export type Column<T> = {
   className?: string
   /** Fixed column width (e.g. "30%"); when any column sets it the table uses a fixed layout so tabs line up. */
   width?: string
-  /** The server field to sort by when this header is clicked (needs `server.sort`). */
+  /** The header becomes a sort button. The column `id` is sent as `SortBy`, so give a sortable column the field name the server returns (`id: "grandTotal"`). */
+  sortable?: boolean
+  /** Deliberate exception only: sort by another name than `id` (a computed cell, or a name the server wants). Say why next to it. */
   sortKey?: string
   /** Marks the automatic serial-number column (added by the table itself, never by pages). */
   serial?: boolean
@@ -42,6 +44,9 @@ export type ServerPaging = {
 
 /** Current sort; clicking a sortable header toggles ascending / descending, as in the old system. */
 export type TableSort = { key?: string; desc: boolean; onSort: (key: string | undefined, desc: boolean) => void }
+
+/** What a header sends as `SortBy`: the explicit override, else the column id; undefined when the column is not sortable. */
+const sortKeyOf = <T,>(c: Column<T>) => c.sortKey ?? (c.sortable ? c.id : undefined)
 
 const SEARCH_DELAY = 350
 const EMPTY: never[] = []
@@ -190,9 +195,9 @@ export function DataTable<T extends RowData>({
             <TableHeader>
               <TableRow className="hover:bg-transparent">
                 {columns.map((c) => (
-                  <TableHead key={c.id} style={colWidth(c) ? { width: colWidth(c) } : undefined} aria-sort={c.sortKey && sort?.key === c.sortKey ? (sort.desc ? "descending" : "ascending") : undefined}
+                  <TableHead key={c.id} style={colWidth(c) ? { width: colWidth(c) } : undefined} aria-sort={sort && sortKeyOf(c) && sort.key === sortKeyOf(c) ? (sort.desc ? "descending" : "ascending") : undefined}
                     className="font-medium text-muted-foreground">
-                    {c.sortKey && sort ? <SortButton column={c} sort={sort} onSorted={() => setPage(0)} /> : c.id === "actions" && !c.header ? t("common.actions") : c.header}
+                    {sortKeyOf(c) && sort ? <SortButton column={c} sort={sort} onSorted={() => setPage(0)} /> : c.id === "actions" && !c.header ? t("common.actions") : c.header}
                   </TableHead>
                 ))}
               </TableRow>
@@ -229,10 +234,11 @@ const ACTIONS_WIDTH = "88px"
 const colWidth = <T,>(c: Column<T>) => c.width ?? (c.id === "actions" ? ACTIONS_WIDTH : undefined)
 
 function SortButton<T>({ column, sort, onSorted }: { column: Column<T>; sort: TableSort; onSorted: () => void }) {
-  const active = sort.key === column.sortKey
+  const key = sortKeyOf(column)
+  const active = sort.key === key
   const Icon = !active ? ArrowUpDown : sort.desc ? ArrowDown : ArrowUp
   // ascending <-> descending (a sorted column never goes back to unsorted, like the old system)
-  const next = () => { sort.onSort(column.sortKey, active && !sort.desc); onSorted() }
+  const next = () => { sort.onSort(key, active && !sort.desc); onSorted() }
   return (
     <button type="button" onClick={next} className={cn("-mx-1 inline-flex items-center gap-1 rounded px-1 py-0.5 hover:text-foreground", active && "text-foreground")}>
       {column.header}<Icon className={cn("size-3.5", !active && "text-faint")} />

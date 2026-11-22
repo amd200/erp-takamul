@@ -236,7 +236,9 @@
     "selected": "المحدد",
     "all": "الكل",
     "serial": "م",
-    "loading": "تحميل..."
+    "loading": "تحميل...",
+    "amount": "المبلغ",
+    "selectedTreasury": "الخزينة المختارة"
   },
   "shiftOld": {
     "dailyStatement": "الكشف اليومي",
@@ -248,33 +250,34 @@
     "end": "نهاية الوردية",
     "statement": "بيان الوردية",
     "sales": "المبيعات",
-    "product": "المنتج",
+    "product": "الصنف",
     "price": "السعر",
     "quantity": "الكمية",
     "total": "الإجمالي",
     "beforeTax": "الإجمالي قبل الضريبة",
     "totalTax": "إجمالي الضريبة",
-    "grandTotal": "الإجمالي الكلي",
+    "grandTotal": "إجمالي المبيعات",
     "deferred": "فواتير البيع الآجل",
     "invoicesCount": "عدد الفواتير",
     "treasuriesDaily": "يومية الخزائن",
     "totalSales": "اجمالي المبيعات",
     "returns": "المرتجعات",
     "totalReturns": "إجمالي المرتجعات",
-    "netSection": "الصافي",
-    "netSales": "صافي المبيعات",
-    "voucherCount": "عدد السندات المحصلة",
-    "voucherTotal": "إجمالي السندات",
     "treasuryNet": "صافي يومية الخزينة",
     "employeeDaily": "يومية موظفي الخدمة",
     "orders": "طلب",
     "net": "الصافي",
     "returnsUnit": "مرتجعات",
-    "purchasesExpenses": "المشتريات والمصروفات",
-    "totalPurchases": "إجمالي المشتريات",
     "totalExpenses": "إجمالي المصروفات",
     "noData": "لم يتم العثور على بيانات للوردية",
-    "previewHint": "معاينة التقرير قبل الطباعة الحرارية"
+    "previewHint": "معاينة التقرير قبل الطباعة الحرارية",
+    "expenses": "المصروفات",
+    "expensesCount": "عدد المصروفات",
+    "vouchers": "السندات المحصلة",
+    "vouchersCount": "عدد السندات",
+    "netTreasuries": "صافي يومية الخزائن",
+    "salesInvoiceNumbers": "أرقام فواتير البيع",
+    "returnInvoiceNumbers": "أرقام فواتير المرتجعات"
   },
   "oldUsers": {
     "title": "المستخدمين",
@@ -2384,7 +2387,6 @@
   },
   "customers": {
     "title": "العملاء",
-    "code": "الكود",
     "mobile": "رقم الجوال",
     "description": "يمكنك تخصيص التقرير أدناه",
     "add": "إضافة عميل",
@@ -2416,7 +2418,6 @@
   },
   "suppliers": {
     "title": "الموردين",
-    "code": "الكود",
     "mobile": "رقم الجوال",
     "description": "إدارة الموردين",
     "add": "إضافة مورد",
@@ -3388,7 +3389,8 @@
     "show_coast_price": "عرض سعر التكلفة في شاشة البيع",
     "حجم خط التصنيفات": "حجم خط التصنيفات",
     "حجم خط اسم الصنف المتفرع": "حجم خط اسم الصنف المتفرع",
-    "products_purchases_report": "تقرير مشتريات الأصناف"
+    "products_purchases_report": "تقرير مشتريات الأصناف",
+    "record_in_open_shift": "تسجيل مصروف في الوردية المفتوحة"
   },
   "pos1": {
     "searchProducts": "ابحث عن المنتجات...",

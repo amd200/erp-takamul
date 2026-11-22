@@ -68,7 +68,7 @@ export default function ProductsListPage() {
   const onSearch = useCallback((q: string) => { setSearch((prev) => { if (prev !== q) setPage(0); return q }) }, [])
 
   const columns: Column<Product>[] = [
-    { id: "name", sortKey: "productNameAr", header: t("products.item"), cell: (p) => (
+    { id: "productNameAr", sortable: true, header: t("products.item"), cell: (p) => (
       <div className="grid grid-cols-[2.25rem_1fr_2.25rem] items-center gap-3">
         <Thumb p={p} />
         <div className="min-w-0 text-center">
@@ -78,13 +78,13 @@ export default function ProductsListPage() {
         <span aria-hidden />
       </div>
     ) },
-    { id: "type", sortKey: "productType", header: t("products.type"), cell: (p) => <Badge variant="secondary">{t(`products.types.${p.productType}`)}</Badge> },
-    { id: "category", sortKey: "categoryName", header: t("products.category"), cell: (p) => p.categoryName || "—" },
+    { id: "productType", sortable: true, header: t("products.type"), cell: (p) => <Badge variant="secondary">{t(`products.types.${p.productType}`)}</Badge> },
+    { id: "categoryName", sortable: true, header: t("products.category"), cell: (p) => p.categoryName || "—" },
     ...branchColumn,
-    { id: "qty", sortKey: "balance", header: t("products.quantity"), cell: (p) => <StockCell p={p} /> },
-    { id: "barcode", sortKey: "barcode", header: t("products.barcode"), cell: (p) => <span className="text-muted-foreground" dir="ltr">{p.barcode || "—"}</span> },
-    { id: "cost", sortKey: "costPrice", header: t("products.purchasePrice"), cell: (p) => <span className="text-muted-foreground">{p.costPrice ? formatMoney(p.costPrice) : "—"}</span> },
-    { id: "price", sortKey: "sellingPrice", header: t("products.sellingPrice"), cell: (p) => <span className="font-medium">{p.sellingPrice ? formatMoney(p.sellingPrice) : "—"}</span> },
+    { id: "balance", sortable: true, header: t("products.quantity"), cell: (p) => <StockCell p={p} /> },
+    { id: "barcode", sortable: true, header: t("products.barcode"), cell: (p) => <span className="text-muted-foreground" dir="ltr">{p.barcode || "—"}</span> },
+    { id: "costPrice", sortable: true, header: t("products.purchasePrice"), cell: (p) => <span className="text-muted-foreground">{p.costPrice ? formatMoney(p.costPrice) : "—"}</span> },
+    { id: "sellingPrice", sortable: true, header: t("products.sellingPrice"), cell: (p) => <span className="font-medium">{p.sellingPrice ? formatMoney(p.sellingPrice) : "—"}</span> },
     { id: "actions", header: "", align: "end", cell: (p) => (
       <RowActions editTo={can(P.products.edit) ? `/products/edit/${p.id}?type=${p.productType}` : undefined} onDelete={can(P.products.delete) ? () => setToDelete(p) : undefined} />
     ) },

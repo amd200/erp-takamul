@@ -26,9 +26,9 @@ export default function AdjustmentsPage() {
   const { data, isLoading } = useAdjustments({ SortBy: sortBy, SortDescending: sortDescending })
 
   const columns: Column<AdjustmentDto>[] = [
-    { id: "date", width: "190px", sortKey: "operationDate", header: t("adjForm.date"), cell: (a) => formatDateTime(a.operationDate ?? "", i18n.language) },
-    { id: "by", width: "170px", sortKey: "performedBy", header: t("adjForm.enteredBy"), cell: (a) => a.performedBy },
-    { id: "notes", sortKey: "notes", header: t("adjForm.note"), cell: (a) => a.notes },
+    { id: "operationDate", sortable: true, width: "190px", header: t("adjForm.date"), cell: (a) => formatDateTime(a.operationDate ?? "", i18n.language) },
+    { id: "performedBy", sortable: true, width: "170px", header: t("adjForm.enteredBy"), cell: (a) => a.performedBy },
+    { id: "notes", sortable: true, header: t("adjForm.note"), cell: (a) => a.notes },
     { id: "actions", width: "72px", header: t("adjForm.actions"), cell: (a) => (
       <RowActions viewTo={`/products/quantity-adjustments/view/${a.id}`} editTo={can(P.stock.adjust) ? `/products/quantity-adjustments/edit/${a.id}` : undefined}
         onPrint={() => output.mutate({ adjustment: a, as: "print" })} onPdf={() => output.mutate({ adjustment: a, as: "pdf" })} onDelete={can(P.stock.delete) ? () => setToDelete(a) : undefined} />

@@ -9,7 +9,7 @@ import { REPORT_CATEGORIES, type ReportCategory } from "../types"
 import { ReportLink } from "./ReportPage"
 
 /** Reports that have no entry in the report definitions; shown as cards after the defined ones. */
-const CLASSIC_ONLY: Partial<Record<ReportCategory, { id: string; titleKey: string; icon: typeof Users }[]>> = {
+const EXTRA_REPORTS: Partial<Record<ReportCategory, { id: string; titleKey: string; icon: typeof Users }[]>> = {
   customers: [{ id: "customer-item-sales", titleKey: "oldReports.customer_item_sales_report", icon: Users }],
   suppliers: [{ id: "supplier-item-purchases", titleKey: "oldReports.supplier_item_purchases_report", icon: History }],
 }
@@ -44,7 +44,7 @@ export default function ReportsHome({ category: fixed }: { category?: ReportCate
           {!category && <h2 className="text-[15px] font-semibold">{t(`reports.cat.${c}`)}</h2>}
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {visible.filter((r) => r.category === c).map((r) => <ReportLink key={r.id} def={r} />)}
-            {(CLASSIC_ONLY[c] ?? []).map(({ id, titleKey, icon: Icon }) => (
+            {(EXTRA_REPORTS[c] ?? []).map(({ id, titleKey, icon: Icon }) => (
               <Link key={id} to={`/reports/${id}`} className="group flex items-start gap-3 rounded-xl border bg-card p-4 transition-colors hover:border-primary">
                 <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-secondary text-secondary-foreground"><Icon className="size-5" /></span>
                 <span className="min-w-0">

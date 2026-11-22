@@ -29,11 +29,11 @@ export default function UsersPage() {
   const open = (u: User | null) => { setEditing(u); setDialogOpen(true) }
 
   const columns: Column<User>[] = [
-    { id: "userName", sortKey: "userName", header: t("oldUsers.userName"), cell: (u) => u.userName },
-    { id: "mobile", sortKey: "mobile", header: t("oldUsers.mobileNumber"), cell: (u) => u.mobile },
-    { id: "role", sortKey: "roleName", header: t("oldUsers.permission"), cell: (u) => u.roleName || u.roles?.[0]?.roleName || "-" },
-    { id: "branch", sortKey: "branchName", header: t("oldUsers.branch"), cell: (u) => u.branchName },
-    { id: "multi", sortKey: "isMultiBranch", header: t("oldUsers.multiBranch"), cell: (u) => (
+    { id: "userName", sortable: true, header: t("oldUsers.userName"), cell: (u) => u.userName },
+    { id: "mobile", sortable: true, header: t("oldUsers.mobileNumber"), cell: (u) => u.mobile },
+    { id: "roleName", sortable: true, header: t("oldUsers.permission"), cell: (u) => u.roleName || u.roles?.[0]?.roleName || "-" },
+    { id: "branchName", sortable: true, header: t("oldUsers.branch"), cell: (u) => u.branchName },
+    { id: "isMultiBranch", sortable: true, header: t("oldUsers.multiBranch"), cell: (u) => (
       <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${u.isMultiBranch ? "bg-[#00e6821a] text-[#09ad95]" : "bg-[#f50b0b1a] text-[#b40b09]"}`}>
         {u.isMultiBranch ? t("oldUsers.enabled") : t("oldUsers.disabled")}
       </span>

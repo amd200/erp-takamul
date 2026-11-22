@@ -65,10 +65,10 @@ export default function NetSalesReport() {
   }
   const columns: Column<NetSalesRow>[] = [
     { id: "serial", header: t("oldReports.serial"), cell: (r) => <span className="text-sm font-semibold">{page * size + rows.indexOf(r) + 1}</span> },
-    { id: "date", sortKey: "date", header: t("oldReports.date"), cell: (r) => <span className="text-sm">{dayText(r.date)}</span> },
-    { id: "number", sortKey: "number", header: t("oldReports.invoice_number"), cell: (r) => <span dir="ltr" className="text-sm font-bold">{r.number}</span> },
+    { id: "date", sortable: true, header: t("oldReports.date"), cell: (r) => <span className="text-sm">{dayText(r.date)}</span> },
+    { id: "number", sortable: true, header: t("oldReports.invoice_number"), cell: (r) => <span dir="ltr" className="text-sm font-bold">{r.number}</span> },
     { id: "type", header: t("oldReports.document_type"), cell: (r) => <span className={`text-sm font-medium ${r.type === "SalesReturn" ? "text-red-500" : "text-primary"}`}>{typeLabel(r.type)}</span> },
-    { id: "total", sortKey: "netAmount", header: t("oldReports.grand_total"), cell: (r) => <span dir="ltr" className={`text-sm font-bold ${r.type === "SalesReturn" ? "text-red-500" : ""}`}>{r.type === "SalesReturn" ? "-" : ""}{money(r.netAmount)}</span> },
+    { id: "netAmount", sortable: true, header: t("oldReports.grand_total"), cell: (r) => <span dir="ltr" className={`text-sm font-bold ${r.type === "SalesReturn" ? "text-red-500" : ""}`}>{r.type === "SalesReturn" ? "-" : ""}{money(r.netAmount)}</span> },
   ]
 
   return (

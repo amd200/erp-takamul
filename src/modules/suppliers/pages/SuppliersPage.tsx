@@ -31,10 +31,9 @@ export default function SuppliersPage() {
   const all = data ?? []
 
   const columns: Column<Supplier>[] = [
-    { id: "code", sortKey: "id", header: t("suppliers.code"), cell: (s) => <span className="tabular-nums">{s.supplierCode ?? s.id}</span> },
-    { id: "name", sortKey: "supplierName", header: t("partners.name"), cell: (s) => <span className="font-semibold">{s.supplierName}</span> },
-    { id: "phone", sortKey: "phone", header: t("suppliers.mobile"), cell: (s) => <span dir="ltr">{s.phone || "—"}</span> },
-    { id: "openingBalance", sortKey: "openingBalance", header: t("partners.openingBalance"), cell: (s) => <span dir="ltr">{formatMoney(s.openingBalance ?? 0)}</span> },
+    { id: "supplierName", sortable: true, header: t("partners.name"), cell: (s) => <span className="font-semibold">{s.supplierName}</span> },
+    { id: "phone", sortable: true, header: t("suppliers.mobile"), cell: (s) => <span dir="ltr">{s.phone || "—"}</span> },
+    { id: "openingBalance", sortable: true, header: t("partners.openingBalance"), cell: (s) => <span dir="ltr">{formatMoney(s.openingBalance ?? 0)}</span> },
     { id: "actions", header: "", align: "end", cell: (s) => (
       <div className="flex items-center justify-center gap-0.5">
         <RowActions extra={[can(P.suppliers.edit) && { key: "opening", label: t("partners.openingBalance"), icon: <WalletCards />, onSelect: () => setOpening(s) }]} onEdit={can(P.suppliers.edit) ? () => setForm({ supplier: s }) : undefined} onDelete={can(P.suppliers.delete) ? () => setToDelete(s) : undefined} />
@@ -48,7 +47,7 @@ export default function SuppliersPage() {
         actions={<Can perm={P.suppliers.add}><Button size="lg" onClick={() => setForm({})}><Plus />{t("suppliers.add")}</Button></Can>} />
       <SectionCard>
           <DataTable rows={all} loading={isLoading} columns={columns} sort={sort} rowKey={(s) => s.id}
-            searchText={(s) => `${s.supplierName} ${s.phone} ${s.taxNumber} ${s.supplierCode ?? s.id}`} searchPlaceholder={t("suppliers.search")}
+            searchText={(s) => `${s.supplierName} ${s.phone} ${s.taxNumber}`} searchPlaceholder={t("suppliers.search")}
             empty={<EmptyState icon={<Truck />} title={t("suppliers.empty")} hint={t("suppliers.emptyHint")} />} />
         </SectionCard>
       <SupplierDialog open={!!form} onOpenChange={(o) => !o && setForm(null)} supplier={form?.supplier} />

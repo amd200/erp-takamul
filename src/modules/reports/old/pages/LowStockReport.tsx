@@ -22,9 +22,9 @@ export default function LowStockReport() {
       ]}
       columns={[
         { id: "code", header: t("oldReports.barcode"), cell: (r) => <span className="text-sm font-medium">{r.productCode}</span> },
-        { id: "name", sortKey: "productName", header: t("oldReports.item_name"), cell: (r) => <span className="text-sm font-bold">{r.productName}</span> },
-        { id: "qty", sortKey: "currentQty", header: t("oldReports.current_quantity"), cell: (r) => <span className="rounded-full border border-red-200 bg-red-50 px-2 py-0.5 text-sm font-bold text-red-700">{money(r.currentQty)}</span> },
-        { id: "min", sortKey: "minStockLevel", header: t("oldReports.reorder_point"), cell: (r) => <span className="text-sm font-semibold whitespace-nowrap">{money(r.minStockLevel)}</span> },
+        { id: "productName", sortable: true, header: t("oldReports.item_name"), cell: (r) => <span className="text-sm font-bold">{r.productName}</span> },
+        { id: "currentQty", sortable: true, header: t("oldReports.current_quantity"), cell: (r) => <span className="rounded-full border border-red-200 bg-red-50 px-2 py-0.5 text-sm font-bold text-red-700">{money(r.currentQty)}</span> },
+        { id: "minStockLevel", sortable: true, header: t("oldReports.reorder_point"), cell: (r) => <span className="text-sm font-semibold whitespace-nowrap">{money(r.minStockLevel)}</span> },
         { id: "short", header: t("oldReports.shortage_quantity"), cell: (r) => <span className="text-sm font-semibold">{money(r.shortageQty)}</span> },
       ]}
       outColumns={[

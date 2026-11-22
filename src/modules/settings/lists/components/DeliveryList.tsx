@@ -43,7 +43,7 @@ export function DeliveryList({ readOnly }: { readOnly: boolean }) {
   const open = (c: DeliveryCompany | null) => { setEditing(c); setDialog(true) }
 
   const columns: Column<DeliveryCompany>[] = [
-    { id: "name", sortKey: "name", header: t("settings.lists.delivery_companies.name"), cell: (c) => <span className="font-semibold">{c.name}</span> },
+    { id: "name", sortable: true, header: t("settings.lists.delivery_companies.name"), cell: (c) => <span className="font-semibold">{c.name}</span> },
     { id: "actions", header: "", align: "end", cell: (c) => !readOnly && <RowActions onEdit={() => open(c)} onDelete={() => setToDelete(c)} /> },
   ]
   return (

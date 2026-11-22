@@ -52,10 +52,10 @@ export function PricingList({ readOnly }: { readOnly: boolean }) {
   const label = (k: string) => t(`settings.lists.pricing_systems.${k}`)
 
   const columns: Column<PricingSystem>[] = [
-    { id: "name", sortKey: "nameAr", header: label("nameAr"), cell: (r) => <span className="font-semibold">{r.nameAr}</span> },
-    { id: "type", sortKey: "systemType", header: label("systemType"), cell: (r) => <span className="text-muted-foreground">{label(`o.systemType.${r.systemType}`)}</span> },
-    { id: "adjustment", sortKey: "adjustmentType", header: label("adjustmentType"), cell: (r) => <span className="text-muted-foreground">{label(`o.adjustmentType.${r.adjustmentType}`)}</span> },
-    { id: "value", sortKey: "value", header: label("value"), cell: (r) => <span className="tabular-nums">{r.value}{r.adjustmentType === "Percentage" ? "%" : ""}</span> },
+    { id: "nameAr", sortable: true, header: label("nameAr"), cell: (r) => <span className="font-semibold">{r.nameAr}</span> },
+    { id: "systemType", sortable: true, header: label("systemType"), cell: (r) => <span className="text-muted-foreground">{label(`o.systemType.${r.systemType}`)}</span> },
+    { id: "adjustmentType", sortable: true, header: label("adjustmentType"), cell: (r) => <span className="text-muted-foreground">{label(`o.adjustmentType.${r.adjustmentType}`)}</span> },
+    { id: "value", sortable: true, header: label("value"), cell: (r) => <span className="tabular-nums">{r.value}{r.adjustmentType === "Percentage" ? "%" : ""}</span> },
     { id: "actions", header: "", align: "end", cell: (r) => !readOnly && <RowActions onEdit={() => open(r)} onDelete={() => setToDelete(r)} /> },
   ]
   return (

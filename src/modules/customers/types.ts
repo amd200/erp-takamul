@@ -10,6 +10,6 @@ export type EyeDto = Partial<Record<EyeField, string | null>>
 export type Companion = Measurement & { id?: number; name: string; phone: string }
 export type CompanionDto = EyeDto & { id?: number; name: string; phone?: string | null }
 
-export type Customer = PartyDto & EyeDto & { id: number; customerCode?: number | null; customerName: string; fileNumber?: string | null; companions?: CompanionDto[] }
+export type Customer = PartyDto & EyeDto & { id: number; customerName: string; fileNumber?: string | null; companions?: CompanionDto[] }
 
 export type SelectedMeasurement = Measurement & { customerId: number; source: "customer" | "companion"; companionId?: number; name: string }

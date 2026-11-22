@@ -1,9 +1,8 @@
-import { useState } from "react"
 import { FileDown, Loader2, RefreshCw } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
-import { errorToast } from "@/shared/api/errors"
 import { shiftsApi } from "@/modules/shifts/service"
+import { useShiftReportOutput } from "@/modules/shifts/print/useShiftReportOutput"
 import type { Shift } from "@/modules/shifts/types"
 import { money } from "../output"
 import { PagedReport, slice } from "../PagedReport"
@@ -18,18 +17,9 @@ const time12 = (v?: string | null) => {
 /** Every shift with its times, user, status and net total, and a button that downloads one shift's PDF report. The server pages the list. */
 export default function ShiftsReport() {
   const { t } = useTranslation()
-  const [busyId, setBusyId] = useState<number | null>(null)
-  const download = async (id: number) => {
-    setBusyId(id)
-    try {
-      const blob = await shiftsApi.export(id)
-      const a = document.createElement("a")
-      a.href = URL.createObjectURL(blob)
-      a.download = `shift-${id}.pdf`
-      a.click()
-      URL.revokeObjectURL(a.href)
-    } catch (e) { errorToast(e, "sales.downloadFailed") } finally { setBusyId(null) }
-  }
+  const output = useShiftReportOutput()
+  const busyId = output.isPending ? (output.variables?.id ?? null) : null
+  const download = (id: number) => output.mutate({ id, as: "pdf" })
   const status = (r: Shift) => (r.status === "Open" ? t("oldReports.shift_status_open") : t("oldReports.shift_status_closed"))
   return (
     <PagedReport<Shift, { rows: Shift[]; total: number }>

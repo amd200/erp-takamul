@@ -3,13 +3,13 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
-import { formatClock } from "@/lib/format"
+import { shiftClock } from "../clock"
 import { useAppSettings } from "@/modules/settings"
 import { useShiftReport } from "../queries"
 import { useShiftReportOutput } from "../print/useShiftReportOutput"
 import type { Shift } from "../types"
 
-const fmt = (v: number | null | undefined) => (typeof v === "number" && !Number.isNaN(v) ? v.toFixed(2) : "—")
+const fmt = (v: number | null | undefined) => (typeof v === "number" && !Number.isNaN(v) ? v.toFixed(2) : "00.00")
 
 /** One row of a box: a grey caption and its value. */
 const Line = ({ label, value, tone }: { label: string; value: string | number; tone?: string }) => (
@@ -34,15 +34,38 @@ const Box = ({ title, children }: { title?: string; children: React.ReactNode })
   </div>
 )
 
+/** One box holding a block per treasury, split by dashed lines (the grouped card of the current system). */
+const Group = ({ children }: { children: React.ReactNode }) => <div className="rounded-xl border border-border bg-muted/50 px-3 py-2">{children}</div>
+
+const Item = ({ title, children }: { title: string; children: React.ReactNode }) => (
+  <div className="[&+div]:mt-3 [&+div]:border-t [&+div]:border-dashed [&+div]:border-border [&+div]:pt-3">
+    <div className="mb-2.5 border-b border-dashed border-border pb-2 text-xs font-bold text-foreground">{title}</div>
+    <div className="space-y-2 text-xs">{children}</div>
+  </div>
+)
+
+/** The invoice numbers of an employee, in small boxes. */
+const InvoiceNumbers = ({ title, numbers }: { title: string; numbers?: string[] | null }) => {
+  if (!numbers?.length) return null
+  return (
+    <div className="mt-3 border-t border-dashed border-border pt-3 text-xs">
+      <div className="mb-2 font-semibold text-muted-foreground">{title}</div>
+      <ul className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,150px),1fr))] gap-2">
+        {numbers.map((n, i) => <li key={`${n}-${i}`} className="min-w-0 rounded-lg border border-border bg-background px-2.5 py-2 text-center"><bdi dir="ltr" className="block break-all font-mono text-[11px] leading-5">{n}</bdi></li>)}
+      </ul>
+    </div>
+  )
+}
+
 /**
  * The shift statement, as in the current system: a header with the title, the shift number and the close and print
- * buttons; under it the statement on a pale background (who and when, what was sold, the totals, each treasury, the
- * returns and net, each service employee, then purchases and expenses).
+ * buttons; under it the statement on a pale background (who and when, what was sold, the totals, each sales treasury, the
+ * returns, expenses and collected vouchers, each service employee, then the net of each treasury).
  */
 type Props = { shift: Shift | null; onOpenChange: (o: boolean) => void; onClose?: (s: Shift) => void }
 
 export function ShiftReportDialog({ shift, onOpenChange, onClose }: Props) {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const appSettings = useAppSettings()
   const withVouchers = !!appSettings.shiftsTab?.enableShiftStatement
   const showReturns = !!appSettings.shiftsTab?.showReturnsInShiftPrint
@@ -51,8 +74,9 @@ export function ShiftReportDialog({ shift, onOpenChange, onClose }: Props) {
   const exempt = appSettings.taxSetting?.taxSetting === "Exempt"
   const { data: r, isLoading } = useShiftReport(shift?.id)
   const output = useShiftReportOutput()
-  const clock = (v: string | null | undefined) => (v ? formatClock(v, i18n.language) : "---")
-  const returnTreasuries = !showReturns ? [] : (r?.treasuries ?? []).filter((x) => x.totalReturns > 0)
+  const clock = shiftClock
+  const showNet = (showExpenses && !!r?.expenseTreasuries?.length) || (showReturns && !!r?.returnTreasuries?.length) || (withVouchers && !!r?.unlinkedVoucherTreasuries?.length)
+  const netTreasuries = showNet ? (r?.treasuries ?? []) : []
 
   return (
     <Dialog open={!!shift} onOpenChange={onOpenChange}>
@@ -147,45 +171,55 @@ export function ShiftReportDialog({ shift, onOpenChange, onClose }: Props) {
                 </Box></div>
               )}
 
-              {(r.treasuries?.length ?? 0) > 0 && (
+              {(r.salesTreasuries?.length ?? 0) > 0 && (
                 <Section icon={Wallet} title={`${t("shiftOld.treasuriesDaily")} (${t("shiftOld.sales")})`}>
-                  <div className="grid grid-cols-1 gap-3">
-                    {(r.treasuries ?? []).map((x) => (
-                      <Box key={x.treasuryId} title={x.treasuryName}>
+                  <Group>
+                    {(r.salesTreasuries ?? []).map((x) => (
+                      <Item key={x.treasuryId} title={x.treasuryName}>
                         <Line label={t("shiftOld.invoicesCount")} value={x.invoicesCount} />
                         <Line label={t("shiftOld.totalSales")} value={fmt(x.totalSales)} tone="font-black text-primary" />
-                      </Box>
+                      </Item>
                     ))}
-                  </div>
+                  </Group>
                 </Section>
               )}
 
-              {returnTreasuries.length > 0 && (
+              {showReturns && (r.returnTreasuries?.length ?? 0) > 0 && (
                 <Section icon={Undo2} title={t("shiftOld.returns")}>
-                  <div className="grid grid-cols-1 gap-3">
-                    {returnTreasuries.map((x) => (
-                      <Box key={x.treasuryId} title={x.treasuryName}><Line label={t("shiftOld.totalReturns")} value={fmt(x.totalReturns)} tone="font-black text-destructive" /></Box>
+                  <Group>
+                    {(r.returnTreasuries ?? []).map((x) => (
+                      <Item key={x.treasuryId} title={x.treasuryName}>
+                        <Line label={t("shiftOld.invoicesCount")} value={x.invoicesCount} />
+                        <Line label={t("shiftOld.totalReturns")} value={fmt(x.totalReturns)} tone="font-black text-destructive" />
+                      </Item>
                     ))}
-                  </div>
+                  </Group>
                 </Section>
               )}
 
-              {(returnTreasuries.length > 0 || (withVouchers && (r.treasuries ?? []).some((x) => (x.paymentCount ?? 0) > 0))) && (
-                <Section icon={CircleDollarSign} title={`${t("shiftOld.netSection")} (${t("shiftOld.sales")} - ${t("shiftOld.returns")})`}>
-                  <div className="grid grid-cols-1 gap-3">
-                    {(r.treasuries ?? []).map((x) => (
-                      <Box key={x.treasuryId} title={x.treasuryName}>
-                        <Line label={t("shiftOld.netSales")} value={fmt(x.netTotal)} tone={cn("font-black", x.netTotal < 0 ? "text-destructive" : "text-primary")} />
-                        {withVouchers && (
-                          <>
-                            <Line label={t("shiftOld.voucherCount")} value={x.paymentCount ?? "—"} />
-                            <Line label={t("shiftOld.voucherTotal")} value={fmt(x.paymentTotal)} tone="font-black text-primary" />
-                            <Line label={t("shiftOld.treasuryNet")} value={fmt(x.paymentTotal == null ? null : x.netTotal + x.paymentTotal)} tone={cn("font-black", x.paymentTotal != null && x.netTotal + x.paymentTotal < 0 ? "text-destructive" : "text-primary")} />
-                          </>
-                        )}
-                      </Box>
+              {showExpenses && (r.expenseTreasuries?.length ?? 0) > 0 && (
+                <Section icon={Wallet} title={t("shiftOld.expenses")}>
+                  <Group>
+                    {(r.expenseTreasuries ?? []).map((x) => (
+                      <Item key={x.treasuryId} title={x.treasuryName}>
+                        <Line label={t("shiftOld.expensesCount")} value={x.expensesCount} />
+                        <Line label={t("shiftOld.totalExpenses")} value={fmt(x.totalExpenses)} tone="font-black text-destructive" />
+                      </Item>
                     ))}
-                  </div>
+                  </Group>
+                </Section>
+              )}
+
+              {withVouchers && (r.unlinkedVoucherTreasuries?.length ?? 0) > 0 && (
+                <Section icon={ReceiptText} title={t("shiftOld.vouchers")}>
+                  <Group>
+                    {(r.unlinkedVoucherTreasuries ?? []).map((x) => (
+                      <Item key={x.treasuryId} title={x.treasuryName}>
+                        <Line label={t("shiftOld.vouchersCount")} value={x.vouchersCount} />
+                        <Line label={t("shiftOld.total")} value={fmt(x.totalAmount)} tone="font-black text-primary" />
+                      </Item>
+                    ))}
+                  </Group>
                 </Section>
               )}
 
@@ -193,33 +227,43 @@ export function ShiftReportDialog({ shift, onOpenChange, onClose }: Props) {
                 <Section icon={Users} title={t("shiftOld.employeeDaily")}>
                   <div className="grid grid-cols-1 gap-3">
                     {(r.employeeSalesSummary ?? []).map((e, i) => (
-                      <div key={i} className="rounded-xl border border-border bg-muted/50 px-3 py-2">
+                      <div key={e.employeeId ?? i} className="rounded-xl border border-border bg-muted/50 px-3 py-2">
                         <div className="mb-2.5 flex items-center justify-between gap-3 border-b border-dashed border-border pb-2.5">
-                          <span className="text-[10px] font-bold text-muted-foreground">{e.employeeName || "—"} ({e.salesInvoicesCount} {t("shiftOld.orders")})</span>
+                          <span className="text-[10px] font-bold text-muted-foreground">{e.employeeName} ({e.salesInvoicesCount} {t("shiftOld.orders")})</span>
                           <span className="text-sm font-black">{t("shiftOld.net")} {fmt(e.netSales)}</span>
                         </div>
-                        {showReturns && (
-                          <div className="flex items-center justify-between gap-3 text-xs">
-                            <span className="font-semibold text-muted-foreground">{t("shiftOld.totalReturns")} ({e.returnInvoicesCount ?? 0} {t("shiftOld.returnsUnit")})</span>
-                            <span className="font-black">{fmt(e.totalReturns)}</span>
+                        {(e.treasuries?.length ?? 0) > 0 && (
+                          <div className="space-y-1.5">
+                            {e.treasuries.map((x) => (
+                              <div key={x.treasuryId} className="flex items-center justify-between gap-3 text-xs">
+                                <span className="font-semibold text-muted-foreground">{x.treasuryName}</span>
+                                <span className="font-bold">{fmt(x.totalSales)}</span>
+                              </div>
+                            ))}
                           </div>
                         )}
+                        <div className="mt-2.5 flex items-center justify-between gap-3 border-t border-dashed border-border pt-2.5 text-xs">
+                          <span className="font-semibold text-muted-foreground">{t("shiftOld.totalReturns")} ({e.returnInvoicesCount ?? 0} {t("shiftOld.returnsUnit")})</span>
+                          <span className="font-black">{fmt(e.totalReturns)}</span>
+                        </div>
+                        <InvoiceNumbers title={t("shiftOld.salesInvoiceNumbers")} numbers={e.salesInvoiceNumbers} />
+                        {showReturns && <InvoiceNumbers title={t("shiftOld.returnInvoiceNumbers")} numbers={e.returnInvoiceNumbers} />}
                       </div>
                     ))}
                   </div>
                 </Section>
               )}
 
-              {((showExpenses && (r.totalExpenses ?? 0) > 0) || (r.totalPurchases ?? 0) > 0) && (
-                <div>
-                  <div className="mb-3 flex items-center gap-2"><ReceiptText size={16} className="text-primary" /><h3 className="text-sm font-bold">{t("shiftOld.purchasesExpenses")}</h3></div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="flex flex-col items-center justify-center gap-1 rounded-xl border border-border bg-muted/50 px-3 py-2"><span className="text-[10px] font-bold text-muted-foreground">{t("shiftOld.totalPurchases")}</span><span className="text-sm font-black">{fmt(r.totalPurchases)}</span></div>
-                    {showExpenses && (
-                      <div className="flex flex-col items-center justify-center gap-1 rounded-xl border border-border bg-muted/50 px-3 py-2"><span className="text-[10px] font-bold text-muted-foreground">{t("shiftOld.totalExpenses")}</span><span className="text-sm font-black">{fmt(r.totalExpenses)}</span></div>
-                    )}
+              {netTreasuries.length > 0 && (
+                <Section icon={CircleDollarSign} title={t("shiftOld.netTreasuries")}>
+                  <div className="grid grid-cols-1 gap-3">
+                    {netTreasuries.map((x) => (
+                      <Box key={x.treasuryId} title={x.treasuryName}>
+                        <Line label={t("shiftOld.treasuryNet")} value={fmt(x.finalNetTotal)} tone={cn("font-black", x.finalNetTotal < 0 ? "text-destructive" : "text-primary")} />
+                      </Box>
+                    ))}
                   </div>
-                </div>
+                </Section>
               )}
             </div>
           ) : (

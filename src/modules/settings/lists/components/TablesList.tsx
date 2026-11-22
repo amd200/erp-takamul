@@ -43,8 +43,8 @@ export function TablesList({ readOnly }: { readOnly: boolean }) {
   const open = (r: DiningTable | null) => { setEditing(r); setDialog(true) }
 
   const columns: Column<DiningTable>[] = [
-    { id: "name", sortKey: "tableName", header: t("settings.lists.tables.tableName"), cell: (r) => <span className="font-semibold">{r.tableName}</span> },
-    { id: "status", sortKey: "status", header: t("settings.lists.tables.status"), cell: (r) => <span className="text-muted-foreground">{t(`settings.lists.tables.o.status.${r.status}`)}</span> },
+    { id: "tableName", sortable: true, header: t("settings.lists.tables.tableName"), cell: (r) => <span className="font-semibold">{r.tableName}</span> },
+    { id: "status", sortable: true, header: t("settings.lists.tables.status"), cell: (r) => <span className="text-muted-foreground">{t(`settings.lists.tables.o.status.${r.status}`)}</span> },
     { id: "actions", header: "", align: "end", cell: (r) => !readOnly && <RowActions onEdit={() => open(r)} onDelete={() => setToDelete(r)} /> },
   ]
   return (

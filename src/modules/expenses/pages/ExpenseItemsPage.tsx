@@ -62,8 +62,8 @@ export default function ExpenseItemsPage() {
   const open = (x: ExpenseItem | null) => { setEditing(x); setDialogOpen(true) }
 
   const columns: Column<ExpenseItem>[] = [
-    { id: "name", sortKey: "name", header: t("expenseItems.name"), cell: (x) => <span className="font-semibold">{x.name}</span> },
-    { id: "status", sortKey: "isActive", header: t("common.status"), cell: (x) => <StatusBadge tone={x.isActive ? "success" : "danger"}>{x.isActive ? t("common.active") : t("common.inactive")}</StatusBadge> },
+    { id: "name", sortable: true, header: t("expenseItems.name"), cell: (x) => <span className="font-semibold">{x.name}</span> },
+    { id: "isActive", sortable: true, header: t("common.status"), cell: (x) => <StatusBadge tone={x.isActive ? "success" : "danger"}>{x.isActive ? t("common.active") : t("common.inactive")}</StatusBadge> },
     { id: "actions", header: "", align: "end", cell: (x) => can(P.expenseItems.manage) && <RowActions onEdit={() => open(x)} onDelete={() => setToDelete(x)} /> },
   ]
 

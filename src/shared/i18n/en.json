@@ -236,7 +236,9 @@
     "selected": "Selected",
     "all": "All",
     "serial": "#",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "amount": "Amount",
+    "selectedTreasury": "Selected Treasury"
   },
   "shiftOld": {
     "dailyStatement": "Daily statement",
@@ -254,27 +256,28 @@
     "total": "Total",
     "beforeTax": "Total before tax",
     "totalTax": "Total tax",
-    "grandTotal": "Grand total",
+    "grandTotal": "Total Sales",
     "deferred": "Deferred sales invoices",
     "invoicesCount": "Invoices count",
     "treasuriesDaily": "Treasuries daily",
     "totalSales": "Total sales",
     "returns": "Returns",
     "totalReturns": "Total returns",
-    "netSection": "Net",
-    "netSales": "Net sales",
-    "voucherCount": "Vouchers collected",
-    "voucherTotal": "Vouchers total",
     "treasuryNet": "Treasury daily net",
     "employeeDaily": "Service employees daily",
     "orders": "orders",
     "net": "Net",
     "returnsUnit": "returns",
-    "purchasesExpenses": "Purchases and expenses",
-    "totalPurchases": "Total purchases",
     "totalExpenses": "Total expenses",
     "noData": "No shift data found",
-    "previewHint": "Preview of the report before thermal printing"
+    "previewHint": "Preview of the report before thermal printing",
+    "expenses": "Expenses",
+    "expensesCount": "Expenses Count",
+    "vouchers": "Collected Vouchers",
+    "vouchersCount": "Vouchers Count",
+    "netTreasuries": "Daily Treasuries Net",
+    "salesInvoiceNumbers": "Sales Invoice Numbers",
+    "returnInvoiceNumbers": "Return Invoice Numbers"
   },
   "oldUsers": {
     "title": "Users",
@@ -2384,7 +2387,6 @@
   },
   "customers": {
     "title": "Customers",
-    "code": "Code",
     "mobile": "Mobile number",
     "description": "Customer details and balances.",
     "add": "Add customer",
@@ -2416,7 +2418,6 @@
   },
   "suppliers": {
     "title": "Suppliers",
-    "code": "Code",
     "mobile": "Mobile number",
     "description": "Supplier details and what we owe them.",
     "add": "Add supplier",
@@ -3388,7 +3389,8 @@
     "show_coast_price": "Show cost price in sales screen",
     "حجم خط التصنيفات": "Category font size",
     "حجم خط اسم الصنف المتفرع": "Branched item name font size",
-    "products_purchases_report": "Products Purchases Report"
+    "products_purchases_report": "Products Purchases Report",
+    "record_in_open_shift": "Record expense in the open shift"
   },
   "pos1": {
     "searchProducts": "Search products...",

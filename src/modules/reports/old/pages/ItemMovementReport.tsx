@@ -37,7 +37,7 @@ export default function ItemMovementReport() {
         { title: t("oldReports.net_quantity"), value: money(r?.totals.netQty), icon: Scale, color: "purple" },
       ]}
       columns={[
-        { id: "date", sortKey: "transDate", header: t("oldReports.trans_date"), cell: (r) => <span className="text-sm whitespace-nowrap">{dayText(r.transDate)}</span> },
+        { id: "transDate", sortable: true, header: t("oldReports.trans_date"), cell: (r) => <span className="text-sm whitespace-nowrap">{dayText(r.transDate)}</span> },
         { id: "type", header: t("oldReports.movement_type"), cell: (r) => r.transType },
         { id: "ref", header: t("oldReports.reference"), cell: (r) => <span className="font-bold">{r.invoiceNo}</span> },
         { id: "before", header: t("oldReports.quantity_before_movement"), cell: (r) => money(r.quantityBefore) },

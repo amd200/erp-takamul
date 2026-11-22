@@ -76,9 +76,9 @@ export default function EmployeesPage() {
   const show = (e: Employee | null) => { setEditing(e); setOpen(true) }
 
   const columns: Column<Employee>[] = [
-    { id: "name", sortKey: "firstName", header: t("employees.name"), cell: (e) => <span className="font-semibold">{e.firstName}</span> },
-    { id: "mobile", sortKey: "mobile", header: t("users.mobile"), cell: (e) => <span dir="ltr">{e.mobile || "—"}</span> },
-    ...(canSeeBranch ? [{ id: "branch", sortKey: "branchName", header: t("users.branch"), cell: (e: Employee) => e.branchName || "—" }] : []),
+    { id: "firstName", sortable: true, header: t("employees.name"), cell: (e) => <span className="font-semibold">{e.firstName}</span> },
+    { id: "mobile", sortable: true, header: t("users.mobile"), cell: (e) => <span dir="ltr">{e.mobile || "—"}</span> },
+    ...(canSeeBranch ? [{ id: "branchName", sortable: true, header: t("users.branch"), cell: (e: Employee) => e.branchName || "—" }] : []),
     { id: "actions", header: "", align: "end", cell: (e) => (
       // An employee with a sign-in is managed on the users page, which removes both together.
       <RowActions onEdit={can(P.employees.edit) ? () => show(e) : undefined} onDelete={can(P.employees.delete) && !e.userName ? () => setToDelete(e) : undefined} />

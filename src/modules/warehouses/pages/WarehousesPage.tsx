@@ -75,13 +75,13 @@ export default function WarehousesPage() {
 
   const branchColumn = useBranchColumn<Warehouse>((w) => ({ id: w.branchId, name: w.branchName }))
   const columns: Column<Warehouse>[] = [
-    { id: "code", sortKey: "warehouseCode", header: t("warehouses.code"), cell: (w) => <span className="font-semibold" dir="ltr">{w.warehouseCode || "—"}</span> },
-    { id: "name", sortKey: "warehouseName", header: t("warehouses.name"), cell: (w) => <span className="font-semibold">{w.warehouseName || "—"}</span> },
+    { id: "warehouseCode", sortable: true, header: t("warehouses.code"), cell: (w) => <span className="font-semibold" dir="ltr">{w.warehouseCode || "—"}</span> },
+    { id: "warehouseName", sortable: true, header: t("warehouses.name"), cell: (w) => <span className="font-semibold">{w.warehouseName || "—"}</span> },
     ...branchColumn,
-    { id: "address", sortKey: "address", header: t("warehouses.address"), cell: (w) => <span className="text-muted-foreground">{[w.address, w.city].filter(Boolean).join("، ") || "—"}</span> },
-    { id: "capacity", sortKey: "capacity", header: t("warehouses.capacity"), cell: (w) => (w.capacity != null ? formatNumber(w.capacity) : <span className="text-faint">—</span>) },
-    { id: "manager", sortKey: "managerName", header: t("warehouses.manager"), cell: (w) => w.managerName || <span className="text-faint">—</span> },
-    { id: "status", sortKey: "isActive", header: t("common.status"), cell: (w) => w.isActive == null ? <span className="text-faint">—</span> : <StatusBadge tone={w.isActive ? "success" : "danger"}>{w.isActive ? t("common.active") : t("common.inactive")}</StatusBadge> },
+    { id: "address", sortable: true, header: t("warehouses.address"), cell: (w) => <span className="text-muted-foreground">{[w.address, w.city].filter(Boolean).join("، ") || "—"}</span> },
+    { id: "capacity", sortable: true, header: t("warehouses.capacity"), cell: (w) => (w.capacity != null ? formatNumber(w.capacity) : <span className="text-faint">—</span>) },
+    { id: "managerName", sortable: true, header: t("warehouses.manager"), cell: (w) => w.managerName || <span className="text-faint">—</span> },
+    { id: "isActive", sortable: true, header: t("common.status"), cell: (w) => w.isActive == null ? <span className="text-faint">—</span> : <StatusBadge tone={w.isActive ? "success" : "danger"}>{w.isActive ? t("common.active") : t("common.inactive")}</StatusBadge> },
     { id: "actions", header: "", align: "end", cell: (w) => (
       <RowActions onEdit={can(P.warehouses.edit) ? () => { setEditing(w); setOpen(true) } : undefined} onDelete={can(P.warehouses.delete) ? () => setToDelete(w) : undefined} />
     ) },

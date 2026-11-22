@@ -86,7 +86,7 @@ export const BACKEND_PERMISSIONS: Record<Permission, string[]> = {
   "vouchers.receipts": [...g("معاملات العملاء", "عرض", "إضافة")],
   "vouchers.payments": [...g("معاملات الموردين", "عرض", "إضافة")],
   "expenses.view": g("المصروفات", "عرض"),
-  "expenses.add": g("المصروفات", "إضافة"),
+  "expenses.add": g("المصروفات", "إضافة", "تسجيل في الوردية المفتوحة"),
   "expenses.edit": g("المصروفات", "تعديل"),
   "expenses.delete": g("المصروفات", "حذف"),
   "expenseItems.view": g("البنود", "عرض"),

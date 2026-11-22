@@ -10,7 +10,7 @@ export default function ProductsPurchasesReport() {
   const { t } = useTranslation()
   return (
     <PagedReport<ProductsPurchasesRow, { rows: ProductsPurchasesRow[]; total: number; grand: number }>
-      id="products-purchases" title={t("oldReports.products_purchases_report")} icon={Barcode} defaultSort={{ key: "totalpurchases", desc: true }}
+      id="products-purchases" title={t("oldReports.products_purchases_report")} icon={Barcode} defaultSort={{ key: "totalPurchases", desc: true }}
       filterText={(a) => `${t("oldReports.from")}: ${a.from} | ${t("oldReports.to")}: ${a.to}`}
       read={async (a, page, size, s) => {
         const r = await productsPurchases({ branchid: currentBranchId(), from: a.from, to: a.to, SortBy: s.key, SortDescending: s.desc })
@@ -19,10 +19,10 @@ export default function ProductsPurchasesReport() {
       rowsOf={(r) => r.rows} totalOf={(r) => r.total} rowKey={(r) => `${r.barcode}-${r.productName}`}
       cards={(r) => [{ title: t("oldReports.total_purchases_amount"), value: money(r?.grand), suffix: t("oldReports.sar"), icon: DollarSign, color: "orange" }]}
       columns={[
-        { id: "code", sortKey: "barcode", header: t("oldReports.barcode"), cell: (r) => <span className="font-mono text-xs">{r.barcode}</span> },
-        { id: "name", sortKey: "productname", header: t("oldReports.product_name"), cell: (r) => <span className="font-bold">{r.productName}</span> },
-        { id: "qty", sortKey: "purchasescount", header: t("oldReports.purchased_quantity"), cell: (r) => r.purchasesCount },
-        { id: "total", sortKey: "totalpurchases", header: t("oldReports.total_purchases_amount"), cell: (r) => <span className="font-bold text-primary">{money(r.totalPurchases)}</span> },
+        { id: "barcode", sortable: true, header: t("oldReports.barcode"), cell: (r) => <span className="font-mono text-xs">{r.barcode}</span> },
+        { id: "productName", sortable: true, header: t("oldReports.product_name"), cell: (r) => <span className="font-bold">{r.productName}</span> },
+        { id: "purchasesCount", sortable: true, header: t("oldReports.purchased_quantity"), cell: (r) => r.purchasesCount },
+        { id: "totalPurchases", sortable: true, header: t("oldReports.total_purchases_amount"), cell: (r) => <span className="font-bold text-primary">{money(r.totalPurchases)}</span> },
       ]}
       outColumns={[
         { header: t("oldReports.barcode"), value: (r) => r.barcode ?? "" },

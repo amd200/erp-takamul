@@ -69,10 +69,10 @@ export default function UnitsPage() {
 
   const branchColumn = useBranchColumn<Unit>((u) => ({ id: u.branchId }))
   const columns: Column<Unit>[] = [
-    { id: "name", sortKey: "name", header: t("units.name"), cell: (u) => <span className="font-semibold">{u.name}</span> },
+    { id: "name", sortable: true, header: t("units.name"), cell: (u) => <span className="font-semibold">{u.name}</span> },
     ...branchColumn,
-    { id: "code", sortKey: "taxCode", header: t("units.taxCode"), cell: (u) => <span className="text-muted-foreground" dir="ltr">{u.taxCode || "—"}</span> },
-    { id: "desc", sortKey: "description", header: t("common.description"), cell: (u) => <span className="text-muted-foreground">{u.description || "—"}</span> },
+    { id: "taxCode", sortable: true, header: t("units.taxCode"), cell: (u) => <span className="text-muted-foreground" dir="ltr">{u.taxCode || "—"}</span> },
+    { id: "description", sortable: true, header: t("common.description"), cell: (u) => <span className="text-muted-foreground">{u.description || "—"}</span> },
     { id: "actions", header: "", align: "end", cell: (u) => can(P.units.manage) && <RowActions onEdit={() => open(u)} onDelete={() => setToDelete(u)} /> },
   ]
 

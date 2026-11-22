@@ -36,15 +36,15 @@ export default function DevicesPage() {
   const onboarding = taxSetting === "SecondStage"
 
   const columns: Column<PosDevice>[] = [
-    { id: "name", sortKey: "deviceName", header: t("devices.name"), cell: (d) => (
+    { id: "deviceName", sortable: true, header: t("devices.name"), cell: (d) => (
       <div className="flex flex-col items-center gap-0.5 text-center">
         <div className="flex items-center justify-center gap-2 font-semibold leading-tight">{d.deviceName}{!d.isActive && <StatusBadge tone="danger">{t("common.inactive")}</StatusBadge>}</div>
         {d.invoiceSequence && <span className="text-xs leading-tight text-faint" dir="ltr">{d.invoiceSequence}</span>}
       </div>
     ) },
-    { id: "branch", sortKey: "branchName", header: t("users.branch"), cell: (d) => d.branchName || "—" },
+    { id: "branchName", sortable: true, header: t("users.branch"), cell: (d) => d.branchName || "—" },
     ...(onboarding ? [
-      { id: "status", sortKey: "certificateType", header: t("devices.registration"), cell: (d: PosDevice) => (
+      { id: "status", sortable: true, header: t("devices.registration"), cell: (d: PosDevice) => (
         <div className="flex flex-wrap items-center justify-center gap-2">
           <DeviceStatusBadge status={d.status} />
           {!registered(d.status) && can(P.posDevices.edit) && (
@@ -52,9 +52,9 @@ export default function DevicesPage() {
           )}
         </div>
       ) },
-      { id: "cert", sortKey: "certificateExpiresAt", header: t("devices.certExpiry"), cell: (d: PosDevice) => <ExpiryBadge expiresAt={d.certificateExpiresAt} daysLeft={d.daysUntilExpiry} expired={d.isCertificateExpired} /> },
+      { id: "certificateExpiresAt", sortable: true, header: t("devices.certExpiry"), cell: (d: PosDevice) => <ExpiryBadge expiresAt={d.certificateExpiresAt} daysLeft={d.daysUntilExpiry} expired={d.isCertificateExpired} /> },
     ] : []),
-    { id: "icv", sortKey: "currentICV", header: t("devices.lastIcv"), cell: (d) => (d.currentICV ? <span className="tabular-nums">{d.currentICV}</span> : <span className="text-faint">—</span>) },
+    { id: "currentICV", sortable: true, header: t("devices.lastIcv"), cell: (d) => (d.currentICV ? <span className="tabular-nums">{d.currentICV}</span> : <span className="text-faint">—</span>) },
     { id: "actions", header: "", align: "end", cell: (d) => (
       <RowActions extra={[onboarding && can(P.posDevices.edit) && { key: "chain", label: t("devices.chain"), icon: <Link2 />, onSelect: () => setChainFor(d) }]}
         onEdit={can(P.posDevices.edit) ? () => show(d) : undefined} onDelete={can(P.posDevices.delete) ? () => setToDelete(d) : undefined} />

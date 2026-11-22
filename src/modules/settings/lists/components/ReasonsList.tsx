@@ -52,9 +52,9 @@ export function ReasonsList({ readOnly }: { readOnly: boolean }) {
   const taxName = (id: number) => taxes.find((x) => x.id === id)?.name ?? "—"
 
   const columns: Column<ExemptionReason>[] = [
-    { id: "code", sortKey: "taxExemptionReasonCode", header: t("settings.lists.tax_exemption_reasons.taxExemptionReasonCode"), cell: (r) => <span className="font-semibold" dir="ltr">{r.taxExemptionReasonCode}</span> },
-    { id: "text", sortKey: "taxExemptionReasonText", header: t("settings.lists.tax_exemption_reasons.taxExemptionReasonText"), cell: (r) => r.taxExemptionReasonText },
-    { id: "tax", sortKey: "taxId", header: t("settings.lists.tax_exemption_reasons.taxId"), cell: (r) => <span className="text-muted-foreground">{taxName(r.taxId)}</span> },
+    { id: "taxExemptionReasonCode", sortable: true, header: t("settings.lists.tax_exemption_reasons.taxExemptionReasonCode"), cell: (r) => <span className="font-semibold" dir="ltr">{r.taxExemptionReasonCode}</span> },
+    { id: "taxExemptionReasonText", sortable: true, header: t("settings.lists.tax_exemption_reasons.taxExemptionReasonText"), cell: (r) => r.taxExemptionReasonText },
+    { id: "taxId", sortable: true, header: t("settings.lists.tax_exemption_reasons.taxId"), cell: (r) => <span className="text-muted-foreground">{taxName(r.taxId)}</span> },
     { id: "actions", header: "", align: "end", cell: (r) => !readOnly && <RowActions onEdit={() => open(r)} onDelete={() => setToDelete(r)} /> },
   ]
   return (

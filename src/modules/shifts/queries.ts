@@ -8,7 +8,7 @@ import type { OpenShiftInput } from "./types"
 import { shiftKeys } from "./keys"
 
 export const useShifts = () => useQuery({ queryKey: shiftKeys.list, queryFn: shiftsApi.list })
-export const useShiftReport = (id: number | undefined) => useQuery({ queryKey: shiftKeys.report(id ?? 0), queryFn: () => shiftsApi.report(id!), enabled: id != null })
+export const useShiftReport = (id: number | undefined) => useQuery({ queryKey: shiftKeys.report(id ?? 0), queryFn: () => shiftsApi.report(id!), enabled: id != null, staleTime: 0, refetchOnMount: "always" })
 
 export const useShiftBranches = (enabled: boolean) => useQuery({ queryKey: shiftKeys.branches, queryFn: shiftsApi.branches, enabled, staleTime: 5 * 60_000 })
 export const useShiftEmployees = (branchId: number) => useQuery({ queryKey: shiftKeys.employees(branchId), queryFn: () => shiftsApi.employees(branchId), enabled: branchId > 0 })

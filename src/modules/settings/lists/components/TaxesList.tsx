@@ -44,8 +44,8 @@ export function TaxesList({ readOnly }: { readOnly: boolean }) {
   const open = (r: Tax | null) => { setEditing(r); setDialog(true) }
 
   const columns: Column<Tax>[] = [
-    { id: "name", sortKey: "name", header: t("settings.lists.taxes.name"), cell: (r) => <span className="font-semibold">{r.name}</span> },
-    { id: "amount", sortKey: "amount", header: t("settings.lists.taxes.amount"), cell: (r) => <span className="text-muted-foreground tabular-nums">{r.amount}%</span> },
+    { id: "name", sortable: true, header: t("settings.lists.taxes.name"), cell: (r) => <span className="font-semibold">{r.name}</span> },
+    { id: "amount", sortable: true, header: t("settings.lists.taxes.amount"), cell: (r) => <span className="text-muted-foreground tabular-nums">{r.amount}%</span> },
     { id: "actions", header: "", align: "end", cell: (r) => !readOnly && <RowActions onEdit={() => open(r)} onDelete={() => setToDelete(r)} /> },
   ]
   return (

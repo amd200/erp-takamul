@@ -35,14 +35,14 @@ function VouchersPage({ kind }: { kind: VoucherKind }) {
   const rows = (data ?? []).filter((v) => v.kind === kind).sort((a, b) => (sortBy ? 0 : b.transactionDate.localeCompare(a.transactionDate)))
 
   const columns: Column<Voucher>[] = [
-    { id: "number", sortKey: "paymentNumber", header: t("vouchers.number"), cell: (v) => <span className="font-semibold">{v.paymentNumber || "—"}</span> },
-    { id: "date", sortKey: "transactionDate", header: t("common.date"), cell: (v) => <span className="text-muted-foreground">{formatDateTime(v.transactionDate, i18n.language)}</span> },
-    { id: "party", sortKey: kind === "receipt" ? "customerName" : "supplierName", header: t(kind === "receipt" ? "vouchers.from" : "vouchers.to"), cell: (v) => (
+    { id: "paymentNumber", sortable: true, header: t("vouchers.number"), cell: (v) => <span className="font-semibold">{v.paymentNumber || "—"}</span> },
+    { id: "transactionDate", sortable: true, header: t("common.date"), cell: (v) => <span className="text-muted-foreground">{formatDateTime(v.transactionDate, i18n.language)}</span> },
+    { id: "party", /* sorted by the customer or the supplier name, whichever this tab shows */ sortKey: kind === "receipt" ? "customerName" : "supplierName", header: t(kind === "receipt" ? "vouchers.from" : "vouchers.to"), cell: (v) => (
       <span>{v.partyName}</span>
     ) },
-    { id: "treasury", sortKey: "treasuryName", header: t("sales.treasury"), cell: (v) => treasuries.find((x) => x.id === v.treasuryId)?.name },
-    { id: "amount", sortKey: "amount", header: t("sales.amount"), cell: (v) => <span className={kind === "receipt" ? "font-semibold text-success" : "font-semibold"}>{formatMoney(v.amount)}</span> },
-    { id: "desc", sortKey: "description", header: t("vouchers.description"), cell: (v) => <span className="text-muted-foreground">{v.description || "—"}</span> },
+    { id: "treasuryName", sortable: true, header: t("sales.treasury"), cell: (v) => treasuries.find((x) => x.id === v.treasuryId)?.name },
+    { id: "amount", sortable: true, header: t("sales.amount"), cell: (v) => <span className={kind === "receipt" ? "font-semibold text-success" : "font-semibold"}>{formatMoney(v.amount)}</span> },
+    { id: "description", sortable: true, header: t("vouchers.description"), cell: (v) => <span className="text-muted-foreground">{v.description || "—"}</span> },
     { id: "actions", header: "", align: "end", cell: (v) => {
       const run = (as: "print" | "pdf") => output.mutate({ voucher: v, treasuryName: treasuries.find((x) => x.id === v.treasuryId)?.name ?? "", as })
       return <RowMenu items={[

@@ -58,10 +58,10 @@ export function CurrenciesList({ readOnly }: { readOnly: boolean }) {
   const open = (r: Currency | null) => { setEditing(r); setDialog(true) }
 
   const columns: Column<Currency>[] = [
-    { id: "code", sortKey: "code", header: t("settings.lists.currencies.code"), cell: (r) => <span className="font-semibold" dir="ltr">{r.code}</span> },
-    { id: "name", sortKey: "name", header: t("settings.lists.currencies.name"), cell: (r) => r.name },
-    { id: "symbol", sortKey: "symbol", header: t("settings.lists.currencies.symbol"), cell: (r) => <span className="text-muted-foreground">{r.symbol}</span> },
-    { id: "default", sortKey: "isDefault", header: "", cell: (r) => r.isDefault && <Badge>{t("settings.lists.currencies.default")}</Badge> },
+    { id: "code", sortable: true, header: t("settings.lists.currencies.code"), cell: (r) => <span className="font-semibold" dir="ltr">{r.code}</span> },
+    { id: "name", sortable: true, header: t("settings.lists.currencies.name"), cell: (r) => r.name },
+    { id: "symbol", sortable: true, header: t("settings.lists.currencies.symbol"), cell: (r) => <span className="text-muted-foreground">{r.symbol}</span> },
+    { id: "isDefault", sortable: true, header: "", cell: (r) => r.isDefault && <Badge>{t("settings.lists.currencies.default")}</Badge> },
     { id: "actions", header: "", align: "end", cell: (r) => !readOnly && (
       <RowActions extra={[!r.isDefault && { key: "default", label: t("settings.lists.currencies.setDefault"), icon: <Star />, disabled: makeDefault.isPending, onSelect: () => makeDefault.mutate(r.id) }]}
         onEdit={() => open(r)} onDelete={() => setToDelete(r)} />

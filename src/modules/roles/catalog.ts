@@ -278,6 +278,7 @@ export const PERMISSION_CATALOG: PermissionSection[] = [
       { id: "add", label: "add", value: "المصروفات.إضافة" },
       { id: "edit", label: "edit", value: "المصروفات.تعديل" },
       { id: "delete", label: "delete", value: "المصروفات.حذف" },
+      { id: "record_in_open_shift", label: "record_in_open_shift", value: "المصروفات.تسجيل في الوردية المفتوحة" },
     ],
   },
   {

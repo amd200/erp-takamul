@@ -78,13 +78,13 @@ export default function TransfersPage() {
   const name = (id: number) => treasuries.find((x) => x.id === id)?.name ?? "—"
 
   const columns: Column<Transfer>[] = [
-    { id: "no", sortKey: "id", header: t("reports.c.doc"), cell: (x) => <span className="font-semibold">TRF-{x.id}</span> },
-    { id: "date", sortKey: "date", header: t("common.date"), cell: (x) => <span className="text-muted-foreground">{formatDateTime(x.date, i18n.language)}</span> },
-    { id: "route", sortKey: "fromTreasuryName", header: t("treasuries.route"), cell: (x) => (
+    { id: "id", sortable: true, header: t("reports.c.doc"), cell: (x) => <span className="font-semibold">TRF-{x.id}</span> },
+    { id: "date", sortable: true, header: t("common.date"), cell: (x) => <span className="text-muted-foreground">{formatDateTime(x.date, i18n.language)}</span> },
+    { id: "fromTreasuryName", sortable: true, header: t("treasuries.route"), cell: (x) => (
       <span className="inline-flex items-center gap-2">{name(x.fromTreasuryId)}<ArrowLeftRight className="size-3.5 text-faint" />{name(x.toTreasuryId)}</span>
     ) },
-    { id: "amount", sortKey: "amount", header: t("sales.amount"), cell: (x) => <span className="font-semibold">{formatMoney(x.amount)}</span> },
-    { id: "notes", sortKey: "notes", header: t("common.notes"), cell: (x) => <span className="text-muted-foreground">{x.notes || "—"}</span> },
+    { id: "amount", sortable: true, header: t("sales.amount"), cell: (x) => <span className="font-semibold">{formatMoney(x.amount)}</span> },
+    { id: "notes", sortable: true, header: t("common.notes"), cell: (x) => <span className="text-muted-foreground">{x.notes || "—"}</span> },
     { id: "actions", header: "", align: "end", cell: (x) => can(P.treasuries.transfers) && <RowActions onDelete={() => setToDelete(x)} /> },
   ]
 

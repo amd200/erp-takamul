@@ -27,12 +27,12 @@ export default function SalesByDayReport() {
         { title: t("oldReports.grand_total_with_tax"), value: money(r?.totals.netSales), suffix: sar, icon: DollarSign, color: "teal" },
       ]}
       columns={[
-        { id: "date", sortKey: "date", header: t("oldReports.date"), cell: (r) => <span className="text-sm font-bold">{dayText(r.date)}</span> },
+        { id: "date", sortable: true, header: t("oldReports.date"), cell: (r) => <span className="text-sm font-bold">{dayText(r.date)}</span> },
         ...(!exempt ? [
-          { id: "sales", sortKey: "totalSales", header: t("oldReports.total_sales_excl_tax"), cell: (r: DailySalesRow) => <span className="text-sm font-medium">{money(r.totalSales)}</span> },
-          { id: "tax", sortKey: "totalTax", header: t("oldReports.total_tax"), cell: (r: DailySalesRow) => <span className="text-sm">{money(r.totalTax)}</span> },
+          { id: "totalSales", sortable: true, header: t("oldReports.total_sales_excl_tax"), cell: (r: DailySalesRow) => <span className="text-sm font-medium">{money(r.totalSales)}</span> },
+          { id: "totalTax", sortable: true, header: t("oldReports.total_tax"), cell: (r: DailySalesRow) => <span className="text-sm">{money(r.totalTax)}</span> },
         ] : []),
-        { id: "net", sortKey: "netSales", header: t("oldReports.grand_total_with_tax"), cell: (r) => <span className="text-sm font-bold text-primary">{money(r.netSales)}</span> },
+        { id: "netSales", sortable: true, header: t("oldReports.grand_total_with_tax"), cell: (r) => <span className="text-sm font-bold text-primary">{money(r.netSales)}</span> },
       ]}
       outColumns={[
         { header: t("oldReports.date"), value: (r) => dayText(r.date) },

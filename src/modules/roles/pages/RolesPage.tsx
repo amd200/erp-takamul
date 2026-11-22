@@ -27,8 +27,8 @@ export default function RolesPage() {
   const usersOf = (r: Role) => users.filter((u) => u.roleName === r.roleName).length
 
   const columns: Column<Role>[] = [
-    { id: "name", sortKey: "roleName", header: t("oldRoles.roleName"), cell: (r) => r.roleName },
-    { id: "count", sortKey: "permissionsCount", header: t("oldRoles.count"), cell: (r) => r.permissions.length },
+    { id: "roleName", sortable: true, header: t("oldRoles.roleName"), cell: (r) => r.roleName },
+    { id: "count", sortable: true, /* computed from `permissions`; the server returns no count field */ sortKey: "permissionsCount", header: t("oldRoles.count"), cell: (r) => r.permissions.length },
     ...(can(P.roles.manage) ? [{ id: "actions", header: t("oldRoles.actions"), cell: (r: Role) => (
       <RowActions editTo={`/roles/${r.roleId}`} onDelete={() => setToDelete(r)} />
     ) }] : []),

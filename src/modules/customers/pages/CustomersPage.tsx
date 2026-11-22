@@ -33,10 +33,9 @@ export default function CustomersPage() {
   const all = data ?? []
 
   const columns: Column<Customer>[] = [
-    { id: "code", sortKey: "id", header: t("customers.code"), cell: (c) => <span className="tabular-nums">{c.customerCode ?? c.id}</span> },
-    { id: "name", sortKey: "customerName", header: t("partners.name"), cell: (c) => <span className="font-semibold">{c.customerName}</span> },
-    { id: "phone", sortKey: "phone", header: t("customers.mobile"), cell: (c) => <span dir="ltr">{c.phone || "—"}</span> },
-    { id: "openingBalance", sortKey: "openingBalance", header: t("partners.openingBalance"), cell: (c) => <span dir="ltr">{formatMoney(c.openingBalance ?? 0)}</span> },
+    { id: "customerName", sortable: true, header: t("partners.name"), cell: (c) => <span className="font-semibold">{c.customerName}</span> },
+    { id: "phone", sortable: true, header: t("customers.mobile"), cell: (c) => <span dir="ltr">{c.phone || "—"}</span> },
+    { id: "openingBalance", sortable: true, header: t("partners.openingBalance"), cell: (c) => <span dir="ltr">{formatMoney(c.openingBalance ?? 0)}</span> },
     { id: "actions", header: "", align: "end", cell: (c) => (
       <div className="flex items-center justify-center gap-0.5">
         <RowActions extra={[can(P.customers.edit) && { key: "opening", label: t("partners.openingBalance"), icon: <WalletCards />, onSelect: () => setOpening(c) }]}
@@ -52,7 +51,7 @@ export default function CustomersPage() {
         actions={<Can perm={P.customers.add}><Button size="lg" onClick={() => setForm({})}><Plus />{t("customers.add")}</Button></Can>} />
       <SectionCard>
           <DataTable rows={all} loading={isLoading} columns={columns} sort={sort} rowKey={(c) => c.id}
-            searchText={(c) => `${c.customerName} ${c.phone} ${c.taxNumber} ${c.customerCode ?? c.id}`} searchPlaceholder={t("customers.search")}
+            searchText={(c) => `${c.customerName} ${c.phone} ${c.taxNumber}`} searchPlaceholder={t("customers.search")}
             empty={<EmptyState icon={<UsersRound />} title={t("customers.empty")} hint={t("customers.emptyHint")} />} />
         </SectionCard>
       <CustomerDialog open={!!form} onOpenChange={(o) => !o && setForm(null)} customer={form?.customer} />

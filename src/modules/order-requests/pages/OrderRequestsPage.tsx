@@ -95,12 +95,12 @@ export default function OrderRequestsPage() {
   }
 
   const columns: Column<OrderRequest>[] = [
-    { id: "number", sortKey: "orderNumber", header: t("orderRequests.number"), cell: (o) => <span className="font-semibold">{o.orderNumber}</span> },
-    { id: "customer", sortKey: "customerName", header: t("sales.customer"), cell: (o) => <div><div>{o.customerName || "—"}</div>{o.customerPhone && <div className="text-xs text-muted-foreground" dir="ltr">{o.customerPhone}</div>}</div> },
-    { id: "date", sortKey: "orderDate", header: t("common.date"), cell: (o) => <span className="text-muted-foreground">{o.orderDate ? formatDateTime(o.orderDate, i18n.language) : "—"}</span> },
-    { id: "items", sortKey: "itemsCount", header: t("orderRequests.items"), cell: (o) => o.itemsCount },
-    { id: "total", sortKey: "grandTotal", header: t("sales.grandTotal"), cell: (o) => <span className="font-semibold">{formatMoney(o.grandTotal ?? 0)}</span> },
-    { id: "status", sortKey: "status", header: t("common.status"), cell: (o) => <StatusBadge tone={o.salesOrderId ? "success" : "warning"}>{o.salesOrderId ? t("orderRequests.invoiced") : t(`orderRequests.statuses.${o.status}`, { defaultValue: o.status || t("orderRequests.pending") })}</StatusBadge> },
+    { id: "orderNumber", sortable: true, header: t("orderRequests.number"), cell: (o) => <span className="font-semibold">{o.orderNumber}</span> },
+    { id: "customerName", sortable: true, header: t("sales.customer"), cell: (o) => <div><div>{o.customerName || "—"}</div>{o.customerPhone && <div className="text-xs text-muted-foreground" dir="ltr">{o.customerPhone}</div>}</div> },
+    { id: "orderDate", sortable: true, header: t("common.date"), cell: (o) => <span className="text-muted-foreground">{o.orderDate ? formatDateTime(o.orderDate, i18n.language) : "—"}</span> },
+    { id: "itemsCount", sortable: true, header: t("orderRequests.items"), cell: (o) => o.itemsCount },
+    { id: "grandTotal", sortable: true, header: t("sales.grandTotal"), cell: (o) => <span className="font-semibold">{formatMoney(o.grandTotal ?? 0)}</span> },
+    { id: "status", sortable: true, header: t("common.status"), cell: (o) => <StatusBadge tone={o.salesOrderId ? "success" : "warning"}>{o.salesOrderId ? t("orderRequests.invoiced") : t(`orderRequests.statuses.${o.status}`, { defaultValue: o.status || t("orderRequests.pending") })}</StatusBadge> },
     { id: "actions", header: "", align: "end", cell: (o) => <RowMenu items={[
       { key: "view", label: t("sales.actions.view"), icon: <Eye />, onSelect: () => setViewing(o.id) },
       { key: "roll", label: t("sales.actions.printRoll"), icon: <Printer />, disabled: print.isPending, onSelect: () => print.mutate(o.id) },

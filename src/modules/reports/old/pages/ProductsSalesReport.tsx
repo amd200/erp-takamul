@@ -17,10 +17,10 @@ export default function ProductsSalesReport() {
       cards={(r) => [{ title: t("oldReports.total_sales"), value: money(r?.totals.totalSales), suffix: t("oldReports.sar"), icon: DollarSign, color: "orange" }]}
       columns={[
         { id: "code", header: t("oldReports.barcode"), cell: (r) => <span className="font-mono text-xs">{r.productCode}</span> },
-        { id: "name", sortKey: "productName", header: t("oldReports.product_name"), cell: (r) => <span className="font-bold">{r.productName}</span> },
+        { id: "productName", sortable: true, header: t("oldReports.product_name"), cell: (r) => <span className="font-bold">{r.productName}</span> },
         { id: "category", header: t("oldReports.category"), cell: (r) => r.categoryName },
-        { id: "qty", sortKey: "quantitySold", header: t("oldReports.sold_quantity"), cell: (r) => r.quantitySold },
-        { id: "total", sortKey: "totalSales", header: t("oldReports.total_sales"), cell: (r) => <span className="font-bold text-primary">{money(r.totalSales)}</span> },
+        { id: "quantitySold", sortable: true, header: t("oldReports.sold_quantity"), cell: (r) => r.quantitySold },
+        { id: "totalSales", sortable: true, header: t("oldReports.total_sales"), cell: (r) => <span className="font-bold text-primary">{money(r.totalSales)}</span> },
       ]}
       outColumns={[
         { header: t("oldReports.barcode"), value: (r) => r.productCode },

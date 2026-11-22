@@ -43,12 +43,12 @@ export default function QuotesPage() {
 
   // The same seven columns, in the same order and wording, as the current system.
   const columns: Column<Quote>[] = [
-    { id: "number", sortKey: "quotationNumber", header: t("quotes.colNumber"), cell: (q) => q.quotationNumber },
-    { id: "date", sortKey: "quotationDate", header: t("quotes.colDate"), cell: (q) => day(q.quotationDate ?? "") },
-    { id: "customer", sortKey: "customerName", header: t("quotes.colCustomer"), cell: (q) => q.customerName || "—" },
-    { id: "by", sortKey: "createdby", header: t("quotes.colUser"), cell: (q) => q.createdby || "—" },
-    { id: "discount", sortKey: "discountAmount", header: t("quotes.colDiscount"), cell: (q) => formatMoney(q.discountAmount ?? 0) },
-    { id: "total", sortKey: "grandTotal", header: t("quotes.colTotal"), cell: (q) => formatMoney(q.grandTotal ?? 0) },
+    { id: "quotationNumber", sortable: true, header: t("quotes.colNumber"), cell: (q) => q.quotationNumber },
+    { id: "quotationDate", sortable: true, header: t("quotes.colDate"), cell: (q) => day(q.quotationDate ?? "") },
+    { id: "customerName", sortable: true, header: t("quotes.colCustomer"), cell: (q) => q.customerName || "—" },
+    { id: "createdby", sortable: true, header: t("quotes.colUser"), cell: (q) => q.createdby || "—" },
+    { id: "discountAmount", sortable: true, header: t("quotes.colDiscount"), cell: (q) => formatMoney(q.discountAmount ?? 0) },
+    { id: "grandTotal", sortable: true, header: t("quotes.colTotal"), cell: (q) => formatMoney(q.grandTotal ?? 0) },
     { id: "actions", header: t("quotes.colActions"), cell: (q) => {
       const item = "flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground"
       return (

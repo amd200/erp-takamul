@@ -17,14 +17,33 @@ export type Shift = {
   deviceName: string
 }
 
-export type TreasuryLine = { treasuryId: number; treasuryName: string; invoicesCount: number; totalSales: number; totalReturns: number; totalExpenses: number; totalRevenues: number; netTotal: number; paymentCount?: number; paymentTotal?: number }
-
 export type SoldItem = { productName: string; quantity: number; unitPrice: number; lineTotal: number }
 
-export type EmployeeSales = { employeeName: string; salesInvoicesCount: number; returnInvoicesCount: number; totalSales: number; totalReturns: number; netSales: number }
+/** `salesTreasuries` / `returnTreasuries` / `expenseTreasuries` / `unlinkedVoucherTreasuries` rows, as the server sends them. */
+export type SalesTreasury = { treasuryId: number; treasuryName: string; invoicesCount: number; totalSales: number }
+export type ReturnTreasury = { treasuryId: number; treasuryName: string; invoicesCount: number; totalReturns: number }
+export type ExpenseTreasury = { treasuryId: number; treasuryName: string; expensesCount: number; totalExpenses: number }
+export type VoucherTreasury = { treasuryId: number; treasuryName: string; vouchersCount: number; totalAmount: number }
+/** The server sends only `finalNetTotal` for each treasury here (the other sums are not serialized). */
+export type NetTreasury = { treasuryId: number; treasuryName: string; finalNetTotal: number }
+
+export type EmployeeTreasury = { treasuryId: number; treasuryName: string; totalSales: number; totalReturns: number; netTotal: number }
+export type EmployeeSales = {
+  employeeId: number | null
+  employeeName: string
+  salesInvoicesCount: number
+  salesInvoiceNumbers: string[]
+  returnInvoicesCount: number
+  returnInvoiceNumbers: string[]
+  totalSales: number
+  totalReturns: number
+  netSales: number
+  treasuries: EmployeeTreasury[]
+}
 
 export type ShiftReport = {
   shiftId: number
+  shiftNumber?: string | null
   employeeName?: string | null
   shiftDate?: string | null
   startTime?: string | null
@@ -39,12 +58,13 @@ export type ShiftReport = {
   deferredSalesInvoicesTotal?: number | null
   returnInvoicesCount?: number | null
   returnInvoicesTotal?: number | null
-  totalPurchases?: number | null
-  totalExpenses?: number | null
-  totalRevenues?: number | null
-  netTotal?: number | null
+  returnInvoiceNumbers?: string[] | null
   soldItems?: SoldItem[] | null
-  treasuries?: TreasuryLine[] | null
+  salesTreasuries?: SalesTreasury[] | null
+  returnTreasuries?: ReturnTreasury[] | null
+  expenseTreasuries?: ExpenseTreasury[] | null
+  unlinkedVoucherTreasuries?: VoucherTreasury[] | null
+  treasuries?: NetTreasury[] | null
   employeeSalesSummary?: EmployeeSales[] | null
 }
 

@@ -31,14 +31,14 @@ export default function DebitNotesPage() {
 
   const branchColumn = useBranchColumn<DebitNoteDto>((d) => ({ name: d.branchName }))
   const columns: Column<DebitNoteDto>[] = [
-    { id: "number", sortKey: "debitNoteNumber", header: t("sales.debitNumber"), cell: (d) => <span className="font-semibold">{d.debitNoteNumber}</span> },
-    { id: "invoice", sortKey: "salesOrderNumber", header: t("sales.invoice"), cell: (d) => <Link to={`/sales/invoices/${d.salesOrderId}`} className="hover:underline">{d.salesOrderNumber}</Link> },
-    { id: "date", sortKey: "issueDate", className: "min-w-44", header: t("common.date"), cell: (d) => <span className="text-muted-foreground">{formatDateTime(d.issueDate ?? "", i18n.language)}</span> },
+    { id: "debitNoteNumber", sortable: true, header: t("sales.debitNumber"), cell: (d) => <span className="font-semibold">{d.debitNoteNumber}</span> },
+    { id: "salesOrderNumber", sortable: true, header: t("sales.invoice"), cell: (d) => <Link to={`/sales/invoices/${d.salesOrderId}`} className="hover:underline">{d.salesOrderNumber}</Link> },
+    { id: "issueDate", sortable: true, className: "min-w-44", header: t("common.date"), cell: (d) => <span className="text-muted-foreground">{formatDateTime(d.issueDate ?? "", i18n.language)}</span> },
     ...branchColumn,
-    { id: "customer", sortKey: "customerName", header: t("sales.customer"), cell: (d) => d.customerName },
-    { id: "createdBy", sortKey: "createdByName", header: t("users.userName"), cell: (d) => d.createdByName || d.createdBy || "—" },
-    { id: "total", sortKey: "grandTotal", header: t("sales.grandTotal"), cell: (d) => <span className="font-semibold">{formatMoney(d.grandTotal ?? 0)}</span> },
-    ...(stage2 ? [{ id: "zatca", sortKey: "zatcaStatus", header: t("sales.zatcaStatus"), cell: (d: DebitNoteDto) => <ZatcaBadge status={d.zatcaStatus} /> }] : []),
+    { id: "customerName", sortable: true, header: t("sales.customer"), cell: (d) => d.customerName },
+    { id: "createdByName", sortable: true, header: t("users.userName"), cell: (d) => d.createdByName || d.createdBy || "—" },
+    { id: "grandTotal", sortable: true, header: t("sales.grandTotal"), cell: (d) => <span className="font-semibold">{formatMoney(d.grandTotal ?? 0)}</span> },
+    ...(stage2 ? [{ id: "zatcaStatus", sortable: true, header: t("sales.zatcaStatus"), cell: (d: DebitNoteDto) => <ZatcaBadge status={d.zatcaStatus} /> }] : []),
     { id: "actions", header: "", align: "end", cell: (d) => <RowMenu items={[
       { key: "a4", label: t("sales.actions.printA4"), icon: <FileText />, disabled: print.isPending, onSelect: () => print.mutate({ note: d, paper: "a4" }) },
       { key: "roll", label: t("sales.actions.printRoll"), icon: <Printer />, disabled: print.isPending, onSelect: () => print.mutate({ note: d, paper: "roll" }) },

@@ -82,7 +82,7 @@ export default function AdditionsPage() {
   const open = (a: Addition | null) => { setEditing(a); setDialogOpen(true) }
 
   const columns: Column<Addition>[] = [
-    { id: "name", sortKey: "additionNameAr", header: t("additions.name"), cell: (a) => <span className="font-semibold">{a.additionNameAr}</span> },
+    { id: "additionNameAr", sortable: true, header: t("additions.name"), cell: (a) => <span className="font-semibold">{a.additionNameAr}</span> },
     { id: "actions", header: "", align: "end", cell: (a) => can(P.additions.manage) && <RowActions onEdit={() => open(a)} onDelete={() => setToDelete(a)} /> },
   ]
 
