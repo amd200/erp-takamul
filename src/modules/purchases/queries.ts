@@ -49,7 +49,7 @@ export function usePaymentMutation<V>(fn: (v: V) => Promise<unknown>, doneKey: s
     onError: (e) => errorToast(e, "common.saveFailed"),
   })
 }
-export const useRecordPurchasePayment = () => usePaymentMutation(({ id, ...p }: { id: number; treasuryId: number; amount: number; notes?: string }) => purchasesApi.recordPayment(id, p), "purchases.paymentSaved")
+export const useRecordPurchasePayment = () => usePaymentMutation(({ id, ...p }: { id: number; treasuryId: number; amount: number; paymentDate?: string; notes?: string }) => purchasesApi.recordPayment(id, p), "purchases.paymentSaved")
 export const useDeletePurchasePayment = () => usePaymentMutation((paymentId: number) => purchasesApi.deletePayment(paymentId), "common.deleted")
 
 export function useCancelPurchase() {

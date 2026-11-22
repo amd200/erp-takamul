@@ -11,15 +11,19 @@ import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { FormInput, FormSelect } from "@/components/form/FormFields"
+import { FormInput, FormSelect, FormTextarea } from "@/components/form/FormFields"
 import { formatMoney, formatDateTime } from "@/lib/format"
 import { pickTreasury, useTreasuries } from "@/modules/lookups/service"
 
 const paymentSchema = z.object({
   treasuryId: z.number({ error: "validation.treasuryRequired" }).min(1, "validation.treasuryRequired"),
   amount: z.number({ error: "validation.number" }).positive("validation.amountPositive"),
+  paymentDate: z.string().min(1, "validation.dateRequired"),
+  notes: z.string().max(1000),
 })
 type PaymentForm = z.infer<typeof paymentSchema>
+
+const today = () => new Date().toLocaleDateString("sv")
 
 export type PaymentRow = { id?: number | null; paymentNumber?: string | null; paymentDate?: string | null; treasuryName?: string | null; amount: number }
 
@@ -39,6 +43,8 @@ type Props = {
   figure: number
   /** Treasury setting to pick by default (e.g. `defaultSalesVault`). */
   defaultVault?: number | null
+  /** Show a notes field the user writes (sent as `v.notes`). */
+  withNotes?: boolean
   /** Amount proposed when the dialog opens. */
   initialAmount?: number
   payments: PaymentRow[]
@@ -51,15 +57,15 @@ type Props = {
 }
 
 /** Pay against one record (sales invoice, sales return, purchase) and list the payments already made; a payment can be deleted, not edited. */
-export function PaymentsDialog({ open, resetKey, ready, onOpenChange, title, partyLabel, partyName, figureLabel, figure, defaultVault, initialAmount = 0, payments, texts, recordPending, deletePending, onSubmit, onDelete }: Props) {
+export function PaymentsDialog({ open, resetKey, ready, onOpenChange, title, partyLabel, partyName, figureLabel, figure, defaultVault, withNotes, initialAmount = 0, payments, texts, recordPending, deletePending, onSubmit, onDelete }: Props) {
   const { t, i18n } = useTranslation()
   const { data: treasuries = [] } = useTreasuries()
   const [toDelete, setToDelete] = useState<PaymentRow | null>(null)
-  const form = useForm<PaymentForm>({ resolver: zodResolver(paymentSchema), defaultValues: { treasuryId: 0, amount: 0 } })
+  const form = useForm<PaymentForm>({ resolver: zodResolver(paymentSchema), defaultValues: { treasuryId: 0, amount: 0, paymentDate: today(), notes: "" } })
 
   // Opening (or switching record) sets the treasury and proposes the amount; a later refetch must not wipe what is typed.
   useEffect(() => {
-    if (open && ready) form.reset({ treasuryId: pickTreasury(treasuries, defaultVault)?.id ?? 0, amount: initialAmount > 0 ? initialAmount : 0 })
+    if (open && ready) form.reset({ treasuryId: pickTreasury(treasuries, defaultVault)?.id ?? 0, amount: initialAmount > 0 ? initialAmount : 0, paymentDate: today(), notes: "" })
   }, [open, ready, resetKey, treasuries, defaultVault]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const submit = form.handleSubmit((v) => onSubmit(v, () => onOpenChange(false)))
@@ -68,17 +74,21 @@ export function PaymentsDialog({ open, resetKey, ready, onOpenChange, title, par
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader><DialogTitle>{title}</DialogTitle></DialogHeader>
-        <DialogBody className="flex flex-col gap-4">
+        <DialogBody className="flex max-h-[70vh] flex-col gap-4 [&>*]:shrink-0">
           {ready && (
             <>
               <form id="payments-form" onSubmit={submit} className="flex flex-col gap-3">
-                <FormSelect control={form.control} name="treasuryId" numeric label={t("sales.treasury")} required
-                  options={treasuries.map((x) => ({ value: String(x.id), label: x.name }))} />
+                <div className="grid gap-3 sm:grid-cols-2 [&>*]:min-w-0">
+                  <FormInput control={form.control} name="paymentDate" type="date" label={t("sales.paymentDate")} required />
+                  <FormSelect control={form.control} name="treasuryId" numeric label={t("sales.treasury")} required
+                    options={treasuries.map((x) => ({ value: String(x.id), label: x.name }))} />
+                </div>
                 <div className="grid gap-3 sm:grid-cols-[2fr_1fr_1fr]">
                   <Field><FieldLabel>{partyLabel}</FieldLabel><Input readOnly value={partyName ?? ""} className="h-10 bg-muted" /></Field>
                   <Field><FieldLabel>{figureLabel}</FieldLabel><Input readOnly value={formatMoney(figure)} className="h-10 bg-muted text-center" /></Field>
                   <FormInput control={form.control} name="amount" type="number" label={t("sales.amount")} required />
                 </div>
+                {withNotes && <FormTextarea control={form.control} name="notes" label={t("common.notes")} className="[&_textarea]:h-10 [&_textarea]:min-h-10" />}
               </form>
               <Separator />
               <div className="font-semibold">{t("sales.previousPayments")}</div>

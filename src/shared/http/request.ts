@@ -48,7 +48,10 @@ function toErrorMessage(data: unknown, errors: string[], fallback: string): stri
   if (typeof data === "string" && data.trim()) return data
   const b = data && typeof data === "object" ? (data as Record<string, unknown>) : {}
   const pick = [b.details, b.message, b.errorMessage, b.error, b.detail, errors[0], b.title].find((v): v is string => typeof v === "string" && v.trim() !== "")
-  return pick ?? fallback
+  // The back end's model-validation answer lists the offending field names in `fields`; keep them visible.
+  const fields = Array.isArray(b.fields) ? b.fields.filter((v): v is string => typeof v === "string" && v !== "") : []
+  const text = pick ?? fallback
+  return fields.length ? `${text} (${fields.join(", ")})` : text
 }
 
 /** `errors` is a list, or ASP.NET validation's `{ Field: ["..."] }`; both become one list. */

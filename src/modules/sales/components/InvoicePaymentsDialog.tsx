@@ -19,14 +19,14 @@ export function InvoicePaymentsDialog({ invoice, onOpenChange }: { invoice: Sale
 
   return (
     <PaymentsDialog
-      open={!!invoice} resetKey={invoice?.id} ready={!!invoice} onOpenChange={onOpenChange}
+      withNotes open={!!invoice} resetKey={invoice?.id} ready={!!invoice} onOpenChange={onOpenChange}
       title={`${t("sales.receiptTitle")} ${invoice?.orderNumber ?? ""}`} partyLabel={t("sales.customerName")} partyName={invoice?.customerName}
       figureLabel={t("sales.currentBalance")} figure={customer?.balance ?? 0} defaultVault={useAppSettings().sales?.defaultSalesVault}
       payments={payments.map((p) => ({ ...p, treasuryName: p.transactionName }))}
       texts={{ submit: t("sales.saveReceipt"), empty: t("sales.noPayments"), deleteTitle: t("sales.deleteReceiptTitle"), deleteName: t("sales.receiptName") }}
       recordPending={record.isPending} deletePending={remove.isPending}
       onSubmit={(v, done) => invoice && record.mutate(
-        { invoiceId: invoice.id, payment: { amount: v.amount, treasuryId: v.treasuryId, method: "Cash", notes: t("sales.receiptNote", { number: invoice.orderNumber, lng: "ar" }) }, key: key.current },
+        { invoiceId: invoice.id, payment: { amount: v.amount, treasuryId: v.treasuryId, paymentDate: v.paymentDate, method: "Cash", notes: v.notes.trim() }, key: key.current },
         { onSuccess: () => { key.current = newIdempotencyKey(); done() }, onError: renewIfReused(key) },
       )}
       onDelete={(id, done) => remove.mutate(id, { onSuccess: done })}

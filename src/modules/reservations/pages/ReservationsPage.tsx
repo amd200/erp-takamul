@@ -59,12 +59,13 @@ function ReservationDialog({ open, onOpenChange, reservation }: { open: boolean;
                   <Field data-invalid={fieldState.invalid}><FieldLabel htmlFor="r-time">{t("reservations.time")}</FieldLabel><Input id="r-time" type="time" className="h-10" dir="ltr" {...field} />{fieldState.error?.message && <FieldError>{t(fieldState.error.message)}</FieldError>}</Field>
                 )} />
               </div>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <div className={`grid grid-cols-1 gap-3 ${reservation ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-3"}`}>
                 <FormInput control={form.control} name="customerName" required label={t("reservations.customerName")} />
                 <FormInput control={form.control} name="customerPhone" required label={t("users.mobile")} dir="ltr" />
+                {reservation && <FormSelect control={form.control} name="status" label={t("common.status")} options={BOOKING_STATUSES.map((s) => ({ value: s, label: t(`reservations.statuses.${s}`) }))} />}
                 <FormInput control={form.control} name="notes" label={t("common.notes")} />
               </div>
-              {reservation && <FormSelect control={form.control} name="status" label={t("common.status")} options={BOOKING_STATUSES.map((s) => ({ value: s, label: t(`reservations.statuses.${s}`) }))} />}            </FieldGroup>
+            </FieldGroup>
           </form>
         </DialogBody>
         <DialogFooter>

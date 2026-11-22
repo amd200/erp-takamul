@@ -2,7 +2,7 @@ import { Controller, useWatch, type Control } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { Switch } from "@/components/ui/switch"
 import { FormInput } from "@/components/form/FormFields"
-import type { partyShape } from "../schema"
+import { NATIONAL_REQUIRED, type partyShape } from "../schema"
 import type { z } from "zod"
 
 type PartyForm = z.infer<z.ZodObject<typeof partyShape>>
@@ -15,6 +15,7 @@ export function PartyAddressFields({ control }: { control: unknown }) {
   const { t } = useTranslation()
   const c = control as Control<PartyForm>
   const national = useWatch({ control: c, name: "isNational" })
+  const req = (name: (typeof NATIONAL_REQUIRED)[number]) => (NATIONAL_REQUIRED as readonly string[]).includes(name)
   return (
     <>
       <div className="col-span-full grid grid-cols-2 gap-3 sm:grid-cols-[60px_minmax(0,0.7fr)_minmax(0,0.7fr)_minmax(0,1fr)_minmax(0,1.6fr)]">
@@ -32,11 +33,11 @@ export function PartyAddressFields({ control }: { control: unknown }) {
         </div>
         {national && (
           <div className="mt-4 grid grid-cols-1 gap-3 border-t border-border pt-4 sm:grid-cols-3">
-            <FormInput control={c} name="taxNumber" required label={t("custDialog.taxNumber")} dir="ltr" />
-            <FormInput control={c} name="commercialRegister" required label={t("custDialog.commercialRegister")} dir="ltr" />
-            <FormInput control={c} name="additionalNumber" required label={t("custDialog.additionalNumber")} />
-            <FormInput control={c} name="buildingNumber" required label={t("custDialog.buildingNumber")} />
-            <FormInput control={c} name="postalCode" required label={t("custDialog.postalCode")} />
+            <FormInput control={c} name="taxNumber" required={req("taxNumber")} label={t("custDialog.taxNumber")} dir="ltr" />
+            <FormInput control={c} name="commercialRegister" required={req("commercialRegister")} label={t("custDialog.commercialRegister")} dir="ltr" />
+            <FormInput control={c} name="additionalNumber" required={req("additionalNumber")} label={t("custDialog.additionalNumber")} />
+            <FormInput control={c} name="buildingNumber" required={req("buildingNumber")} label={t("custDialog.buildingNumber")} />
+            <FormInput control={c} name="postalCode" required={req("postalCode")} label={t("custDialog.postalCode")} />
           </div>
         )}
       </div>

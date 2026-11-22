@@ -44,7 +44,7 @@ export function useCreateInvoice() {
 export function useRecordPayment() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ invoiceId, payment, key }: { invoiceId: number; payment: Omit<Payment, "id" | "date">; key: string }) =>
+    mutationFn: ({ invoiceId, payment, key }: { invoiceId: number; payment: Omit<Payment, "id" | "date"> & { paymentDate?: string }; key: string }) =>
       invoicesApi.recordPayment(invoiceId, payment, key),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: salesKeys.all })
@@ -150,5 +150,5 @@ function useRefundMutation<V>(fn: (v: V) => Promise<unknown>, doneKey: string) {
     onError: (e) => errorToast(e, "common.saveFailed"),
   })
 }
-export const useRecordRefund = () => useRefundMutation(({ id, ...r }: { id: number; treasuryId: number; amount: number }) => returnsApi.recordRefund(id, r), "sales.refundSaved")
+export const useRecordRefund = () => useRefundMutation(({ id, ...r }: { id: number; treasuryId: number; amount: number; paymentDate?: string }) => returnsApi.recordRefund(id, r), "sales.refundSaved")
 export const useDeleteRefund = () => useRefundMutation(({ id, paymentId }: { id: number; paymentId: number }) => returnsApi.deleteRefund(id, paymentId), "common.deleted")

@@ -23,15 +23,18 @@ export const partyShape = {
   openingBalanceDate: z.string().nullish(),
 }
 
-type PartyLike = { isNational: boolean; taxNumber?: string | null; cityName?: string | null; street?: string | null; buildingNumber?: string | null; postalCode?: string | null; district?: string | null }
+/** Fields of the national-address box that are required while the switch is on (the box shows its stars from this same list). */
+export const NATIONAL_REQUIRED = ["taxNumber", "commercialRegister", "additionalNumber", "buildingNumber", "postalCode"] as const
+
+type PartyLike = { isNational: boolean } & Partial<Record<(typeof NATIONAL_REQUIRED)[number], string | null>>
 
 export function refineParty(v: PartyLike, ctx: z.RefinementCtx) {
-  if (!v.isNational || !v.taxNumber) return
-  // Saudi VAT numbers: 15 digits, starting and ending with 3.
-  if (!/^3\d{13}3$/.test(v.taxNumber)) ctx.addIssue({ code: "custom", path: ["taxNumber"], message: "validation.vatFormat" })
-  for (const key of ["cityName", "district", "street", "buildingNumber", "postalCode"] as const) {
-    if (!v[key]) ctx.addIssue({ code: "custom", path: [key], message: "validation.addressForVat" })
+  if (!v.isNational) return
+  for (const key of NATIONAL_REQUIRED) {
+    if (!v[key]) ctx.addIssue({ code: "custom", path: [key], message: "validation.required" })
   }
+  // Saudi VAT numbers: 15 digits, starting and ending with 3.
+  if (v.taxNumber && !/^3\d{13}3$/.test(v.taxNumber)) ctx.addIssue({ code: "custom", path: ["taxNumber"], message: "validation.vatFormat" })
 }
 
 /** The separate opening-balance pop-up of a customer or supplier: only these three fields of the Update DTO. */

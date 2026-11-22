@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-import { Download, FileText, Loader2, Printer, Receipt } from "lucide-react"
+import { Download, Loader2, Printer } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -13,18 +13,22 @@ type Paper = "a4" | "roll"
 /** Preview only: the page is as tall as its content (the A4 templates force a full-sheet height for printing). */
 const FIT = "<style>html,body,.invoice-page{min-height:0!important;height:auto!important}</style>"
 
-const PAD = 16
+const PAD = 0
+const KEY = "invoice-preview-paper"
+
+const readPaper = (): Paper => { try { return localStorage.getItem(KEY) === "roll" ? "roll" : "a4" } catch { return "a4" } }
 
 /** On-screen preview of an invoice with the same template the print uses (the A4 design chosen in settings, or the receipt roll). */
 export function InvoicePreviewDialog({ invoice, onOpenChange }: { invoice: SalesOrderDto | null; onOpenChange: (o: boolean) => void }) {
   const { t } = useTranslation()
   const output = useInvoiceOutput()
   const pdf = useInvoiceOutput()
-  const [paper, setPaper] = useState<Paper>("a4")
+  const [paper, setPaper] = useState<Paper>(readPaper)
   const [doc, setDoc] = useState<PrintDoc | null>(null)
   const [height, setHeight] = useState(400)
   const [box, setBox] = useState({ w: 0, h: 0 })
   const id = invoice?.id
+  const choose = (p: Paper) => { setPaper(p); try { localStorage.setItem(KEY, p) } catch { /* optional */ } }
 
   /** Track the preview area so the page can be scaled to its width. */
   const setBoxEl = useCallback((el: HTMLDivElement | null) => {
@@ -50,40 +54,28 @@ export function InvoicePreviewDialog({ invoice, onOpenChange }: { invoice: Sales
 
   return (
     <Dialog open={!!invoice} onOpenChange={onOpenChange}>
-      <DialogContent className="flex h-[92dvh] max-h-[92dvh] flex-col gap-0 overflow-hidden p-0 sm:max-w-4xl">
-        <DialogHeader className="shrink-0 flex-row items-center gap-3 border-b px-4 py-3 pe-12">
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"><FileText size={18} /></span>
-          <div className="min-w-0">
-            <DialogTitle className="truncate">{title}</DialogTitle>
-            <DialogDescription className="mt-1 truncate text-xs">{invoice?.customerName || t("sales.previewHint")}</DialogDescription>
-          </div>
+      <DialogContent className={cn("flex h-[94dvh] max-h-[94dvh] flex-col gap-0 overflow-hidden bg-white p-0 text-foreground", paper === "roll" ? "sm:max-w-md" : "sm:max-w-3xl")}>
+        <DialogHeader className="sr-only">
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{invoice?.customerName || t("sales.previewHint")}</DialogDescription>
         </DialogHeader>
 
-        <div className="flex shrink-0 flex-wrap items-center gap-2 border-b bg-card px-4 py-2">
-          <div className="flex rounded-lg bg-muted p-0.5" role="group" aria-label={t("sales.previewPaper")}>
-            {([["a4", FileText, t("sales.previewA4")], ["roll", Receipt, t("sales.previewRoll")]] as const).map(([p, Icon, label]) => (
-              <button
-                key={p}
-                type="button"
-                aria-pressed={paper === p}
-                onClick={() => setPaper(p)}
-                className={cn("inline-flex h-7 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-colors",
-                  paper === p ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
-              ><Icon size={14} />{label}</button>
+        <div className="flex h-12 shrink-0 items-center justify-end gap-1.5 bg-white px-4 pe-12 print:hidden">
+          <div className="flex rounded-md border bg-white p-0.5" role="radiogroup" aria-label={t("sales.previewFormat")}>
+            {(["a4", "roll"] as const).map((p) => (
+              <button key={p} type="button" role="radio" aria-checked={paper === p} onClick={() => choose(p)}
+                className={cn("h-6 rounded px-2 text-xs font-medium", paper === p ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}
+              >{p === "a4" ? t("sales.previewA4") : t("sales.previewRoll")}</button>
             ))}
           </div>
-
-          <div className="ms-auto flex items-center gap-2">
-            <Button variant="outline" size="sm" disabled={!doc || pdf.isPending} onClick={() => id !== undefined && pdf.mutate({ invoice: { id }, as: "pdf", paper })}>
-              {pdf.isPending ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}<span className="hidden sm:inline">{t("sales.actions.downloadPdf")}</span>
-            </Button>
-            <Button size="sm" disabled={!doc} onClick={() => doc && printDocument(doc)}><Printer size={14} /><span className="hidden sm:inline">{t("sales.actions.print")}</span></Button>
-          </div>
+          <Button variant="outline" size="sm" className="h-7 bg-white px-2 text-xs" disabled={!doc || pdf.isPending} onClick={() => id !== undefined && pdf.mutate({ invoice: { id }, as: "pdf", paper })}>
+            {pdf.isPending ? <Loader2 size={13} className="animate-spin" /> : <Download size={13} />}PDF
+          </Button>
+          <Button variant="outline" size="sm" className="h-7 bg-white px-2 text-xs" disabled={!doc} onClick={() => doc && printDocument(doc)}><Printer size={13} />{t("sales.actions.print")}</Button>
         </div>
-
-        <div ref={setBoxEl} className="flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-muted/60 dark:bg-muted/30" style={{ padding: PAD }}>
+        <div ref={setBoxEl} className="flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-white" style={{ padding: PAD }}>
           {doc ? (
-            <div dir="ltr" className="shrink-0 overflow-hidden rounded-sm bg-white shadow-lg ring-1 ring-black/5" style={{ position: "relative", width: pageW * scale, height: height * scale }}>
+            <div dir="ltr" className="shrink-0 overflow-hidden bg-white" style={{ position: "relative", width: pageW * scale, height: height * scale }}>
               <iframe
                 title={title}
                 srcDoc={renderDocument(doc).replace("</head>", `${FIT}</head>`)}
@@ -99,6 +91,7 @@ export function InvoicePreviewDialog({ invoice, onOpenChange }: { invoice: Sales
             </div>
           )}
         </div>
+
       </DialogContent>
     </Dialog>
   )

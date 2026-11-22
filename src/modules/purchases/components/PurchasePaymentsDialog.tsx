@@ -20,7 +20,7 @@ export function PurchasePaymentsDialog({ purchaseId, onOpenChange }: { purchaseI
       texts={{ submit: t("purchases.addPayment"), empty: t("sales.noPayments"), deleteTitle: t("purchases.deletePayment"), deleteName: t("purchases.paymentName") }}
       recordPending={record.isPending} deletePending={remove.isPending}
       onSubmit={(v, done) => purchase && record.mutate(
-        { id: purchase.id, treasuryId: v.treasuryId, amount: v.amount, notes: t("purchases.paymentNote", { number: purchase.purchaseOrderNumber, lng: "ar" }) },
+        { id: purchase.id, treasuryId: v.treasuryId, amount: v.amount, paymentDate: v.paymentDate, notes: t("purchases.paymentNote", { number: purchase.purchaseOrderNumber, lng: "ar" }) },
         { onSuccess: done },
       )}
       onDelete={(id, done) => remove.mutate(id, { onSuccess: done })}

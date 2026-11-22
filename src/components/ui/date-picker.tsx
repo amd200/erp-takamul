@@ -92,7 +92,7 @@ export function DatePicker({ value, onChange, onBlur, id, name, min, max, cleara
 
   return (
     <Popover open={open} onOpenChange={(o) => { setOpen(o); if (!o) onBlur?.() }}>
-      <div className="relative">
+      <div className="relative w-full min-w-0">
         <PopoverTrigger asChild>
           <button
             type="button"

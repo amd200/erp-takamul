@@ -21,7 +21,7 @@ export function ReturnRefundsDialog({ returnId, onOpenChange }: { returnId: numb
       payments={ret?.payments ?? []}
       texts={{ submit: t("sales.addRefund"), empty: t("sales.noRefunds"), deleteTitle: t("sales.deleteRefundTitle"), deleteName: t("sales.refundName") }}
       recordPending={record.isPending} deletePending={remove.isPending}
-      onSubmit={(v, done) => ret && record.mutate({ id: ret.id, treasuryId: v.treasuryId, amount: v.amount }, { onSuccess: done })}
+      onSubmit={(v, done) => ret && record.mutate({ id: ret.id, treasuryId: v.treasuryId, amount: v.amount, paymentDate: v.paymentDate }, { onSuccess: done })}
       onDelete={(paymentId, done) => ret && remove.mutate({ id: ret.id, paymentId }, { onSuccess: done })}
     />
   )

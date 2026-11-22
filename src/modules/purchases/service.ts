@@ -22,7 +22,7 @@ function body(p: PurchaseInput) {
   return {
     supplierId: p.supplierId, warehouseId: p.warehouseId, orderDate: when, notes: p.notes || null,
     items: p.lines.map(itemBody),
-    payments: p.payments.map((x) => ({ paymentType: x.method, treasuryId: x.treasuryId, amount: x.amount, paymentDate: when, notes: x.notes || null })),
+    payments: p.payments.map((x) => ({ paymentType: x.method, treasuryId: x.treasuryId, amount: x.amount, paymentDate: when, notes: x.notes || "" })),
   }
 }
 
@@ -34,8 +34,8 @@ export const purchasesApi = {
   create: (p: PurchaseInput, key?: string) => retryWhileInProgress(() => http<{ data?: Purchase; message?: string }>("/PurchaseOrder", { method: "POST", headers: idempotencyHeaders(key), data: body(p) })),
   update: (id: number, p: PurchaseInput) => http<unknown>(`/PurchaseOrder/${id}`, { method: "PUT", data: { ...body(p), expectedDeliveryDate: null } }),
   cancel: (id: number) => http<unknown>(`/PurchaseOrder/${id}`, { method: "DELETE" }),
-  /** A payment to the supplier against one purchase (the server takes no date; it stamps it). */
-  recordPayment: (id: number, p: { treasuryId: number; amount: number; notes?: string }) =>
-    http<unknown>(`/PurchaseOrder/${id}/record-payment`, { method: "POST", data: { paymentType: "Cash", treasuryId: p.treasuryId, amount: p.amount, notes: p.notes || null } }),
+  /** A payment to the supplier against one purchase; `paymentDate` is a day (the server adds its own time). */
+  recordPayment: (id: number, p: { treasuryId: number; amount: number; paymentDate?: string; notes?: string }) =>
+    http<unknown>(`/PurchaseOrder/${id}/record-payment`, { method: "POST", data: { paymentType: "Cash", treasuryId: p.treasuryId, amount: p.amount, paymentDate: p.paymentDate, notes: p.notes || null } }),
   deletePayment: (paymentId: number) => http<unknown>(`/PurchaseOrder/payments/${paymentId}`, { method: "DELETE" }),
 }

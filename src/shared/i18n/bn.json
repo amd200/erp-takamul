@@ -1244,13 +1244,18 @@
     "previewTitle": "Chalan {{number}} priview",
     "previewA4": "A4",
     "previewRoll": "Rol",
+    "previewA4Desc": "Shadharon printer er jonno purno kagoj",
+    "previewRollDesc": "Thermal rosid rol",
+    "previewFormat": "Chalaner format bachai korun",
     "previewFailed": "Chalan priview kora jayni",
     "refundsTitle": "Ferot er pement",
     "refundSaved": "Ferot taka safalvabe nothibhukto hayeeche",
     "addRefund": "Ferot nothibhukto korun",
     "deleteRefundTitle": "Ferot muchhe felun",
     "refundName": "Ferot",
-    "noRefunds": "Ei ferot er jonno ager kono pement nei"
+    "noRefunds": "Ei ferot er jonno ager kono pement nei",
+    "previewHint": "Mudroner age priview",
+    "previewLoading": "Chalan lod hochche..."
   },
   "users": {
     "title": "Byabaharkarider",

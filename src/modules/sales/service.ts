@@ -38,9 +38,9 @@ export const invoicesApi = {
     },
   })),
 
-  recordPayment: (invoiceId: number, p: Omit<Payment, "id" | "date">, idempotencyKey?: string) => retryWhileInProgress(() => http<unknown>("/sales-orders/record-payment", {
+  recordPayment: (invoiceId: number, p: Omit<Payment, "id" | "date"> & { paymentDate?: string }, idempotencyKey?: string) => retryWhileInProgress(() => http<unknown>("/sales-orders/record-payment", {
     method: "POST", headers: idempotencyHeaders(idempotencyKey),
-    data: { salesOrderId: invoiceId, treasuryId: p.treasuryId, amount: p.amount, paymentMethod: p.method, notes: p.notes || null },
+    data: { salesOrderId: invoiceId, treasuryId: p.treasuryId, amount: p.amount, paymentMethod: p.method, paymentDate: p.paymentDate, notes: p.notes || null },
   })),
   payments: (invoiceId: number) => http<InvoicePaymentItem[]>(`/sales-orders/order/${invoiceId}`),
   deletePayment: (paymentId: number) => http<unknown>(`/sales-orders/delete-payment/${paymentId}`, { method: "DELETE" }),
@@ -78,9 +78,9 @@ export const returnsApi = {
     }))
   },
   sendToZatca: (id: number) => http<unknown>("/zatca-invoices/sell-return", { method: "POST", data: { invoiceId: id } }),
-  /** A refund paid to the customer against one return (the server takes no date; it stamps it). */
-  recordRefund: (id: number, r: { treasuryId: number; amount: number }) =>
-    http<unknown>(`/sales-returns/${id}/record-refund`, { method: "POST", data: { treasuryId: r.treasuryId, amount: r.amount, paymentMethod: "Cash", notes: null } }),
+  /** A refund paid to the customer against one return; `paymentDate` is a day (the server adds its own time). */
+  recordRefund: (id: number, r: { treasuryId: number; amount: number; paymentDate?: string }) =>
+    http<unknown>(`/sales-returns/${id}/record-refund`, { method: "POST", data: { treasuryId: r.treasuryId, amount: r.amount, paymentDate: r.paymentDate, paymentMethod: "Cash", notes: null } }),
   deleteRefund: (id: number, paymentId: number) => http<unknown>(`/sales-returns/${id}/refunds/${paymentId}`, { method: "DELETE" }),
 }
 

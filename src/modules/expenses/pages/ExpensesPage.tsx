@@ -77,8 +77,8 @@ export function ExpenseDialog({ open, onOpenChange, expense }: { open: boolean; 
                 <FormInput control={form.control} name="name" label={t("expenses.name")} placeholder={t("expenses.namePlaceholder")} required />
               </div>
               <div className="grid gap-3 sm:grid-cols-3">
-                <FormInput control={form.control} name="amount" type="number" required label={t("expenses.amount")} />
                 <FormSelect control={form.control} name="treasuryId" numeric required label={t("expenses.treasury")} options={treasuryOptions} placeholder={t("expenses.pickTreasury")} />
+                <FormInput control={form.control} name="amount" type="number" required label={t("expenses.amount")} />
                 <FormTextarea control={form.control} name="notes" label={t("common.notes")} className="[&_textarea]:h-10 [&_textarea]:min-h-10" />
               </div>
               {over && <p className="text-sm text-destructive">{t("treasuries.errors.insufficient")}</p>}
