@@ -275,9 +275,7 @@
     "expensesCount": "Expenses Count",
     "vouchers": "Collected Vouchers",
     "vouchersCount": "Vouchers Count",
-    "netTreasuries": "Daily Treasuries Net",
-    "salesInvoiceNumbers": "Sales Invoice Numbers",
-    "returnInvoiceNumbers": "Return Invoice Numbers"
+    "netTreasuries": "Daily Treasuries Net"
   },
   "oldUsers": {
     "title": "Users",

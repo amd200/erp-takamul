@@ -275,9 +275,7 @@
     "expensesCount": "عدد المصروفات",
     "vouchers": "السندات المحصلة",
     "vouchersCount": "عدد السندات",
-    "netTreasuries": "صافي يومية الخزائن",
-    "salesInvoiceNumbers": "أرقام فواتير البيع",
-    "returnInvoiceNumbers": "أرقام فواتير المرتجعات"
+    "netTreasuries": "صافي يومية الخزائن"
   },
   "oldUsers": {
     "title": "المستخدمين",
