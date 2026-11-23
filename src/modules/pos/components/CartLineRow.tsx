@@ -39,7 +39,7 @@ export const CartLineRow = memo(function CartLineRow({ line: l, index, locked, o
 
       <div className="min-w-0">
         <div className="text-xs leading-snug font-bold">{l.productName}</div>
-        {l.extras.length > 0 && <div className="text-[10px] text-gray-400">+ {l.extras.map((e) => e.name).join("، ")}</div>}
+        {l.extras.length > 0 && <div className="text-[10px] text-faint">+ {l.extras.map((e) => e.name).join("، ")}</div>}
         {l.categoryDiscount && <CategoryDiscountBadge line={l} className="mt-0.5" />}
         {!l.categoryDiscount && l.discount > 0 && <div className="text-[10px] font-semibold text-primary">{l.discountKind === "percent" ? `${l.discount}% ${t("pos.off")}` : `-${formatMoney(l.discount)}`}</div>}
               </div>

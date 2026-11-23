@@ -109,7 +109,7 @@ export function Cart({ onPay, onHold, onSend, busy, onShift, categoryId = null }
           <div className="w-full"><CustomerPicker customerId={null} name="" disabled={locked} onPick={s.setCustomer} tools={false} /></div>
         ) : (
           <div className="flex flex-1 items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1.5">
-            <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{s.customerName.slice(0, 2).toUpperCase()}</div>
+            <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{s.customerName.slice(0, 2).toUpperCase()}</div>
             <span className="flex-1 truncate text-xs font-bold text-primary">{s.customerName}</span>
             <button type="button" disabled={locked} onClick={() => s.setCustomer(null, "")} className="text-base leading-none text-primary/60 hover:text-primary">×</button>
           </div>
@@ -135,7 +135,7 @@ export function Cart({ onPay, onHold, onSend, busy, onShift, categoryId = null }
           </div>
         ) : (
           <>
-            <div className={`${CART_GRID} border-b border-border py-1.5 text-[10px] font-semibold text-gray-400 uppercase`}>
+            <div className={`${CART_GRID} border-b border-border py-1.5 text-[10px] font-semibold text-faint uppercase`}>
               <span>#</span><span>{t("pos1.item")}</span><span className="text-center">{t("pos1.quantity")}</span><span className="flex items-center justify-center text-center">{t("pos1.price")}</span><span className="text-center">{t("pos1.total")}</span><span className="text-center">{t("pos1.actions")}</span>
             </div>
             <ul>{s.lines.map((l, i) => <CartLineRow key={l.key} line={l} index={i} locked={locked} onQty={(key, q) => s.setQty(key, Math.max(1, q))} onRemove={s.remove} onEdit={(k) => canEdit && setEditingKey(k)} />)}</ul>
@@ -150,7 +150,7 @@ export function Cart({ onPay, onHold, onSend, busy, onShift, categoryId = null }
               const disabled = k === "discount" && hasItemDiscount
               return (
                 <button key={k} type="button" disabled={disabled} onClick={() => !disabled && setTab(k)}
-                  className={cn("border-b-2 px-1.5 py-2 text-xs whitespace-nowrap transition-colors duration-150", tab === k ? "border-primary font-bold text-primary" : "border-transparent text-gray-400 hover:text-gray-600", disabled && "cursor-not-allowed opacity-40")}>
+                  className={cn("border-b-2 px-1.5 py-2 text-xs whitespace-nowrap transition-colors duration-150", tab === k ? "border-primary font-bold text-primary" : "border-transparent text-faint hover:text-foreground", disabled && "cursor-not-allowed opacity-40")}>
                   {tabLabel(k)}
                 </button>
               )
@@ -167,24 +167,24 @@ export function Cart({ onPay, onHold, onSend, busy, onShift, categoryId = null }
         {tab === "add" && (
           <div className="px-3 pt-2.5 pb-3">
             <div className="mb-1.5 flex items-center justify-between text-xs">
-              <span className={hasOrderDiscount || itemDiscounts > 0 ? "font-semibold text-primary" : "text-gray-500"}>{t("pos1.discount")}</span>
+              <span className={hasOrderDiscount || itemDiscounts > 0 ? "font-semibold text-primary" : "text-muted-foreground"}>{t("pos1.discount")}</span>
               <div className="flex items-center gap-1">
-                <span className={cn("text-sm font-semibold tabular-nums", hasOrderDiscount || itemDiscounts > 0 ? "text-foreground" : "text-gray-400")}>-{fmt(hasOrderDiscount ? totals.discount - itemDiscounts : itemDiscounts)}</span>
-                {hasOrderDiscount && <button type="button" disabled={locked} onClick={() => s.setDiscount({ kind: "percent", value: 0 })} className="flex size-4 items-center justify-center rounded-full bg-gray-200 text-xs leading-none text-gray-500 hover:bg-gray-300">×</button>}
+                <span className={cn("text-sm font-semibold tabular-nums", hasOrderDiscount || itemDiscounts > 0 ? "text-foreground" : "text-faint")}>-{fmt(hasOrderDiscount ? totals.discount - itemDiscounts : itemDiscounts)}</span>
+                {hasOrderDiscount && <button type="button" disabled={locked} onClick={() => s.setDiscount({ kind: "percent", value: 0 })} className="flex size-4 items-center justify-center rounded-full bg-muted text-xs leading-none text-muted-foreground hover:bg-gray-300">×</button>}
               </div>
             </div>
-            <div className="mb-1.5 flex justify-between text-xs text-gray-500">
+            <div className="mb-1.5 flex justify-between text-xs text-muted-foreground">
               <span>{t("pos1.subtotal")}</span>
               <div className="flex items-center gap-1.5">
-                {hasOrderDiscount && <span className="text-[10px] text-gray-300 line-through">{fmt(before.subTotal - before.discount)}</span>}
+                {hasOrderDiscount && <span className="text-[10px] text-faint line-through">{fmt(before.subTotal - before.discount)}</span>}
                 <span className="text-sm font-semibold text-foreground tabular-nums">{fmt(totals.subTotal - totals.discount)}</span>
               </div>
             </div>
             {!exempt && (
-              <div className="mb-1.5 flex justify-between text-xs text-gray-500">
+              <div className="mb-1.5 flex justify-between text-xs text-muted-foreground">
                 <span>{t("pos1.tax")}</span>
                 <div className="flex items-center gap-1.5">
-                  {hasOrderDiscount && <span className="text-[10px] text-gray-300 line-through">{fmt(before.tax)}</span>}
+                  {hasOrderDiscount && <span className="text-[10px] text-faint line-through">{fmt(before.tax)}</span>}
                   <span className="text-sm font-semibold text-foreground tabular-nums">{fmt(totals.tax)}</span>
                 </div>
               </div>
@@ -192,7 +192,7 @@ export function Cart({ onPay, onHold, onSend, busy, onShift, categoryId = null }
             <div className="mt-2 mb-3 flex justify-between border-t border-border pt-1 text-sm font-black text-foreground">
               <span>{t("pos1.payable")}</span>
               <div className="flex items-center gap-1.5">
-                {hasOrderDiscount && <span className="text-xs font-normal text-gray-300 line-through">{fmt(before.grandTotal)}</span>}
+                {hasOrderDiscount && <span className="text-xs font-normal text-faint line-through">{fmt(before.grandTotal)}</span>}
                 <span className="text-xl tabular-nums">{fmt(totals.grandTotal)}</span>
               </div>
             </div>
@@ -217,9 +217,9 @@ export function Cart({ onPay, onHold, onSend, busy, onShift, categoryId = null }
           <div className="p-3">
             <div className="mb-3 text-sm font-bold text-foreground">{t("pos1.orderDiscount")}</div>
             <div className="mb-3 flex items-center gap-2">
-              <button type="button" onClick={() => setDiscKind("value")} className={cn("flex size-12 shrink-0 items-center justify-center rounded-xl border-2 text-base font-bold transition-all", discKind === "value" ? "border-primary bg-primary/10 text-primary" : "border-gray-200 bg-white text-gray-400")}><CurrencySymbol size={18} /></button>
-              <button type="button" onClick={() => setDiscKind("percent")} className={cn("flex h-12 min-w-12 shrink-0 px-3 items-center justify-center rounded-xl border-2 text-sm font-bold transition-all", discKind === "percent" ? "border-primary bg-primary/10 text-primary" : "border-gray-200 bg-white text-gray-400")}>{t("sales.kindPercent")}</button>
-              <Input value={discInput} onChange={(e) => setDiscInput(e.target.value)} type="number" min="0" placeholder="0" className="h-12 flex-1 rounded-xl border border-gray-200 bg-white px-3 text-right text-sm font-semibold outline-none focus:border-primary/40" />
+              <button type="button" onClick={() => setDiscKind("value")} className={cn("flex size-12 shrink-0 items-center justify-center rounded-xl border-2 text-base font-bold transition-all", discKind === "value" ? "border-primary bg-primary/10 text-primary" : "border-border bg-card text-faint")}><CurrencySymbol size={18} /></button>
+              <button type="button" onClick={() => setDiscKind("percent")} className={cn("flex h-12 min-w-12 shrink-0 px-3 items-center justify-center rounded-xl border-2 text-sm font-bold transition-all", discKind === "percent" ? "border-primary bg-primary/10 text-primary" : "border-border bg-card text-faint")}>{t("sales.kindPercent")}</button>
+              <Input value={discInput} onChange={(e) => setDiscInput(e.target.value)} type="number" min="0" placeholder="0" className="h-12 flex-1 rounded-xl border border-border bg-card px-3 text-right text-sm font-semibold outline-none focus:border-primary/40" />
             </div>
             <div className="flex gap-2">
               <Button type="button" variant="destructive" className="h-12 flex-1 gap-2 px-5 text-base" onClick={() => { setTab("add"); s.setDiscount({ kind: "percent", value: 0 }) }}>{t("common.cancel")}</Button>
@@ -230,7 +230,7 @@ export function Cart({ onPay, onHold, onSend, busy, onShift, categoryId = null }
 
         {tab === "note" && (
           <div className="p-3">
-            <textarea value={s.note} disabled={locked} onChange={(e) => s.setNote(e.target.value)} rows={2} placeholder={t("pos1.addOrderNote")} className="mb-2 w-full resize-none rounded-lg border border-gray-200 px-2.5 py-2 text-xs outline-none focus:border-primary/40" />
+            <textarea value={s.note} disabled={locked} onChange={(e) => s.setNote(e.target.value)} rows={2} placeholder={t("pos1.addOrderNote")} className="mb-2 w-full resize-none rounded-lg border border-border px-2.5 py-2 text-xs outline-none focus:border-primary/40" />
             <div className="flex gap-2">
               <Button type="button" variant="destructive" className="h-12 flex-1 gap-2 px-5 text-base" onClick={() => s.setNote("")}>{t("common.clear")}</Button>
               <Button type="button" className="h-12 flex-1 gap-2 px-5 text-base" onClick={() => setTab("add")}>{t("common.save")}</Button>

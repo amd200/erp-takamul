@@ -39,8 +39,8 @@ export default function ReturnsPage() {
     { id: "returnDate", sortable: true, className: "min-w-44", header: t("common.date"), cell: (r) => <span className="text-muted-foreground">{formatDateTime(r.returnDate ?? "", i18n.language)}</span> },
     ...branchColumn,
     { id: "customerName", sortable: true, header: t("sales.customer"), cell: (r) => r.customerName },
-    { id: "paymentStatus", sortable: true, header: t("sales.paymentStatus"), cell: (r) => <PaymentBadge status={r.paymentStatus} /> },
     { id: "grandTotal", sortable: true, header: t("sales.grandTotal"), cell: (r) => <span className="font-semibold">{formatMoney(r.grandTotal ?? 0)}</span> },
+    { id: "paymentStatus", sortable: true, header: t("sales.paymentStatus"), cell: (r) => <PaymentBadge status={r.paymentStatus} /> },
     { id: "refundedAmount", sortable: true, header: t("sales.refunded"), cell: (r) => (r.refundedAmount ? formatMoney(r.refundedAmount) : <span className="text-faint">—</span>) },
     ...(stage2 ? [{ id: "zatcaStatus", sortable: true, header: t("sales.zatcaStatus"), cell: (r: SalesReturnDto) => <ZatcaBadge status={r.zatcaStatus} /> }] : []),
     { id: "actions", header: "", align: "end", cell: (r) => <RowMenu items={[

@@ -137,7 +137,8 @@
 }
 
 /* The salon (beauty) theme: warm rose over blush, as in the previous system. Switched on for the sales screens
-   by the "beautyTheme" setting (see usePosBeauty), so it also reaches dialogs, which sit outside the page root. */
+   by the "beautyTheme" setting (see usePosBeauty), so it also reaches dialogs, which sit outside the page root.
+   Rose is darkened a little so white text on it and rose text on blush stay readable (4.5:1 and up). */
 html.beauty {
   --background: #fdf0ed;
   --foreground: #4a3535;
@@ -145,27 +146,89 @@ html.beauty {
   --card-foreground: #4a3535;
   --popover: #ffffff;
   --popover-foreground: #4a3535;
-  --primary: #d65f5f;
+  --primary: #bd444b;
   --primary-foreground: #ffffff;
   --secondary: #feeae6;
-  --secondary-foreground: #d65f5f;
+  --secondary-foreground: #a63a40;
   --muted: #feeae6;
-  --muted-foreground: #8c7373;
+  --muted-foreground: #755c5c;
   --accent: #feeae6;
-  --accent-foreground: #d65f5f;
-  --destructive: #c4484b;
-  --border: #f3d9d3;
-  --input: #f3d9d3;
-  --ring: #d65f5f;
+  --accent-foreground: #a63a40;
+  --destructive: #b83c3f;
+  --destructive-soft: rgba(184, 60, 63, 0.1);
+  --success: #1f7a4d;
+  --success-soft: #e3f3ea;
+  --warning: #8a5f00;
+  --warning-soft: rgba(138, 95, 0, 0.12);
+  --faint: #8f7676;
+  --brand-green: var(--primary);
+  --brand-navy: var(--sidebar);
+  --border: #f1d3cc;
+  --input: #f1d3cc;
+  --ring: #bd444b;
   --sidebar: #fdf0ed;
   --sidebar-foreground: #4a3535;
-  --sidebar-primary: #d65f5f;
+  --sidebar-primary: #bd444b;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #feeae6;
-  --sidebar-accent-foreground: #d65f5f;
-  --sidebar-border: #f3d9d3;
-  --sidebar-ring: #d65f5f;
+  --sidebar-accent-foreground: #a63a40;
+  --sidebar-border: #f1d3cc;
+  --sidebar-ring: #bd444b;
+  --text-main: #5b4545;
+  --text-muted: #755c5c;
+  --bg-main: #fdf0ed;
+  --input-bg: #ffffff;
+  --table-header-text: #755c5c;
+  --table-header-border: #f1d3cc;
+  --table-row-hover: #fdeae6;
 }
+
+/* Dark salon theme: the same rose on deep warm brown, so it follows the dark/light switch like the other themes. */
+html.beauty.dark {
+  --background: #1f1517;
+  --foreground: #f3e6e4;
+  --card: #2a1c1f;
+  --card-foreground: #f3e6e4;
+  --popover: #301f23;
+  --popover-foreground: #f3e6e4;
+  --primary: #c25058;
+  --primary-foreground: #ffffff;
+  --secondary: #3a2226;
+  --secondary-foreground: #f0b8b8;
+  --muted: #372529;
+  --muted-foreground: #b9a5a5;
+  --accent: #3a2226;
+  --accent-foreground: #f3e6e4;
+  --destructive: #ee8f8f;
+  --destructive-soft: #4a2528;
+  --success: #6cc27a;
+  --success-soft: #1b3326;
+  --warning: #dba957;
+  --warning-soft: #382f1d;
+  --faint: #9a8686;
+  --brand-green: var(--primary);
+  --border: #3d2a2d;
+  --input: #4a3438;
+  --ring: #e08a90;
+  --sidebar: #2a1c1f;
+  --sidebar-foreground: #b9a5a5;
+  --sidebar-primary: #c25058;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #3a2226;
+  --sidebar-accent-foreground: #f0b8b8;
+  --sidebar-border: #3d2a2d;
+  --sidebar-ring: #e08a90;
+  --text-main: #e6d6d4;
+  --text-muted: #b9a5a5;
+  --bg-main: #1f1517;
+  --input-bg: #2a1c1f;
+  --table-header-text: #b9a5a5;
+  --table-header-border: #3d2a2d;
+  --table-row-hover: #372529;
+}
+
+/* A disabled button keeps its colour readable (the shared half-opacity washes outlined ones out on blush). */
+html.beauty :where(button, [role="button"]):disabled { opacity: 0.65; }
 
 @theme inline {
   --font-sans: "Cairo", "Segoe UI", Tahoma, sans-serif;
