@@ -44,24 +44,8 @@ const Item = ({ title, children }: { title: string; children: React.ReactNode })
   </div>
 )
 
-/** The invoice numbers of an employee, in small boxes. */
-const InvoiceNumbers = ({ title, numbers }: { title: string; numbers?: string[] | null }) => {
-  if (!numbers?.length) return null
-  return (
-    <div className="mt-3 border-t border-dashed border-border pt-3 text-xs">
-      <div className="mb-2 font-semibold text-muted-foreground">{title}</div>
-      <ul className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,150px),1fr))] gap-2">
-        {numbers.map((n, i) => <li key={`${n}-${i}`} className="min-w-0 rounded-lg border border-border bg-background px-2.5 py-2 text-center"><bdi dir="ltr" className="block break-all font-mono text-[11px] leading-5">{n}</bdi></li>)}
-      </ul>
-    </div>
-  )
-}
 
-/**
- * The shift statement, as in the current system: a header with the title, the shift number and the close and print
- * buttons; under it the statement on a pale background (who and when, what was sold, the totals, each sales treasury, the
- * returns, expenses and collected vouchers, each service employee, then the net of each treasury).
- */
+
 type Props = { shift: Shift | null; onOpenChange: (o: boolean) => void; onClose?: (s: Shift) => void }
 
 export function ShiftReportDialog({ shift, onOpenChange, onClose }: Props) {
@@ -242,12 +226,12 @@ export function ShiftReportDialog({ shift, onOpenChange, onClose }: Props) {
                             ))}
                           </div>
                         )}
-                        <div className="mt-2.5 flex items-center justify-between gap-3 border-t border-dashed border-border pt-2.5 text-xs">
-                          <span className="font-semibold text-muted-foreground">{t("shiftOld.totalReturns")} ({e.returnInvoicesCount ?? 0} {t("shiftOld.returnsUnit")})</span>
-                          <span className="font-black">{fmt(e.totalReturns)}</span>
-                        </div>
-                        <InvoiceNumbers title={t("shiftOld.salesInvoiceNumbers")} numbers={e.salesInvoiceNumbers} />
-                        {showReturns && <InvoiceNumbers title={t("shiftOld.returnInvoiceNumbers")} numbers={e.returnInvoiceNumbers} />}
+                        {Number(e.totalReturns) > 0 && (
+                          <div className="mt-2.5 flex items-center justify-between gap-3 border-t border-dashed border-border pt-2.5 text-xs">
+                            <span className="font-semibold text-muted-foreground">{t("shiftOld.totalReturns")} ({e.returnInvoicesCount ?? 0} {t("shiftOld.returnsUnit")})</span>
+                            <span className="font-black">{fmt(e.totalReturns)}</span>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>

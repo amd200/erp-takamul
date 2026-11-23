@@ -17,8 +17,7 @@ export const NAV: NavItem[] = [
     children: [
       { key: "itemsList", to: "/products", perm: P.products.view },
       { key: "addItem", to: "/products/create", perm: P.products.add },
-      // Hidden from the menu for now; the page still works by address:
-      // { key: "barcode", to: "/products/barcode", perm: P.barcode.print },
+      { key: "barcode", to: "/products/barcode", perm: P.barcode.print },
       { key: "adjustments", to: "/products/quantity-adjustments", perm: P.stock.view },
       { key: "categories", to: "/products/groups", perm: P.categories.view },
       { key: "units", to: "/products/units", perm: P.units.view },

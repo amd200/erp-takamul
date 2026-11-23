@@ -21,7 +21,7 @@ export function useCreateAdjustment() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: adjustmentKeys.all })
       qc.invalidateQueries({ queryKey: productKeys.all })
-      qc.invalidateQueries({ queryKey: ["stock-rows"] })
+      qc.invalidateQueries({ queryKey: adjustmentKeys.stockRows })
       toast.success(i18n.t("stock.saved"))
     },
     onError: () => toast.error(i18n.t("common.saveFailed")),
@@ -41,7 +41,7 @@ export function useUpdateAdjustment() {
     mutationFn: ({ id, input }: { id: number; input: AdjustmentInput }) => adjustmentsApi.update(id, input),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: adjustmentKeys.all })
-      qc.invalidateQueries({ queryKey: ["stock-rows"] })
+      qc.invalidateQueries({ queryKey: adjustmentKeys.stockRows })
       qc.invalidateQueries({ queryKey: productKeys.all })
       toast.success(i18n.t("stock.saved"))
     },
@@ -56,7 +56,7 @@ export const useDeleteAdjustment = () => {
     mutationFn: (id: number) => adjustmentsApi.remove(id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: adjustmentKeys.all })
-      qc.invalidateQueries({ queryKey: ["stock-rows"] })
+      qc.invalidateQueries({ queryKey: adjustmentKeys.stockRows })
       qc.invalidateQueries({ queryKey: productKeys.all })
       toast.success(i18n.t("common.deleted"))
     },
