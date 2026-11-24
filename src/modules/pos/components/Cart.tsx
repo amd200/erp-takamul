@@ -62,8 +62,8 @@ export function Cart({ onPay, onHold, onSend, busy, onShift, categoryId = null }
   useEffect(() => {
     if (picked.current || !customers?.length) return
     picked.current = true
-    // An order being edited keeps its own customer (or the name and phone it came with).
-    if (!usePosStore.getState().customerId && usePosStore.getState().save === "idle" && usePosStore.getState().orderRequest?.id == null) defaults()
+    // An order request keeps the customer chosen for it (or none, or the name and phone it came with).
+    if (!usePosStore.getState().customerId && usePosStore.getState().save === "idle" && !usePosStore.getState().orderRequest) defaults()
   }, [customers, defaults])
 
   useEffect(() => { if (s.discount.value === 0) setDiscInput("") }, [s.discount])

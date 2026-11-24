@@ -3023,6 +3023,10 @@
     "replaceCartTitle": "Replace the cart",
     "replaceCartBody": "The current cart has items. They will be removed to open the order.",
     "openInPos": "Open in point of sale",
+    "stepTitle": "Choose the customer",
+    "stepHint": "Pick an existing customer or add a new one, then add the items in the point of sale.",
+    "continue": "Continue",
+    "withoutCustomer": "Continue without a customer",
     "statuses": {
       "OrderReceived": "Order received",
       "Ready": "Prepared",

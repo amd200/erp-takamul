@@ -3021,6 +3021,10 @@
     "replaceCartTitle": "Cart bodlan",
     "replaceCartBody": "Ekhonkar cart-e item ache. Order kholte segulo soriye deya hobe.",
     "openInPos": "Point of sale-e kholun",
+    "stepTitle": "Grahok bachai korun",
+    "stepHint": "Bidyoman grahok bachun ba notun grahok jog korun, tarpor point of sale-e item jog korun.",
+    "continue": "Egiye jan",
+    "withoutCustomer": "Grahok chhara egiye jan",
     "statuses": {
       "OrderReceived": "Order grohon kora hoyeche",
       "Ready": "Prostut",

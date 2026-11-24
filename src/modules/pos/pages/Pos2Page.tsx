@@ -89,7 +89,7 @@ function Pos2Screen({ shift, optics }: { shift: Shift; optics: boolean }) {
     defaulted.current = true
     if (optics) { if (store().lines.length === 0 && store().save === "idle") store().setCustomer(null, ""); return }
     const c = customers.find((x) => x.id === Number(defaultCustomer)) ?? customers[0]
-    if (c && store().customerId == null && store().lines.length === 0) store().setCustomer(c.id, c.customerName)
+    if (c && store().customerId == null && store().lines.length === 0 && !store().orderRequest) store().setCustomer(c.id, c.customerName)
   }, [customers, defaultCustomer, store, optics])
 
   // The default service employee is picked once, when the setting is on and nobody was chosen yet.

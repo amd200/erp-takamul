@@ -13,6 +13,7 @@ import { orderRequestBody, orderRequestsApi } from "@/modules/order-requests/ser
 import type { OrderRequestDetails } from "@/modules/order-requests/types"
 import { newLineKey } from "./cart"
 import { usePosPath } from "./hooks"
+import { OrderCustomerDialog } from "./OrderCustomerDialog"
 import { usePosStore, type OrderRequestMode } from "./store"
 import type { CartLine } from "./types"
 
@@ -28,6 +29,7 @@ export function useOpenOrderRequest() {
   const path = usePosPath()
   const { data: units = [] } = useUnits()
   const { data: additions = [] } = useAdditions()
+  const [choosing, setChoosing] = useState(false)
   const [pending, setPending] = useState<{ mode: OrderRequestMode; lines?: CartLine[]; customerId?: number | null; customerName?: string; note?: string } | null>(null)
 
   const unlocked = () => {
@@ -65,12 +67,15 @@ export function useOpenOrderRequest() {
   })
 
   const confirmation = (
+    <>
+    <OrderCustomerDialog open={choosing} onOpenChange={setChoosing} onContinue={(c) => { setChoosing(false); begin({ mode: { id: null, number: null, customerName: null, customerPhone: null }, customerId: c?.id ?? null, customerName: c?.name ?? "" }) }} />
     <ConfirmDialog open={!!pending} onOpenChange={(o) => !o && setPending(null)}
       title={t("orderRequests.replaceCartTitle")} description={t("orderRequests.replaceCartBody")}
       confirmLabel={t("orderRequests.openInPos")} onConfirm={() => pending && commit(pending)} />
+    </>
   )
   return {
-    add: () => begin({ mode: { id: null, number: null, customerName: null, customerPhone: null } }),
+    add: () => { if (unlocked()) setChoosing(true) },
     edit: (id: number) => { if (!details.isPending) details.mutate(id) },
     confirmation,
   }
