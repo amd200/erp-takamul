@@ -92,7 +92,7 @@ export function Cart({ onPay, onHold, onSend, busy, onShift, categoryId = null }
     return true
   }
 
-  const clearInvoice = () => { if (s.orderRequest) s.startOrderRequest({ mode: s.orderRequest }); else { s.clear(); defaults() } setTab("add"); setEditingKey(null) }
+  const clearInvoice = () => { if (s.orderRequest) s.startOrderRequest({ mode: s.orderRequest, customerId: s.customerId, customerName: s.customerName }); else { s.clear(); defaults() } setTab("add"); setEditingKey(null) }
 
   const applyDiscount = () => {
     if (hasItemDiscount) return toast.error(t("pos1.cannotMixDiscounts"))
@@ -113,7 +113,7 @@ export function Cart({ onPay, onHold, onSend, busy, onShift, categoryId = null }
           <div className="flex flex-1 items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1.5">
             <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{s.customerName.slice(0, 2).toUpperCase()}</div>
             <span className="flex-1 truncate text-xs font-bold text-primary">{s.customerName}</span>
-            <button type="button" disabled={locked} onClick={() => s.setCustomer(null, "")} className="text-base leading-none text-primary/60 hover:text-primary">×</button>
+            {!s.orderRequest && <button type="button" disabled={locked} onClick={() => s.setCustomer(null, "")} className="text-base leading-none text-primary/60 hover:text-primary">×</button>}
           </div>
         )}
         <Button type="button" size="icon-sm" variant="outline" disabled={locked} onClick={() => setAdding(true)} className="border-primary text-primary hover:bg-primary/10 hover:text-primary"><Plus size={14} /></Button>

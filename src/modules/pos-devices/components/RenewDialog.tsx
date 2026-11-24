@@ -4,10 +4,10 @@ import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
 import { errorToast } from "@/shared/api/errors"
 import { useRenewCertificate } from "../queries"
 import type { CertificateSummary } from "../types"
+import { OtpField } from "./OtpField"
 
 /** Renews a device's certificate with a fresh OTP from the Fatoora portal. Same frame as the device wizard. */
 export function RenewDialog({ cert, onClose }: { cert: CertificateSummary | null; onClose: () => void }) {
@@ -23,8 +23,7 @@ export function RenewDialog({ cert, onClose }: { cert: CertificateSummary | null
           <DialogTitle className="font-semibold">{t("devices.renewTitle")}</DialogTitle>
           <DialogDescription>{t("devices.renewBody", { name: cert?.deviceName })}</DialogDescription>
         </DialogHeader>
-        <Input value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))} inputMode="numeric" dir="ltr" autoComplete="one-time-code"
-          aria-label={t("devices.otp")} placeholder="••••••" className="h-12 max-w-48 text-center text-xl tracking-[0.5em]" />
+        <OtpField value={otp} onChange={setOtp} autoFocus />
         <DialogFooter className="bg-muted/50">
           <Button variant="outline" onClick={onClose}>{t("common.cancel")}</Button>
           <Button disabled={renew.isPending || otp.length !== 6 || !cert}

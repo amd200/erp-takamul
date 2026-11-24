@@ -3024,7 +3024,7 @@
     "stepTitle": "Grahok bachai korun",
     "stepHint": "Bidyoman grahok bachun ba notun grahok jog korun, tarpor point of sale-e item jog korun.",
     "continue": "Egiye jan",
-    "withoutCustomer": "Grahok chhara egiye jan",
+    "customerRequired": "Order save korar age grahok bachai korun",
     "statuses": {
       "OrderReceived": "Order grohon kora hoyeche",
       "Ready": "Prostut",

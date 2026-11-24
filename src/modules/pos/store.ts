@@ -19,8 +19,8 @@ import type { CartDiscount, CartLine, DineInMode, OrderType } from "./types"
  */
 type SaveState = "idle" | "saving" | "uncertain"
 
-/** A customer order (not a sale) is being typed: a new one (`id` null) or an existing one being edited. A customer without an account keeps the name and phone the order came with. */
-export type OrderRequestMode = { id: number | null; number: string | null; customerName: string | null; customerPhone: string | null }
+/** A customer order (not a sale) is being typed: a new one (`id` null) or an existing one being edited. */
+export type OrderRequestMode = { id: number | null; number: string | null }
 
 type PosState = {
   /** Set while the cart is an order request: saving creates / updates the order instead of a sale. Never persisted. */

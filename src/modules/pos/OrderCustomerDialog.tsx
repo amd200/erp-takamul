@@ -6,13 +6,13 @@ import { Dialog, DialogBody, DialogContent, DialogDescription, DialogFooter, Dia
 import { CustomerDialog } from "@/modules/customers/components/CustomerDialog"
 import { CustomerPicker } from "./components/CustomerPicker"
 
-/** The first step of a new order: who it is for, an existing customer or a new one, or nobody. Then the sales screen opens for the items. */
-export function OrderCustomerDialog({ open, onOpenChange, onContinue }: { open: boolean; onOpenChange: (o: boolean) => void; onContinue: (customer: { id: number; name: string } | null) => void }) {
+/** The first step of a new order: who it is for: an existing customer or a new one (required). Then the sales screen opens for the items. */
+export function OrderCustomerDialog({ open, onOpenChange, onContinue }: { open: boolean; onOpenChange: (o: boolean) => void; onContinue: (customer: { id: number; name: string }) => void }) {
   const { t } = useTranslation()
   const [customer, setCustomer] = useState<{ id: number; name: string } | null>(null)
   const [adding, setAdding] = useState(false)
   const close = (o: boolean) => { if (!o) setCustomer(null); onOpenChange(o) }
-  const go = (c: { id: number; name: string } | null) => { setCustomer(null); onContinue(c) }
+  const go = (c: { id: number; name: string }) => { setCustomer(null); onContinue(c) }
   return (
     <>
       <Dialog open={open} onOpenChange={close}>
@@ -24,14 +24,13 @@ export function OrderCustomerDialog({ open, onOpenChange, onContinue }: { open: 
           <DialogBody>
             <div className="flex items-center gap-2">
               <div className="min-w-0 flex-1">
-                <CustomerPicker tools={false} customerId={customer?.id ?? null} name={customer?.name ?? ""} onPick={(id, name) => setCustomer(id ? { id, name } : null)} />
+                <CustomerPicker tools={false} clearable={false} customerId={customer?.id ?? null} name={customer?.name ?? ""} onPick={(id, name) => setCustomer(id ? { id, name } : null)} />
               </div>
               <Button type="button" variant="outline" size="icon-lg" aria-label={t("customers.add")} title={t("customers.add")} onClick={() => setAdding(true)}><Plus /></Button>
             </div>
           </DialogBody>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => go(null)}>{t("orderRequests.withoutCustomer")}</Button>
-            <Button type="button" disabled={!customer} onClick={() => go(customer)}>{t("orderRequests.continue")}</Button>
+            <Button type="button" disabled={!customer} onClick={() => customer && go(customer)}>{t("orderRequests.continue")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

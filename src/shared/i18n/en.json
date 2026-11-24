@@ -3026,7 +3026,7 @@
     "stepTitle": "Choose the customer",
     "stepHint": "Pick an existing customer or add a new one, then add the items in the point of sale.",
     "continue": "Continue",
-    "withoutCustomer": "Continue without a customer",
+    "customerRequired": "Choose the customer before saving the order",
     "statuses": {
       "OrderReceived": "Order received",
       "Ready": "Prepared",

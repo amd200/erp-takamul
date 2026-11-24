@@ -3,7 +3,6 @@ import type { PagedResult } from "@/shared/http/paged"
 import { idempotencyHeaders, retryWhileInProgress } from "@/shared/http/idempotency"
 import type { PosPayment } from "@/modules/pos/types"
 import type { CartLine } from "@/modules/pos/types"
-import type { OrderRequestMode } from "@/modules/pos/store"
 import type { OrderRequestDetails, OrderRequest, OrderRequestInput } from "./types"
 
 export const orderRequestsApi = {
@@ -22,13 +21,11 @@ export const orderRequestsApi = {
 }
 
 /**
- * The body the server takes from the point-of-sale cart: a registered customer, or the name / phone the order came with, never both.
+ * The body the server takes from the point-of-sale cart. The customer is always a registered one (the server refuses an id together with a name / phone).
  * A fixed line discount is the line's total here (not per unit as the sale endpoints take it); the server prices the lines itself.
  */
-export const orderRequestBody = (c: { lines: CartLine[]; customerId: number | null; note: string; orderRequest: OrderRequestMode }): OrderRequestInput => ({
+export const orderRequestBody = (c: { lines: CartLine[]; customerId: number; note: string }): OrderRequestInput => ({
   customerId: c.customerId,
-  customerName: c.customerId ? null : c.orderRequest.customerName,
-  customerPhone: c.customerId ? null : c.orderRequest.customerPhone,
   notes: c.note.trim() || null,
   items: c.lines.map((l) => ({
     productId: l.productId, quantity: l.quantity,

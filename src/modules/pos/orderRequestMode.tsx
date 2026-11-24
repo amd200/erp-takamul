@@ -60,7 +60,7 @@ export function useOpenOrderRequest() {
     onSuccess: (o) => {
       if (!o.items?.length) return void toast.error(t("orderRequests.noItemsToLoad"))
       begin({
-        mode: { id: o.id, number: o.orderNumber ?? null, customerName: o.customerName ?? null, customerPhone: o.customerPhone ?? null },
+        mode: { id: o.id, number: o.orderNumber ?? null },
         lines: linesOf(o), customerId: o.customerId ?? null, customerName: o.customerId ? o.customerName ?? "" : "", note: o.notes ?? "",
       })
     },
@@ -68,7 +68,7 @@ export function useOpenOrderRequest() {
 
   const confirmation = (
     <>
-    <OrderCustomerDialog open={choosing} onOpenChange={setChoosing} onContinue={(c) => { setChoosing(false); begin({ mode: { id: null, number: null, customerName: null, customerPhone: null }, customerId: c?.id ?? null, customerName: c?.name ?? "" }) }} />
+    <OrderCustomerDialog open={choosing} onOpenChange={setChoosing} onContinue={(c) => { setChoosing(false); begin({ mode: { id: null, number: null }, customerId: c.id, customerName: c.name }) }} />
     <ConfirmDialog open={!!pending} onOpenChange={(o) => !o && setPending(null)}
       title={t("orderRequests.replaceCartTitle")} description={t("orderRequests.replaceCartBody")}
       confirmLabel={t("orderRequests.openInPos")} onConfirm={() => pending && commit(pending)} />
@@ -95,9 +95,11 @@ export function useOrderRequestMode() {
       const s = usePosStore.getState()
       if (!s.orderRequest) return
       if (s.lines.length === 0) return void toast.error(t("pos1.addItems"))
+      // The customer is always a registered one (an old order with only a name and phone gets one picked here).
+      if (!s.customerId) return void toast.error(t("orderRequests.customerRequired"))
       // The order has no invoice-wide discount; only each line's own.
       if (s.discount.value > 0) return void toast.error(t("orderRequests.discountNotSupported"))
-      save.mutate({ id: s.orderRequest.id ?? undefined, data: orderRequestBody({ lines: s.lines, customerId: s.customerId, note: s.note, orderRequest: s.orderRequest }) }, {
+      save.mutate({ id: s.orderRequest.id ?? undefined, data: orderRequestBody({ lines: s.lines, customerId: s.customerId, note: s.note }) }, {
         onSuccess: () => { usePosStore.getState().clear(); nav("/orders") },
       })
     },

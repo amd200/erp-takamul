@@ -162,7 +162,7 @@ function Pos2Screen({ shift, optics }: { shift: Shift; optics: boolean }) {
             locked={locked} uncertain={saveState === "uncertain"} busy={save.isPending || order.saving || (noWarehouse && !order.mode)} orderMode={!!order.mode}
             onQuotation={() => setQuoteOpen(true)}
             onHold={() => store().dineInMode ? toast.error(t("posTables.cannotHold")) : needLines(() => save.mutate({ sale: sale(true, []) }, { onSuccess: () => defaults() }))}
-            onClear={() => { if (locked) return; if (order.mode) store().startOrderRequest({ mode: order.mode }); else { store().clear(); defaults() } }}
+            onClear={() => { if (locked) return; if (order.mode) store().startOrderRequest({ mode: order.mode, customerId: store().customerId, customerName: store().customerName }); else { store().clear(); defaults() } }}
             onHeld={() => setHeldOpen(true)} onDiscarded={defaults}
             onPay={() => needLines(() => (order.mode ? order.save() : setPayOpen(true)))} optics={optics} />
         </div>

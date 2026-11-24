@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { FieldGroup } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
 import { FormInput, FormSelect } from "@/components/form/FormFields"
 import { cn } from "@/lib/utils"
 import { activeBranchId, useAuthStore } from "@/shared/auth/authStore"
@@ -17,6 +16,7 @@ import { errorToast } from "@/shared/api/errors"
 import { useDevices, useGenerateCsr, useRegisterCcsid, useRegisterPcsid, useSaveDevice } from "../queries"
 import { deviceSchema, emptyDevice, type DeviceForm } from "../schema"
 import type { DeviceStatus, PosDevice } from "../types"
+import { OtpField } from "./OtpField"
 
 const STEPS = [
   { id: 1, key: "info", icon: Monitor },
@@ -151,9 +151,7 @@ export function DeviceWizard({ open, onOpenChange, device }: { open: boolean; on
         {step === 3 && (
           <div className="flex flex-col gap-3">
             <p className="text-muted-foreground">{t("devices.otpBody")}</p>
-            <Input value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-              inputMode="numeric" dir="ltr" autoComplete="one-time-code" aria-label={t("devices.otp")}
-              placeholder="••••••" className="h-12 max-w-48 text-center text-xl tracking-[0.5em]" />
+            <OtpField value={otp} onChange={setOtp} autoFocus />
           </div>
         )}
 
