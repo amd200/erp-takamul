@@ -17,7 +17,7 @@ import { PaymentScreen } from "../payment/PaymentScreen"
 import { usePosBeauty } from "../hooks"
 import { useNextInvoiceNumber, useSaveSale } from "../queries"
 import { useInvoiceOutput } from "@/modules/sales/print/useInvoiceOutput"
-import { OrderRequestBanner, useOrderRequestMode } from "../orderRequestMode"
+import { useOrderRequestMode } from "../orderRequestMode"
 import { getCustomerCompanionId, usePosStore } from "../store"
 import type { PosPayment } from "../types"
 import { Pos2Header } from "../grid/Pos2Header"
@@ -146,7 +146,6 @@ function Pos2Screen({ shift, optics }: { shift: Shift; optics: boolean }) {
   return (
     <div className="relative flex h-dvh min-h-0 overflow-hidden bg-background text-foreground sm:rounded-xl sm:border sm:border-border">
       <div className="flex min-w-0 flex-1 flex-col overflow-y-auto xl:overflow-hidden">
-        <OrderRequestBanner />
         <Pos2Header invoiceNumber={nextNumber.data ?? "---"} shiftId={shift.id} locked={locked}
           customerId={customerId} customerName={customerName} onCustomer={(id, name) => store().setCustomer(id, name)} onAddCustomer={() => setAddingCustomer(true)}
           balance={appSettings.customersTab?.showActualBalance ? (balance != null ? String(balance) : "") : null}

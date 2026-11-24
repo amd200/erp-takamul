@@ -27,7 +27,7 @@ import { useSaveSale } from "../queries"
 import { useScanner } from "../grid/useScanner"
 import { useKitchenBon, type BonSale } from "../kitchenBon"
 import { useInvoiceOutput } from "@/modules/sales/print/useInvoiceOutput"
-import { OrderRequestBanner, useOrderRequestMode } from "../orderRequestMode"
+import { useOrderRequestMode } from "../orderRequestMode"
 import { getCustomerCompanionId, usePosStore } from "../store"
 import type { PosPayment, SaleResult } from "../types"
 
@@ -140,7 +140,6 @@ function PosScreen({ shift }: { shift: Shift }) {
     <div className="relative flex h-dvh overflow-hidden bg-brand-navy py-2">
       <Rail screen={screen} onScreen={setScreen} />
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-lg bg-sidebar ltr:rounded-tl-[28px] rtl:rounded-tr-[28px]">
-        <OrderRequestBanner />
         {screen === "tables" ? (
           <div className="flex flex-1 overflow-hidden bg-[var(--bg-main)]"><TablesScreen onOpened={() => setScreen("sales")} /></div>
         ) : (

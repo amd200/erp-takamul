@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
@@ -81,12 +81,23 @@ export function useOpenOrderRequest() {
   }
 }
 
-/** What the sales screens read while the cart is an order request: the mode, a save that sends it to the server, and a way out. */
+let leaving: ReturnType<typeof setTimeout> | undefined
+
+/**
+ * What the sales screens read while the cart is an order request: the mode and a save that sends it to the server.
+ * Leaving the screen drops the request (and its cart), so the next visit is an ordinary sale. React's dev double mount unmounts and mounts
+ * again at once, so the drop waits a tick and a mount cancels it.
+ */
 export function useOrderRequestMode() {
   const { t } = useTranslation()
   const nav = useNavigate()
   const mode = usePosStore((s) => s.orderRequest)
   const save = useSaveOrderRequest()
+
+  useEffect(() => {
+    clearTimeout(leaving)
+    return () => { leaving = setTimeout(() => { if (usePosStore.getState().orderRequest) usePosStore.getState().clear() }) }
+  }, [])
 
   return {
     mode,
@@ -103,19 +114,5 @@ export function useOrderRequestMode() {
         onSuccess: () => { usePosStore.getState().clear(); nav("/orders") },
       })
     },
-    cancel: () => { usePosStore.getState().clear(); nav("/orders") },
   }
-}
-
-/** The strip over a sales screen that says it is working on an order, with the way back. */
-export function OrderRequestBanner() {
-  const { t } = useTranslation()
-  const { mode, cancel } = useOrderRequestMode()
-  if (!mode) return null
-  return (
-    <div role="status" className="flex shrink-0 items-center justify-between gap-3 border-b border-primary/20 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
-      <span className="min-w-0 truncate">{mode.id ? t("orderRequests.modeEdit", { number: mode.number ?? "" }) : t("orderRequests.modeNew")}</span>
-      <button type="button" onClick={cancel} className="shrink-0 rounded-md border border-primary/30 bg-background px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/5">{t("orderRequests.backToOrders")}</button>
-    </div>
-  )
 }
