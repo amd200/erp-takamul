@@ -3,8 +3,8 @@ import { Link, NavLink, Navigate, useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ArrowLeft, Search, Settings } from "lucide-react"
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { ArrowLeft, Search } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { useCan } from "@/shared/permissions/usePermission"
 import { LIST_SECTIONS } from "../lists"
@@ -72,43 +72,43 @@ export default function SettingsPage() {
     )
   }
 
+  // Site settings, in the erpv2-modern page structure: header with breadcrumb above, a sticky section menu beside a card.
+  const shown = tabs.filter((s) => s.id === tab.id || t(`settings.s.${s.id}`).toLowerCase().includes(q.trim().toLowerCase()))
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t("nav.siteSettings")}</CardTitle>
-        <CardAction>
-          <Button asChild size="xl" variant="outline"><Link to="/">{t("sales.cancelBack")}<ArrowLeft size={16} /></Link></Button>
-        </CardAction>
-      </CardHeader>
-      <CardContent>
-        <div className="relative flex flex-col items-stretch gap-4 md:flex-row md:items-start md:gap-8">
-          <div className="min-w-0 md:w-64 md:shrink-0">
-            <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm md:sticky md:top-24">
-              <div className="hidden items-center gap-3 border-b border-border bg-muted/40 p-4 font-bold text-foreground md:flex">
-                <span className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary"><Settings size={18} /></span>{t("nav.siteSettings")}
+    <div className="flex flex-col gap-5">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="min-w-0">
+          <div className="text-xs text-faint">{t("nav.home")} / {t("nav.settings")}</div>
+          <h1 className="mt-0.5 text-[22px] font-bold text-balance">{t("nav.siteSettings")}</h1>
+        </div>
+        <Button asChild variant="outline"><Link to="/">{t("sales.cancelBack")}<ArrowLeft size={16} /></Link></Button>
+      </div>
+      <div className="grid gap-5 lg:grid-cols-[260px_minmax(0,1fr)]">
+        <aside className="min-w-0 lg:sticky lg:top-20 lg:self-start">
+          <Card size="sm" className="gap-2">
+            <CardContent className="flex flex-col gap-2">
+              <div className="relative">
+                <Search size={16} className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("common.search")} aria-label={t("common.search")} className="h-10 ps-9" />
               </div>
-              <div className="relative border-b border-border p-2">
-                <Search size={16} className="pointer-events-none absolute start-5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("common.search")} aria-label={t("common.search")} className="h-10 rounded-xl ps-9" />
-              </div>
-              <nav aria-label={t("nav.settings")} className="flex gap-1.5 overflow-x-auto p-2 [scrollbar-width:thin] md:max-h-[calc(100vh-18rem)] md:flex-col md:gap-1 md:overflow-y-auto md:overflow-x-hidden">
-                {tabs.filter((s) => t(`settings.s.${s.id}`).toLowerCase().includes(q.trim().toLowerCase()) || s.id === tab.id).map((s) => {
+              <nav aria-label={t("nav.settings")} className="flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:thin] lg:max-h-[calc(100vh-14rem)] lg:flex-col lg:gap-1 lg:overflow-y-auto lg:overflow-x-hidden lg:pb-0">
+                {shown.map((s) => {
                   const Icon = s.icon
                   return (
                     <NavLink key={s.id} to={`/settings/${page}/${s.id}`}
-                      className={({ isActive }) => cn("flex shrink-0 items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-start text-sm whitespace-nowrap transition-all md:w-full md:gap-3 md:py-3",
-                        isActive ? "bg-primary font-bold text-primary-foreground shadow-sm" : "font-medium text-foreground hover:bg-primary/10 hover:text-primary")}>
-                      <Icon size={18} className="shrink-0" />
+                      className={({ isActive }) => cn("flex shrink-0 items-center gap-2.5 rounded-lg px-3 py-2 text-start text-sm whitespace-nowrap transition-colors lg:w-full",
+                        isActive ? "bg-primary font-semibold text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground")}>
+                      <Icon size={16} className="shrink-0" />
                       <span>{t(`settings.s.${s.id}`)}</span>
                     </NavLink>
                   )
                 })}
               </nav>
-            </div>
-          </div>
-          <div className="w-full min-w-0 flex-1">{body}</div>
-        </div>
-      </CardContent>
-    </Card>
+            </CardContent>
+          </Card>
+        </aside>
+        <div className="min-w-0">{body}</div>
+      </div>
+    </div>
   )
 }

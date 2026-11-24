@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Save } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { readLocal } from "../local"
 import { useAppSettings, useSaveTab } from "../queries"
@@ -37,25 +38,29 @@ export function TabForm({ tab, readOnly }: { tab: FormTab; readOnly: boolean }) 
     const Icon = tab.icon
     return (
       <form onSubmit={submit} noValidate>
-        <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-          <div className="flex items-center gap-3 border-b border-border bg-muted/40 px-4 py-4 sm:px-6">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"><Icon size={20} /></span>
-            <h2 className="text-lg font-bold text-foreground">{t(`settings.s.${tab.id}`)}</h2>
-          </div>
-          <div className="p-4 sm:p-6">
-            {fields}
-            {readOnly && <p className="mt-4 text-sm text-muted-foreground">{t("settings.readOnly")}</p>}
-          </div>
-        </section>
-        {!readOnly && form.formState.isDirty && (
-          <div className="sticky bottom-4 z-20 mt-6 flex flex-col gap-3 rounded-2xl border border-border bg-card/95 p-3 shadow-lg backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:px-5">
-            <span className="flex items-center gap-2 text-sm font-medium text-foreground"><span className="size-2 rounded-full bg-amber-500" />{t("settings.unsaved")}</span>
-            <div className="flex gap-2 max-sm:[&>button]:flex-1">
-              <Button type="button" variant="outline" onClick={() => form.reset(saved)}>{t("settings.discard")}</Button>
-              <Button type="submit" className="gap-2 px-6 font-bold" disabled={save.isPending}><Save size={18} />{t("settings.saveSettings")}</Button>
+        <div className="flex flex-col gap-5">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2.5 text-[15px]">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"><Icon size={16} /></span>
+                {t(`settings.s.${tab.id}`)}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {fields}
+              {readOnly && <p className="mt-4 text-sm text-muted-foreground">{t("settings.readOnly")}</p>}
+            </CardContent>
+          </Card>
+          {!readOnly && form.formState.isDirty && (
+            <div className="sticky bottom-0 z-10 -mx-4 flex flex-wrap items-center justify-between gap-3 border-t bg-background/90 px-4 py-3 backdrop-blur md:-mx-6 md:px-6">
+              <span className="flex items-center gap-2 text-sm text-muted-foreground" role="status"><span className="size-2 rounded-full bg-warning" />{t("settings.unsaved")}</span>
+              <div className="flex gap-2">
+                <Button type="button" variant="outline" size="lg" onClick={() => form.reset(saved)}>{t("settings.discard")}</Button>
+                <Button type="submit" size="lg" disabled={save.isPending}><Save size={16} />{t("settings.saveSettings")}</Button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
         {leave}
       </form>
     )
