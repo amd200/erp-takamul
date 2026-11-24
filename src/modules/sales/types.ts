@@ -136,7 +136,7 @@ export type ReturnInput = {
   order: SalesOrderDto;
   date: string;
   reason: string;
-  quantities: number[];
+  lines: (InvoiceLine & { originalItemId: number })[];
   refunds: { treasuryId: number; amount: number }[];
   key?: string;
 };

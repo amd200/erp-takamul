@@ -64,7 +64,7 @@ export const returnsApi = {
   list: (sort?: ListSort) => fetchAllPages<SalesReturnDto>("/sales-returns", { pageSize: 50, params: { ...sort } }),
   get: (id: number) => http<SalesReturnDto>(`/sales-returns/${id}`),
   create: async (input: ReturnInput) => {
-    const items = (input.order.items ?? []).flatMap((l, i) => (input.quantities[i] > 0 ? [{ originalItemId: l.id, productId: l.productId, unitId: l.unitId, quantity: input.quantities[i] }] : []))
+    const items = input.lines.filter((l) => l.quantity > 0).map((l) => ({ originalItemId: l.originalItemId, productId: l.productId, unitId: l.unitId, quantity: l.quantity }))
     const refunds = input.refunds.filter((r) => r.amount > 0)
     const warehouseId = await warehouseIdOf(input.order)
     return retryWhileInProgress(() => http<{ id?: number }>("/sales-returns", {

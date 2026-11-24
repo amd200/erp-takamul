@@ -8,6 +8,7 @@ import { useAuthStore } from "@/shared/auth/authStore"
 import { newIdempotencyKey } from "@/shared/http/idempotency"
 import type { SelectedMeasurement } from "@/modules/customers/types"
 import type { Quote } from "@/modules/quotes/types"
+import { settingsApi } from "@/modules/settings/service"
 import { newLineKey, sameLine } from "./cart"
 import type { CartDiscount, CartLine, DineInMode, OrderType } from "./types"
 
@@ -95,7 +96,8 @@ export const usePosStore = create<PosState>()(persist((set, get) => {
       if (locked()) return
       const next: CartLine = { notes: "", extras: [], ...line, key: newLineKey() }
       set((s) => {
-        const same = s.lines.find((l) => sameLine(l, next))
+        // With "add repeated item as a new line" on, the same item is never merged into an existing line.
+        const same = settingsApi.snapshot().itemsTab?.showItemInOneLine ? undefined : s.lines.find((l) => sameLine(l, next))
         return same
           ? { lines: s.lines.map((l) => (l.key === same.key ? { ...l, quantity: l.quantity + next.quantity } : l)) }
           : { lines: [...s.lines, next] }

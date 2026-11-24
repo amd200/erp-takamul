@@ -44,7 +44,8 @@ export function LinesEditor({ allowFreeText, purchase, simple, hideDiscount }: {
   const rootError = errors.lines?.message ?? errors.lines?.root?.message
 
   const add = (line: InvoiceLine) => {
-    const i = getValues("lines").findIndex((l) => l.productId === line.productId && l.productName === line.productName && l.unitName === line.unitName)
+    // With "add repeated item as a new line" on, the same item is never merged into an existing row.
+    const i = settings.itemsTab?.showItemInOneLine ? -1 : getValues("lines").findIndex((l) => l.productId === line.productId && l.productName === line.productName && l.unitName === line.unitName)
     if (i >= 0) setValue(`lines.${i}.quantity`, getValues(`lines.${i}.quantity`) + 1, { shouldValidate: true })
     // Keep focus in the barcode box so the next scan doesn't land in the new row.
     else rows.append(line, { shouldFocus: false })

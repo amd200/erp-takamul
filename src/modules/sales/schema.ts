@@ -3,7 +3,7 @@ import { PAYMENT_METHODS } from "./types"
 
 const num = (msg = "validation.number") => z.number({ error: msg })
 
-export const lineSchema = z.object({
+const lineFields = z.object({
   productId: z.number(),
   taxId: z.number().optional(),
   unitId: z.number(),
@@ -16,7 +16,12 @@ export const lineSchema = z.object({
   discountKind: z.enum(["percent", "value"]),
   discount: num().min(0, "validation.min0"),
   categoryDiscount: z.object({ kind: z.enum(["percent", "value"]), value: z.number() }).optional(),
-}).refine((l) => l.discountKind !== "percent" || l.discount <= 100, { path: ["discount"], message: "validation.percentMax" })
+})
+
+export const lineSchema = lineFields.refine((l) => l.discountKind !== "percent" || l.discount <= 100, { path: ["discount"], message: "validation.percentMax" })
+
+/** A return line is the invoice line it comes from (same fields) plus its id; only the quantity can change, and 0 means not returned. */
+const returnLineSchema = lineFields.extend({ originalItemId: z.number(), quantity: num().min(0, "validation.min0") })
 
 const paymentSchema = z.object({
   /** 0 is allowed (the "cancel credit" button zeroes payments); negatives are refused. */
@@ -53,7 +58,7 @@ export type DebitNoteForm = z.infer<typeof debitNoteSchema>
 export const returnSchema = z.object({
   date: z.string().min(1, "validation.dateRequired"),
   reason: z.string(),
-  quantities: z.array(z.number().min(0, "validation.min0")),
+  lines: z.array(returnLineSchema),
   payments: z.array(z.object({ treasuryId: z.number().min(1, "validation.required"), amount: z.number().min(0, "validation.min0") })),
 })
 export type ReturnForm = z.infer<typeof returnSchema>
