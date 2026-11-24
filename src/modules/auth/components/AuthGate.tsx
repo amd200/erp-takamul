@@ -8,6 +8,11 @@ import { authApi } from "../service"
 
 let restoring = false
 
+/** Where to go after signing in: only an in-app path ("/x"), never "//host" or a full URL. */
+export function safeFrom(from: unknown): string {
+  return typeof from === "string" && /^\/(?![/\\])/.test(from) ? from : "/"
+}
+
 /**
  * Wraps the app: on first load it tries to restore the session from the refresh cookie, then
  * lets signed-in users through and sends everyone else to /login (remembering where they were going).
@@ -39,5 +44,6 @@ export function RequireAuth() {
 /** The sign-in pages bounce signed-in users to the app. */
 export function GuestOnly() {
   const signedIn = useAuthStore((s) => !!s.session)
-  return signedIn ? <Navigate to="/" replace /> : <Outlet />
+  const from = safeFrom((useLocation().state as { from?: string } | null)?.from)
+  return signedIn ? <Navigate to={from} replace /> : <Outlet />
 }

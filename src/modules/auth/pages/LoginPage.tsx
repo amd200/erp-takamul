@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 import { Input } from "@/components/ui/input"
 import { ApiError } from "@/shared/http/ApiError"
+import { safeFrom } from "../components/AuthGate"
 import { AuthLayout } from "../components/AuthLayout"
 import { authFieldClass as fieldClass } from "../components/AuthField"
 import { authApi } from "../service"
@@ -17,7 +18,7 @@ import { loginSchema, type LoginForm } from "../schema"
 export default function LoginPage() {
   const { t } = useTranslation()
   const nav = useNavigate()
-  const from = (useLocation().state as { from?: string } | null)?.from ?? "/"
+  const from = safeFrom((useLocation().state as { from?: string } | null)?.from)
   const [reveal, setReveal] = useState(false)
   const [error, setError] = useState("")
   const [conflict, setConflict] = useState(false)
