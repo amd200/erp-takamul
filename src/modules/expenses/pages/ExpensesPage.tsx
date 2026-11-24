@@ -56,7 +56,7 @@ export function ExpenseDialog({ open, onOpenChange, expense }: { open: boolean; 
   const treasuryOptions = treasuries.map((x) => ({ value: String(x.id), label: `${x.name} — ${x.currentBalance == null ? "—" : formatMoney(x.currentBalance)}` }))
   // Stopped items stay selectable on the expense that already uses one.
   const itemOptions = items.filter((x) => x.isActive !== false || x.id === expense?.itemId).map((x) => ({ value: String(x.id), label: x.name ?? "" }))
-  const submit = form.handleSubmit((data) => save.mutate({ id: expense?.id, data, key: key.current }, { onSuccess: () => onOpenChange(false), onError: renewIfReused(key) }))
+  const submit = form.handleSubmit((data) => !over && save.mutate({ id: expense?.id, data, key: key.current }, { onSuccess: () => onOpenChange(false), onError: renewIfReused(key) }))
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -86,15 +86,9 @@ export function ExpenseDialog({ open, onOpenChange, expense }: { open: boolean; 
           </form>
         </DialogBody>
         <DialogFooter>
-           <button
-      onClick={() => {
-        throw new Error('This is your first error!');
-      }}
-    >
-      Break the world
-    </button>
+         
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
-          <Button type="submit" form="expense-form" disabled={save.isPending }>{t("common.save")}</Button>
+          <Button type="submit" form="expense-form" disabled={save.isPending || over}>{t("common.save")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
