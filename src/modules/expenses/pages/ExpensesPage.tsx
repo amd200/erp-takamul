@@ -86,6 +86,13 @@ export function ExpenseDialog({ open, onOpenChange, expense }: { open: boolean; 
           </form>
         </DialogBody>
         <DialogFooter>
+           <button
+      onClick={() => {
+        throw new Error('This is your first error!');
+      }}
+    >
+      Break the world
+    </button>
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
           <Button type="submit" form="expense-form" disabled={save.isPending }>{t("common.save")}</Button>
         </DialogFooter>
