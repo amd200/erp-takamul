@@ -3,9 +3,12 @@ import { useAuthStore } from "@/shared/auth/authStore"
 
 /**
  * Error monitoring (Sentry, or GlitchTip: only the DSN differs). Off unless VITE_SENTRY_DSN is set,
- * so dev and the mock server never send anything. This ERP holds customer data, so nothing but
- * the error itself leaves the browser: no default PII, no request/response bodies, no headers,
- * cookies or tokens, no query strings, and the user is only an id plus a branch tag.
+ * so dev and the mock server never send anything. This ERP holds customer data, so events carry
+ * no default PII, no request/response bodies, no headers, cookies or tokens, no query strings,
+ * and the user is only an id plus a branch tag.
+ * Session replay is the exception, by the owner's decision: only sessions that hit an error are
+ * recorded, with page text visible (maskAllText off) but every input masked (maskAllInputs on, so
+ * passwords, logins, tokens and typed values never leave) and no network detail capture.
  */
 const dsn: string | undefined = import.meta.env.VITE_SENTRY_DSN
 
@@ -15,11 +18,14 @@ export function initMonitoring() {
     dsn,
     environment: import.meta.env.VITE_APP_ENV || import.meta.env.MODE,
     release: import.meta.env.VITE_APP_RELEASE || undefined,
+    replaysSessionSampleRate: 0,
+    replaysOnErrorSampleRate: 1.0,
     // Breadcrumbs for console / clicks / fetch / xhr can carry typed text and URLs: keep navigation only.
     // In @sentry/react 11 console capture is its own default integration ("Console"), so drop it here.
     integrations: (defaults) => [
       ...defaults.filter((i) => i.name !== "Breadcrumbs" && i.name !== "Console"),
       Sentry.breadcrumbsIntegration({ dom: false, fetch: false, xhr: false, history: true }),
+      Sentry.replayIntegration({ maskAllText: false, blockAllMedia: false, maskAllInputs: true }),
     ],
     beforeSend(event) {
       if (event.request) {
