@@ -85,7 +85,7 @@ let leaving: ReturnType<typeof setTimeout> | undefined
 
 /**
  * What the sales screens read while the cart is an order request: the mode and a save that sends it to the server.
- * Leaving the screen drops the request (and its cart), so the next visit is an ordinary sale. React's dev double mount unmounts and mounts
+ * Leaving the screen drops the request (and its cart), so the next visit is an ordinary sale (the sales screen picks its default customer again). React's dev double mount unmounts and mounts
  * again at once, so the drop waits a tick and a mount cancels it.
  */
 export function useOrderRequestMode() {
@@ -96,7 +96,7 @@ export function useOrderRequestMode() {
 
   useEffect(() => {
     clearTimeout(leaving)
-    return () => { leaving = setTimeout(() => { if (usePosStore.getState().orderRequest) usePosStore.getState().clear() }) }
+    return () => { leaving = setTimeout(() => { const s = usePosStore.getState(); if (s.orderRequest) { s.clear(); s.setCustomer(null, "") } }) }
   }, [])
 
   return {
