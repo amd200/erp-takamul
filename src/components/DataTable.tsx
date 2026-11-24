@@ -60,7 +60,7 @@ const features = tableFeatures({
 
 /** The one list pattern used by every page: search and filters on top, quiet table, pager at the bottom. */
 export function DataTable<T extends RowData>({
-  rows, columns: columnsProp, rowKey, serial = true, loading, searchText, searchPlaceholder, filters, empty, emptyText, pageSize = 10, server, pager = true, sort: sortProp,
+  rows, columns: columnsProp, rowKey, serial = true, loading, searchText, searchPlaceholder, filters, empty, emptyText, pageSize = 10, server, pager = true, sort: sortProp, onRowClick,
 }: {
   rows: T[] | undefined
   columns: Column<T>[]
@@ -81,6 +81,8 @@ export function DataTable<T extends RowData>({
   pager?: boolean
   /** Sort done by the server (works with server paging or with a fully loaded list); headers with a `sortKey` become buttons. */
   sort?: TableSort
+  /** Makes the whole row clickable; clicks on buttons, links, inputs and menus inside the row are ignored. */
+  onRowClick?: (row: T) => void
 }) {
   const { t } = useTranslation()
   const header = t("common.serial")
@@ -207,7 +209,13 @@ export function DataTable<T extends RowData>({
                 <TableRow className="hover:bg-transparent"><TableCell colSpan={columns.length} className="py-6 font-normal text-muted-foreground">{emptyText ?? t("common.noData")}</TableCell></TableRow>
               )}
               {slice.map((row, ri) => (
-                <TableRow key={row.id}>
+                <TableRow key={row.id} className={onRowClick ? "cursor-pointer" : undefined}
+                  onClick={onRowClick && ((e) => {
+                    const target = e.target as HTMLElement
+                    // Portalled menus bubble through React but are not inside the row; interactive cells handle their own clicks.
+                    if (!e.currentTarget.contains(target) || target.closest("a,button,input,select,textarea,label,[role=menuitem],[role=checkbox],[role=switch]")) return
+                    onRowClick(row.original)
+                  })}>
                   {row.getAllCells().map((cell) => (
                     <TableCell key={cell.id} className={cn("tabular-nums py-3", columnsProp.some((c) => c.width) && "overflow-hidden text-ellipsis", columns.find((c) => c.id === cell.column.id)?.className)}>{columns.find((c) => c.id === cell.column.id)?.serial ? firstNo + ri + 1 : <table.FlexRender cell={cell} />}</TableCell>
                   ))}

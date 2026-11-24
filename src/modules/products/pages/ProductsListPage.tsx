@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { PackageSearch, Plus, RotateCw, Upload } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Badge } from "@/components/ui/badge"
@@ -46,6 +46,7 @@ function Thumb({ p }: { p: Product }) {
 export default function ProductsListPage() {
   const { t } = useTranslation()
   const can = useCan()
+  const navigate = useNavigate()
   const { data: categories = [] } = useCategories()
   const del = useDeleteProduct()
   const branchColumn = useBranchColumn<Product>((p) => ({ id: p.branchId }))
@@ -113,6 +114,7 @@ export default function ProductsListPage() {
             loading={isLoading}
             columns={columns}
             rowKey={(p) => p.id}
+            onRowClick={can(P.products.edit) ? (p) => navigate(`/products/edit/${p.id}?type=${p.productType}`) : undefined}
             searchPlaceholder={t("products.searchPlaceholder")}
             server={{ total: data?.totalCount ?? 0, page, pageSize: PAGE_SIZE, onPage: setPage, onSearch, fetching: isFetching && !isLoading,
               sort: { key: sort.key, desc: sort.desc, onSort: (key, desc) => { setSort({ key, desc }); setPage(0) } } }}

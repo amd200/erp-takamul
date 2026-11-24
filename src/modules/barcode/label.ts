@@ -6,7 +6,7 @@ export type LabelData = { company: string; name: string; price: number; currency
 
 const FONT = "Cairo,Tahoma,sans-serif"
 /** Space between the label's edge and its content, so nothing touches the paper edge. */
-const PAD_MM = 2
+const PAD_MM = 1.5
 
 function bars(code: string, height: number) {
   const widths = code128(code)
@@ -18,7 +18,7 @@ function bars(code: string, height: number) {
 }
 
 const line = (text: string, size: number, spacing: number, weight: number) =>
-  `<div style="width:100%;font-size:${Math.max(4, size)}px;letter-spacing:${spacing}px;font-weight:${weight};line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(text)}</div>`
+  `<div style="width:100%;font-size:${Math.max(4, size)}px;letter-spacing:${spacing}px;font-weight:${weight};line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(text)}</div>`
 
 /** One label as HTML. The screen preview and the printout use this same markup, so they match. */
 export function labelHtml(d: LabelData, s: LabelSettings) {

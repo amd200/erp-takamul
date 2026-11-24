@@ -20,7 +20,7 @@ export type LabelSettings = {
 }
 
 export const DEFAULT_SETTINGS: LabelSettings = {
-  width: 40, height: 30, barcodeHeight: 40, numberSize: 12,
+  width: 40, height: 30, barcodeHeight: 46, numberSize: 12,
   showCompany: true, showName: true, showPrice: true, showCurrency: true,
   company: { fontSize: 15, spacing: 0 }, name: { fontSize: 15, spacing: 0 }, price: { fontSize: 15, spacing: 0 },
 }
