@@ -34,7 +34,8 @@ export async function http<T>(url: string, o: Options = {}): Promise<T> {
       const timeout = e.code === "ECONNABORTED" || e.code === "ETIMEDOUT"
       throw new ApiError(i18n.t(timeout ? "common.timeout" : "common.network"), 0, { code: timeout ? "TIMEOUT" : "NETWORK", cause: e })
     }
-    if (e.response.status >= 500) reportApiFailure(o.method ?? "GET", url, e.response.status)
+    // 401 is routine (the client refreshes the token itself, wrong login password) so it is not reported; every other HTTP error is.
+    if (e.response.status !== 401) reportApiFailure(o.method ?? "GET", url, e.response.status)
     // A blob request's error body arrives as a Blob; read it back to the JSON the server sent.
     const body = e.response.data instanceof Blob ? await readBlobJson(e.response.data) : e.response.data
     const errors = toErrorList((body as { errors?: unknown } | undefined)?.errors)

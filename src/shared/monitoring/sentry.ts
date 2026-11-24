@@ -47,14 +47,14 @@ export function reportError(error: unknown) {
 }
 
 /**
- * Report a failed API call (server error or no connection). The server's message is left out on
+ * Report a failed API call: every failed call except 401 (HTTP errors and no connection). The server's message is left out on
  * purpose, it may quote customer data; only method, route (ids removed) and status are sent.
  */
 export function reportApiFailure(method: string, url: string, status: number) {
   if (!dsn) return
   const route = url.split("?")[0].replace(/\/\d+(?=\/|$)/g, "/:id").replace(/[0-9a-f]{8}-[0-9a-f-]{27}/gi, ":id")
   Sentry.captureMessage(`API ${method} ${route} ${status || "network"}`, {
-    level: "error",
+    level: status >= 500 || status === 0 ? "error" : "warning",
     tags: { api_status: status || "network" },
     fingerprint: ["api", method, route, String(status)],
   })
