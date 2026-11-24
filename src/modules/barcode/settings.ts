@@ -20,12 +20,12 @@ export type LabelSettings = {
 }
 
 export const DEFAULT_SETTINGS: LabelSettings = {
-  width: 40, height: 30, barcodeHeight: 46, numberSize: 12,
+  width: 40, height: 30, barcodeHeight: 54, numberSize: 12,
   showCompany: true, showName: true, showPrice: true, showCurrency: true,
-  company: { fontSize: 15, spacing: 0 }, name: { fontSize: 15, spacing: 0 }, price: { fontSize: 15, spacing: 0 },
+  company: { fontSize: 12, spacing: 0 }, name: { fontSize: 12, spacing: 0 }, price: { fontSize: 12, spacing: 0 },
 }
 
-const KEY = "barcode_print_settings"
+const KEY = "barcode_print_settings_v2"
 
 function load(): LabelSettings {
   try {
