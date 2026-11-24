@@ -2,6 +2,7 @@ import axios from "axios"
 import i18n from "@/shared/i18n"
 import { client } from "./client"
 import { ApiError } from "./ApiError"
+import { reportApiFailure } from "@/shared/monitoring/sentry"
 
 type Options = {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
@@ -29,9 +30,11 @@ export async function http<T>(url: string, o: Options = {}): Promise<T> {
     if (axios.isCancel(e) || e instanceof ApiError) throw e
     if (!axios.isAxiosError(e)) throw e
     if (!e.response) {
+      reportApiFailure(o.method ?? "GET", url, 0)
       const timeout = e.code === "ECONNABORTED" || e.code === "ETIMEDOUT"
       throw new ApiError(i18n.t(timeout ? "common.timeout" : "common.network"), 0, { code: timeout ? "TIMEOUT" : "NETWORK", cause: e })
     }
+    if (e.response.status >= 500) reportApiFailure(o.method ?? "GET", url, e.response.status)
     // A blob request's error body arrives as a Blob; read it back to the JSON the server sent.
     const body = e.response.data instanceof Blob ? await readBlobJson(e.response.data) : e.response.data
     const errors = toErrorList((body as { errors?: unknown } | undefined)?.errors)
