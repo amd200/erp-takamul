@@ -1399,11 +1399,6 @@
     "certTitle": "Sartifiket",
     "certDescription": "Nibondhito POS device certificate porichalona korun",
     "certType": "Type",
-    "certTypes": {
-      "CCSID": "Compliance",
-      "PCSID": "Utpadon",
-      "CSR": "Order"
-    },
     "statActive": "Boidho sarti",
     "statSoon": "30 dine meyad sesh",
     "statMissing": "Boidho sarti charai device",

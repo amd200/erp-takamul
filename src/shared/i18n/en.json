@@ -1401,11 +1401,6 @@
     "certTitle": "Certificates",
     "certDescription": "E-invoicing certificates for each device and when they expire.",
     "certType": "Type",
-    "certTypes": {
-      "CCSID": "Compliance",
-      "PCSID": "Production",
-      "CSR": "Request"
-    },
     "statActive": "Valid certificates",
     "statSoon": "Expire within 30 days",
     "statMissing": "Devices without a valid certificate",

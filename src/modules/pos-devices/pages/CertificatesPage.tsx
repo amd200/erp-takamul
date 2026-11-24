@@ -29,7 +29,7 @@ export default function CertificatesPage() {
 
   const columns: Column<CertificateSummary>[] = [
     { id: "deviceName", sortable: true, header: t("devices.name"), cell: (c) => <span className="font-semibold">{c.deviceName}</span> },
-    { id: "currentCertificateType", sortable: true, header: t("devices.certType"), cell: (c) => (c.currentCertificateType ? <StatusBadge tone={c.currentCertificateType === "PCSID" ? "success" : "warning"}>{t(`devices.certTypes.${c.currentCertificateType}`, { defaultValue: c.currentCertificateType })}</StatusBadge> : <span className="text-faint">—</span>) },
+    { id: "currentCertificateType", sortable: true, header: t("devices.certType"), cell: (c) => (c.currentCertificateType ? <StatusBadge tone="neutral">{c.currentCertificateType}</StatusBadge> : <span className="text-faint">—</span>) },
     { id: "hasActiveCertificate", sortable: true, header: t("devices.registration"), cell: (c) => (c.isExpired ? <StatusBadge tone="danger">{t("devices.expired")}</StatusBadge> : c.hasActiveCertificate ? <StatusBadge tone="success">{t("common.active")}</StatusBadge> : <StatusBadge tone="danger">{t("common.inactive")}</StatusBadge>) },
     { id: "expiresAt", sortable: true, header: t("devices.certExpiry"), cell: (c) => <ExpiryBadge expiresAt={c.expiresAt} daysLeft={c.daysUntilExpiry} expired={c.isExpired} /> },
     { id: "actions", header: "", align: "end", cell: (c) => (

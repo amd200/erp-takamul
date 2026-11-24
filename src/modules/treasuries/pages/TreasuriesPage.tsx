@@ -38,24 +38,24 @@ function TreasuryDialog({ open, onOpenChange, treasury }: { open: boolean; onOpe
   const shown = form.watch("showInSalesScreen")
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[900px]">
+      <DialogContent className="sm:max-w-[1100px]">
         <DialogHeader className="py-3"><DialogTitle className="flex items-center gap-2 text-[#2ecc71]"><Wallet size={18} />{title}</DialogTitle></DialogHeader>
         <DialogBody>
           <form id="treasury-form" onSubmit={submit} noValidate className="no-scrollbar -mx-4 max-h-[50vh] overflow-y-auto px-4">
-            <div className="grid grid-cols-1 gap-5 p-2 md:grid-cols-2">
-              {formBranch.show && <BranchSection className="md:col-span-2" value={formBranch.branchId} onChange={formBranch.pick} />}
+            <div className="grid grid-cols-1 gap-5 p-2 md:grid-cols-[1fr_1fr_1fr_auto] md:items-end">
+              {formBranch.show && <BranchSection className="md:col-span-4" value={formBranch.branchId} onChange={formBranch.pick} />}
               <FormInput control={form.control} name="name" required label={t("oldTreasuries.nameLabel")} placeholder={t("oldTreasuries.nameHint")} />
               <FormInput control={form.control} name="openingBalance" type="number" label={t("oldTreasuries.opening")} placeholder="0" />
-              <div className="md:col-span-2">
+              <div>
                 <Controller control={form.control} name="openingBalanceDate" render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}><FieldLabel htmlFor="obd">{t("oldTreasuries.openingDate")}</FieldLabel><DatePicker id="obd" value={field.value} onChange={field.onChange} onBlur={field.onBlur} aria-invalid={fieldState.invalid} /><FieldError>{fieldState.error && t(fieldState.error.message!)}</FieldError></Field>
                 )} />
               </div>
-              <div className="flex items-center gap-3 rounded-2xl border border-border p-3 md:col-span-2">
+              <div className="flex items-center gap-3 rounded-2xl border border-border p-3 md:whitespace-nowrap">
                 <Checkbox id="treasury-in-sales" checked={shown ?? "indeterminate"} onCheckedChange={(c) => form.setValue("showInSalesScreen", c === true, { shouldValidate: true, shouldDirty: true })} />
                 <label htmlFor="treasury-in-sales" className="cursor-pointer text-sm font-medium">{t("oldTreasuries.showInSales")}</label>
               </div>
-              {form.formState.errors.showInSalesScreen && <FieldError>{t("validation.required")}</FieldError>}
+              {form.formState.errors.showInSalesScreen && <FieldError className="md:col-span-4">{t("validation.required")}</FieldError>}
             </div>
           </form>
         </DialogBody>
