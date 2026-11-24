@@ -48,8 +48,8 @@ export default function PurchasesPage() {
     { id: "purchaseOrderNumber", sortable: true, header: t("purchases.colNumber"), cell: (p) => <Link to={`/purchases/${p.id}`} className="hover:underline">{p.purchaseOrderNumber}</Link> },
     { id: "orderDate", sortable: true, className: "min-w-44", header: t("purchases.colDate"), cell: (p) => (p.orderDate ? formatDateTime(p.orderDate, i18n.language) : "—") },
     { id: "supplierName", sortable: true, header: t("purchases.colSupplier"), cell: (p) => p.supplierName || "—" },
-    { id: "paymentStatus", sortable: true, header: t("purchases.colStatus"), cell: (p) => <Status p={p} /> },
     { id: "grandTotal", sortable: true, header: t("purchases.colTotal"), cell: (p) => formatMoney(p.grandTotal ?? 0) },
+    { id: "paymentStatus", sortable: true, header: t("purchases.colStatus"), cell: (p) => <Status p={p} /> },
     { id: "paidAmount", sortable: true, header: t("purchases.colPaid"), cell: (p) => formatMoney(p.paidAmount ?? 0) },
     { id: "actions", header: t("purchases.colActions"), cell: (p) => (
       <RowActions extra={[can(P.purchases.edit) && { key: "payments", label: t("purchases.payments"), icon: <HandCoins />, onSelect: () => setPaymentsId(p.id) }]} editTo={can(P.purchases.edit) ? `/purchases/${p.id}/edit` : undefined} onDelete={can(P.purchases.cancel) ? () => setToCancel(p) : undefined} />
