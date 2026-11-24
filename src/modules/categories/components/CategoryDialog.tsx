@@ -39,14 +39,14 @@ export function CategoryDialog({ open, onOpenChange, category }: { open: boolean
                 <FormInput control={form.control} name="categoryNameEn" label={t("categories.nameEn")} dir="ltr" />
                 <FormInput control={form.control} name="categoryNameUr" label={t("categories.nameUr")} dir="ltr" />
               </div>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className={`grid grid-cols-1 gap-3 ${category ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
                 <FormInput control={form.control} name="displayOrder" type="number" label={t("common.displayOrder")} />
                 <FormInput control={form.control} name="description" label={t("common.description")} placeholder={t("common.optional")} />
+                {/* The server keeps printers per item; this sets it on every item already in the category. */}
+                {category && (
+                  <FormSelect control={form.control} name="printerName" label={t("categories.printerForItems")} allowEmpty={t("productForm.noPrinter")} options={printers} />
+                )}
               </div>
-              {/* The server keeps printers per item; this sets it on every item already in the category. */}
-              {category && (
-                <FormSelect control={form.control} name="printerName" label={t("categories.printerForItems")} allowEmpty={t("productForm.noPrinter")} options={printers} />
-              )}
             </FieldGroup>
           </form>
         </DialogBody>
