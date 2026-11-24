@@ -57,7 +57,7 @@ export function LinesEditor({ allowFreeText, purchase, simple, hideDiscount }: {
   const exempt = settings.taxSetting?.taxSetting === "Exempt"
   // Purchase setting "تغيير سعر الإجمالي": the line total is typed and the unit cost is worked back from it, as in the current system.
   const editTotal = !!purchase && !!settings.purchasesScreenTab?.purchesSetting
-  const shown = SPEC.filter((c) => !(hideDiscount && c.id === "discount") && !(simple && (c.id === "discount" || (c.id === "taxType" && !purchase))) && !(exempt && (c.id === "taxType" || c.id === "before" || c.id === "vat")))
+  const shown = SPEC.filter((c) => !(hideDiscount && c.id === "discount") && !(simple && c.id === "discount") && !(c.id === "taxType" && !purchase) && !(exempt && (c.id === "taxType" || c.id === "before" || c.id === "vat")))
   const { data: taxes = [] } = useTaxes()
   // Changing a line's tax keeps its total in total mode (the cost moves), otherwise the cost stays and the total moves.
   const setTax = (i: number, taxId: number) => {
@@ -141,15 +141,15 @@ export function LinesEditor({ allowFreeText, purchase, simple, hideDiscount }: {
                       )}
                     </div>
                   )}
-                  {has("taxType") && (purchase ? (
-                    // Buying: the tax is picked per line from the tax list, as in the current system.
+                  {has("taxType") && (
+                    // Buying only: the tax is picked per line from the tax list, as in the current system.
                     <div className="text-center"><Caption>{L.taxType}</Caption>
                       <Select value={l.taxId ? String(l.taxId) : ""} onValueChange={(v) => setTax(i, Number(v))}>
                         <SelectTrigger className={cn("h-10 w-full", errors.lines?.[i]?.taxId && "border-destructive")} aria-label={L.taxType} aria-invalid={!!errors.lines?.[i]?.taxId || undefined}><SelectValue placeholder={t("pos3.pickTax")} /></SelectTrigger>
                         <SelectContent>{taxes.map((x) => <SelectItem key={x.id} value={String(x.id)}>{x.name}</SelectItem>)}</SelectContent>
                       </Select>
                     </div>
-                  ) : <div className="text-center font-medium text-foreground tabular-nums"><Caption>{L.taxType}</Caption>{l.taxPercentage}% {l.taxCalculation === 1 ? t("sales.inclusive") : t("sales.exclusive")}</div>)}
+                  )}
                   {has("before") && <div className="text-center font-medium text-foreground tabular-nums"><Caption>{L.before}</Caption>{formatMoney(a.net)}</div>}
                   {has("vat") && <div className="text-center font-medium text-orange-500 tabular-nums"><Caption>{L.vat}</Caption>{formatMoney(a.tax)}</div>}
                   <div className="text-center font-bold text-success tabular-nums"><Caption>{L.total}</Caption>{editTotal

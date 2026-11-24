@@ -1092,8 +1092,6 @@
     "pickItem": "Choose an item",
     "lineTotal": "Total",
     "taxRate": "Tax",
-    "inclusive": "incl.",
-    "exclusive": "excl.",
     "discountKind": "Discount type",
     "kindValue": "Amt",
     "kindPercent": "Percentage",
