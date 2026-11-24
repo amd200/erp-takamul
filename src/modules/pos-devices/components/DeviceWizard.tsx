@@ -13,6 +13,7 @@ import { activeBranchId, useAuthStore } from "@/shared/auth/authStore"
 import { useAppSettings } from "@/modules/settings"
 import { useBranches } from "@/modules/lookups/service"
 import { devicesApi } from "../service"
+import { errorToast } from "@/shared/api/errors"
 import { useDevices, useGenerateCsr, useRegisterCcsid, useRegisterPcsid, useSaveDevice } from "../queries"
 import { deviceSchema, emptyDevice, type DeviceForm } from "../schema"
 import type { DeviceStatus, PosDevice } from "../types"
@@ -74,7 +75,6 @@ export function DeviceWizard({ open, onOpenChange, device }: { open: boolean; on
   const sessionBranch = useAuthStore((x) => x.session?.branchId)
   const [step, setStep] = useState(1)
   const [otp, setOtp] = useState("")
-  const [otpError, setOtpError] = useState(false)
   const form = useForm<DeviceForm>({ resolver: zodResolver(deviceSchema), defaultValues: emptyDevice })
 
   const live = devices.find((d) => d.id === deviceId)
@@ -89,7 +89,7 @@ export function DeviceWizard({ open, onOpenChange, device }: { open: boolean; on
     setCertificateId(null)
     const resume = device && onboarding && !registered(device.status) ? stepFor[device.status] : 1
     setStep(resume)
-    setOtp(""); setOtpError(false)
+    setOtp("")
     if (!device) devicesApi.generateSerial().then((s) => form.setValue("serialNumber", s))
     // Resuming at the OTP or production step: find the certificate that step works on.
     if (device && (resume === 3 || resume === 4)) devicesApi.latestCertificate(device.id).then((c) => setCertificateId(c?.id ?? null))
@@ -108,10 +108,11 @@ export function DeviceWizard({ open, onOpenChange, device }: { open: boolean; on
   const next = () => {
     if (step === 1) return saveInfo()
     if (!deviceId) return
-    if (step === 2) csr.mutate(deviceId, { onSuccess: (r) => { setCertificateId(r.certificateId); setStep(3) } })
+    const fail = (e: unknown) => errorToast(e, "common.saveFailed")
+    if (step === 2) csr.mutate(deviceId, { onSuccess: (r) => { setCertificateId(r.certificateId); setStep(3) }, onError: fail })
     if (certificateId == null) return
-    if (step === 3) ccsid.mutate({ certificateId, otp }, { onSuccess: () => setStep(4), onError: () => setOtpError(true) })
-    if (step === 4) pcsid.mutate(certificateId, { onSuccess: () => setStep(5) })
+    if (step === 3) ccsid.mutate({ certificateId, otp }, { onSuccess: () => setStep(4), onError: fail })
+    if (step === 4) pcsid.mutate(certificateId, { onSuccess: () => setStep(5), onError: fail })
   }
 
   return (
@@ -151,10 +152,9 @@ export function DeviceWizard({ open, onOpenChange, device }: { open: boolean; on
           {step === 3 && (
             <div className="flex flex-col gap-3">
               <p className="text-muted-foreground">{t("devices.otpBody")}</p>
-              <Input value={otp} onChange={(e) => { setOtp(e.target.value.replace(/\D/g, "").slice(0, 6)); setOtpError(false) }}
-                inputMode="numeric" dir="ltr" autoComplete="one-time-code" aria-label={t("devices.otp")} aria-invalid={otpError}
+              <Input value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                inputMode="numeric" dir="ltr" autoComplete="one-time-code" aria-label={t("devices.otp")}
                 placeholder="••••••" className="h-12 max-w-48 text-center text-xl tracking-[0.5em]" />
-              {otpError && <p className="text-sm text-destructive">{t("devices.otpInvalid")}</p>}
             </div>
           )}
 

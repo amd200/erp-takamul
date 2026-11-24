@@ -1404,9 +1404,9 @@
     "statActive": "Valid certificates",
     "statSoon": "Expire within 30 days",
     "statMissing": "Devices without a valid certificate",
-    "revoke": "Revoke",
-    "revokeTitle": "Revoke certificate",
-    "revokeBody": "“{{name}}” will stop sending invoices until it's onboarded again.",
+    "revoke": "Deactivate",
+    "revokeTitle": "Deactivate certificate",
+    "revokeBody": "The certificate of “{{name}}” is deactivated in the system only; it is not revoked at ZATCA.",
     "chain": "Invoice chain",
     "chainTitle": "Edit invoice chain",
     "chainHint": "Sets the counter (ICV) and previous invoice hash (PIH) the next invoice continues from. Change only when ZATCA asks for it.",
@@ -1417,7 +1417,7 @@
     "renewBody": "Enter the 6-digit OTP from the Fatoora portal to renew the certificate of “{{name}}”.",
     "certRenewed": "Certificate renewed",
     "expiringSoon": "{{count}} certificates expire within 30 days.",
-    "certRevoked": "Certificate revoked"
+    "certRevoked": "Certificate deactivated"
   },
   "employees": {
     "title": "Employees",

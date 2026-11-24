@@ -1,7 +1,9 @@
+import { useState } from "react"
 import { Link, NavLink, Navigate, useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Settings } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { ArrowLeft, Search, Settings } from "lucide-react"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { useCan } from "@/shared/permissions/usePermission"
@@ -19,6 +21,7 @@ export default function SettingsPage() {
   const { t } = useTranslation()
   const { group: groupParam, section: id } = useParams()
   const page: "sales" | "system" = groupParam === "system" ? "system" : "sales"
+  const [q, setQ] = useState("")
   const can = useCan()
   const settings = useAppSettings()
   const tabs = TABS.filter((x) => x.page === page && (x.id !== "zatca" || settings.taxSetting?.taxSetting === "SecondStage"))
@@ -78,20 +81,24 @@ export default function SettingsPage() {
         </CardAction>
       </CardHeader>
       <CardContent>
-        <div className="relative flex flex-col items-start gap-8 md:flex-row">
-          <div className="w-full md:w-64">
-            <div className="sticky top-24 overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-              <div className="flex items-center gap-2 border-b border-border bg-[var(--bg-main)]/50 p-4 font-bold text-[var(--text-main)]">
-                <Settings size={20} className="text-primary" />{t("nav.siteSettings")}
+        <div className="relative flex flex-col items-stretch gap-4 md:flex-row md:items-start md:gap-8">
+          <div className="min-w-0 md:w-64 md:shrink-0">
+            <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm md:sticky md:top-24">
+              <div className="hidden items-center gap-3 border-b border-border bg-muted/40 p-4 font-bold text-foreground md:flex">
+                <span className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary"><Settings size={18} /></span>{t("nav.siteSettings")}
               </div>
-              <nav aria-label={t("nav.settings")} className="space-y-1 p-2">
-                {tabs.map((s) => {
+              <div className="relative border-b border-border p-2">
+                <Search size={16} className="pointer-events-none absolute start-5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("common.search")} aria-label={t("common.search")} className="h-10 rounded-xl ps-9" />
+              </div>
+              <nav aria-label={t("nav.settings")} className="flex gap-1.5 overflow-x-auto p-2 [scrollbar-width:thin] md:max-h-[calc(100vh-18rem)] md:flex-col md:gap-1 md:overflow-y-auto md:overflow-x-hidden">
+                {tabs.filter((s) => t(`settings.s.${s.id}`).toLowerCase().includes(q.trim().toLowerCase()) || s.id === tab.id).map((s) => {
                   const Icon = s.icon
                   return (
                     <NavLink key={s.id} to={`/settings/${page}/${s.id}`}
-                      className={({ isActive }) => cn("flex w-full items-center gap-3 rounded-lg px-4 py-3 text-start text-sm transition-all",
-                        isActive ? "bg-primary font-bold text-primary-foreground" : "font-medium text-[var(--text-main)] hover:bg-primary/10 hover:text-primary")}>
-                      <Icon size={18} />
+                      className={({ isActive }) => cn("flex shrink-0 items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-start text-sm whitespace-nowrap transition-all md:w-full md:gap-3 md:py-3",
+                        isActive ? "bg-primary font-bold text-primary-foreground shadow-sm" : "font-medium text-foreground hover:bg-primary/10 hover:text-primary")}>
+                      <Icon size={18} className="shrink-0" />
                       <span>{t(`settings.s.${s.id}`)}</span>
                     </NavLink>
                   )

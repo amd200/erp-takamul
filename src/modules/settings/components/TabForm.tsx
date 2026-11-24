@@ -34,22 +34,28 @@ export function TabForm({ tab, readOnly }: { tab: FormTab; readOnly: boolean }) 
   )
 
   if (tab.page === "system") {
+    const Icon = tab.icon
     return (
       <form onSubmit={submit} noValidate>
-        <section className="mb-8 overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-          <div className="flex items-center justify-between border-b border-border bg-[var(--bg-main)]/50 p-4">
-            <h2 className="flex items-center gap-2 text-lg font-bold text-[var(--text-main)]"><div className="h-6 w-1 rounded-full bg-primary" />{t(`settings.s.${tab.id}`)}</h2>
+        <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+          <div className="flex items-center gap-3 border-b border-border bg-muted/40 px-4 py-4 sm:px-6">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"><Icon size={20} /></span>
+            <h2 className="text-lg font-bold text-foreground">{t(`settings.s.${tab.id}`)}</h2>
           </div>
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             {fields}
             {readOnly && <p className="mt-4 text-sm text-muted-foreground">{t("settings.readOnly")}</p>}
-            {!readOnly && (
-              <div className="mt-8 flex justify-start border-t border-border pt-6">
-                <Button type="submit" className="flex items-center gap-2 px-6 font-bold" disabled={save.isPending}><Save size={18} />{t("settings.saveSettings")}</Button>
-              </div>
-            )}
           </div>
         </section>
+        {!readOnly && form.formState.isDirty && (
+          <div className="sticky bottom-4 z-20 mt-6 flex flex-col gap-3 rounded-2xl border border-border bg-card/95 p-3 shadow-lg backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:px-5">
+            <span className="flex items-center gap-2 text-sm font-medium text-foreground"><span className="size-2 rounded-full bg-amber-500" />{t("settings.unsaved")}</span>
+            <div className="flex gap-2 max-sm:[&>button]:flex-1">
+              <Button type="button" variant="outline" onClick={() => form.reset(saved)}>{t("settings.discard")}</Button>
+              <Button type="submit" className="gap-2 px-6 font-bold" disabled={save.isPending}><Save size={18} />{t("settings.saveSettings")}</Button>
+            </div>
+          </div>
+        )}
         {leave}
       </form>
     )

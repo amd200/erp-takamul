@@ -1402,9 +1402,9 @@
     "statActive": "Boidho sarti",
     "statSoon": "30 dine meyad sesh",
     "statMissing": "Boidho sarti charai device",
-    "revoke": "Batil korun",
-    "revokeTitle": "Sarti batil korun",
-    "revokeBody": "Abar onboard na howa porjonto “{{name}}” chalan pathano bondho korbe.",
+    "revoke": "Bondho korun",
+    "revokeTitle": "Sarti bondho korun",
+    "revokeBody": "“{{name}}” er sarti shudhu system-e bondho hobe; ZATCA-te batil hobe na.",
     "chain": "Chalan chain",
     "chainTitle": "Chalan chain sompadona",
     "chainHint": "Porer chalan ja counter (ICV) o ager chalaner hash (PIH) theke shuru hobe ta thik kore. Shudhu ZATCA chaile bodlan.",
@@ -1415,7 +1415,7 @@
     "renewBody": "“{{name}}” er sartifiket noboyoner jonno Fatoora portal theke 6 sonkhyar OTP din.",
     "certRenewed": "Sartifiket noboyon hoyeche",
     "expiringSoon": "{{count}} ti sartifiket 30 diner moddhe shesh hobe.",
-    "certRevoked": "Sarti batil hoyeche"
+    "certRevoked": "Sarti bondho hoyeche"
   },
   "employees": {
     "title": "Kormocharider",

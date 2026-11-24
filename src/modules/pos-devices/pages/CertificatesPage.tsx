@@ -34,8 +34,8 @@ export default function CertificatesPage() {
     { id: "expiresAt", sortable: true, header: t("devices.certExpiry"), cell: (c) => <ExpiryBadge expiresAt={c.expiresAt} daysLeft={c.daysUntilExpiry} expired={c.isExpired} /> },
     { id: "actions", header: "", align: "end", cell: (c) => (
       <div className="flex items-center justify-end gap-1">
-        {can(P.posDevices.edit) && <Button variant="ghost" size="sm" onClick={() => setToRenew(c)}><RefreshCw />{t("devices.renew")}</Button>}
-        {can(P.certificates.delete) && <Button variant="ghost" size="sm" className="hover:bg-destructive-soft hover:text-destructive" onClick={() => setToRevoke(c)}><ShieldOff />{t("devices.revoke")}</Button>}
+        {c.hasActiveCertificate && can(P.posDevices.edit) && <Button variant="ghost" size="sm" onClick={() => setToRenew(c)}><RefreshCw />{t("devices.renew")}</Button>}
+        {c.hasActiveCertificate && can(P.certificates.delete) && <Button variant="ghost" size="sm" className="hover:bg-destructive-soft hover:text-destructive" onClick={() => setToRevoke(c)}><ShieldOff />{t("devices.revoke")}</Button>}
       </div>
     ) },
   ]

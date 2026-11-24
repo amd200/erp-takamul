@@ -52,8 +52,8 @@ export const Grid = ({ children }: { children: ReactNode }) => <div className="g
 /** A titled bordered box spanning the whole grid, as the old system groups related settings. */
 export function Section({ title, children, cols }: { title: string; children: ReactNode; cols?: boolean }) {
   return (
-    <section className="col-span-full rounded-xl border border-input p-4 sm:p-5">
-      <h2 className="mb-4 text-sm font-bold text-foreground">{title}</h2>
+    <section className="col-span-full rounded-2xl border border-border bg-muted/20 p-4 shadow-xs sm:p-5">
+      <h2 className="mb-4 flex items-center gap-2 text-sm font-bold text-foreground"><span className="h-4 w-1 rounded-full bg-primary" />{title}</h2>
       <div className={cols ? "grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3" : "grid grid-cols-1 gap-4"}>{children}</div>
     </section>
   )
@@ -64,7 +64,7 @@ export function Check({ control, name }: { control: Control<FieldValues>; name: 
   const label = useLabel()
   return (
     <Controller control={control} name={name} render={({ field }) => (
-      <div className="flex min-h-14 min-w-0 items-center gap-3 rounded-lg border border-input px-4">
+      <div className="flex min-h-14 min-w-0 items-center gap-3 rounded-xl border border-input bg-card px-4 transition-colors hover:border-primary/40">
         <Checkbox id={name} checked={field.value === true} onCheckedChange={(c) => field.onChange(c === true)} />
         <label htmlFor={name} className="cursor-pointer text-sm font-medium">{label(name)}</label>
       </div>
