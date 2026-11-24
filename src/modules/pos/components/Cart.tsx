@@ -62,7 +62,8 @@ export function Cart({ onPay, onHold, onSend, busy, onShift, categoryId = null }
   useEffect(() => {
     if (picked.current || !customers?.length) return
     picked.current = true
-    if (!usePosStore.getState().customerId && usePosStore.getState().save === "idle") defaults()
+    // An order being edited keeps its own customer (or the name and phone it came with).
+    if (!usePosStore.getState().customerId && usePosStore.getState().save === "idle" && usePosStore.getState().orderRequest?.id == null) defaults()
   }, [customers, defaults])
 
   useEffect(() => { if (s.discount.value === 0) setDiscInput("") }, [s.discount])
@@ -85,12 +86,13 @@ export function Cart({ onPay, onHold, onSend, busy, onShift, categoryId = null }
   /** The checks the current POS makes before holding or paying. */
   const ready = () => {
     if (empty) { toast.error(t("pos1.addItems")); return false }
+    if (s.orderRequest) return true
     if (none) { toast.error(t("pos1.noOrderType")); return false }
     if (settings.salonsTab?.showEmployeeService && !s.employeeId) { toast.error(t("pos1.chooseServiceEmployee")); return false }
     return true
   }
 
-  const clearInvoice = () => { s.clear(); defaults(); setTab("add"); setEditingKey(null) }
+  const clearInvoice = () => { if (s.orderRequest) s.startOrderRequest({ mode: s.orderRequest }); else { s.clear(); defaults() } setTab("add"); setEditingKey(null) }
 
   const applyDiscount = () => {
     if (hasItemDiscount) return toast.error(t("pos1.cannotMixDiscounts"))
@@ -201,13 +203,13 @@ export function Cart({ onPay, onHold, onSend, busy, onShift, categoryId = null }
               <Button type="button" variant="outline" disabled={empty || locked} onClick={clearInvoice} className="h-12 w-full gap-2 px-5 text-base border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive">
                 <Trash2 size={16} />{t("pos1.emptyInvoice")}
               </Button>
-              {dineIn ? (
+              {s.orderRequest ? null : dineIn ? (
                 <Button type="button" variant="outline" disabled={busy || s.dineInMode === "checkout"} onClick={() => ready() && onSend()} className="h-12 w-full gap-2 border-primary px-5 text-base text-primary hover:bg-primary/10 hover:text-primary">{t("posTables.sendToKitchen")} <Plus /></Button>
               ) : canHold && (
                 <Button type="button" variant="outline" disabled={busy} onClick={() => ready() && onHold()} className="h-12 w-full gap-2 border-primary px-5 text-base text-primary hover:bg-primary/10 hover:text-primary">{t("pos1.holdCart")} <Pause /></Button>
               )}
-              <Button type="button" disabled={busy} onClick={() => ready() && onPay()} className={cn("h-12 w-full gap-2 px-5 text-base", (canHold || dineIn) && "order-first col-span-2")}>
-                {t("pos1.pay")} <CircleArrowRight />
+              <Button type="button" disabled={busy} onClick={() => ready() && onPay()} className={cn("h-12 w-full gap-2 px-5 text-base", (canHold || dineIn || s.orderRequest) && "order-first col-span-2")}>
+                {s.orderRequest ? t("orderRequests.saveOrder") : t("pos1.pay")} <CircleArrowRight />
               </Button>
             </div>
           </div>

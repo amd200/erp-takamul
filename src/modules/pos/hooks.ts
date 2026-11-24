@@ -91,3 +91,9 @@ export function usePosBeauty() {
     return () => document.documentElement.classList.remove("beauty")
   }, [on])
 }
+
+/** The sales screen the branch chose (setting "postype"): the second one, the optics one, or the first. */
+export function usePosPath() {
+  const postype = useAppSettings().salesScreenTab?.postype
+  return postype === "Pos3" ? "/pos-optics" : postype === "Pos2" ? "/pos2" : "/pos"
+}

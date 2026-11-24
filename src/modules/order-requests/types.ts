@@ -15,7 +15,13 @@ export type OrderRequest = {
 
 export type OrderRequestItem = {
   productId?: number; unitId?: number | null; productName?: string | null; quantity: number; unitPrice?: number | null; taxPercentage?: number | null
-  discountPercentage?: number | null; discountValue?: number | null; lineTotal?: number | null; notes?: string | null
+  discountPercentage?: number | null; discountValue?: number | null; lineTotal?: number | null; notes?: string | null; additionIds?: number[] | null
 }
 
 export type OrderRequestDetails = OrderRequest & { notes?: string | null; items?: OrderRequestItem[] | null; subTotal?: number | null; taxAmount?: number | null; discountAmount?: number | null }
+
+/** The body of POST / PUT /sales-orders/requests. Either `customerId` or a name / phone, never both. */
+export type OrderRequestInput = {
+  customerId: number | null; customerName: string | null; customerPhone: string | null; notes: string | null
+  items: { productId: number; quantity: number; discountPercentage: number; discountValue: number; notes: string | null; additionIds: number[] }[]
+}

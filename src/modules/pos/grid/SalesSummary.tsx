@@ -33,6 +33,8 @@ type Props = {
   onDiscarded: () => void
   /** The optics screen: no quotation or hold tiles, and a shorter pay button under the other two, as in the current POS. */
   optics?: boolean
+  /** The cart is a customer order: paying becomes saving the order, and the quotation / hold tiles go. */
+  orderMode?: boolean
 }
 
 /**
@@ -40,11 +42,12 @@ type Props = {
  * after-discount and tax totals, the quotation / hold / clear / invoices tiles, and the pay button.
  * On a phone the pay button is a bar fixed to the bottom.
  */
-export function SalesSummary({ totals, undiscounted, discount, onDiscount, exempt, locked, uncertain, busy, onQuotation, onHold, onClear, onHeld, onPay, onDiscarded, optics = false }: Props) {
+export function SalesSummary({ totals, undiscounted, discount, onDiscount, exempt, locked, uncertain, busy, onQuotation, onHold, onClear, onHeld, onPay, onDiscarded, optics = false, orderMode = false }: Props) {
   const { t } = useTranslation()
   const [pct, setPct] = useState("")
   const [flat, setFlat] = useState("")
   const applied = discount.value > 0
+  const payLabel = orderMode ? t("orderRequests.saveOrder") : t("pos2.pay")
   const afterDiscount = totals.grandTotal - totals.tax
 
   const apply = () => {
@@ -57,7 +60,7 @@ export function SalesSummary({ totals, undiscounted, discount, onDiscount, exemp
   const typed = (set: (v: string) => void) => (e: React.ChangeEvent<HTMLInputElement>) => /^\d*\.?\d*$/.test(e.target.value) && set(e.target.value)
 
   const tiles = (wide: boolean): { icon: LucideIcon; label: string; onClick: () => void; danger?: boolean; disabled?: boolean }[] => [
-    ...(optics ? [] : [
+    ...(optics || orderMode ? [] : [
       { icon: Tag, label: t("pos2.quotations"), onClick: onQuotation, disabled: locked },
       { icon: wide ? Clock : CirclePause, label: t("pos2.hold"), onClick: onHold, disabled: locked || busy },
     ]),
@@ -148,7 +151,7 @@ export function SalesSummary({ totals, undiscounted, discount, onDiscount, exemp
             <button type="button" onClick={onPay} disabled={busy}
               className={cn("group flex flex-1 items-center justify-center gap-2.25 rounded-[9px] border border-[#159b55] bg-[#1db56c] px-1.5 py-2.25 text-[12px]/[1.5] font-bold text-white shadow-[inset_0_-20px_30px_rgba(0,0,0,0.07),0_5px_13px_rgba(29,181,108,0.24)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#18a760] hover:shadow-[inset_0_-20px_30px_rgba(0,0,0,0.09),0_7px_16px_rgba(29,181,108,0.28)] active:translate-y-0 active:scale-[0.97] disabled:opacity-60", optics ? "min-h-[52px] flex-row" : "min-h-[120px] flex-col")}>
               <WalletCards size={25.5} strokeWidth={1.7} className="transition-transform duration-200 group-hover:scale-105" />
-              <span>{t("pos2.pay")}</span>
+              <span>{payLabel}</span>
             </button>
           </div>
         </div>
@@ -190,7 +193,7 @@ export function SalesSummary({ totals, undiscounted, discount, onDiscount, exemp
       <div className="fixed inset-x-2 bottom-[max(0.5rem,env(safe-area-inset-bottom))] z-40 mx-auto max-w-xl xl:hidden">
         <button type="button" onClick={onPay} disabled={busy}
           className="group flex h-14 w-full items-center justify-between rounded-2xl border border-[#15894a] bg-[#1da85d] px-5 text-white shadow-[0_10px_30px_rgba(15,86,49,0.32)] transition hover:bg-[#198f50] active:scale-[0.98] disabled:opacity-60">
-          <span className="flex items-center gap-2 text-sm font-extrabold"><WalletCards size={21} strokeWidth={1.9} />{t("pos2.pay")}</span>
+          <span className="flex items-center gap-2 text-sm font-extrabold"><WalletCards size={21} strokeWidth={1.9} />{payLabel}</span>
           <strong className="text-lg font-black tabular-nums" dir="ltr">{money(totals.grandTotal)}</strong>
         </button>
       </div>

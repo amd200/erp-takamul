@@ -5,6 +5,7 @@ import { errorToast } from "@/shared/api/errors"
 import type { PosPayment } from "@/modules/pos/types"
 import { orderRequestsApi } from "./service"
 import { orderRequestKeys } from "./keys"
+import type { OrderRequestInput } from "./types"
 import { salesKeys } from "@/modules/sales/keys"
 import { treasuryKeys } from "@/modules/treasuries/keys"
 import { customerKeys } from "@/modules/customers/keys"
@@ -34,6 +35,15 @@ export function useCheckoutOrderRequest() {
   })
 }
 
+export function useSaveOrderRequest() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, data }: { id?: number; data: OrderRequestInput }) => (id ? orderRequestsApi.update(id, data) : orderRequestsApi.create(data)),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: orderRequestKeys.all }); toast.success(i18n.t("common.saved")) },
+    onError: (e) => errorToast(e, "common.saveFailed"),
+  })
+}
+
 export function useDeleteOrderRequest() {
   const qc = useQueryClient()
   return useMutation({
@@ -42,3 +52,4 @@ export function useDeleteOrderRequest() {
     onError: (e) => errorToast(e, "common.deleteFailed"),
   })
 }
+

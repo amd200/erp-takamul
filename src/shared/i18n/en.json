@@ -3013,12 +3013,20 @@
     "empty": "No orders",
     "emptyHint": "New orders show up here by themselves.",
     "autoRefresh": "The list refreshes every 30 seconds.",
+    "add": "Add order",
+    "saveOrder": "Save order",
+    "modeNew": "New order",
+    "modeEdit": "Edit order {{number}}",
+    "backToOrders": "Back to orders",
+    "noItemsToLoad": "This order has no items",
+    "discountNotSupported": "An order has no invoice-wide discount, use the item discount",
+    "replaceCartTitle": "Replace the cart",
+    "replaceCartBody": "The current cart has items. They will be removed to open the order.",
+    "openInPos": "Open in point of sale",
     "statuses": {
-      "Pending": "New",
-      "Ready": "Ready",
-      "ReadyForDelivery": "Ready for delivery",
-      "Completed": "Completed",
-      "Cancelled": "Cancelled"
+      "OrderReceived": "Order received",
+      "Ready": "Prepared",
+      "Invoiced": "Turned into an invoice"
     }
   },
   "expenses": {

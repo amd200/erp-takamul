@@ -3011,12 +3011,20 @@
     "empty": "Kon adesh pawa jayani",
     "emptyHint": "Notun order nijei ekhane dekha jabe.",
     "autoRefresh": "Talika prati 30 second-e refresh hoy.",
+    "add": "Order jog korun",
+    "saveOrder": "Order save korun",
+    "modeNew": "Notun order",
+    "modeEdit": "Order {{number}} sompadona",
+    "backToOrders": "Order talikay phire jan",
+    "noItemsToLoad": "Ei order-e kono item nei",
+    "discountNotSupported": "Order-e puro invoice-er discount nei, item discount byabohar korun",
+    "replaceCartTitle": "Cart bodlan",
+    "replaceCartBody": "Ekhonkar cart-e item ache. Order kholte segulo soriye deya hobe.",
+    "openInPos": "Point of sale-e kholun",
     "statuses": {
-      "Pending": "Notun",
+      "OrderReceived": "Order grohon kora hoyeche",
       "Ready": "Prostut",
-      "ReadyForDelivery": "Delivery-r jonyo prostut",
-      "Completed": "Sampann",
-      "Cancelled": "Batil"
+      "Invoiced": "Chalane roopantorito"
     }
   },
   "expenses": {

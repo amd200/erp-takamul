@@ -17,6 +17,7 @@ import { PaymentScreen } from "../payment/PaymentScreen"
 import { usePosBeauty } from "../hooks"
 import { useNextInvoiceNumber, useSaveSale } from "../queries"
 import { useInvoiceOutput } from "@/modules/sales/print/useInvoiceOutput"
+import { OrderRequestBanner, useOrderRequestMode } from "../orderRequestMode"
 import { getCustomerCompanionId, usePosStore } from "../store"
 import type { PosPayment } from "../types"
 import { Pos2Header } from "../grid/Pos2Header"
@@ -46,6 +47,7 @@ function Pos2Screen({ shift, optics }: { shift: Shift; optics: boolean }) {
   const { data: employees = [] } = useEmployees(showEmployee)
   const nextNumber = useNextInvoiceNumber()
   const save = useSaveSale()
+  const order = useOrderRequestMode()
   const printInvoice = useInvoiceOutput()
   const closeShift = useCloseShift()
   const saleDefaults = useSaleDefaults()
@@ -144,6 +146,7 @@ function Pos2Screen({ shift, optics }: { shift: Shift; optics: boolean }) {
   return (
     <div className="relative flex h-dvh min-h-0 overflow-hidden bg-background text-foreground sm:rounded-xl sm:border sm:border-border">
       <div className="flex min-w-0 flex-1 flex-col overflow-y-auto xl:overflow-hidden">
+        <OrderRequestBanner />
         <Pos2Header invoiceNumber={nextNumber.data ?? "---"} shiftId={shift.id} locked={locked}
           customerId={customerId} customerName={customerName} onCustomer={(id, name) => store().setCustomer(id, name)} onAddCustomer={() => setAddingCustomer(true)}
           balance={appSettings.customersTab?.showActualBalance ? (balance != null ? String(balance) : "") : null}
@@ -156,12 +159,12 @@ function Pos2Screen({ shift, optics }: { shift: Shift; optics: boolean }) {
             options={{ exempt, editPrice: appSettings.itemsTab?.allowPriceChangeOnSale, showCost: appSettings.itemsTab?.showCoastPrice, saleUnits: appSettings.itemsTab?.enablePieceAndCartonSystem }} />
 
           <SalesSummary totals={totals} undiscounted={undiscounted} discount={discount} onDiscount={(d) => store().setDiscount(d)} exempt={exempt}
-            locked={locked} uncertain={saveState === "uncertain"} busy={save.isPending || noWarehouse}
+            locked={locked} uncertain={saveState === "uncertain"} busy={save.isPending || order.saving || (noWarehouse && !order.mode)} orderMode={!!order.mode}
             onQuotation={() => setQuoteOpen(true)}
             onHold={() => store().dineInMode ? toast.error(t("posTables.cannotHold")) : needLines(() => save.mutate({ sale: sale(true, []) }, { onSuccess: () => defaults() }))}
-            onClear={() => { if (locked) return; store().clear(); defaults() }}
+            onClear={() => { if (locked) return; if (order.mode) store().startOrderRequest({ mode: order.mode }); else { store().clear(); defaults() } }}
             onHeld={() => setHeldOpen(true)} onDiscarded={defaults}
-            onPay={() => needLines(() => setPayOpen(true))} optics={optics} />
+            onPay={() => needLines(() => (order.mode ? order.save() : setPayOpen(true)))} optics={optics} />
         </div>
       </div>
 

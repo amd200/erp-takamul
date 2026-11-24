@@ -3013,12 +3013,20 @@
     "empty": "لا توجد طلبات",
     "emptyHint": "الطلبات الجديدة بتظهر هنا لوحدها.",
     "autoRefresh": "القائمة بتتحدّث كل نص دقيقة.",
+    "add": "إضافة طلب",
+    "saveOrder": "حفظ الطلب",
+    "modeNew": "طلب جديد",
+    "modeEdit": "تعديل الطلب {{number}}",
+    "backToOrders": "الرجوع للطلبات",
+    "noItemsToLoad": "الطلب ده مفيهوش أصناف",
+    "discountNotSupported": "الطلب مفيهوش خصم على الفاتورة كلها، استخدم خصم الصنف",
+    "replaceCartTitle": "استبدال السلة",
+    "replaceCartBody": "في أصناف في السلة الحالية. هتتشال علشان تفتح الطلب.",
+    "openInPos": "فتح في نقطة البيع",
     "statuses": {
-      "Pending": "جديد",
-      "Ready": "جاهز",
-      "ReadyForDelivery": "جاهز للتسليم",
-      "Completed": "مكتمل",
-      "Cancelled": "ملغي"
+      "OrderReceived": "تم استلام الطلب",
+      "Ready": "تم التجهيز",
+      "Invoiced": "اتحوّل لفاتورة"
     }
   },
   "expenses": {

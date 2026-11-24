@@ -27,6 +27,7 @@ import { useSaveSale } from "../queries"
 import { useScanner } from "../grid/useScanner"
 import { useKitchenBon, type BonSale } from "../kitchenBon"
 import { useInvoiceOutput } from "@/modules/sales/print/useInvoiceOutput"
+import { OrderRequestBanner, useOrderRequestMode } from "../orderRequestMode"
 import { getCustomerCompanionId, usePosStore } from "../store"
 import type { PosPayment, SaleResult } from "../types"
 
@@ -53,6 +54,7 @@ function PosScreen({ shift }: { shift: Shift }) {
   const defaults = useSaleDefaults()
   const { data: warehouses = [] } = useWarehouses()
   const save = useSaveSale()
+  const order = useOrderRequestMode()
   const printInvoice = useInvoiceOutput()
   const kitchenBon = useKitchenBon()
   const closeShift = useCloseShift()
@@ -120,6 +122,7 @@ function PosScreen({ shift }: { shift: Shift }) {
   }
   const pay = () => {
     setCartOpen(false)
+    if (order.mode) return order.save()
     const s = usePosStore.getState()
     if (s.orderType !== "InDine") return orderStep.start()
     if (s.dineInMode === "checkout") setPayOpen(true)
@@ -127,7 +130,7 @@ function PosScreen({ shift }: { shift: Shift }) {
   }
 
   const cart = (
-    <Cart categoryId={categoryId} busy={save.isPending || warehouses.length === 0} onShift={() => { setCartOpen(false); setReport(shift) }}
+    <Cart categoryId={categoryId} busy={save.isPending || order.saving || (warehouses.length === 0 && !order.mode)} onShift={() => { setCartOpen(false); setReport(shift) }}
       onPay={pay} onSend={sendToKitchen}
       onHold={() => { const bon = bonOf(); save.mutate({ sale: sale(true, []) }, { onSuccess: (res) => { setCartOpen(false); defaults(); printBon(bon, res, true) } }) }} />
   )
@@ -137,6 +140,7 @@ function PosScreen({ shift }: { shift: Shift }) {
     <div className="relative flex h-dvh overflow-hidden bg-brand-navy py-2">
       <Rail screen={screen} onScreen={setScreen} />
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-lg bg-sidebar ltr:rounded-tl-[28px] rtl:rounded-tr-[28px]">
+        <OrderRequestBanner />
         {screen === "tables" ? (
           <div className="flex flex-1 overflow-hidden bg-[var(--bg-main)]"><TablesScreen onOpened={() => setScreen("sales")} /></div>
         ) : (

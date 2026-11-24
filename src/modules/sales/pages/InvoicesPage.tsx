@@ -1,4 +1,7 @@
 import { useCallback, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { useCan } from "@/shared/permissions/usePermission"
+import { P } from "@/shared/permissions/permissions"
 import { useBranchColumn } from "@/modules/branches/useBranchColumn"
 import { FileText, RotateCw } from "lucide-react"
 import { useTranslation } from "react-i18next"
@@ -23,6 +26,8 @@ const PAGE_SIZE = 20
 /** One page for both invoice lists: A4 invoices and invoices issued from the point of sale. The server pages and searches. */
 export default function InvoicesPage({ channel }: { channel: Channel }) {
   const { t, i18n } = useTranslation()
+  const navigate = useNavigate()
+  const can = useCan()
   const stage2 = useAppSettings().taxSetting?.taxSetting === "SecondStage"
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(0)
@@ -58,6 +63,7 @@ export default function InvoicesPage({ channel }: { channel: Channel }) {
             loading={isLoading}
             columns={columns}
             rowKey={(i) => i.id}
+            onRowClick={can(P.sales.view) ? (i) => navigate(`/sales/invoices/${i.id}`) : undefined}
             searchPlaceholder={t("sales.searchInvoices")}
             server={{ total: data?.totalCount ?? 0, page, pageSize: PAGE_SIZE, onPage: setPage, onSearch, fetching: isFetching && !isLoading,
               sort: { key: sort.key, desc: sort.desc, onSort: (key, desc) => { setSort({ key, desc }); setPage(0) } } }}

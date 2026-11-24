@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from "react"
-import { CheckCheck, ClipboardList, Eye, Printer, Trash2, Wallet } from "lucide-react"
+import { CheckCheck, ClipboardList, Eye, Pencil, Plus, Printer, Trash2, Wallet } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { useTranslation } from "react-i18next"
 import { StatusBadge } from "@/components/StatusBadge"
 import { Dialog, DialogBody, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -16,6 +17,7 @@ import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency"
 import { useCan } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
 import { useAppSettings } from "@/modules/settings"
+import { useOpenOrderRequest } from "@/modules/pos/orderRequestMode"
 import { PaymentScreen } from "@/modules/pos/payment/PaymentScreen"
 import type { PosPayment } from "@/modules/pos/types"
 import type { OrderRequest } from "../types"
@@ -71,6 +73,7 @@ function DetailsDialog({ id, onOpenChange }: { id: number | null; onOpenChange: 
 export default function OrderRequestsPage() {
   const { t, i18n } = useTranslation()
   const can = useCan()
+  const openInPos = useOpenOrderRequest()
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(0)
   const [from, setFrom] = useState("")
@@ -104,6 +107,7 @@ export default function OrderRequestsPage() {
     { id: "actions", header: "", align: "end", cell: (o) => <RowMenu items={[
       { key: "view", label: t("sales.actions.view"), icon: <Eye />, onSelect: () => setViewing(o.id) },
       { key: "roll", label: t("sales.actions.printRoll"), icon: <Printer />, disabled: print.isPending, onSelect: () => print.mutate(o.id) },
+      manage && !o.salesOrderId && { key: "edit", label: t("common.edit"), icon: <Pencil />, onSelect: () => openInPos.edit(o.id) },
       manage && !o.salesOrderId && { key: "ready", label: t("orderRequests.markReady"), icon: <CheckCheck />, disabled: ready.isPending, onSelect: () => ready.mutate(o.id) },
       manage && !o.salesOrderId && { key: "checkout", label: t("orderRequests.checkout"), icon: <Wallet />, onSelect: () => setPaying(o) },
       manage && !o.salesOrderId && { key: "delete", label: t("common.delete"), icon: <Trash2 />, destructive: true, onSelect: () => setToDelete(o) },
@@ -112,7 +116,8 @@ export default function OrderRequestsPage() {
 
   return (
     <>
-      <PageHeader title={t("orderRequests.title")} description={t("orderRequests.description")} />
+      <PageHeader title={t("orderRequests.title")} description={t("orderRequests.description")}
+        actions={manage && <Button onClick={openInPos.add}><Plus />{t("orderRequests.add")}</Button>} />
       <SectionCard>
         <DataTable rows={data?.items} loading={isLoading} columns={columns} rowKey={(o) => o.id} sort={sort} searchPlaceholder={t("orderRequests.search")}
           server={{ total: data?.totalCount ?? 0, page, pageSize: PAGE_SIZE, onPage: setPage, onSearch, fetching: isFetching && !isLoading }}
@@ -126,6 +131,7 @@ export default function OrderRequestsPage() {
           empty={<EmptyState icon={<ClipboardList />} title={t("orderRequests.empty")} hint={t("orderRequests.emptyHint")} />} />
       </SectionCard>
 
+      {openInPos.confirmation}
       <DetailsDialog id={viewing} onOpenChange={(o) => !o && setViewing(null)} />
       <ConfirmDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)} pending={del.isPending}
         title={t("orderRequests.deleteTitle")} description={t("orderRequests.deleteBody", { number: toDelete?.orderNumber })}

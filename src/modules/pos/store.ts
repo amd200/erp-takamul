@@ -19,7 +19,12 @@ import type { CartDiscount, CartLine, DineInMode, OrderType } from "./types"
  */
 type SaveState = "idle" | "saving" | "uncertain"
 
+/** A customer order (not a sale) is being typed: a new one (`id` null) or an existing one being edited. A customer without an account keeps the name and phone the order came with. */
+export type OrderRequestMode = { id: number | null; number: string | null; customerName: string | null; customerPhone: string | null }
+
 type PosState = {
+  /** Set while the cart is an order request: saving creates / updates the order instead of a sale. Never persisted. */
+  orderRequest: OrderRequestMode | null
   lines: CartLine[]
   orderType: OrderType
   /** The label picked before paying (takeaway / dine-in / delivery) when the branch asks for it; shown on prints, it does not change the sale. */
@@ -67,6 +72,8 @@ type PosState = {
   setDiscount: (d: CartDiscount) => void
   setNote: (n: string) => void
   loadHeld: (id: number, lines: CartLine[], customerId: number | null, customerName: string, note: string) => boolean
+  /** Starts an order request: an empty cart for a new one, or an existing order's lines, customer and note. A locked sale cannot be replaced. */
+  startOrderRequest: (o: { mode: OrderRequestMode; lines?: CartLine[]; customerId?: number | null; customerName?: string; note?: string }) => boolean
   /** Starts a new sale from a quotation; a locked sale cannot be replaced. */
   loadQuotation: (quote: Quote) => boolean
   /** Called right before sending: fixes the key and date so a retry sends the same sale. */
@@ -80,7 +87,7 @@ type PosState = {
   clear: () => void
 }
 
-const empty = { lines: [] as CartLine[], discount: { kind: "value", value: 0 } as CartDiscount, note: "", selectedMeasurement: null as SelectedMeasurement | null, orderTypeName: null as string | null, orderDeviceNumber: null as string | null, tableNumber: null as string | null, tableId: null as number | null, dineInMode: null as DineInMode | null, dineInOrderId: null as number | null, dineInOrderNumber: null as string | null, originalLines: [] as CartLine[], holdingOrderId: null, save: "idle" as SaveState, key: null, orderDate: null, ownerId: null }
+const empty = { orderRequest: null as OrderRequestMode | null, lines: [] as CartLine[], discount: { kind: "value", value: 0 } as CartDiscount, note: "", selectedMeasurement: null as SelectedMeasurement | null, orderTypeName: null as string | null, orderDeviceNumber: null as string | null, tableNumber: null as string | null, tableId: null as number | null, dineInMode: null as DineInMode | null, dineInOrderId: null as number | null, dineInOrderNumber: null as string | null, originalLines: [] as CartLine[], holdingOrderId: null, save: "idle" as SaveState, key: null, orderDate: null, ownerId: null }
 
 export const usePosStore = create<PosState>()(persist((set, get) => {
   const locked = () => get().save !== "idle"
@@ -133,6 +140,11 @@ export const usePosStore = create<PosState>()(persist((set, get) => {
     loadHeld: (holdingOrderId, lines, customerId, customerName, note) => {
       if (locked()) return false
       set({ ...empty, lines, holdingOrderId, customerId, customerName, note })
+      return true
+    },
+    startOrderRequest: (o) => {
+      if (locked()) return false
+      set({ ...empty, orderRequest: o.mode, orderType: "TakeAway", deliveryCompanyId: null, employeeId: null, lines: o.lines ?? [], customerId: o.customerId ?? null, customerName: o.customerName ?? "", note: o.note ?? "" })
       return true
     },
     loadQuotation: (quote) => {
