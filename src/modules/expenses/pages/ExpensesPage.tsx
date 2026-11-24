@@ -87,7 +87,7 @@ export function ExpenseDialog({ open, onOpenChange, expense }: { open: boolean; 
         </DialogBody>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
-          <Button type="submit" form="expense-form" disabled={save.isPending || over}>{t("common.save")}</Button>
+          <Button type="submit" form="expense-form" disabled={save.isPending }>{t("common.save")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
