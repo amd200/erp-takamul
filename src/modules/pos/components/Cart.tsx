@@ -200,7 +200,7 @@ export function Cart({ onPay, onHold, onSend, busy, onShift, categoryId = null }
             </div>
 
             <div className="grid grid-cols-2 gap-2">
-              <Button type="button" variant="outline" disabled={empty || locked} onClick={clearInvoice} className="h-12 w-full gap-2 px-5 text-base border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive">
+              <Button type="button" variant="outline" disabled={empty || locked} onClick={clearInvoice} className={cn("h-12 w-full gap-2 px-5 text-base border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive", s.orderRequest && "col-span-2")}>
                 <Trash2 size={16} />{t("pos1.emptyInvoice")}
               </Button>
               {s.orderRequest ? null : dineIn ? (
