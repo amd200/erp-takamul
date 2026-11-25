@@ -7,7 +7,8 @@ import QRCode from "qrcode"
 import { invoiceA4Doc } from "@/modules/sales/print/invoiceA4Doc"
 import { invoiceRollDoc, rollDesignOf, rollOptionsOf } from "@/modules/sales/print/invoiceRollDoc"
 import type { PrintInvoice } from "@/modules/sales/print/printInvoice"
-import type { Branch } from "@/modules/branches/types"
+import { useBranch } from "@/modules/branches/queries"
+import { useSession } from "@/shared/session/session"
 import type { Customer } from "@/modules/customers/types"
 import { readScale, scaleRule } from "@/modules/pos/shared/lib/scale"
 import { useAppSettings } from "../queries"
@@ -122,7 +123,6 @@ const SAMPLE_INVOICE: PrintInvoice = {
   totals: { subTotal: 130, discount: 0, tax: 19.5, grandTotal: 149.5 },
   payments: [{ amount: 120, paymentMethod: "Cash" }],
 }
-const SAMPLE_BRANCH = { name: "مؤسسة المثال التجارية - فرع الرياض", nameEn: "Example Trading Est. - Riyadh Branch", shortName: "فرع الرياض", shortNameEn: "Riyadh Branch", taxNumber: "300000000000003", commercialRegister: "1010000000", phone: "0500000000", cityName: "الرياض", district: "العليا", street: "شارع الملك فهد", postalCode: "12211", buildingNumber: "1234", subNumber: "5678", imageUrl: null, stampImageUrl: null, iban: "SA0000000000000000000000", footerNote: "", locationAddress: "" } as unknown as Branch
 const SAMPLE_CUSTOMER = { phone: "0555555555", taxNumber: "300000000000009", commercialRegister: "1010111111", city: "الرياض", district: "النخيل", street: "طريق الملك عبدالله", postalCode: "12345", buildingNumber: "4321", additionalNumber: "8765", country: "السعودية" } as unknown as Customer
 
 /** The A4 invoice as the chosen design prints it, on sample data, scaled to fit the card. */
@@ -131,6 +131,7 @@ export function A4Preview({ v }: { v: V }) {
   const box = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(0.5)
   const design = String(v.a4InvoiceType ?? "Design1")
+  const branch = useBranch(useSession().branch.id).data
 
   useEffect(() => {
     const el = box.current
@@ -143,9 +144,9 @@ export function A4Preview({ v }: { v: V }) {
   }, [])
 
   const html = useMemo(() => renderDocument(invoiceA4Doc(SAMPLE_INVOICE, {
-    branch: SAMPLE_BRANCH, customer: SAMPLE_CUSTOMER, isExempt: false, showPaymentMethods: true, showPaidAndRemaining: true,
+    branch, customer: SAMPLE_CUSTOMER, isExempt: false, showPaymentMethods: true, showPaidAndRemaining: true,
     showBranchName: true, showHeaderAndFooter: v.showHeaderAndFooterInPrint !== false, blue: design === "Design2", design: design === "Design3" || design === "Design4" ? design : undefined, methodLabel: (m) => i18n.t(`sales.methods.${m}`),
-  })), [v.showHeaderAndFooterInPrint, design])
+  })), [v.showHeaderAndFooterInPrint, design, branch])
 
   return (
     <div className="flex flex-col gap-2">
@@ -170,14 +171,15 @@ export function RollPreview({ v }: { v: V }) {
   const [qr, setQr] = useState<string | null>(null)
   const [height, setHeight] = useState(600)
   const design = rollDesignOf({ rollInvoiceDesign: String(v.rollInvoiceDesign ?? "") })
+  const branch = useBranch(useSession().branch.id).data
 
   useEffect(() => { QRCode.toDataURL("Takamul").then(setQr).catch(() => setQr(null)) }, [])
 
   const html = useMemo(() => renderDocument(invoiceRollDoc(ROLL_INVOICE, {
-    ...rollOptionsOf(settings, { branch: SAMPLE_BRANCH, customer: SAMPLE_CUSTOMER, currency, methodLabel: (m) => i18n.t(`sales.methods.${m}`), qrImage: qr }),
+    ...rollOptionsOf(settings, { branch, customer: SAMPLE_CUSTOMER, currency, methodLabel: (m) => i18n.t(`sales.methods.${m}`), qrImage: qr }),
     rollDesign: design,
     showBranchName: v.showBranchNameInPrint === true,
-  })), [settings, currency, qr, design, v.showBranchNameInPrint])
+  })), [settings, currency, qr, design, branch, v.showBranchNameInPrint])
 
   return (
     <div className="flex flex-col gap-2">
