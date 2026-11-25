@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next"
 import { errorToast } from "@/shared/api/errors"
 import { AuthLayout } from "../components/AuthLayout"
 import { AuthError, AuthField, authButtonClass } from "../components/AuthField"
-import { useForgotPassword } from "../queries"
+import { useForgetPassword } from "../queries"
 import { forgotSchema, type ForgotForm } from "../schema"
 
 /** Step 1 of 3: ask for the email; the server mails a 6-digit code. */
@@ -16,7 +16,7 @@ export default function ForgotPasswordPage() {
   const nav = useNavigate()
   const [sentTo, setSentTo] = useState<string | null>(null)
   const form = useForm<ForgotForm>({ resolver: zodResolver(forgotSchema), defaultValues: { email: "" } })
-  const send = useForgotPassword()
+  const send = useForgetPassword()
   const error = form.formState.errors.email?.message && t(form.formState.errors.email.message)
 
   return (

@@ -19,8 +19,8 @@ export function useLogout() {
   })
 }
 
-export function useForgotPassword() {
-  return useMutation({ mutationFn: authApi.forgotPassword })
+export function useForgetPassword() {
+  return useMutation({ mutationFn: authApi.forgetPassword })
 }
 
 export function useVerifyOtp() {
