@@ -8,6 +8,7 @@ import { DatePicker } from "@/components/ui/date-picker"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { RowMenu } from "@/components/RowActions"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { DataTable, type Column } from "@/components/DataTable"
 import { useTableSort } from "@/components/useTableSort"
 import { EmptyState } from "@/components/EmptyState"
@@ -104,14 +105,23 @@ export default function OrderRequestsPage() {
     { id: "itemsCount", sortable: true, header: t("orderRequests.items"), cell: (o) => o.itemsCount },
     { id: "grandTotal", sortable: true, header: t("sales.grandTotal"), cell: (o) => <span className="font-semibold">{formatMoney(o.grandTotal ?? 0)}</span> },
     { id: "status", sortable: true, header: t("common.status"), cell: (o) => <StatusBadge tone={o.salesOrderId ? "success" : "warning"}>{o.salesOrderId ? t("orderRequests.invoiced") : t(`orderRequests.statuses.${o.status}`, { defaultValue: o.status || t("orderRequests.pending") })}</StatusBadge> },
-    { id: "actions", header: "", align: "end", cell: (o) => <RowMenu items={[
-      { key: "view", label: t("sales.actions.view"), icon: <Eye />, onSelect: () => setViewing(o.id) },
-      { key: "roll", label: t("sales.actions.printRoll"), icon: <Printer />, disabled: print.isPending, onSelect: () => print.mutate(o.id) },
-      manage && !o.salesOrderId && { key: "edit", label: t("common.edit"), icon: <Pencil />, onSelect: () => openInPos.edit(o.id) },
-      manage && !o.salesOrderId && { key: "ready", label: t("orderRequests.markReady"), icon: <CheckCheck />, disabled: ready.isPending, onSelect: () => ready.mutate(o.id) },
-      manage && !o.salesOrderId && { key: "checkout", label: t("orderRequests.checkout"), icon: <Wallet />, onSelect: () => setPaying(o) },
-      manage && !o.salesOrderId && { key: "delete", label: t("common.delete"), icon: <Trash2 />, destructive: true, onSelect: () => setToDelete(o) },
-    ]} /> },
+    { id: "actions", header: "", align: "end", cell: (o) => (
+      <div className="flex items-center justify-center gap-0.5">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button type="button" variant="ghost" size="icon" aria-label={t("sales.actions.view")} onClick={() => setViewing(o.id)}><Eye /></Button>
+          </TooltipTrigger>
+          <TooltipContent>{t("sales.actions.view")}</TooltipContent>
+        </Tooltip>
+        <RowMenu items={[
+        { key: "roll", label: t("sales.actions.printRoll"), icon: <Printer />, disabled: print.isPending, onSelect: () => print.mutate(o.id) },
+        manage && !o.salesOrderId && { key: "edit", label: t("common.edit"), icon: <Pencil />, onSelect: () => openInPos.edit(o.id) },
+        manage && !o.salesOrderId && { key: "ready", label: t("orderRequests.markReady"), icon: <CheckCheck />, disabled: ready.isPending, onSelect: () => ready.mutate(o.id) },
+        manage && !o.salesOrderId && { key: "checkout", label: t("orderRequests.checkout"), icon: <Wallet />, onSelect: () => setPaying(o) },
+        manage && !o.salesOrderId && { key: "delete", label: t("common.delete"), icon: <Trash2 />, destructive: true, onSelect: () => setToDelete(o) },
+        ]} />
+      </div>
+    ) },
   ]
 
   return (

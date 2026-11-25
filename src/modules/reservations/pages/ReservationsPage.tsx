@@ -22,6 +22,7 @@ import { useCan } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
 import { BranchSection } from "@/modules/branches/BranchSection"
 import { useFormBranch } from "@/modules/branches/useFormBranch"
+import { useBranchColumn } from "@/modules/branches/useBranchColumn"
 import { BOOKING_STATUSES } from "../types"
 import type { BookingStatus, Reservation } from "../types"
 import { useDeleteReservation, useReservations, useSaveReservation, useSetReservationStatus } from "../queries"
@@ -92,13 +93,14 @@ export default function ReservationsPage() {
   const [editing, setEditing] = useState<Reservation | null>(null)
   const [open, setOpen] = useState(false)
   const [toDelete, setToDelete] = useState<Reservation | null>(null)
+  const branchColumn = useBranchColumn<Reservation>((r) => ({ id: r.branchId, name: r.branchName }))
 
   const columns: Column<Reservation>[] = [
     { id: "bookingNumber", sortable: true, header: t("reservations.number"), cell: (r) => <span className="font-semibold">{r.bookingNumber}</span> },
     { id: "customerName", sortable: true, header: t("reservations.customerName"), cell: (r) => <span className="font-medium">{r.customerName}</span> },
     { id: "customerPhone", sortable: true, header: t("users.mobile"), cell: (r) => <span dir="ltr" className="text-muted-foreground">{r.customerPhone}</span> },
     { id: "bookingDateTime", sortable: true, header: t("reservations.when"), cell: (r) => <span className="text-muted-foreground">{formatDateTime(r.bookingDateTime ?? r.bookingDate ?? "", i18n.language, (r.bookingTime ?? "").slice(0, 5))}</span> },
-    { id: "branchName", sortable: true, header: t("shifts.branch"), cell: (r) => <span className="text-muted-foreground">{r.branchName || "—"}</span> },
+    ...branchColumn,
     { id: "status", sortable: true, header: t("common.status"), cell: (r) => (
       <Select value={bookingStatusOf(r.status)} disabled={!canManage || setBookingStatus.isPending} onValueChange={(v) => setBookingStatus.mutate({ id: r.id, status: v as BookingStatus })}>
         <SelectTrigger className={`h-8 w-28 text-xs font-medium ${STATUS_TONE[bookingStatusOf(r.status)]}`} aria-label={t("common.status")}><SelectValue /></SelectTrigger>
