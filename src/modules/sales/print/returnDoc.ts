@@ -1,9 +1,9 @@
 import type { InvoiceLine, ReturnItemDto, SalesReturnDto } from "../types"
 import type { PrintInvoice } from "./printInvoice"
 import { invoiceA4Doc, type InvoiceA4Options } from "./invoiceA4Doc"
-import { invoiceRollDoc, type InvoiceRollOptions } from "./invoiceRollDoc"
+import { invoiceRollDoc, type RollFlags } from "./invoiceRollDoc"
 
-export type ReturnPrintOptions = InvoiceA4Options & Pick<InvoiceRollOptions, "grid" | "showUnits">
+export type ReturnPrintOptions = InvoiceA4Options & RollFlags
 
 /** A return line: the unit price is worked back from the line's own amounts, so it is always the price before tax. */
 const printLineOf = (d: ReturnItemDto): InvoiceLine => {

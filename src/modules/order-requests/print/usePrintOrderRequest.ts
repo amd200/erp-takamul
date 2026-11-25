@@ -9,6 +9,7 @@ import { errorToast } from "@/shared/api/errors"
 import { printDocument } from "@/shared/print/print"
 import { useSession } from "@/shared/session/session"
 import { orderRequestsApi } from "../service"
+import { rollOptionsOf } from "@/modules/sales/print/invoiceRollDoc"
 import { orderRequestDoc } from "./orderRequestDoc"
 
 export function usePrintOrderRequest() {
@@ -26,15 +27,10 @@ export function usePrintOrderRequest() {
         branchId ? qc.fetchQuery({ queryKey: branchKeys.detail(branchId), queryFn: () => branchesApi.get(branchId) }).catch(() => undefined) : undefined,
         customerId ? qc.fetchQuery({ queryKey: customerKeys.detail(customerId), queryFn: () => customersApi.get(customerId) }).catch(() => undefined) : undefined,
       ])
+      // An order has no payments, so none are printed.
       await printDocument(orderRequestDoc(order, {
-        branch: details, customer,
-        isExempt: settings.taxSetting?.taxSetting === "Exempt",
-        showPaymentMethods: false,
-        showPaidAndRemaining: false,
-        showBranchName: settings.printRollTab?.showBranchNameInPrint === true,
-        grid: settings.printRollTab?.invoiceDesign3 === true,
-        showUnits: false,
-        methodLabel: (method) => t(`sales.methods.${method}`, { defaultValue: method }),
+        ...rollOptionsOf(settings, { branch: details, customer, methodLabel: (method) => t(`sales.methods.${method}`, { defaultValue: method }) }),
+        showPaymentMethods: false, showPaidAndRemaining: false, showUnits: false,
       }))
     },
     onError: (error) => errorToast(error, "orderRequests.printFailed"),

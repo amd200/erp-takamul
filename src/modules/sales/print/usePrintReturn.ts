@@ -11,6 +11,7 @@ import { printDocument } from "@/shared/print/print"
 import { useSession } from "@/shared/session/session"
 import { returnsApi } from "../service"
 import type { SalesReturnDto } from "../types"
+import { rollFlagsOf } from "./invoiceRollDoc"
 import { returnDoc } from "./returnDoc"
 
 export function usePrintReturn() {
@@ -38,8 +39,7 @@ export function usePrintReturn() {
         showHeaderAndFooter: settings.printA4Tab?.showHeaderAndFooterInPrint !== false,
         blue: settings.printA4Tab?.a4InvoiceType === "Design2",
         design: settings.printA4Tab?.a4InvoiceType === "Design3" || settings.printA4Tab?.a4InvoiceType === "Design4" ? settings.printA4Tab?.a4InvoiceType as "Design3" | "Design4" : undefined,
-        grid: settings.printRollTab?.invoiceDesign3 === true,
-        showUnits: settings.itemsTab?.enablePieceAndCartonSystem === true,
+        ...rollFlagsOf(settings),
         methodLabel: (method) => t(`sales.methods.${method}`, { defaultValue: method }),
       }))
     },

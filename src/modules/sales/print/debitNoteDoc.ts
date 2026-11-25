@@ -1,9 +1,9 @@
 import type { DebitNoteDto, DebitNoteItemDto, InvoiceLine } from "../types"
 import type { PrintInvoice } from "./printInvoice"
 import { invoiceA4Doc, type InvoiceA4Options } from "./invoiceA4Doc"
-import { invoiceRollDoc, type InvoiceRollOptions } from "./invoiceRollDoc"
+import { invoiceRollDoc, type RollFlags } from "./invoiceRollDoc"
 
-export type DebitNotePrintOptions = InvoiceA4Options & Pick<InvoiceRollOptions, "grid" | "showUnits">
+export type DebitNotePrintOptions = InvoiceA4Options & RollFlags
 
 /** Keep the debit note's own items and amounts, using the selected invoice layouts. */
 /** A debit note line: the server prices it before tax, so the rate is worked back from the tax amount. */

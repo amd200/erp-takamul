@@ -15,7 +15,7 @@ import { fullName } from "@/modules/lookups/types"
 import { useBranches, useCustomers, useEmployees, useSuppliers } from "@/modules/lookups/service"
 import { useTreasuries } from "@/modules/treasuries/queries"
 import { Flag, Check, Section, Grid, Choice, useLabel, type FieldsProps } from "./fields"
-import { A4Preview, AppearancePreview, BarcodePreview } from "./Previews"
+import { A4Preview, AppearancePreview, BarcodePreview, RollPreview } from "./Previews"
 
 /** The fields of each sales-settings tab, in the order the current system shows them. Names are the server's. */
 
@@ -150,13 +150,16 @@ export function A4Fields({ form: { control, watch } }: FieldsProps) {
   )
 }
 
-export function RollFields({ form: { control } }: FieldsProps) {
+export function RollFields({ form: { control, watch } }: FieldsProps) {
   const label = useLabel()
   return (
-    <Grid>
-      <Flag control={control} name="printRollTab.invoiceDesign3" />
-      <FormInput control={control} name="printRollTab.printCount" type="number" required label={label("printCount")} />
-    </Grid>
+    <>
+      <Grid>
+        <Choice control={control} name="printRollTab.rollInvoiceDesign" values={["Design1", "Design2", "Design3"]} />
+        <FormInput control={control} name="printRollTab.printCount" type="number" required label={label("printCount")} />
+      </Grid>
+      <div className="mt-5"><RollPreview v={watch("printRollTab")} /></div>
+    </>
   )
 }
 

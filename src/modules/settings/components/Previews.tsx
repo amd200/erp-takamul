@@ -3,11 +3,15 @@ import { useTranslation } from "react-i18next"
 import { cn } from "@/lib/utils"
 import i18n from "@/shared/i18n"
 import { renderDocument } from "@/shared/print"
+import QRCode from "qrcode"
 import { invoiceA4Doc } from "@/modules/sales/print/invoiceA4Doc"
+import { invoiceRollDoc, rollDesignOf, rollOptionsOf } from "@/modules/sales/print/invoiceRollDoc"
 import type { PrintInvoice } from "@/modules/sales/print/printInvoice"
 import type { Branch } from "@/modules/branches/types"
 import type { Customer } from "@/modules/customers/types"
 import { readScale, scaleRule } from "@/modules/pos/shared/lib/scale"
+import { useAppSettings } from "../queries"
+import { useCurrency } from "../useCurrency"
 import type { Settings, SettingValue } from "../types"
 
 type V = Record<string, SettingValue>
@@ -148,6 +152,36 @@ export function A4Preview({ v }: { v: V }) {
       <div ref={box} className="relative w-full max-w-lg overflow-hidden rounded-lg border bg-white" style={{ height: 1123 * scale }}>
         <iframe title={t("settings.previewA4")} srcDoc={html} className="pointer-events-none absolute left-0 top-0 border-0 bg-white" style={{ width: 794, height: 1123, transform: `scale(${scale})`, transformOrigin: "top left" }} />
       </div>
+    </div>
+  )
+}
+
+const ROLL_INVOICE: PrintInvoice = {
+  ...SAMPLE_INVOICE, employeeName: "أحمد", startNumber: 15, orderTypeName: "سفري", tableNumber: "5", deviceNumber: 7, notes: "ملاحظة تجريبية",
+  lines: SAMPLE_INVOICE.lines.map((l, i) => (i === 0 ? { ...l, additions: ["إضافة تجريبية"] } : { ...l, notes: "بدون سكر" })),
+}
+
+/** The roll invoice as the chosen design prints it, on sample data and the saved print settings, at the roll's own width. */
+export function RollPreview({ v }: { v: V }) {
+  const { t } = useTranslation()
+  const settings = useAppSettings()
+  const currency = useCurrency()
+  const frame = useRef<HTMLIFrameElement>(null)
+  const [qr, setQr] = useState<string | null>(null)
+  const [height, setHeight] = useState(600)
+  const design = rollDesignOf({ rollInvoiceDesign: String(v.rollInvoiceDesign ?? "") })
+
+  useEffect(() => { QRCode.toDataURL("Takamul").then(setQr).catch(() => setQr(null)) }, [])
+
+  const html = useMemo(() => renderDocument(invoiceRollDoc(ROLL_INVOICE, {
+    ...rollOptionsOf(settings, { branch: SAMPLE_BRANCH, customer: SAMPLE_CUSTOMER, currency, methodLabel: (m) => i18n.t(`sales.methods.${m}`), qrImage: qr }),
+    rollDesign: design,
+  })), [settings, currency, qr, design])
+
+  return (
+    <div className="flex flex-col gap-2">
+      <iframe ref={frame} title={t("settings.previewRoll")} srcDoc={html} className="pointer-events-none rounded-lg border bg-white" style={{ width: 302, height }}
+        onLoad={() => setHeight(frame.current?.contentDocument?.documentElement.scrollHeight ?? 600)} />
     </div>
   )
 }

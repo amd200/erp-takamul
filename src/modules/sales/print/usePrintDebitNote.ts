@@ -11,6 +11,7 @@ import { useSession } from "@/shared/session/session"
 import { salesKeys } from "../keys"
 import { debitNotesApi, invoicesApi } from "../service"
 import type { DebitNoteDto } from "../types"
+import { rollFlagsOf } from "./invoiceRollDoc"
 import { debitNoteDoc } from "./debitNoteDoc"
 
 export function usePrintDebitNote() {
@@ -39,8 +40,7 @@ export function usePrintDebitNote() {
         showHeaderAndFooter: settings.printA4Tab?.showHeaderAndFooterInPrint !== false,
         blue: settings.printA4Tab?.a4InvoiceType === "Design2",
         design: settings.printA4Tab?.a4InvoiceType === "Design3" || settings.printA4Tab?.a4InvoiceType === "Design4" ? settings.printA4Tab?.a4InvoiceType as "Design3" | "Design4" : undefined,
-        grid: settings.printRollTab?.invoiceDesign3 === true,
-        showUnits: settings.itemsTab?.enablePieceAndCartonSystem === true,
+        ...rollFlagsOf(settings),
         methodLabel: (method) => t(`sales.methods.${method}`),
       }))
     },

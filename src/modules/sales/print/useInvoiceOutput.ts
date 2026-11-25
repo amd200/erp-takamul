@@ -18,9 +18,7 @@ import type { SalesOrderDto } from "../types"
 import type { PrintInvoice } from "./printInvoice"
 import { invoiceA4Doc } from "./invoiceA4Doc"
 import { invoiceA5Doc } from "./invoiceA5Doc"
-import { invoiceRollDoc, type InvoiceRollOptions } from "./invoiceRollDoc"
-import type { Settings } from "@/modules/settings/types"
-import type { Branch } from "@/modules/branches/types"
+import { invoiceRollDoc, rollOptionsOf } from "./invoiceRollDoc"
 import { claimVoucherDoc, stockVoucherDoc } from "./voucherDocs"
 
 type Output = "print" | "pdf" | "preview"
@@ -37,28 +35,20 @@ async function barcodesOf(qc: QueryClient, invoice: SalesOrderDto) {
 const measurementOf = (c: Customer | undefined) => (c && EYE_FIELDS.some((k) => String(c[k] ?? "").trim() !== "") ? eyeText(c) : null)
 type Paper = "a4" | "a5" | "roll"
 
-/**
- * The 80mm roll's options from the settings, the same for every place that draws an invoice on the roll (the cashier's
- * print and PDF, the customer's /qr page), so they all look exactly alike.
- */
-export const rollOptionsOf = (settings: Settings, o: { branch: Branch | undefined; customer: Customer | undefined; currency: string; methodLabel: (m: string) => string }): InvoiceRollOptions => ({
-  ...o,
-  isExempt: settings.taxSetting?.taxSetting === "Exempt",
-  showPaymentMethods: settings.paymentTab?.showPaymentMethods !== false,
-  showPaidAndRemaining: settings.paymentTab?.showPaidAndRemainingAmount !== false,
-  showBranchName: settings.printRollTab?.showBranchNameInPrint === true,
-  grid: settings.printRollTab?.invoiceDesign3 === true,
-  showUnits: settings.itemsTab?.enablePieceAndCartonSystem === true,
-})
-
 /** The saved invoice as the layouts print it: the server's own totals and line amounts. */
 export const printInvoiceOf = (o: SalesOrderDto): PrintInvoice => ({
   id: o.id, number: o.orderNumber ?? "", date: o.orderDate ?? "", customerName: o.customerName ?? "", warehouseName: o.warehouseName ?? "",
   employeeName: o.employeeName ?? null, createdBy: o.createdBy ?? "", notes: o.notes ?? "",
-  lines: (o.items ?? []).map((l) => ({ ...editorLineOf(l), amounts: { discount: l.discountValue ?? 0, tax: l.taxAmount ?? 0, total: l.lineTotal ?? 0 } })),
+  lines: (o.items ?? []).map((l) => ({
+    ...editorLineOf(l), amounts: { discount: l.discountValue ?? 0, tax: l.taxAmount ?? 0, total: l.lineTotal ?? 0 },
+    notes: l.notes ?? "", additions: (l.additions ?? []).map((a) => a.additionNameAr || a.additionNameEn || "").filter(Boolean),
+  })),
   totals: { subTotal: o.subTotal ?? 0, discount: o.discountAmount ?? 0, tax: o.taxAmount ?? 0, grandTotal: o.grandTotal ?? 0 },
   payments: o.payments ?? [],
   paid: o.totalPaid ?? 0,
+  startNumber: o.salesOrderStartNumber, deviceNumber: o.orderDeviceNumber, tableNumber: o.tableNumber,
+  // Only a takeaway order prints its type, as the old system does.
+  orderTypeName: o.orderType === "TakeAway" ? o.orderTypeName : null,
 })
 
 /** Prints an invoice on A4 or saves it as PDF (or, with `as: "preview"`, returns the document to show on screen). The invoice, branch and customer details it needs are fetched first. */
@@ -93,7 +83,7 @@ export function useInvoiceOutput() {
       const doc = paper === "a5"
         ? invoiceA5Doc(doc0, { branch: b, customer: c, isExempt, qrImage, barcodes: await barcodesOf(qc, invoice), measurement: measurementOf(c), methodLabel })
         : paper === "roll"
-        ? invoiceRollDoc(doc0, rollOptionsOf(settings, { branch: b, customer: c, currency, methodLabel }))
+        ? invoiceRollDoc(doc0, rollOptionsOf(settings, { branch: b, customer: c, currency, methodLabel, qrImage }))
         : invoiceA4Doc(doc0, { branch: b, customer: c, isExempt, qrImage, showPaymentMethods, showPaidAndRemaining, showBranchName, showHeaderAndFooter: settings.printA4Tab?.showHeaderAndFooterInPrint !== false, blue: settings.printA4Tab?.a4InvoiceType === "Design2", design: settings.printA4Tab?.a4InvoiceType === "Design3" || settings.printA4Tab?.a4InvoiceType === "Design4" ? settings.printA4Tab?.a4InvoiceType as "Design3" | "Design4" : undefined, methodLabel })
       // Preview: hand the finished document back; the caller shows it on screen instead of printing.
       if (as === "preview") return doc

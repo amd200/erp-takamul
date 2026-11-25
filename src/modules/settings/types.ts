@@ -18,7 +18,7 @@ export type OperationsTab = {
 }
 export type TablesTab = { isTables: boolean; selectTableNumberDuringSave: boolean; showTableNumberInOrders: boolean }
 export type SalonsTab = { beautyTheme: boolean; showEmployeeService: boolean; showServiceEmployeeSales: boolean; defaultServiceEmployeeId: number | null }
-export type PrintRollTab = { printCount: number; showBranchNameInPrint: boolean; invoiceDesign3: boolean }
+export type PrintRollTab = { printCount: number; showBranchNameInPrint: boolean; invoiceDesign3: boolean; rollInvoiceDesign: Enum }
 export type SalesScreenTab = {
   postype: Enum; sales2InvoiceType: number | null; selectOrderTypeDuringSave: boolean; selectTableNumberDuringSave: boolean; showOrdertype: boolean
   isTekawuy: boolean; isTables: boolean; isDelivary: boolean; isQuantity: boolean; isPrice: boolean; isAddons: boolean

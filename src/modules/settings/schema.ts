@@ -91,8 +91,8 @@ export const emptyAppearance: z.infer<typeof appearanceSchema> = {
 export const a4Schema = z.object({ printA4Tab: z.object({ a4InvoiceType: named, showHeaderAndFooterInPrint: flag }) })
 export const emptyA4: z.infer<typeof a4Schema> = { printA4Tab: { a4InvoiceType: "Design1", showHeaderAndFooterInPrint: true } }
 
-export const rollSchema = z.object({ printRollTab: z.object({ invoiceDesign3: flag, printCount: count(1, 5) }) })
-export const emptyRoll: z.infer<typeof rollSchema> = { printRollTab: { invoiceDesign3: false, printCount: 1 } }
+export const rollSchema = z.object({ printRollTab: z.object({ rollInvoiceDesign: named, printCount: count(1, 5) }) })
+export const emptyRoll: z.infer<typeof rollSchema> = { printRollTab: { rollInvoiceDesign: "Design1", printCount: 1 } }
 
 export const voucherSchema = z.object({ vouchersPrintTab: z.object({ voucherPrintCount: count(1, 5) }) })
 export const emptyVoucher: z.infer<typeof voucherSchema> = { vouchersPrintTab: { voucherPrintCount: 1 } }

@@ -1825,7 +1825,7 @@
       "defultPreparedPrinter": "Tikit printer",
       "a4InvoiceType": "A4 chalan desin",
       "showHeaderAndFooterInPrint": "A4 printey header ebong futar dekhan",
-      "invoiceDesign3": "Chalan naksha 3",
+      "rollInvoiceDesign": "Roll chalan desin",
       "printCount": "Chalan print kopi",
       "showBranchNameInPrint": "Printe shakhar naam dekhan",
       "showBranchShortNameInInvoice": "Sakhar sonkkhipto nam print korun",
@@ -1914,6 +1914,11 @@
         "Arabic": "العربية",
         "English": "English",
         "ArabicAndEnglish": "Arabic ebong English"
+      },
+      "rollInvoiceDesign": {
+        "Design1": "Design 1",
+        "Design2": "Design 2",
+        "Design3": "Design 3 (shohoj)"
       },
       "a4InvoiceType": {
         "Design1": "Design 1",
@@ -2058,6 +2063,7 @@
       }
     },
     "previewA4": "A4 chalan priview",
+    "previewRoll": "Roll chalan priview",
     "previewDesignFallback": "Ei design notun sanskarane ekhono nei; prothom design-e print hobe.",
     "sec": {
       "customerOrders": "Grahok order screen",

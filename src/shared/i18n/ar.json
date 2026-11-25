@@ -1827,7 +1827,7 @@
       "defultPreparedPrinter": "طابعة بونات التجهيز",
       "a4InvoiceType": "تصميم فاتورة A4",
       "showHeaderAndFooterInPrint": "إظهار الهيدر والفوتر في طباعة A4",
-      "invoiceDesign3": "تصميم الفاتورة 3",
+      "rollInvoiceDesign": "تصميم الفاتورة الرول",
       "printCount": "عدد نسخ طباعة الفاتورة",
       "showBranchNameInPrint": "إظهار اسم الفرع في الطباعة",
       "showBranchShortNameInInvoice": "طباعة الاسم المختصر للفرع",
@@ -1916,6 +1916,11 @@
         "Arabic": "عربي",
         "English": "إنجليزي",
         "ArabicAndEnglish": "عربي وإنجليزي"
+      },
+      "rollInvoiceDesign": {
+        "Design1": "تصميم رقم 1",
+        "Design2": "تصميم رقم 2",
+        "Design3": "تصميم رقم 3 (مبسّط)"
       },
       "a4InvoiceType": {
         "Design1": "التصميم الأول",
@@ -2060,6 +2065,7 @@
       }
     },
     "previewA4": "معاينة فاتورة A4",
+    "previewRoll": "معاينة فاتورة الرول",
     "previewDesignFallback": "هذا التصميم غير متاح بعد في النسخة الجديدة، لذا سيُطبع بالتصميم الأول.",
     "sec": {
       "customerOrders": "شاشة طلبات العميل",

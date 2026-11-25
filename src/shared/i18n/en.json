@@ -1827,7 +1827,7 @@
       "defultPreparedPrinter": "Ticket printer",
       "a4InvoiceType": "A4 invoice design",
       "showHeaderAndFooterInPrint": "Print header and footer",
-      "invoiceDesign3": "Compact receipt layout",
+      "rollInvoiceDesign": "Roll invoice design",
       "printCount": "Receipt copies",
       "showBranchNameInPrint": "Print branch name",
       "showBranchShortNameInInvoice": "Print branch short name",
@@ -1916,6 +1916,11 @@
         "Arabic": "Arabic",
         "English": "English",
         "ArabicAndEnglish": "Arabic and English"
+      },
+      "rollInvoiceDesign": {
+        "Design1": "Design 1",
+        "Design2": "Design 2",
+        "Design3": "Design 3 (simplified)"
       },
       "a4InvoiceType": {
         "Design1": "Design 1",
@@ -2060,6 +2065,7 @@
       }
     },
     "previewA4": "A4 invoice preview",
+    "previewRoll": "Roll invoice preview",
     "previewDesignFallback": "This design is not available in the new version yet; it prints with the first design.",
     "sec": {
       "customerOrders": "Customer orders screen",

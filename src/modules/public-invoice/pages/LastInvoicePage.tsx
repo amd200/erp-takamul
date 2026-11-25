@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react"
+import QRCode from "qrcode"
 import { useSearchParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { AlertTriangle, BellOff, BellRing, ChefHat, CheckCircle2, ClipboardCheck, Download, Loader2, PackageCheck, ReceiptText, Share, type LucideIcon } from "lucide-react"
@@ -6,8 +7,8 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { downloadPdf, renderDocument } from "@/shared/print"
 import { usePublicBranch } from "@/modules/pos/pos4/queries"
-import { invoiceRollDoc } from "@/modules/sales/print/invoiceRollDoc"
-import { printInvoiceOf, rollOptionsOf } from "@/modules/sales/print/useInvoiceOutput"
+import { invoiceRollDoc, rollOptionsOf } from "@/modules/sales/print/invoiceRollDoc"
+import { printInvoiceOf } from "@/modules/sales/print/useInvoiceOutput"
 import { useAppSettings, useCurrency } from "@/modules/settings"
 import type { Branch } from "@/modules/branches/types"
 import { orderRequestDoc } from "@/modules/order-requests/print/orderRequestDoc"
@@ -104,6 +105,13 @@ function Tracking({ params }: { params: URLSearchParams }) {
   const branch = usePublicBranch()
   const settings = useAppSettings()
   const currency = useCurrency()
+  // The invoice's ZATCA QR, printed at the bottom of the receipt as on the cashier's copy.
+  const qrText = record && record.recordType !== "OrderRequest" ? record.data.zatcaQRCode : null
+  const [qrImage, setQrImage] = useState<string | null>(null)
+  useEffect(() => {
+    if (!qrText) { setQrImage(null); return }
+    QRCode.toDataURL(qrText).then(setQrImage).catch(() => setQrImage(null))
+  }, [qrText])
   // Drawn with the cashier's own roll template and settings, so the customer sees exactly the receipt that prints.
   const doc = useMemo(() => {
     if (!record?.data.items?.length) return null
@@ -115,8 +123,8 @@ function Tracking({ params }: { params: URLSearchParams }) {
     }
     // The invoice carries its own issuing branch and customer; the public branch info only fills in when it does not.
     const branchOf = record.data.branch ?? (branch.data as Branch | undefined)
-    return invoiceRollDoc(printInvoiceOf(record.data), rollOptionsOf(settings, { branch: branchOf ?? undefined, customer: record.data.customer ?? undefined, currency, methodLabel }))
-  }, [record, branch.data, settings, currency, t])
+    return invoiceRollDoc(printInvoiceOf(record.data), rollOptionsOf(settings, { branch: branchOf ?? undefined, customer: record.data.customer ?? undefined, currency, methodLabel, qrImage }))
+  }, [record, branch.data, settings, currency, t, qrImage])
   const html = useMemo(() => (doc ? withoutPhoneLinks(renderDocument(doc)) : null), [doc])
 
   // Built in the browser from the receipt on screen, so it needs no token or extra endpoint.

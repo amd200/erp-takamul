@@ -45,6 +45,23 @@ export type InvoiceInput = {
   payments: Omit<Payment, "id" | "date">[];
 };
 
+export type AdditionCategoryDto = { id: number; categoryNameAr: string; categoryNameEn?: string | null; categoryNameUr?: string | null };
+/** An addition on an order line. The order endpoints fill only id, additionNameAr and additionNameEn; the rest arrive as defaults. */
+export type AdditionDto = {
+  id: number;
+  additionNameAr: string;
+  additionNameEn?: string | null;
+  additionNameUr?: string | null;
+  categoryIds?: number[] | null;
+  categories?: AdditionCategoryDto[] | null;
+  categoryId?: number | null;
+  categoryNameAr?: string | null;
+  categoryNameEn?: string | null;
+  categoryNameUr?: string | null;
+  isActive?: boolean;
+  createdAt?: string | null;
+};
+
 export type ItemDto = {
   id?: number | null;
   returnedQuantity?: number | null;
@@ -63,6 +80,7 @@ export type ItemDto = {
   discountPercentage?: number | null;
   lineTotal?: number | null;
   taxCalculation?: number | null;
+  additions?: AdditionDto[] | null;
 };
 export type PaymentDto = { id: number; paymentNumber?: string | null; amount: number; paymentMethod?: string | null; paymentDate?: string | null; notes?: string | null; treasuryId?: number | null; treasuryName?: string | null };
 export type InvoicePaymentItem = { id: number; paymentNumber?: string | null; paymentDate?: string | null; amount: number; paymentMethod?: string | null; status?: string | null; notes?: string | null; transactionName?: string | null };
@@ -88,6 +106,11 @@ export type SalesOrderDto = {
   zatcaResponse?: string | null;
   zatcaQRCode?: string | null;
   notes?: string | null;
+  salesOrderStartNumber?: number | null;
+  orderDeviceNumber?: number | null;
+  orderType?: string | null;
+  orderTypeName?: string | null;
+  tableNumber?: string | null;
   items?: ItemDto[] | null;
   payments?: PaymentDto[] | null;
   totalPaid?: number | null;
