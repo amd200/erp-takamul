@@ -33,7 +33,7 @@ export const authApi = {
 
   /** The answer is generic: it does not say whether the email is registered. */
   forgotPassword: (email: string) =>
-    http<void>("/Auth/forgot-password", { method: "POST", data: JSON.stringify(email), headers: { "Content-Type": "application/json" } }),
+    http<void>("/Auth/forget-password", { method: "POST", data: JSON.stringify(email), headers: { "Content-Type": "application/json" } }),
 
   /** A correct code answers with `resetGrant`, the proof the next step must send back. Wrong or expired codes fail with an `OTP_*` code. */
   verifyOtp: ({ email, otp }: { email: string; otp: string }) =>
