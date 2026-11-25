@@ -4,3 +4,4 @@ export { esc, PAPERS, renderDocument, type Paper, type PrintDoc } from "./docume
 export { printDocument } from "./print"
 export { downloadPdf } from "./pdf"
 export { currencyMark, isRiyal, riyalIcon } from "./currency"
+export { invoicePaperOf } from "./paper"

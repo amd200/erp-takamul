@@ -7,7 +7,7 @@ import { invoiceA4Doc } from "@/modules/sales/print/invoiceA4Doc"
 import type { PrintInvoice } from "@/modules/sales/print/printInvoice"
 import type { Branch } from "@/modules/branches/types"
 import type { Customer } from "@/modules/customers/types"
-import { readScale, scaleRule } from "@/modules/pos/scale"
+import { readScale, scaleRule } from "@/modules/pos/shared/lib/scale"
 import type { Settings, SettingValue } from "../types"
 
 type V = Record<string, SettingValue>

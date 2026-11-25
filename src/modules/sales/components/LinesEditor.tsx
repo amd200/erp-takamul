@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FormInput } from "@/components/form/FormFields"
 import { formatMoney } from "@/lib/format"
 import { useAppSettings } from "@/modules/settings"
-import { NumberInput } from "@/modules/pos/grid/NumberInput"
+import { NumberInput } from "@/modules/pos/shared/NumberInput"
 import { costFromTotal } from "@/modules/purchases/screen/lines"
 import { cn } from "@/lib/utils"
 import { useTaxes } from "@/modules/taxes/service"

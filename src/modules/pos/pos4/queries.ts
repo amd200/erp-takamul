@@ -32,10 +32,10 @@ export function usePos4Items({ categoryId, term, enabled = true }: { categoryId:
     getNextPageParam: (last, _all, lastParam) => (last.more ? lastParam + 1 : undefined),
     staleTime: 60_000,
   })
-  const items = useMemo(() => {
-    const seen = new Set<number>()
-    return (q.data?.pages ?? []).flatMap((p) => p.items).filter((p) => showsInSales(p) && p.productType !== "RawMatrial" && !isBranchChild(p) && !seen.has(p.id) && !!seen.add(p.id))
-  }, [q.data])
+  const items = useMemo(
+    () => (q.data?.pages ?? []).flatMap((p) => p.items).filter((p) => showsInSales(p) && p.productType !== "RawMatrial" && !isBranchChild(p)),
+    [q.data],
+  )
   return {
     items,
     loading: q.isLoading,

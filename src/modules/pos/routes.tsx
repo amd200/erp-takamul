@@ -5,15 +5,15 @@ import { lazyPage } from "@/shared/routing/lazyPage"
 
 /** The customer's own ordering screen needs no sign-in: the server hands out the menu and takes the order without one. */
 export const pos4Routes: RouteObject[] = [
-  { path: "pos4", lazy: lazyPage(() => import("./pages/Pos4Page")) },
+  { path: "pos4", lazy: lazyPage(() => import("./pos4/pages/Pos4Page")) },
 ]
 
 /** The cashier screens fill the whole window, so they sit outside the back-office layout. */
 export const posRoutes: RouteObject[] = [
   { element: <RequirePermission perm={P.sales.pos} />, children: [
-    { path: "pos", lazy: lazyPage(() => import("./pages/PosPage")) },
-    { path: "pos2", lazy: lazyPage(() => import("./pages/Pos2Page")) },
-    { path: "pos-optics", lazy: lazyPage(() => import("./pages/PosOpticsPage")) },
+    { path: "pos", lazy: lazyPage(() => import("./pos1/pages/PosPage")) },
+    { path: "pos2", lazy: lazyPage(() => import("./pos2/pages/Pos2Page")) },
+    { path: "pos-optics", lazy: lazyPage(() => import("./pos2/pages/PosOpticsPage")) },
     // The tailoring shop's order screen: look only for now, on sample data (the back end has no tailoring data yet).
     { path: "pos-tailoring", lazy: lazyPage(() => import("@/modules/tailoring/pages/TailoringPosPage")) },
   ] },

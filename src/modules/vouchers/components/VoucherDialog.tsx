@@ -50,8 +50,8 @@ export function VoucherDialog({ kind, open, onOpenChange, embedded = false, cust
   useEffect(() => { if (open) { form.reset(defaults()); key.current = newIdempotencyKey() } }, [open, treasuries.length, customerId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const parties = (partyType === "customer"
-    ? customers.filter((p) => p.isActive !== false).map((p) => ({ id: p.id, name: p.customerName, balance: p.balance ?? 0 }))
-    : suppliers.filter((p) => p.isActive !== false).map((p) => ({ id: p.id, name: p.supplierName, balance: p.balance ?? 0 })))
+    ? customers.map((p) => ({ id: p.id, name: p.customerName, balance: p.balance ?? 0 }))
+    : suppliers.map((p) => ({ id: p.id, name: p.supplierName, balance: p.balance ?? 0 })))
   const party = parties.find((p) => p.id === partyId)
   const treasury = treasuries.find((x) => x.id === treasuryId)
   const balance = party?.balance ?? 0

@@ -1,7 +1,7 @@
 import type { Control, FieldValues, Path } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { FormInput, FormSelect } from "@/components/form/FormFields"
-import { useTreasuries } from "@/modules/lookups/service"
+import { useTreasuries } from "@/modules/treasuries/queries"
 
 /** Amount and treasury fields for one payment, used in the invoice forms and the payments dialog. The method is not asked: a payment goes in as cash. */
 export function PaymentFields<T extends FieldValues>({ control, prefix, compact, disabled }: { control: Control<T>; prefix?: string; compact?: boolean; disabled?: boolean }) {

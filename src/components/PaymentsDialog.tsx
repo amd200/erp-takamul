@@ -13,7 +13,8 @@ import { Separator } from "@/components/ui/separator"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { FormInput, FormSelect, FormTextarea } from "@/components/form/FormFields"
 import { formatMoney, formatDateTime } from "@/lib/format"
-import { pickTreasury, useTreasuries } from "@/modules/lookups/service"
+import { pickTreasury } from "@/modules/lookups/service"
+import { useTreasuries } from "@/modules/treasuries/queries"
 
 const paymentSchema = z.object({
   treasuryId: z.number({ error: "validation.treasuryRequired" }).min(1, "validation.treasuryRequired"),

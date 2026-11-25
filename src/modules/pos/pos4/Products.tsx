@@ -1,6 +1,6 @@
 import { memo, useEffect, useRef, useState } from "react"
 import { Flame, Minus, Plus, Store } from "lucide-react"
-import { CurrencySymbol } from "../components/CurrencySymbol"
+import { CurrencySymbol } from "../shared/CurrencySymbol"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import type { Category } from "@/modules/categories/types"

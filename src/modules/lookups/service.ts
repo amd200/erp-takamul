@@ -3,19 +3,16 @@ import { fetchAllPages } from "@/shared/http/paged"
 import { branchesApi } from "@/modules/branches/service"
 import { customersApi } from "@/modules/customers/service"
 import { suppliersApi } from "@/modules/suppliers/service"
-import { treasuriesApi } from "@/modules/treasuries/service"
 import { warehousesApi } from "@/modules/warehouses/service"
 import type { EmployeeDto } from "./types"
 import { customerKeys } from "@/modules/customers/keys"
 import { supplierKeys } from "@/modules/suppliers/keys"
-import { treasuryKeys } from "@/modules/treasuries/keys"
 import { employeeKeys } from "@/modules/employees/keys"
 import { warehouseKeys } from "@/modules/warehouses/keys"
 import { branchKeys } from "@/modules/branches/keys"
 
-export const useCustomers = () => useQuery({ queryKey: customerKeys.refs, queryFn: async () => (await customersApi.list()).filter((c) => c.isActive !== false) })
-export const useSuppliers = () => useQuery({ queryKey: supplierKeys.refs, queryFn: async () => (await suppliersApi.list()).filter((s) => s.isActive !== false) })
-export const useTreasuries = () => useQuery({ queryKey: treasuryKeys.refs, queryFn: () => treasuriesApi.list() })
+export const useCustomers = () => useQuery({ queryKey: customerKeys.refs, queryFn: () => customersApi.list() })
+export const useSuppliers = () => useQuery({ queryKey: supplierKeys.refs, queryFn: () => suppliersApi.list() })
 export const useEmployees = (enabled = true) => useQuery({
   queryKey: employeeKeys.refs,
   queryFn: () => fetchAllPages<EmployeeDto>("/employees"),

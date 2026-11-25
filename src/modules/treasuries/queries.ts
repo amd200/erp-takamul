@@ -6,6 +6,7 @@ import { treasuriesApi } from "./service"
 import type { TransferInput } from "./types"
 import { treasuryKeys } from "./keys"
 
+export const useTreasuries = () => useQuery({ queryKey: treasuryKeys.refs, queryFn: () => treasuriesApi.list() })
 export const useTreasuryList = (sort?: ListSort) => useQuery({ queryKey: treasuryKeys.list(sort), queryFn: () => treasuriesApi.list(sort), placeholderData: keepPreviousData })
 
 export const useSaveTreasury = () => {

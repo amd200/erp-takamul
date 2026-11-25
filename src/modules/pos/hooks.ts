@@ -64,12 +64,10 @@ export function usePosGrid(search: string, categoryId: number | null) {
     staleTime: 60_000,
   })
 
-  const shown = useMemo(() => {
-    const seen = new Set<number>()
-    return (grid.data?.pages ?? []).flatMap((p) => p.items)
-      // A branched item's children are reached through it, so they are not cards of their own.
-      .filter((p) => showsInSales(p) && p.productType !== "RawMatrial" && !(p.parentProductId && (p.productType === "Direct" || p.productType === "Prepared")) && !seen.has(p.id) && !!seen.add(p.id))
-  }, [grid.data])
+  const shown = useMemo(() => (grid.data?.pages ?? []).flatMap((p) => p.items)
+    // A branched item's children are reached through it, so they are not cards of their own.
+    .filter((p) => showsInSales(p) && p.productType !== "RawMatrial" && !(p.parentProductId && (p.productType === "Direct" || p.productType === "Prepared"))),
+  [grid.data])
 
   return {
     main, shown,

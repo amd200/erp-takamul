@@ -14,7 +14,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { cn } from "@/lib/utils";
 import { newIdempotencyKey, renewIfReused } from "@/shared/http/idempotency";
 import { useAppSettings } from "@/modules/settings";
-import { useTreasuries } from "@/modules/lookups/service";
+import { useTreasuries } from "@/modules/treasuries/queries";
 import { useCreateReturn, useInvoice } from "../queries";
 import { returnSchema, today, type ReturnForm } from "../schema";
 
