@@ -55,7 +55,7 @@ export function CompactDialog(props: PaymentProps) {
     <DialogPrimitive.Root open={open} onOpenChange={(o) => !busy && onOpenChange(o)}>
       <DialogContent showCloseButton={false} aria-describedby={undefined} style={beauty ? beautyStyle : undefined}
         className="flex max-h-[calc(100dvh-16px)] w-[calc(100vw-16px)] max-w-none flex-col gap-0 overflow-hidden rounded-2xl border border-[var(--compact-payment-border,#e1e4ec)] bg-[var(--compact-payment-background,#f7f8fc)] p-0 text-[var(--compact-payment-ink,#0e124d)] shadow-2xl ring-0 sm:max-h-[calc(100dvh-24px)] sm:w-[calc(100vw-24px)] sm:max-w-[900px] sm:rounded-[20px]">
-        <header className="flex min-h-[67px] shrink-0 items-center justify-between bg-[var(--compact-payment-header,#0e124d)] px-4 py-2 text-white max-sm:min-h-14 sm:py-2 sm:ps-[30px] sm:pe-11">
+        <header className="flex min-h-[67px] shrink-0 items-center justify-between bg-[var(--compact-payment-header,#0e124d)] px-4 py-2 text-white max-sm:min-h-14 sm:py-2 sm:ps-[30px] sm:pe-6">
           <div className="flex items-center gap-2.5 sm:gap-8">
             <DialogTitle className="text-lg leading-[1.4] font-extrabold text-white! sm:text-[21px] sm:text-[27px]">{t("posPayment.title")}</DialogTitle>
             <DialogDescription className="sr-only">{t("pos.payHint")}</DialogDescription>
@@ -64,12 +64,12 @@ export function CompactDialog(props: PaymentProps) {
               {t("posPayment.split")}
             </Button>
           </div>
-          <div className="flex shrink-0 items-center gap-2 sm:gap-4">
+          <div className="flex shrink-0 items-center gap-4 sm:gap-6">
             <div className="flex flex-col items-start">
               <span className="text-[11px] leading-[1.3] sm:text-[13px] sm:leading-[1.4] text-[var(--compact-payment-header-muted,#b9bfd8)]">{t("posPayment.due")}</span>
               <strong className="font-[Arial] text-2xl leading-none font-extrabold text-[var(--compact-payment-header-amount,#45dc82)] sm:text-[30px]" dir="ltr">{total.toFixed(2)}</strong>
             </div>
-            <Button type="button" variant="ghost" size="icon" aria-label={t("common.close")} disabled={busy} onClick={() => onOpenChange(false)} className="relative size-8 sm:-left-6 shrink-0 rounded-lg bg-white/15 text-white hover:bg-white/25 hover:text-white"><X size={18} /></Button>
+            <Button type="button" variant="ghost" size="icon" aria-label={t("common.close")} disabled={busy} onClick={() => onOpenChange(false)} className="size-8 shrink-0 rounded-lg bg-white/15 text-white hover:bg-white/25 hover:text-white"><X size={18} /></Button>
           </div>
         </header>
 
