@@ -131,7 +131,7 @@ export function A4Preview({ v }: { v: V }) {
   const box = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(0.5)
   const design = String(v.a4InvoiceType ?? "Design1")
-  const branch = useBranch(useSession().branch.id).data
+  const branch = useBranch(useSession().branch.id ?? undefined).data
 
   useEffect(() => {
     const el = box.current
@@ -171,7 +171,7 @@ export function RollPreview({ v }: { v: V }) {
   const [qr, setQr] = useState<string | null>(null)
   const [height, setHeight] = useState(600)
   const design = rollDesignOf({ rollInvoiceDesign: String(v.rollInvoiceDesign ?? "") })
-  const branch = useBranch(useSession().branch.id).data
+  const branch = useBranch(useSession().branch.id ?? undefined).data
 
   useEffect(() => { QRCode.toDataURL("Takamul").then(setQr).catch(() => setQr(null)) }, [])
 
