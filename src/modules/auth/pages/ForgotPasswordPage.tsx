@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useNavigate } from "react-router-dom"
 import { Mail } from "lucide-react"
 import { useTranslation } from "react-i18next"
+import { errorToast } from "@/shared/api/errors"
 import { AuthLayout } from "../components/AuthLayout"
 import { AuthError, AuthField, authButtonClass } from "../components/AuthField"
 import { useForgotPassword } from "../queries"
@@ -16,13 +17,13 @@ export default function ForgotPasswordPage() {
   const [sentTo, setSentTo] = useState<string | null>(null)
   const form = useForm<ForgotForm>({ resolver: zodResolver(forgotSchema), defaultValues: { email: "" } })
   const send = useForgotPassword()
-  const error = send.error?.message ?? (form.formState.errors.email?.message && t(form.formState.errors.email.message))
+  const error = form.formState.errors.email?.message && t(form.formState.errors.email.message)
 
   return (
     <AuthLayout title={t("auth.forgotTitle")} description={sentTo ? undefined : t("auth.forgotDescription")} onBack={() => nav("/login")}>
       {sentTo === null ? (
-        <form onSubmit={form.handleSubmit((v) => send.mutate(v.email, { onSuccess: () => setSentTo(v.email) }))} noValidate className="space-y-4">
-          <AuthField icon={Mail} type="email" placeholder={t("auth.email")} {...form.register("email", { onChange: () => send.reset() })} />
+        <form onSubmit={form.handleSubmit((v) => send.mutate(v.email, { onSuccess: () => setSentTo(v.email), onError: (e) => errorToast(e, "common.unexpected") }))} noValidate className="space-y-4">
+          <AuthField icon={Mail} type="email" placeholder={t("auth.email")} {...form.register("email")} />
           {error && <AuthError>{error}</AuthError>}
           <button type="submit" disabled={send.isPending} className={`mt-4 ${authButtonClass}`}>
             {send.isPending ? <span className="inline-block size-5 animate-spin rounded-full border-2 border-white/30 border-t-white" /> : t("auth.sendLink")}

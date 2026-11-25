@@ -1,8 +1,6 @@
 import { useAuthStore } from "@/shared/auth/authStore"
 import { applyToken, type TokenResponse } from "@/shared/auth/tokens"
 import { refreshAccessToken } from "@/shared/http/client"
-import i18n from "@/shared/i18n"
-import { ApiError } from "@/shared/http/ApiError"
 import { http } from "@/shared/http/request"
 
 /** Stable id for this browser; the server limits a user to one device at a time ("DEVICE_CONFLICT"). */
@@ -33,15 +31,15 @@ export const authApi = {
     try { await refreshAccessToken() } catch { useAuthStore.getState().clear() }
   },
 
+  /** The answer is generic: it does not say whether the email is registered. */
   forgotPassword: (email: string) =>
-    http<void>("/Auth/forget-password", { method: "POST", data: JSON.stringify(email), headers: { "Content-Type": "application/json" } }),
+    http<void>("/Auth/forgot-password", { method: "POST", data: JSON.stringify(email), headers: { "Content-Type": "application/json" } }),
 
-  /** The server answers 200 even for a wrong code; only the message "OTP_VALID" means it matched. */
-  verifyOtp: async ({ email, otp }: { email: string; otp: string }) => {
-    const res = await http<{ message?: string }>("/Auth/verify-otp", { method: "POST", data: { email, otp } })
-    if (res?.message !== "OTP_VALID") throw new ApiError(res?.message ?? i18n.t("common.unexpected"), 400)
-  },
+  /** A correct code answers with `resetGrant`, the proof the next step must send back. Wrong or expired codes fail with an `OTP_*` code. */
+  verifyOtp: ({ email, otp }: { email: string; otp: string }) =>
+    http<{ resetGrant: string; expiresAtUtc: string }>("/Auth/verify-otp", { method: "POST", data: { email, otp } }),
 
-  resetPassword: ({ email, password }: { email: string; password: string }) =>
-    http<void>("/Auth/reset-password", { method: "POST", data: { email, newPassword: password } }),
+  /** Sends the grant exactly as `verifyOtp` returned it, not the code. */
+  resetPassword: ({ email, password, resetGrant }: { email: string; password: string; resetGrant: string }) =>
+    http<void>("/Auth/reset-password", { method: "POST", data: { email, newPassword: password, resetGrant } }),
 }

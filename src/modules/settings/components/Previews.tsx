@@ -122,7 +122,7 @@ const SAMPLE_INVOICE: PrintInvoice = {
   totals: { subTotal: 130, discount: 0, tax: 19.5, grandTotal: 149.5 },
   payments: [{ amount: 120, paymentMethod: "Cash" }],
 }
-const SAMPLE_BRANCH = { name: "مؤسسة المثال التجارية", nameEn: "Example Trading Est.", shortName: "المثال", shortNameEn: "Example", taxNumber: "300000000000003", commercialRegister: "1010000000", phone: "0500000000", cityName: "الرياض", district: "العليا", street: "شارع الملك فهد", postalCode: "12211", buildingNumber: "1234", subNumber: "5678", imageUrl: null, stampImageUrl: null, iban: "SA0000000000000000000000", footerNote: "", locationAddress: "" } as unknown as Branch
+const SAMPLE_BRANCH = { name: "مؤسسة المثال التجارية - فرع الرياض", nameEn: "Example Trading Est. - Riyadh Branch", shortName: "فرع الرياض", shortNameEn: "Riyadh Branch", taxNumber: "300000000000003", commercialRegister: "1010000000", phone: "0500000000", cityName: "الرياض", district: "العليا", street: "شارع الملك فهد", postalCode: "12211", buildingNumber: "1234", subNumber: "5678", imageUrl: null, stampImageUrl: null, iban: "SA0000000000000000000000", footerNote: "", locationAddress: "" } as unknown as Branch
 const SAMPLE_CUSTOMER = { phone: "0555555555", taxNumber: "300000000000009", commercialRegister: "1010111111", city: "الرياض", district: "النخيل", street: "طريق الملك عبدالله", postalCode: "12345", buildingNumber: "4321", additionalNumber: "8765", country: "السعودية" } as unknown as Customer
 
 /** The A4 invoice as the chosen design prints it, on sample data, scaled to fit the card. */
@@ -176,7 +176,8 @@ export function RollPreview({ v }: { v: V }) {
   const html = useMemo(() => renderDocument(invoiceRollDoc(ROLL_INVOICE, {
     ...rollOptionsOf(settings, { branch: SAMPLE_BRANCH, customer: SAMPLE_CUSTOMER, currency, methodLabel: (m) => i18n.t(`sales.methods.${m}`), qrImage: qr }),
     rollDesign: design,
-  })), [settings, currency, qr, design])
+    showBranchName: v.showBranchNameInPrint === true,
+  })), [settings, currency, qr, design, v.showBranchNameInPrint])
 
   return (
     <div className="flex flex-col gap-2">
