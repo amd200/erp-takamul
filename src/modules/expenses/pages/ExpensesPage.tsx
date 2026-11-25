@@ -108,7 +108,7 @@ export default function ExpensesPage() {
 
   // The same seven columns, in the same order, as the current system.
   const columns: Column<Expense>[] = [
-    { id: "date", sortable: true, header: t("expenses.colDate"), cell: (x) => (x.date ? formatDateTime(x.date + "T12:00:00", i18n.language) : "—") },
+    { id: "date", sortable: true, header: t("expenses.colDate"), cell: (x) => (x.date ? formatDateTime(x.date, i18n.language) : "—") },
     { id: "name", sortable: true, header: t("expenses.colName"), cell: (x) => <span className="font-semibold">{x.name}</span> },
     { id: "treasuryName", sortable: true, header: t("expenses.treasury"), cell: (x) => x.treasuryName || "—" },
     { id: "itemName", sortable: true, header: t("expenses.item"), cell: (x) => x.itemName || "—" },
