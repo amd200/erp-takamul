@@ -55,10 +55,12 @@ type Props = {
   /** Save one payment; call `done` once it went through (closes the dialog). */
   onSubmit: (v: PaymentForm, done: () => void) => void
   onDelete: (id: number, done: () => void) => void
+  /** Only list the payments: no entry form and no delete buttons (the user may not change them). */
+  readOnly?: boolean
 }
 
 /** Pay against one record (sales invoice, sales return, purchase) and list the payments already made; a payment can be deleted, not edited. */
-export function PaymentsDialog({ open, resetKey, ready, onOpenChange, title, partyLabel, partyName, figureLabel, figure, defaultVault, withNotes, initialAmount = 0, payments, texts, recordPending, deletePending, onSubmit, onDelete }: Props) {
+export function PaymentsDialog({ open, resetKey, ready, onOpenChange, title, partyLabel, partyName, figureLabel, figure, defaultVault, withNotes, initialAmount = 0, payments, texts, recordPending, deletePending, onSubmit, onDelete, readOnly }: Props) {
   const { t, i18n } = useTranslation()
   const { data: treasuries = [] } = useTreasuries()
   const [toDelete, setToDelete] = useState<PaymentRow | null>(null)
@@ -78,7 +80,7 @@ export function PaymentsDialog({ open, resetKey, ready, onOpenChange, title, par
         <DialogBody className="flex max-h-[70vh] flex-col gap-4 [&>*]:shrink-0">
           {ready && (
             <>
-              <form id="payments-form" onSubmit={submit} className="flex flex-col gap-3">
+              {!readOnly && <form id="payments-form" onSubmit={submit} className="flex flex-col gap-3">
                 <div className="grid gap-3 sm:grid-cols-2 [&>*]:min-w-0">
                   <FormInput control={form.control} name="paymentDate" type="date" label={t("sales.paymentDate")} required />
                   <FormSelect control={form.control} name="treasuryId" numeric label={t("sales.treasury")} required
@@ -90,8 +92,8 @@ export function PaymentsDialog({ open, resetKey, ready, onOpenChange, title, par
                   <FormInput control={form.control} name="amount" type="number" label={t("sales.amount")} required />
                 </div>
                 {withNotes && <FormTextarea control={form.control} name="notes" label={t("common.notes")} className="[&_textarea]:h-10 [&_textarea]:min-h-10" />}
-              </form>
-              <Separator />
+              </form>}
+              {!readOnly && <Separator />}
               <div className="font-semibold">{t("sales.previousPayments")}</div>
               {payments.length === 0 ? (
                 <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">{texts.empty}</div>
@@ -110,7 +112,7 @@ export function PaymentsDialog({ open, resetKey, ready, onOpenChange, title, par
                         <TableCell className="text-muted-foreground">{p.treasuryName || "—"}</TableCell>
                         <TableCell className="font-semibold tabular-nums">{formatMoney(p.amount)}</TableCell>
                         <TableCell>
-                          {p.id != null && <Button variant="ghost-destructive" size="icon" aria-label={t("common.delete")} onClick={() => setToDelete(p)}><Trash2 /></Button>}
+                          {p.id != null && !readOnly && <Button variant="ghost-destructive" size="icon" aria-label={t("common.delete")} onClick={() => setToDelete(p)}><Trash2 /></Button>}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -122,7 +124,7 @@ export function PaymentsDialog({ open, resetKey, ready, onOpenChange, title, par
         </DialogBody>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
-          <Button type="submit" form="payments-form" disabled={recordPending || !ready}>{texts.submit}</Button>
+          {!readOnly && <Button type="submit" form="payments-form" disabled={recordPending || !ready}>{texts.submit}</Button>}
         </DialogFooter>
       </DialogContent>
       <ConfirmDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)} title={texts.deleteTitle}

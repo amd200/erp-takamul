@@ -43,7 +43,7 @@ export const invoicesApi = {
     data: { salesOrderId: invoiceId, treasuryId: p.treasuryId, amount: p.amount, paymentMethod: p.method, paymentDate: p.paymentDate, notes: p.notes || null },
   })),
   payments: (invoiceId: number) => http<InvoicePaymentItem[]>(`/sales-orders/order/${invoiceId}`),
-  deletePayment: (paymentId: number) => http<unknown>(`/sales-orders/delete-payment/${paymentId}`, { method: "DELETE" }),
+  deletePayment: (paymentId: number, idempotencyKey?: string) => retryWhileInProgress(() => http<unknown>(`/sales-orders/delete-payment/${paymentId}`, { method: "DELETE", headers: idempotencyHeaders(idempotencyKey) })),
   updateNotes: (invoiceId: number, notes: string) => http<unknown>(`/sales-orders/${invoiceId}/notes`, { method: "PUT", data: { notes } }),
   sendToZatca: (invoiceId: number) => http<unknown>("/zatca-invoices/sell", { method: "POST", data: { invoiceId } }),
   /** Phase 1 QR text (TLV base64) for an invoice that has none stored. POST /zatca-invoices/generate-qr */
@@ -79,9 +79,10 @@ export const returnsApi = {
   },
   sendToZatca: (id: number) => http<unknown>("/zatca-invoices/sell-return", { method: "POST", data: { invoiceId: id } }),
   /** A refund paid to the customer against one return; `paymentDate` is a day (the server adds its own time). */
-  recordRefund: (id: number, r: { treasuryId: number; amount: number; paymentDate?: string }) =>
-    http<unknown>(`/sales-returns/${id}/record-refund`, { method: "POST", data: { treasuryId: r.treasuryId, amount: r.amount, paymentDate: r.paymentDate, paymentMethod: "Cash", notes: null } }),
-  deleteRefund: (id: number, paymentId: number) => http<unknown>(`/sales-returns/${id}/refunds/${paymentId}`, { method: "DELETE" }),
+  recordRefund: (id: number, r: { treasuryId: number; amount: number; paymentDate?: string }, idempotencyKey?: string) =>
+    retryWhileInProgress(() => http<unknown>(`/sales-returns/${id}/record-refund`, { method: "POST", headers: idempotencyHeaders(idempotencyKey), data: { treasuryId: r.treasuryId, amount: r.amount, paymentDate: r.paymentDate, paymentMethod: "Cash", notes: null } })),
+  deleteRefund: (id: number, paymentId: number, idempotencyKey?: string) =>
+    retryWhileInProgress(() => http<unknown>(`/sales-returns/${id}/refunds/${paymentId}`, { method: "DELETE", headers: idempotencyHeaders(idempotencyKey) })),
 }
 
 export const debitNotesApi = {

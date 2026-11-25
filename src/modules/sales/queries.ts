@@ -57,7 +57,7 @@ export function useRecordPayment() {
 export function useDeletePayment() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (paymentId: number) => invoicesApi.deletePayment(paymentId),
+    mutationFn: ({ paymentId, key }: { paymentId: number; key: string }) => invoicesApi.deletePayment(paymentId, key),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: salesKeys.all })
       toast.success(i18n.t("common.deleted"))
@@ -150,5 +150,5 @@ function useRefundMutation<V>(fn: (v: V) => Promise<unknown>, doneKey: string) {
     onError: (e) => errorToast(e, "common.saveFailed"),
   })
 }
-export const useRecordRefund = () => useRefundMutation(({ id, ...r }: { id: number; treasuryId: number; amount: number; paymentDate?: string }) => returnsApi.recordRefund(id, r), "sales.refundSaved")
-export const useDeleteRefund = () => useRefundMutation(({ id, paymentId }: { id: number; paymentId: number }) => returnsApi.deleteRefund(id, paymentId), "common.deleted")
+export const useRecordRefund = () => useRefundMutation(({ id, key, ...r }: { id: number; key: string; treasuryId: number; amount: number; paymentDate?: string }) => returnsApi.recordRefund(id, r, key), "sales.refundSaved")
+export const useDeleteRefund = () => useRefundMutation(({ id, paymentId, key }: { id: number; paymentId: number; key: string }) => returnsApi.deleteRefund(id, paymentId, key), "common.deleted")

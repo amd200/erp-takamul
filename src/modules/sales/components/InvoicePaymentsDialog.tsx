@@ -16,6 +16,9 @@ export function InvoicePaymentsDialog({ invoice, onOpenChange }: { invoice: Sale
   const remove = useDeletePayment()
   // One key per payment being typed: sending it twice (double click, retry) records it once.
   const key = useRef(newIdempotencyKey())
+  // One key per payment being deleted; another payment gets its own.
+  const deleteKey = useRef(newIdempotencyKey())
+  const deleteId = useRef(0)
 
   return (
     <PaymentsDialog
@@ -29,7 +32,10 @@ export function InvoicePaymentsDialog({ invoice, onOpenChange }: { invoice: Sale
         { invoiceId: invoice.id, payment: { amount: v.amount, treasuryId: v.treasuryId, paymentDate: v.paymentDate, method: "Cash", notes: v.notes.trim() }, key: key.current },
         { onSuccess: () => { key.current = newIdempotencyKey(); done() }, onError: renewIfReused(key) },
       )}
-      onDelete={(id, done) => remove.mutate(id, { onSuccess: done })}
+      onDelete={(id, done) => {
+        if (deleteId.current !== id) { deleteId.current = id; deleteKey.current = newIdempotencyKey() }
+        remove.mutate({ paymentId: id, key: deleteKey.current }, { onSuccess: () => { deleteId.current = 0; deleteKey.current = newIdempotencyKey(); done() }, onError: renewIfReused(deleteKey) })
+      }}
     />
   )
 }

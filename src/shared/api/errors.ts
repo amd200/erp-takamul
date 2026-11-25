@@ -7,7 +7,8 @@ export type ListSort = { SortBy?: string; SortDescending?: boolean }
 
 /** The server's own message (it's already in the user's language), followed by the first detail line it sent with it when that adds something, else ours. */
 export const errorToast = (e: unknown, fallbackKey: string) => {
-  if (e instanceof ApiError && e.status !== 0 && e.status < 500) {
+  // 503 IDEMPOTENCY_UNAVAILABLE is a server answer meant for the user (nothing was saved; try again), unlike other 5xx.
+  if (e instanceof ApiError && e.status !== 0 && (e.status < 500 || e.code === "IDEMPOTENCY_UNAVAILABLE")) {
     const detail = e.errors.find((x) => x !== e.message)
     toast.error(detail ? `${e.message}: ${detail}` : e.message)
     return

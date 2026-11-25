@@ -48,7 +48,7 @@ export default function ReturnsPage() {
       { key: "roll", label: t("sales.actions.printRoll"), icon: <Printer />, disabled: print.isPending, onSelect: () => print.mutate({ ret: r, paper: "roll" }) },
       stage2 && can(P.sales.zatca) && r.zatcaStatus !== "Sent" && { key: "resend", label: t("sales.actions.resend"), icon: <Send />, disabled: send.isPending, onSelect: () => send.mutate(r.id) },
       stage2 && { key: "zatca", label: t("sales.menu.zatcaResponse"), icon: <ScrollText />, onSelect: () => setZatcaDoc(r) },
-      ops?.allowViewInvoicePayments && { key: "refunds", label: t("sales.menu.payments"), icon: <DollarSign />, onSelect: () => setRefundsId(r.id) },
+      ops?.allowViewInvoicePayments && can(P.sales.returnsAdd) && { key: "refunds", label: t("sales.menu.payments"), icon: <DollarSign />, onSelect: () => setRefundsId(r.id) },
       { key: "view", label: t("common.view"), icon: <Eye />, to: `/sales/returns/${r.id}` },
     ]} /> },
   ]
