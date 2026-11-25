@@ -50,7 +50,7 @@ export function InvoiceActions({ invoice, channel, onPayments, onNotes, onZatcaR
       ops?.allowPrintInvoiceA4 && <DropdownMenuItem key="a4" className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "print" })}><FileText size={14} />{t("sales.menu.printA4")}</DropdownMenuItem>,
       ops?.allowPrintInvoiceA5 && <DropdownMenuItem key="a5" className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "print", paper: "a5" })}><FileText size={14} />{t("sales.menu.printA5")}</DropdownMenuItem>,
       ops?.allowPrintInvoiceRoll && <DropdownMenuItem key="roll" className={item} disabled={output.isPending} onSelect={() => output.mutate({ invoice, as: "print", paper: "roll" })}><Printer size={14} />{t("sales.menu.printRoll")}</DropdownMenuItem>,
-      ops?.allowViewInvoicePayments && <DropdownMenuItem key="payments" className={item} onSelect={onPayments}><DollarSign size={14} />{t("sales.menu.payments")}</DropdownMenuItem>,
+     <DropdownMenuItem key="payments" className={item} onSelect={onPayments}><DollarSign size={14} />{t("sales.menu.payments")}</DropdownMenuItem>,
     ],
     [ops?.allowEditInvoiceNotes && <DropdownMenuItem key="notes" className={item} onSelect={onNotes}><FileText size={14} />{t("sales.menu.notes")}</DropdownMenuItem>],
     [
