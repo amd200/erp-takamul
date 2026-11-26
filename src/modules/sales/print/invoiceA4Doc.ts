@@ -1,4 +1,5 @@
 import { esc, type PrintDoc } from "@/shared/print"
+import { secureImageUrl } from "./imageUrl"
 import type { Branch } from "@/modules/branches/types"
 import type { Customer } from "@/modules/customers/types"
 import { lineAmounts } from "../totals"
@@ -162,7 +163,7 @@ ${o.isExempt ? "" : `<td>${money(a.net)}</td><td>${money(a.tax)}</td>`}<td>${mon
     <div class="meta-row${head ? "" : " hidden"}"><div class="meta-label-ar">الرقم&nbsp;الضريبي</div><div class="meta-value">${dash(b?.taxNumber)}</div><div class="meta-label-en">VAT No.</div></div>
     <div class="meta-row"><div class="meta-label-ar">${nb(esc(o.documentNumberLabel?.ar ?? "فاتورة رقم"))}</div><div class="meta-value">${dash(inv.number)}</div><div class="meta-label-en">${esc(o.documentNumberLabel?.en ?? "INV No.")}</div></div>
   </div>
-  ${head ? `<div class="logo-container">${b?.imageUrl ? `<img src="${esc(b.imageUrl)}" alt="" style="max-height:85px;max-width:100%;object-fit:contain" crossorigin="anonymous">` : `<div style="font-size:14px;font-weight:700">Logo / اللوجو</div>`}</div>` : ""}
+  ${head ? `<div class="logo-container">${b?.imageUrl ? `<img src="${esc(secureImageUrl(b.imageUrl))}" alt="" style="max-height:85px;max-width:100%;object-fit:contain" crossorigin="anonymous">` : `<div style="font-size:14px;font-weight:700">Logo / اللوجو</div>`}</div>` : ""}
   <div class="header-col">
     <div class="company-title${head ? "" : " hidden"}">${nb(esc(names.en))}</div>
     <div class="meta-row${head ? "" : " hidden"}"><div class="meta-label-ar">سجل&nbsp;التجاري</div><div class="meta-value">${dash(b?.commercialRegister)}</div><div class="meta-label-en">Commercial No.</div></div>
@@ -204,7 +205,7 @@ ${o.isExempt ? "" : `<td>${money(a.net)}</td><td>${money(a.tax)}</td>`}<td>${mon
     ${o.showPaidAndRemaining ? tr("المتبقي", money(remaining), "REMAINING", "net-total-row") : ""}
   </table>
 </div>
-${o.blue ? `<div class="payment-stamp-row"><div class="stamp-box">${b?.stampImageUrl ? `<img src="${esc(b.stampImageUrl)}" alt="" crossorigin="anonymous">` : ""}</div><div class="iban-box"><span class="iban-label">رقم الحساب الدولي : آيبان</span><span class="iban-value">${b?.iban?.trim() ? esc(b.iban.trim()) : "____________________________"}</span></div></div>` : ""}
+${o.blue ? `<div class="payment-stamp-row"><div class="stamp-box">${b?.stampImageUrl ? `<img src="${esc(secureImageUrl(b.stampImageUrl))}" alt="" crossorigin="anonymous">` : ""}</div><div class="iban-box"><span class="iban-label">رقم الحساب الدولي : آيبان</span><span class="iban-value">${b?.iban?.trim() ? esc(b.iban.trim()) : "____________________________"}</span></div></div>` : ""}
 ${inv.notes ? `<div class="notes-box"><div>${esc(inv.notes)}</div></div>` : ""}
 ${b?.footerNote ? `<div class="notes-box"><div>${esc(b.footerNote)}</div></div>` : ""}
 ${head ? `<div class="full-width-bar"><div>العنوان : ${dash([b?.cityName, b?.stateName, b?.district, b?.street].filter(Boolean).join(" / ") || b?.locationAddress)}</div>

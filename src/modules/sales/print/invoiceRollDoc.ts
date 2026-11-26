@@ -1,4 +1,5 @@
 import { currencyMark, esc, type PrintDoc } from "@/shared/print"
+import { secureImageUrl } from "./imageUrl"
 import type { Branch } from "@/modules/branches/types"
 import type { Customer } from "@/modules/customers/types"
 import { lineAmounts } from "../totals"
@@ -165,7 +166,7 @@ ${l.notes ? `<div class="item-additions item-note">(${esc(l.notes)})</div>` : ""
   const remaining = Math.max(0, t.grandTotal - inv.paid)
 
   const body = `<div class="page">
-<div class="logo-box">${b?.imageUrl ? `<img src="${esc(b.imageUrl)}" alt="" crossorigin="anonymous">` : ""}
+<div class="logo-box">${b?.imageUrl ? `<img src="${esc(secureImageUrl(b.imageUrl))}" alt="" crossorigin="anonymous">` : ""}
 ${names.ar ? `<div class="branch-name" dir="rtl">${esc(names.ar)}</div>` : ""}${names.en ? `<div class="branch-name" dir="ltr">${esc(names.en)}</div>` : ""}</div>
 
 ${o.documentTitle ? `<div class="title-line">${esc(o.documentTitle.ar)}</div>` : o.isExempt ? "" : `<div class="title-line">${taxNo ? "فاتورة ضريبية" : "فاتورة ضريبية مبسطة"}</div>`}
@@ -267,7 +268,7 @@ function simplifiedRollDoc(inv: PrintInvoice, o: InvoiceRollOptions): PrintDoc {
   const cashier = clean(inv.employeeName)
 
   const body = `<div class="s-page">
-${b?.imageUrl ? `<div class="s-logo"><img src="${esc(b.imageUrl)}" alt="" crossorigin="anonymous"></div>` : ""}
+${b?.imageUrl ? `<div class="s-logo"><img src="${esc(secureImageUrl(b.imageUrl))}" alt="" crossorigin="anonymous"></div>` : ""}
 ${names ? `<div class="s-station">${esc(names)}</div>` : ""}
 ${address ? `<div class="s-small">${esc(address)}</div>` : ""}
 ${!o.isExempt && clean(b?.taxNumber) ? `<div class="s-small">الرقم الضريبي: <bdi>${esc(clean(b?.taxNumber))}</bdi></div>` : ""}

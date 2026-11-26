@@ -88,7 +88,6 @@ export function TicketFields({ form: { control } }: FieldsProps) {
       <Flag control={control} name="generalTab.salesOrderStartNumber" />
       <Flag control={control} name="preparationTicketTab.showCustomerNameInPreparationTicket" />
       <Flag control={control} name="preparationTicketTab.showInvoiceNumberInPreparationTicket" />
-      <Flag control={control} name="printRollTab.showBranchNameInPrint" />
       <Flag control={control} name="preparationTicketTab.saleBoneOrder" />
       <Flag control={control} name="preparationTicketTab.printPreparationTicketInPendingInvoices" />
       <Flag control={control} name="preparationTicketTab.printPreparedReceipt" />
@@ -141,11 +140,13 @@ export function AppearanceFields({ form: { control, watch } }: FieldsProps) {
 export function A4Fields({ form: { control, watch } }: FieldsProps) {
   return (
     <>
-      <Grid>
-        <Choice control={control} name="printA4Tab.a4InvoiceType" values={["Design1", "Design2", "Design3", "Design4"]} />
-        <Flag control={control} name="printA4Tab.showHeaderAndFooterInPrint" />
-      </Grid>
-      <div className="mt-5"><A4Preview v={watch("printA4Tab")} /></div>
+      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
+        <Grid>
+          <Choice control={control} name="printA4Tab.a4InvoiceType" values={["Design1", "Design2", "Design3", "Design4"]} />
+          <Flag control={control} name="printA4Tab.showHeaderAndFooterInPrint" />
+        </Grid>
+        <div className="w-full min-w-0 max-w-[22rem]"><A4Preview v={watch("printA4Tab")} /></div>
+      </div>
     </>
   )
 }
@@ -154,11 +155,14 @@ export function RollFields({ form: { control, watch } }: FieldsProps) {
   const label = useLabel()
   return (
     <>
-      <Grid>
-        <Choice control={control} name="printRollTab.rollInvoiceDesign" values={["Design1", "Design2", "Design3"]} />
-        <FormInput control={control} name="printRollTab.printCount" type="number" required label={label("printCount")} />
-      </Grid>
-      <div className="mt-5"><RollPreview v={watch("printRollTab")} /></div>
+      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
+        <Grid>
+          <Flag control={control} name="printRollTab.showBranchNameInPrint" />
+          <Choice control={control} name="printRollTab.rollInvoiceDesign" values={["Design1", "Design2", "Design3"]} />
+          <FormInput control={control} name="printRollTab.printCount" type="number" required label={label("printCount")} />
+        </Grid>
+        <div className="w-full min-w-0 max-w-[22rem]"><RollPreview v={watch("printRollTab")} /></div>
+      </div>
     </>
   )
 }
