@@ -31,4 +31,6 @@ export const branchesApi = {
     method: "PUT",
     data: form(b, { Id: id, IsActive: current.isActive == null ? undefined : String(current.isActive), Image: b.image, ImageUrl: b.image ? undefined : b.imageUrl, StampImage: b.stampImage }),
   }),
+  /** 204 with no body on success; refusals come as `{ Success: false, Message }` (default branch, linked invoices / financial documents). */
+  remove: (id: number) => http<unknown>(`/Branch/${id}`, { method: "DELETE" }),
 }

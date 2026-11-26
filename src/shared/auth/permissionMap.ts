@@ -65,6 +65,7 @@ export const BACKEND_PERMISSIONS: Record<Permission, string[]> = {
   "branches.view": g("الفروع", "عرض"),
   "branches.add": g("الفروع", "إضافة"),
   "branches.edit": g("الفروع", "تعديل"),
+  "branches.delete": g("الفروع", "حذف"),
   "warehouses.view": g("المستودعات", "عرض", "عرض بالفرع"),
   "warehouses.add": g("المستودعات", "إضافة"),
   "warehouses.edit": g("المستودعات", "تعديل"),

@@ -243,6 +243,8 @@ export const PERMISSION_CATALOG: PermissionSection[] = [
         { id: "view", label: "view", value: "الفروع.عرض" },
         { id: "add", label: "add", value: "الفروع.إضافة" },
         { id: "edit", label: "edit", value: "الفروع.تعديل" },
+        // Not in the back end's AppPermissions yet (the back-end developer is adding it); the old system has no such entry.
+        { id: "delete", label: "delete", value: "الفروع.حذف" },
       ] },
     ],
   },

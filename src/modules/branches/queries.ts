@@ -22,3 +22,16 @@ export function useSaveBranch() {
     onError: (e) => errorToast(e, "common.saveFailed"),
   })
 }
+
+export function useDeleteBranch() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) => branchesApi.remove(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: branchKeys.all })
+      qc.invalidateQueries({ queryKey: refKeys.all })
+      toast.success(i18n.t("common.deleted"))
+    },
+    onError: (e) => errorToast(e, "common.deleteFailed"),
+  })
+}

@@ -19,7 +19,7 @@ export const P = {
   suppliers: { view: "suppliers.view", add: "suppliers.add", edit: "suppliers.edit", delete: "suppliers.delete" },
   quotes: { view: "quotes.view", add: "quotes.add", edit: "quotes.edit", delete: "quotes.delete" },
   purchases: { view: "purchases.view", add: "purchases.add", edit: "purchases.edit", cancel: "purchases.cancel" },
-  branches: { view: "branches.view", add: "branches.add", edit: "branches.edit" },
+  branches: { view: "branches.view", add: "branches.add", edit: "branches.edit", delete: "branches.delete" },
   warehouses: { view: "warehouses.view", add: "warehouses.add", edit: "warehouses.edit", delete: "warehouses.delete" },
   reservations: { view: "reservations.view" },
   orderRequests: { view: "orderRequests.view" },

@@ -1597,7 +1597,8 @@
     "branches": {
       "view": "Dekhun",
       "add": "Jog korun",
-      "edit": "Sampadona korun"
+      "edit": "Sampadona korun",
+      "delete": "Muchun"
     },
     "warehouses": {
       "view": "Dekhun",
@@ -2893,7 +2894,9 @@
     "add": "Sakha jog korun",
     "search": "Cod, nam ba fon diye anusandhan korun",
     "empty": "Ekhono kono sakha nei",
-    "emptyHint": "Prothom sakha jog korun."
+    "emptyHint": "Prothom sakha jog korun.",
+    "deleteTitle": "Sakha muchun",
+    "deleteBody": "Sakha “{{name}}” ebong er sob data (ponno, grahok, sorborahkari, kosagar o setting) muche fela hobe. Eta ar ferano jabe na."
   },
   "branchForm": {
     "addTitle": "Notun shakha jog korun",

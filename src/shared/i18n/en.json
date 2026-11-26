@@ -1599,7 +1599,8 @@
     "branches": {
       "view": "View",
       "add": "Add",
-      "edit": "Edit"
+      "edit": "Edit",
+      "delete": "Delete"
     },
     "warehouses": {
       "view": "View",
@@ -2895,7 +2896,9 @@
     "add": "Add branch",
     "search": "Search by code, name or phone",
     "empty": "No branches yet",
-    "emptyHint": "Add the first branch."
+    "emptyHint": "Add the first branch.",
+    "deleteTitle": "Delete branch",
+    "deleteBody": "Branch “{{name}}” will be deleted together with all its data: products, customers, suppliers, treasuries and settings. This cannot be undone."
   },
   "branchForm": {
     "addTitle": "Add New Branch",
