@@ -28,9 +28,7 @@ export default function InvoicesPage({ channel }: { channel: Channel }) {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const can = useCan()
-  const settings = useAppSettings()
-  const stage2 = settings.taxSetting?.taxSetting === "SecondStage"
-  const showReturned = settings.generalTab?.showReturnedItemsDetails === true
+  const stage2 = useAppSettings().taxSetting?.taxSetting === "SecondStage"
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(0)
   const [sort, setSort] = useState<{ key?: string; desc: boolean }>({ desc: false })
@@ -43,7 +41,7 @@ export default function InvoicesPage({ channel }: { channel: Channel }) {
 
   const branchColumn = useBranchColumn<SalesOrderDto>((i) => ({ id: i.branchId, name: i.branchShortName }))
   const columns: Column<SalesOrderDto>[] = [
-    { id: "orderNumber", sortable: true, header: t("sales.number"), cell: (i) => <span className="inline-flex items-center gap-1.5 whitespace-nowrap"><span className="font-semibold">{i.orderNumber}</span>{showReturned && <ReturnBadge className="px-1.5 py-0 text-[10px] leading-4 whitespace-nowrap" isPartiallyReturned={i.isPartiallyReturned} isFullyReturned={i.isFullyReturned} />}</span> },
+    { id: "orderNumber", sortable: true, header: t("sales.number"), cell: (i) => <span className="inline-flex items-center gap-1.5 whitespace-nowrap"><span className="font-semibold">{i.orderNumber}</span><ReturnBadge className="px-1.5 py-0 text-[10px] leading-4 whitespace-nowrap" isPartiallyReturned={i.isPartiallyReturned} isFullyReturned={i.isFullyReturned} /></span> },
     { id: "orderDate", sortable: true, className: "min-w-44", header: t("common.dateTime"), cell: (i) => <span className="text-muted-foreground">{formatDateTime(i.orderDate ?? "", i18n.language)}</span> },
     ...branchColumn,
     { id: "customerName", sortable: true, header: t("sales.customer"), cell: (i) => i.customerName },

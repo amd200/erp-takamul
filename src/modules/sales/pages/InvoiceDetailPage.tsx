@@ -19,9 +19,7 @@ import { useInvoiceOutput } from "../print/useInvoiceOutput"
 
 export default function InvoiceDetailPage() {
   const { t, i18n } = useTranslation()
-  const settings = useAppSettings()
-  const exempt = settings.taxSetting?.taxSetting === "Exempt"
-  const showReturned = settings.generalTab?.showReturnedItemsDetails === true
+  const exempt = useAppSettings().taxSetting?.taxSetting === "Exempt"
   const { id } = useParams()
   const [search] = useSearchParams()
   const channel = search.get("channel") === "POS" ? "POS" : "A4"
@@ -57,7 +55,7 @@ export default function InvoiceDetailPage() {
       <div className="flex flex-wrap gap-2">
         <PaymentBadge status={inv.paymentStatus} />
         <ZatcaBadge status={inv.zatcaStatus} message={message} />
-        {showReturned && <ReturnBadge isPartiallyReturned={inv.isPartiallyReturned} isFullyReturned={inv.isFullyReturned} />}
+        <ReturnBadge isPartiallyReturned={inv.isPartiallyReturned} isFullyReturned={inv.isFullyReturned} />
       </div>
       {message && <div className="rounded-xl bg-destructive-soft px-4 py-3 text-destructive">{t("sales.zatcaRejectedBanner", { message })}</div>}
 
