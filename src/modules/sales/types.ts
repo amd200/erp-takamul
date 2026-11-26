@@ -114,6 +114,8 @@ export type SalesOrderDto = {
   items?: ItemDto[] | null;
   payments?: PaymentDto[] | null;
   totalPaid?: number | null;
+  isPartiallyReturned?: boolean;
+  isFullyReturned?: boolean;
 };
 export type ReturnItemDto = {
   id?: number;

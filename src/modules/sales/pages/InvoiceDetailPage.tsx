@@ -11,7 +11,7 @@ import { formatDateTime, formatMoney } from "@/lib/format"
 import { Can } from "@/shared/permissions/usePermission"
 import { P } from "@/shared/permissions/permissions"
 import { InvoicePaymentsDialog } from "../components/InvoicePaymentsDialog"
-import { PaymentBadge, ZatcaBadge } from "../components/StatusBadges"
+import { PaymentBadge, ReturnBadge, ZatcaBadge } from "../components/StatusBadges"
 import { TotalsPanel } from "../components/TotalsPanel"
 import { useAppSettings } from "@/modules/settings"
 import { useInvoice } from "../queries"
@@ -19,7 +19,9 @@ import { useInvoiceOutput } from "../print/useInvoiceOutput"
 
 export default function InvoiceDetailPage() {
   const { t, i18n } = useTranslation()
-  const exempt = useAppSettings().taxSetting?.taxSetting === "Exempt"
+  const settings = useAppSettings()
+  const exempt = settings.taxSetting?.taxSetting === "Exempt"
+  const showReturned = settings.generalTab?.showReturnedItemsDetails === true
   const { id } = useParams()
   const [search] = useSearchParams()
   const channel = search.get("channel") === "POS" ? "POS" : "A4"
@@ -55,6 +57,7 @@ export default function InvoiceDetailPage() {
       <div className="flex flex-wrap gap-2">
         <PaymentBadge status={inv.paymentStatus} />
         <ZatcaBadge status={inv.zatcaStatus} message={message} />
+        {showReturned && <ReturnBadge isPartiallyReturned={inv.isPartiallyReturned} isFullyReturned={inv.isFullyReturned} />}
       </div>
       {message && <div className="rounded-xl bg-destructive-soft px-4 py-3 text-destructive">{t("sales.zatcaRejectedBanner", { message })}</div>}
 

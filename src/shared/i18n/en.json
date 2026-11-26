@@ -1273,7 +1273,11 @@
     "previewZoomIn": "Zoom in",
     "previewZoomOut": "Zoom out",
     "previewFit": "Fit to width",
-    "previewLoading": "Preparing the invoice..."
+    "previewLoading": "Preparing the invoice...",
+    "returnStatus": {
+      "partial": "Partially returned",
+      "full": "Fully returned"
+    }
   },
   "users": {
     "title": "Users",

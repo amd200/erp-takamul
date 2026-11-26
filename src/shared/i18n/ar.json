@@ -1273,7 +1273,11 @@
     "previewZoomIn": "تكبير",
     "previewZoomOut": "تصغير",
     "previewFit": "ملاءمة العرض",
-    "previewLoading": "جاري تجهيز الفاتورة..."
+    "previewLoading": "جاري تجهيز الفاتورة...",
+    "returnStatus": {
+      "partial": "مرتجع جزئي",
+      "full": "مرتجع كلي"
+    }
   },
   "users": {
     "title": "المستخدمون",

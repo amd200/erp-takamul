@@ -15,6 +15,14 @@ export function PaymentBadge({ status }: { status?: string | null }) {
   return <StatusBadge tone={PAYMENT_TONE[state]}>{t(`sales.payment.${state}`)}</StatusBadge>
 }
 
+/** Return state from the server's two flags; fully returned wins when both are set. */
+export function ReturnBadge({ isPartiallyReturned, isFullyReturned, className }: { isPartiallyReturned?: boolean; isFullyReturned?: boolean; className?: string }) {
+  const { t } = useTranslation()
+  if (isFullyReturned) return <StatusBadge tone="refunded" className={className}>{t("sales.returnStatus.full")}</StatusBadge>
+  if (isPartiallyReturned) return <StatusBadge tone="warning" className={className}>{t("sales.returnStatus.partial")}</StatusBadge>
+  return null
+}
+
 /** E-invoice (ZATCA phase 2) state; a rejection shows the authority's message on hover. */
 export function ZatcaBadge({ status, message }: { status?: string | null; message?: string | null }) {
   const { t } = useTranslation()

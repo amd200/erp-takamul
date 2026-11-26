@@ -1271,7 +1271,11 @@
     "refundName": "Ferot",
     "noRefunds": "Ei ferot er jonno ager kono pement nei",
     "previewHint": "Mudroner age priview",
-    "previewLoading": "Chalan lod hochche..."
+    "previewLoading": "Chalan lod hochche...",
+    "returnStatus": {
+      "partial": "Angshik ferot",
+      "full": "Sompurno ferot"
+    }
   },
   "users": {
     "title": "Byabaharkarider",
