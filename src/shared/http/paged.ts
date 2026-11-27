@@ -5,10 +5,7 @@ export type PagedResult<T> = { items: T[]; totalCount: number; pageNumber?: numb
 
 export type PageParams = { page: number; pageSize: number; searchTerm?: string; [k: string]: unknown }
 
-/**
- * Every page of a list, for pickers that need the whole set (units, raw materials).
- * The server caps page size, so this walks the pages; `sizeParam`/`pageParam` follow each endpoint's names.
- */
+
 export async function fetchAllPages<T>(url: string, { pageSize = 100, pageParam = "Page", sizeParam = "PageSize", params = {} as Record<string, unknown> } = {}) {
   const all: T[] = []
   for (let page = 1; page < 500; page++) {
@@ -19,7 +16,6 @@ export async function fetchAllPages<T>(url: string, { pageSize = 100, pageParam 
   return all
 }
 
-/** Builds multipart bodies the way ASP.NET binds them: skips empty values, repeats keys for arrays. */
 export function toFormData(fields: Record<string, unknown>) {
   const fd = new FormData()
   for (const [key, value] of Object.entries(fields)) {
