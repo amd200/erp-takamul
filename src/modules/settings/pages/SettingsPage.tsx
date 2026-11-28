@@ -10,6 +10,7 @@ import { useCan } from "@/shared/permissions/usePermission"
 import { LIST_SECTIONS } from "../lists"
 import { TabForm } from "../components/TabForm"
 import { ZatcaPanel } from "../components/ZatcaPanel"
+import { LoyaltyTab } from "../components/LoyaltyTab"
 import { isForm, TABS } from "../tabs"
 import { useAppSettings } from "../queries"
 
@@ -30,7 +31,7 @@ export default function SettingsPage() {
 
   const List = LIST_SECTIONS[tab.id]
   const readOnly = !can(tab.perm)
-  const body = List ? <List key={tab.id} readOnly={readOnly} /> : tab.id === "zatca" ? <ZatcaPanel readOnly={readOnly} /> : isForm(tab) ? <TabForm key={tab.id} tab={tab} readOnly={readOnly} /> : null
+  const body = List ? <List key={tab.id} readOnly={readOnly} /> : tab.id === "zatca" ? <ZatcaPanel readOnly={readOnly} /> : tab.id === "loyalty" ? <LoyaltyTab readOnly={readOnly} /> : isForm(tab) ? <TabForm key={tab.id} tab={tab} readOnly={readOnly} /> : null
 
   if (page === "sales") {
     return (

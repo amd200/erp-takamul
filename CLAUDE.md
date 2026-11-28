@@ -55,7 +55,11 @@ Still on the generic engine: items, purchases, customers, suppliers, expenses, p
   + cancel/save footer. `/settings/system` = card "إعدادات الموقع" + side menu + titled boxes with their own save button.
   Both through `legacy` modes of `SectionForm` / `SettingField` (`"sales"` | `"site"`).
 - Removed from the site menu: "money" (not in the old system; its definitions still exist, values stay local defaults).
-- Not done: reset-to-defaults button, loyalty points (old one has no save), customer display (COM / QZ hardware), the small
+- Loyalty tab (`components/LoyaltyTab.tsx`, own form, not `TabForm`): `GET|PUT /LoyaltyPoints` (404 = no record → server
+  defaults) + switch `enableLoyaltyPoints` (top level of GET /Settings, `PUT /Settings/loyalty-points`). Assumed, report
+  silent: camelCase, `calculationScope` by name, `workingDays` sent as DayOfWeek numbers (0 = Sunday), read as numbers or
+  names. Only tried on a mock.
+- Not done: reset-to-defaults button, customer display (COM / QZ hardware), the small
   headed sub-sections inside the sales tabs, tables / pricing / category-discount tabs restyled, `itemTax` switch still shown.
 
 ### Purchases screen 2 (`/pos3`) – `modules/purchases/{pages/PurchaseScreenPage,screen/*}`

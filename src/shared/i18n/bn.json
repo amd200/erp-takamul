@@ -1683,6 +1683,7 @@
       "roll_printing": "Rol printing",
       "voucher_printing": "Vouchar printing",
       "customers": "Grahok setings",
+      "loyalty": "Loyalty point",
       "suppliers": "Sarborahokari setings",
       "purchases_screen": "Cray screen",
       "tax_system": "Tax sistem",
@@ -1898,7 +1899,16 @@
       "showSupplierNameAndPhoneOnlyInPurchases": "Jog korar somoy sarborahokari-r totho",
       "enableNotifications": "Enable invoice notifications",
       "defaultCategoryId": "Difalt bivag",
-      "defaultUnitId": "Difalt ekok"
+      "defaultUnitId": "Difalt ekok",
+      "enableLoyaltyPoints": "Loyalty point chalu korun",
+      "calculationScope": "Hisaber poddhoti",
+      "selectedCategoryIds": "Ontorbhukto category",
+      "workingDays": "Program cholar din",
+      "earningInvoiceAmount": "Invoice-er poriman",
+      "earnedPoints": "Orjito point",
+      "minimumRedemptionInvoiceAmount": "Redeem korar jonno invoice-er nunotom poriman",
+      "redemptionPoints": "Redeem kora point",
+      "redemptionDiscountAmount": "Somotullo discount-er poriman"
     },
     "o": {
       "taxSetting": {
@@ -1953,6 +1963,10 @@
       "nameAndPhone": {
         "false": "Purno bibaran",
         "true": "Sudhu nam ebong fon"
+      },
+      "calculationScope": {
+        "AllCategories": "Shob category",
+        "SelectedCategories": "Nirdishto category"
       }
     },
     "sim": {
@@ -2087,6 +2101,29 @@
     "loadFailed": {
       "categories": "Bivag load kora jayni. Abar chesta korun.",
       "units": "Unit load kora jayni. Abar chesta korun."
+    },
+    "loyalty": {
+      "sec": {
+        "method": "Program-er porisor",
+        "days": "Kajer din",
+        "earning": "Point orjoner niyom",
+        "redemption": "Point redeem-er niyom"
+      },
+      "day": {
+        "0": "Robibar",
+        "1": "Shombar",
+        "2": "Mongolbar",
+        "3": "Budhbar",
+        "4": "Brihoshpotibar",
+        "5": "Shukrobar",
+        "6": "Shonibar"
+      },
+      "earningSummary": "Invoice-er protiti {{amount}} porimaner jonno grahok {{points}} point pay.",
+      "redemptionSummary": "Protiti {{points}} point {{amount}} discount-er soman; kompokkhe {{min}} porimaner invoice-e redeem kora jay.",
+      "err": {
+        "points": "Nunotom invoice poriman ba discount dile redeem kora point shunner beshi hote hobe",
+        "days": "Kompokkhe ekti din bachai korun"
+      }
     }
   },
   "reports": {

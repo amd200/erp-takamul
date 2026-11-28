@@ -1685,6 +1685,7 @@
       "roll_printing": "طباعة رول",
       "voucher_printing": "طباعة السندات",
       "customers": "إعدادات العملاء",
+      "loyalty": "نقاط الولاء",
       "suppliers": "إعدادات الموردين",
       "purchases_screen": "شاشة المشتريات",
       "tax_system": "نظام الضرائب",
@@ -1900,7 +1901,16 @@
       "showSupplierNameAndPhoneOnlyInPurchases": "بيانات المورد عند الإضافة",
       "enableNotifications": "تفعيل إشعارات الفواتير للعملاء",
       "defaultCategoryId": "التصنيف الافتراضي",
-      "defaultUnitId": "الوحدة الافتراضية"
+      "defaultUnitId": "الوحدة الافتراضية",
+      "enableLoyaltyPoints": "تفعيل نقاط الولاء",
+      "calculationScope": "طريقة الاحتساب",
+      "selectedCategoryIds": "التصنيفات المشمولة",
+      "workingDays": "أيام تطبيق البرنامج",
+      "earningInvoiceAmount": "مبلغ الفاتورة",
+      "earnedPoints": "عدد النقاط المكتسبة",
+      "minimumRedemptionInvoiceAmount": "الحد الأدنى لمبلغ الفاتورة للاستبدال",
+      "redemptionPoints": "عدد النقاط المستبدلة",
+      "redemptionDiscountAmount": "مبلغ الخصم المقابل"
     },
     "o": {
       "taxSetting": {
@@ -1955,6 +1965,10 @@
       "nameAndPhone": {
         "false": "بيانات كاملة",
         "true": "الاسم والجوال فقط"
+      },
+      "calculationScope": {
+        "AllCategories": "جميع التصنيفات",
+        "SelectedCategories": "تصنيفات محددة"
       }
     },
     "sim": {
@@ -2089,6 +2103,29 @@
     "loadFailed": {
       "categories": "تعذر تحميل التصنيفات. حاول مرة أخرى.",
       "units": "تعذر تحميل الوحدات. حاول مرة أخرى."
+    },
+    "loyalty": {
+      "sec": {
+        "method": "نطاق البرنامج",
+        "days": "أيام العمل",
+        "earning": "قاعدة اكتساب النقاط",
+        "redemption": "قاعدة استبدال النقاط"
+      },
+      "day": {
+        "0": "الأحد",
+        "1": "الاثنين",
+        "2": "الثلاثاء",
+        "3": "الأربعاء",
+        "4": "الخميس",
+        "5": "الجمعة",
+        "6": "السبت"
+      },
+      "earningSummary": "يكتسب العميل {{points}} نقطة عن كل {{amount}} من مبلغ الفاتورة.",
+      "redemptionSummary": "كل {{points}} نقطة تعادل خصمًا قدره {{amount}}، ولا يُتاح الاستبدال إلا على فاتورة لا يقل مبلغها عن {{min}}.",
+      "err": {
+        "points": "يجب أن يكون عدد النقاط المستبدلة أكبر من صفر عند تحديد حد أدنى لمبلغ الفاتورة أو مبلغ خصم",
+        "days": "اختر يومًا واحدًا على الأقل"
+      }
     }
   },
   "reports": {

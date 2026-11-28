@@ -1685,6 +1685,7 @@
       "roll_printing": "Receipt printing",
       "voucher_printing": "Voucher printing",
       "customers": "Customer settings",
+      "loyalty": "Loyalty points",
       "suppliers": "Supplier settings",
       "purchases_screen": "Purchases screen",
       "tax_system": "Tax system",
@@ -1900,7 +1901,16 @@
       "showSupplierNameAndPhoneOnlyInPurchases": "Supplier data when adding",
       "enableNotifications": "Enable invoice notifications for customers",
       "defaultCategoryId": "Default category",
-      "defaultUnitId": "Default unit"
+      "defaultUnitId": "Default unit",
+      "enableLoyaltyPoints": "Enable loyalty points",
+      "calculationScope": "Calculation method",
+      "selectedCategoryIds": "Included categories",
+      "workingDays": "Days the program applies",
+      "earningInvoiceAmount": "Invoice amount",
+      "earnedPoints": "Points earned",
+      "minimumRedemptionInvoiceAmount": "Minimum invoice amount to redeem",
+      "redemptionPoints": "Points redeemed",
+      "redemptionDiscountAmount": "Equivalent discount amount"
     },
     "o": {
       "taxSetting": {
@@ -1955,6 +1965,10 @@
       "nameAndPhone": {
         "false": "Full details",
         "true": "Name and phone only"
+      },
+      "calculationScope": {
+        "AllCategories": "All categories",
+        "SelectedCategories": "Specific categories"
       }
     },
     "sim": {
@@ -2089,6 +2103,29 @@
     "loadFailed": {
       "categories": "Could not load the categories. Try again.",
       "units": "Could not load the units. Try again."
+    },
+    "loyalty": {
+      "sec": {
+        "method": "Program scope",
+        "days": "Working days",
+        "earning": "Earning rule",
+        "redemption": "Redemption rule"
+      },
+      "day": {
+        "0": "Sunday",
+        "1": "Monday",
+        "2": "Tuesday",
+        "3": "Wednesday",
+        "4": "Thursday",
+        "5": "Friday",
+        "6": "Saturday"
+      },
+      "earningSummary": "The customer earns {{points}} points for every {{amount}} of the invoice amount.",
+      "redemptionSummary": "Every {{points}} points equal a {{amount}} discount; redemption is available on invoices of at least {{min}}.",
+      "err": {
+        "points": "Points redeemed must be above zero when a minimum invoice amount or a discount is set",
+        "days": "Choose at least one day"
+      }
     }
   },
   "reports": {

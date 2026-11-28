@@ -1,5 +1,5 @@
 import type { ComponentType } from "react"
-import { BellRing, Barcode, ChefHat, Clock, Coins, CreditCard, DollarSign, FileText, Grid3x3, Mail, MessageCircle, Monitor, Package, Percent, Printer, Receipt, Scissors, Send, ShoppingCart, SlidersHorizontal, Tag, Truck, Type, Users, type LucideIcon } from "lucide-react"
+import { BellRing, Barcode, ChefHat, Clock, Coins, CreditCard, DollarSign, FileText, Grid3x3, Mail, MessageCircle, Monitor, Package, Percent, Printer, Receipt, Scissors, Send, ShoppingCart, SlidersHorizontal, Star, Tag, Truck, Type, Users, type LucideIcon } from "lucide-react"
 import type { ZodObject } from "zod"
 import { P, type Permission } from "@/shared/permissions/permissions"
 import type { FieldsProps } from "./components/fields"
@@ -12,7 +12,7 @@ import type { Values } from "./service"
 type Base = { id: string; page: "sales" | "system"; icon: LucideIcon; perm: Permission }
 /** A tab drawn as a form: its schema, starting values and fields. */
 export type FormTab = Base & { schema: ZodObject; empty: Values; Fields: ComponentType<FieldsProps> }
-/** A tab drawn by its own screen (a plain list, or the ZATCA panel). */
+/** A tab drawn by its own screen (a plain list, the loyalty program or the ZATCA panel). */
 export type Tab = Base | FormTab
 export const isForm = (t: Tab): t is FormTab => "Fields" in t
 
@@ -31,6 +31,7 @@ export const TABS: Tab[] = [
   { id: "operations", page: "sales", icon: SlidersHorizontal, perm: P.settings.operations, schema: s.operationsSchema, empty: s.emptyOperations, Fields: sales.OperationsFields },
   { id: "barcode", page: "sales", icon: Barcode, perm: P.settings.barcode, schema: s.barcodeSchema, empty: s.emptyBarcode, Fields: sales.BarcodeFields },
   { id: "customers", page: "sales", icon: Users, perm: P.settings.partners, schema: s.customersSchema, empty: s.emptyCustomers, Fields: sales.CustomersFields },
+  { id: "loyalty", page: "sales", icon: Star, perm: P.settings.sales },
   { id: "suppliers", page: "sales", icon: Truck, perm: P.settings.partners, schema: s.suppliersSchema, empty: s.emptySuppliers, Fields: sales.SuppliersFields },
   { id: "purchases_screen", page: "sales", icon: ShoppingCart, perm: P.settings.partners, schema: s.purchasesScreenSchema, empty: s.emptyPurchasesScreen, Fields: sales.PurchasesScreenFields },
   { id: "tables", page: "sales", icon: Grid3x3, perm: P.settings.sales },

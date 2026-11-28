@@ -132,6 +132,45 @@ export const emptyCustomers: z.infer<typeof customersSchema> = {
   customersTab: { defultCustomar: null, showActualBalance: true, showCustomerNameAndPhoneOnlyInQuotations: false },
 }
 
+/**
+ * The loyalty program: GET|PUT /LoyaltyPoints (one record; 404 = none yet, so the defaults below are shown) plus the
+ * on/off switch `enableLoyaltyPoints` from GET /Settings, saved with PUT /Settings/loyalty-points. Field names are the
+ * server's. Earning: every `earningInvoiceAmount` of an invoice gives `earnedPoints`. Redemption: every
+ * `redemptionPoints` points are worth a `redemptionDiscountAmount` discount on an invoice of at least
+ * `minimumRedemptionInvoiceAmount`. Days are .NET `DayOfWeek` numbers, the same as `Date.getDay()` (0 = Sunday).
+ * The rules are the server's: nothing negative, `redemptionPoints` above zero once a minimum or a discount is given,
+ * at least one category when the scope is `SelectedCategories`.
+ */
+const money = z.number({ error: "validation.number" }).min(0, "validation.min0")
+const points = z.number({ error: "validation.number" }).int("validation.wholeNumber").min(0, "validation.min0")
+export const loyaltySchema = z.object({
+  enableLoyaltyPoints: flag,
+  loyalty: z.object({
+    calculationScope: z.enum(["AllCategories", "SelectedCategories"]),
+    selectedCategoryIds: z.array(z.number()),
+    workingDays: z.array(z.number().int().min(0).max(6)).min(1, "settings.loyalty.err.days"),
+    earningInvoiceAmount: money,
+    earnedPoints: points,
+    redemptionPoints: points,
+    minimumRedemptionInvoiceAmount: money,
+    redemptionDiscountAmount: money,
+  }).superRefine((v, ctx) => {
+    if (v.calculationScope === "SelectedCategories" && v.selectedCategoryIds.length === 0)
+      ctx.addIssue({ code: "custom", path: ["selectedCategoryIds"], message: "validation.pickCategory" })
+    if ((v.minimumRedemptionInvoiceAmount > 0 || v.redemptionDiscountAmount > 0) && !(v.redemptionPoints > 0))
+      ctx.addIssue({ code: "custom", path: ["redemptionPoints"], message: "settings.loyalty.err.points" })
+  }),
+})
+export type LoyaltyValues = z.infer<typeof loyaltySchema>
+/** What the server starts with when there is no record: every category, Saturday to Thursday, zeros. */
+export const emptyLoyalty: LoyaltyValues = {
+  enableLoyaltyPoints: false,
+  loyalty: {
+    calculationScope: "AllCategories", selectedCategoryIds: [], workingDays: [6, 0, 1, 2, 3, 4],
+    earningInvoiceAmount: 0, earnedPoints: 0, redemptionPoints: 0, minimumRedemptionInvoiceAmount: 0, redemptionDiscountAmount: 0,
+  },
+}
+
 export const suppliersSchema = z.object({ suppliersTab: z.object({ showSupplierNameAndPhoneOnlyInPurchases: flag, showActualSupplierBalance: flag, defaultSupplier: z.number() }) })
 export const emptySuppliers: z.infer<typeof suppliersSchema> = { suppliersTab: { showSupplierNameAndPhoneOnlyInPurchases: false, showActualSupplierBalance: false, defaultSupplier: 0 } }
 

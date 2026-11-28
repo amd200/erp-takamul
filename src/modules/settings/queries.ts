@@ -3,8 +3,9 @@ import { toast } from "sonner"
 import i18n from "@/shared/i18n"
 import { errorToast } from "@/shared/api/errors"
 import { useAuthStore, useBranchChoice } from "@/shared/auth/authStore"
-import { settingsApi, type Values } from "./service"
-import { settingsKeys } from "./keys"
+import { loyaltyApi, settingsApi, type Values } from "./service"
+import type { LoyaltyValues } from "./schema"
+import { loyaltyKeys, settingsKeys } from "./keys"
 import { salesKeys } from "@/modules/sales/keys"
 
 export const settingsKey = (branchId: number | null) => ["settings", branchId] as const
@@ -40,6 +41,23 @@ export function useSaveTab() {
     },
     // A save can reach some groups before failing, so what the server holds now is read again.
     onError: (e) => { qc.invalidateQueries({ queryKey: key }); errorToast(e, "common.saveFailed") },
+  })
+}
+
+/** GET /LoyaltyPoints (`null` = no record yet). */
+export const useLoyaltyPoints = () => useQuery({ queryKey: loyaltyKeys.all, queryFn: loyaltyApi.get })
+
+/** Saves the loyalty tab (see `loyaltyApi.save`); both reads are refreshed afterwards, whether it worked or not. */
+export function useSaveLoyalty() {
+  const qc = useQueryClient()
+  const refresh = () => Promise.all([qc.invalidateQueries({ queryKey: loyaltyKeys.all }), qc.invalidateQueries({ queryKey: settingsKeys.all })])
+  return useMutation({
+    mutationFn: ({ data, saved }: { data: LoyaltyValues; saved: LoyaltyValues }) => loyaltyApi.save(data, saved),
+    onSuccess: async () => {
+      await refresh()
+      toast.success(i18n.t("settings.saved"))
+    },
+    onError: (e) => { refresh(); errorToast(e, "common.saveFailed") },
   })
 }
 

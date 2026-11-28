@@ -64,6 +64,24 @@ type Groups = {
 export type GroupKey = keyof Groups
 
 /** Any group can be missing (an older server, or before the first answer), and so can any field in it. */
-export type Settings = { [K in GroupKey]?: Partial<Groups[K]> }
+export type Settings = { [K in GroupKey]?: Partial<Groups[K]> } & {
+  /** The loyalty program's on/off switch (top level of GET /Settings, per the back-end report; default false). */
+  enableLoyaltyPoints?: boolean
+}
 
 export type SettingValue = boolean | number | string | null
+
+/**
+ * GET /LoyaltyPoints as the server sends it (camelCase, enums by name). `workingDays` are .NET `DayOfWeek` values: the
+ * report does not say whether they come back as numbers or names ("Saturday"), so both are accepted on reading.
+ */
+export type LoyaltyPoints = {
+  calculationScope: "AllCategories" | "SelectedCategories"
+  selectedCategoryIds: number[] | null
+  workingDays: (number | string)[] | null
+  earningInvoiceAmount: number
+  earnedPoints: number
+  redemptionPoints: number
+  minimumRedemptionInvoiceAmount: number
+  redemptionDiscountAmount: number
+}
