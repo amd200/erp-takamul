@@ -1905,7 +1905,7 @@
       "selectedCategoryIds": "Ontorbhukto category",
       "earningInvoiceAmount": "Invoice-er poriman",
       "earnedPoints": "Orjito point",
-      "minimumRedemptionInvoiceAmount": "Redeem korar nunotom invoice poriman",
+      "minimumRedemptionInvoiceAmount": "Nunotom invoice poriman",
       "redemptionPoints": "Redeem kora point",
       "redemptionDiscountAmount": "Somotullo discount-er poriman"
     },
@@ -2113,7 +2113,7 @@
         "method": "Je bikrite point hisab hoy.",
         "days": "Je dine program chole.",
         "earning": "Invoice-er porimaner jonno grahok koto point pay.",
-        "redemption": "Redeem korle point-er mullo, ebong nunotom koto invoice-e redeem kora jay."
+        "redemption": "Redeem korle point-er mullo."
       },
       "day": {
         "Saturday": "Shonibar",
@@ -2127,7 +2127,7 @@
       "hintEvery": "Ei porimaner protiti gunitoke point deya hoy.",
       "pointUnit": "point",
       "err": {
-        "points": "Nunotom ba discount poriman dile redeem kora point kompokkhe 1 hote hobe",
+        "points": "Nunotom invoice poriman ba discount poriman dile redeem kora point kompokkhe 1 hote hobe",
         "days": "Kompokkhe ekti din bachai korun"
       }
     }

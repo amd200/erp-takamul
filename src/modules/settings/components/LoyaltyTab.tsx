@@ -121,7 +121,8 @@ function LoyaltyFields({ control }: { control: Control<LoyaltyValues> }) {
       </Block>
 
       <Block title={t("settings.loyalty.sec.earning")} help={t("settings.loyalty.desc.earning")}>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
+          <NumberField control={control} name="minimumRedemptionInvoiceAmount" />
           <NumberField control={control} name="earningInvoiceAmount" hint={t("settings.loyalty.hintEvery")} />
           <NumberField control={control} name="earnedPoints" unit={unit} />
         </div>
@@ -131,9 +132,6 @@ function LoyaltyFields({ control }: { control: Control<LoyaltyValues> }) {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <NumberField control={control} name="redemptionPoints" unit={unit} />
           <NumberField control={control} name="redemptionDiscountAmount" />
-          <div className="sm:col-span-2">
-            <NumberField control={control} name="minimumRedemptionInvoiceAmount" />
-          </div>
         </div>
       </Block>
     </div>

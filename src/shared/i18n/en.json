@@ -1907,7 +1907,7 @@
       "selectedCategoryIds": "Included categories",
       "earningInvoiceAmount": "Invoice amount",
       "earnedPoints": "Points earned",
-      "minimumRedemptionInvoiceAmount": "Minimum invoice amount to redeem",
+      "minimumRedemptionInvoiceAmount": "Minimum invoice amount",
       "redemptionPoints": "Points redeemed",
       "redemptionDiscountAmount": "Equivalent discount amount"
     },
@@ -2115,7 +2115,7 @@
         "method": "The sales that earn points.",
         "days": "The days the program runs.",
         "earning": "How many points the customer earns for the invoice amount.",
-        "redemption": "What points are worth when redeemed, and the smallest invoice they can be redeemed on."
+        "redemption": "What points are worth when redeemed."
       },
       "day": {
         "Saturday": "Saturday",
@@ -2129,7 +2129,7 @@
       "hintEvery": "Points are given for every multiple of this amount.",
       "pointUnit": "points",
       "err": {
-        "points": "Points redeemed must be at least 1 when a minimum or discount amount is set",
+        "points": "Points redeemed must be at least 1 when a minimum invoice amount or discount amount is set",
         "days": "Choose at least one day"
       }
     }
