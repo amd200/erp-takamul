@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Switch } from "@/components/ui/switch"
@@ -20,6 +21,9 @@ import type { LoyaltyWorkingDay } from "../types"
 /** Saturday first, as the week runs here; the saved list keeps this order. */
 const WEEK: LoyaltyWorkingDay[] = ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 const SCOPES = ["AllCategories", "SelectedCategories"] as const
+/** Ticked boxes in this tab fill with the theme colour and a white tick (for the categories list too, through its slot). */
+const CHECKED = "data-[state=checked]:border-primary! data-[state=checked]:bg-primary! data-[state=checked]:text-white!"
+const LIST_CHECKED = "[&_[data-slot=checkbox][data-state=checked]]:border-primary! [&_[data-slot=checkbox][data-state=checked]]:bg-primary! [&_[data-slot=checkbox][data-state=checked]]:text-white!"
 type NumberName = "earningInvoiceAmount" | "earnedPoints" | "redemptionPoints" | "minimumRedemptionInvoiceAmount" | "redemptionDiscountAmount"
 
 /** A block of loyalty settings, as the current system draws it: a title with a line of help, then its fields. */
@@ -75,19 +79,19 @@ function LoyaltyFields({ control }: { control: Control<LoyaltyValues> }) {
 
       <Block title={t("settings.loyalty.sec.method")} help={t("settings.loyalty.desc.method")}>
         <Controller control={control} name="loyalty.calculationScope" render={({ field }) => (
-          <div role="radiogroup" aria-label={t("settings.f.calculationScope")} className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <RadioGroup value={field.value} onValueChange={field.onChange} aria-label={t("settings.f.calculationScope")} className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {SCOPES.map((s) => (
               <label key={s} className={cn("flex cursor-pointer items-center gap-2.5 rounded-md border px-4 py-3 text-sm transition-colors",
-                field.value === s ? "border-primary bg-primary/5 font-semibold text-foreground" : "border-border text-muted-foreground hover:border-primary/40")}>
-                <input type="radio" name={field.name} value={s} checked={field.value === s} onChange={() => field.onChange(s)} className="size-4 accent-primary" />
+                field.value === s ? "border-primary bg-primary/5 font-semibold text-primary" : "border-border text-muted-foreground hover:border-primary/40")}>
+                <RadioGroupItem value={s} className="border-primary/50 data-[state=checked]:border-primary! data-[state=checked]:bg-primary! [&_[data-slot=radio-group-indicator]>span]:bg-white!" />
                 {t(`settings.o.calculationScope.${s}`)}
               </label>
             ))}
-          </div>
+          </RadioGroup>
         )} />
         {scope === "SelectedCategories" && (
           <Controller control={control} name="loyalty.selectedCategoryIds" render={({ field, fieldState }) => (
-            <div className="mt-3">
+            <div className={cn("mt-3", LIST_CHECKED)}>
               {/* The server takes active categories only; one already chosen stays listed so it can be removed. */}
               <MultiPicker options={categories.filter((c) => c.isActive || field.value.includes(c.id)).map((c) => ({ value: c.id, label: c.categoryNameAr }))}
                 value={field.value} onChange={field.onChange} />
@@ -105,7 +109,7 @@ function LoyaltyFields({ control }: { control: Control<LoyaltyValues> }) {
                 const on = field.value.includes(day)
                 return (
                   <label key={day} className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
-                    <Checkbox checked={on} onCheckedChange={() => field.onChange(WEEK.filter((d) => (d === day ? !on : field.value.includes(d))))} />
+                    <Checkbox className={CHECKED} checked={on} onCheckedChange={() => field.onChange(WEEK.filter((d) => (d === day ? !on : field.value.includes(d))))} />
                     {t(`settings.loyalty.day.${day}`)}
                   </label>
                 )
