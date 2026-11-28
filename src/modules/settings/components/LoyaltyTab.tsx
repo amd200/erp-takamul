@@ -1,98 +1,145 @@
 import { useEffect, useMemo, type ReactNode } from "react"
 import { useBlocker, useNavigate } from "react-router-dom"
-import { Controller, useForm, type FieldValues } from "react-hook-form"
+import { Controller, useForm, useWatch, type Control } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslation } from "react-i18next"
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { ConfirmDialog } from "@/components/ConfirmDialog"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { Switch } from "@/components/ui/switch"
 import { MultiPicker } from "@/components/form/MultiPicker"
-import { FormInput } from "@/components/form/FormFields"
+import { NumberText } from "@/components/form/FormFields"
 import { useCategories } from "@/modules/categories/queries"
 import { useAppSettings, useLoyaltyPoints, useSaveLoyalty } from "../queries"
 import { loyaltySchema, type LoyaltyValues } from "../schema"
 import { loyaltyFormOf } from "../service"
-import { Choice, Flag, Grid, useLabel, type FieldsProps } from "./fields"
+import type { LoyaltyWorkingDay } from "../types"
 
-/** Saturday first, as the week runs here; values are `DayOfWeek` / `Date.getDay()` numbers. */
-const WEEK = [6, 0, 1, 2, 3, 4, 5]
+/** Saturday first, as the week runs here; the saved list keeps this order. */
+const WEEK: LoyaltyWorkingDay[] = ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+const SCOPES = ["AllCategories", "SelectedCategories"] as const
+type NumberName = "earningInvoiceAmount" | "earnedPoints" | "redemptionPoints" | "minimumRedemptionInvoiceAmount" | "redemptionDiscountAmount"
 
-/** The loyalty tab's titled box, drawn as erpv2-modern draws its settings sections (plainer than this project's `Section`). */
-function LoyaltySection({ title, children, cols }: { title: string; children: ReactNode; cols?: boolean }) {
+/** A block of loyalty settings, as the current system draws it: a title with a line of help, then its fields. */
+function Block({ title, help, children }: { title: string; help: string; children: ReactNode }) {
   return (
-    <section className="col-span-full rounded-xl border border-input p-4 sm:p-5">
-      <h2 className="mb-4 text-sm font-bold text-foreground">{title}</h2>
-      <div className={cols ? "grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3" : "grid grid-cols-1 gap-4"}>{children}</div>
+    <section className="h-full rounded-md border border-border bg-card">
+      <header className="border-b border-border px-5 py-3.5">
+        <h3 className="text-sm font-bold text-foreground">{title}</h3>
+        <p className="mt-0.5 text-xs text-muted-foreground">{help}</p>
+      </header>
+      <div className="px-5 py-4">{children}</div>
     </section>
   )
 }
 
-function LoyaltyFields({ form: { control, watch } }: FieldsProps) {
+/** A labelled number box with an optional unit inside it, after the number, and a hint under it. */
+function NumberField({ control, name, unit, hint }: { control: Control<LoyaltyValues>; name: NumberName; unit?: string; hint?: string }) {
   const { t } = useTranslation()
-  const label = useLabel()
-  const { data: categories = [] } = useCategories()
-  const v = watch("loyalty") as LoyaltyValues["loyalty"]
-  const n = (x: unknown) => (typeof x === "number" && Number.isFinite(x) ? x : 0)
-  const error = (message?: string) => (message ? [{ message: t(message) }] : undefined)
-  const required = <>&nbsp;<span className="text-red-500">*</span></>
+  const id = `loyalty.${name}`
   return (
-    <Grid>
-      <Flag control={control} name="enableLoyaltyPoints" />
-      <LoyaltySection title={t("settings.loyalty.sec.method")} cols>
-        <Choice control={control} name="loyalty.calculationScope" values={["AllCategories", "SelectedCategories"]} />
-        {v.calculationScope === "SelectedCategories" && (
+    <Controller control={control} name={id as `loyalty.${NumberName}`} render={({ field, fieldState }) => (
+      <Field data-invalid={fieldState.invalid} className="gap-1.5">
+        <FieldLabel htmlFor={id} className="gap-x-2 text-xs text-muted-foreground">{t(`settings.f.${name}`)}</FieldLabel>
+        <div className="relative">
+          <NumberText name={field.name} ref={field.ref} onBlur={field.onBlur} value={field.value} onValue={(v) => field.onChange(v)} empty={undefined}
+            id={id} step="any" inputMode="decimal" aria-invalid={fieldState.invalid} className={cn("h-10", unit && "pe-14")} />
+          {unit && <span className="pointer-events-none absolute inset-y-0 end-3 flex items-center text-xs text-muted-foreground">{unit}</span>}
+        </div>
+        {hint && !fieldState.error && <p className="text-xs text-muted-foreground">{hint}</p>}
+        <FieldError errors={fieldState.error?.message ? [{ message: t(fieldState.error.message) }] : undefined} />
+      </Field>
+    )} />
+  )
+}
+
+function LoyaltyFields({ control }: { control: Control<LoyaltyValues> }) {
+  const { t } = useTranslation()
+  const { data: categories = [] } = useCategories()
+  const scope = useWatch({ control, name: "loyalty.calculationScope" })
+  const unit = t("settings.loyalty.pointUnit")
+  const error = (message?: string) => (message ? [{ message: t(message) }] : undefined)
+  return (
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <Controller control={control} name="enableLoyaltyPoints" render={({ field }) => (
+        <label htmlFor="enableLoyaltyPoints" className="flex cursor-pointer items-center justify-between gap-6 rounded-md border border-border bg-card px-5 py-4 lg:col-span-2">
+          <span className="space-y-0.5">
+            <span className="block text-sm font-bold text-foreground">{t("settings.f.enableLoyaltyPoints")}</span>
+            <span className="block text-xs leading-relaxed text-muted-foreground">{t("settings.loyalty.intro")}</span>
+          </span>
+          <Switch id="enableLoyaltyPoints" checked={field.value} onCheckedChange={field.onChange} />
+        </label>
+      )} />
+
+      <Block title={t("settings.loyalty.sec.method")} help={t("settings.loyalty.desc.method")}>
+        <Controller control={control} name="loyalty.calculationScope" render={({ field }) => (
+          <div role="radiogroup" aria-label={t("settings.f.calculationScope")} className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {SCOPES.map((s) => (
+              <label key={s} className={cn("flex cursor-pointer items-center gap-2.5 rounded-md border px-4 py-3 text-sm transition-colors",
+                field.value === s ? "border-primary bg-primary/5 font-semibold text-foreground" : "border-border text-muted-foreground hover:border-primary/40")}>
+                <input type="radio" name={field.name} value={s} checked={field.value === s} onChange={() => field.onChange(s)} className="size-4 accent-primary" />
+                {t(`settings.o.calculationScope.${s}`)}
+              </label>
+            ))}
+          </div>
+        )} />
+        {scope === "SelectedCategories" && (
           <Controller control={control} name="loyalty.selectedCategoryIds" render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid} className="xl:col-span-2">
-              <FieldLabel className="gap-x-0">{label("selectedCategoryIds")}{required}</FieldLabel>
+            <div className="mt-3">
               {/* The server takes active categories only; one already chosen stays listed so it can be removed. */}
-              <MultiPicker options={categories.filter((c) => c.isActive || (field.value ?? []).includes(c.id)).map((c) => ({ value: c.id, label: c.categoryNameAr }))}
-                value={field.value ?? []} onChange={field.onChange} />
-              <FieldError errors={error(fieldState.error?.message)} />
-            </Field>
+              <MultiPicker options={categories.filter((c) => c.isActive || field.value.includes(c.id)).map((c) => ({ value: c.id, label: c.categoryNameAr }))}
+                value={field.value} onChange={field.onChange} />
+              <FieldError className="mt-2" errors={error(fieldState.error?.message)} />
+            </div>
           )} />
         )}
-      </LoyaltySection>
-      <LoyaltySection title={t("settings.loyalty.sec.days")}>
+      </Block>
+
+      <Block title={t("settings.loyalty.sec.days")} help={t("settings.loyalty.desc.days")}>
         <Controller control={control} name="loyalty.workingDays" render={({ field, fieldState }) => (
-          <Field data-invalid={fieldState.invalid}>
-            <FieldLabel className="gap-x-0">{label("workingDays")}{required}</FieldLabel>
-            <ToggleGroup type="multiple" variant="outline" className="grid w-full grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-7"
-              value={((field.value as number[] | undefined) ?? []).map(String)} onValueChange={(picked) => field.onChange(WEEK.filter((d) => picked.includes(String(d))))}>
-              {WEEK.map((d) => (
-                <ToggleGroupItem key={d} value={String(d)}
-                  className="h-10 w-full border-input bg-background font-normal text-muted-foreground data-[state=on]:border-primary data-[state=on]:bg-primary/10 data-[state=on]:font-medium data-[state=on]:text-primary">
-                  {t(`settings.loyalty.day.${d}`)}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
-            <FieldError errors={error(fieldState.error?.message)} />
-          </Field>
+          <div>
+            <div className="flex flex-wrap gap-x-6 gap-y-3">
+              {WEEK.map((day) => {
+                const on = field.value.includes(day)
+                return (
+                  <label key={day} className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
+                    <Checkbox checked={on} onCheckedChange={() => field.onChange(WEEK.filter((d) => (d === day ? !on : field.value.includes(d))))} />
+                    {t(`settings.loyalty.day.${day}`)}
+                  </label>
+                )
+              })}
+            </div>
+            <FieldError className="mt-2" errors={error(fieldState.error?.message)} />
+          </div>
         )} />
-      </LoyaltySection>
-      <LoyaltySection title={t("settings.loyalty.sec.earning")} cols>
-        <FormInput control={control} name="loyalty.earningInvoiceAmount" type="number" required label={label("earningInvoiceAmount")} />
-        <FormInput control={control} name="loyalty.earnedPoints" type="number" required label={label("earnedPoints")} />
-        <p className="col-span-full border-t pt-3 text-sm text-muted-foreground" aria-live="polite">
-          {t("settings.loyalty.earningSummary", { amount: n(v.earningInvoiceAmount), points: n(v.earnedPoints) })}
-        </p>
-      </LoyaltySection>
-      <LoyaltySection title={t("settings.loyalty.sec.redemption")} cols>
-        <FormInput control={control} name="loyalty.minimumRedemptionInvoiceAmount" type="number" required label={label("minimumRedemptionInvoiceAmount")} />
-        <FormInput control={control} name="loyalty.redemptionPoints" type="number" required label={label("redemptionPoints")} />
-        <FormInput control={control} name="loyalty.redemptionDiscountAmount" type="number" required label={label("redemptionDiscountAmount")} />
-        <p className="col-span-full border-t pt-3 text-sm text-muted-foreground" aria-live="polite">
-          {t("settings.loyalty.redemptionSummary", { points: n(v.redemptionPoints), amount: n(v.redemptionDiscountAmount), min: n(v.minimumRedemptionInvoiceAmount) })}
-        </p>
-      </LoyaltySection>
-    </Grid>
+      </Block>
+
+      <Block title={t("settings.loyalty.sec.earning")} help={t("settings.loyalty.desc.earning")}>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <NumberField control={control} name="earningInvoiceAmount" hint={t("settings.loyalty.hintEvery")} />
+          <NumberField control={control} name="earnedPoints" unit={unit} />
+        </div>
+      </Block>
+
+      <Block title={t("settings.loyalty.sec.redemption")} help={t("settings.loyalty.desc.redemption")}>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <NumberField control={control} name="redemptionPoints" unit={unit} />
+          <NumberField control={control} name="redemptionDiscountAmount" />
+          <div className="sm:col-span-2">
+            <NumberField control={control} name="minimumRedemptionInvoiceAmount" />
+          </div>
+        </div>
+      </Block>
+    </div>
   )
 }
 
 /**
- * The loyalty tab: the rules from GET /LoyaltyPoints and the switch from GET /Settings, in the sales settings' look
- * (grid + cancel / save footer). Saving waits for the record to be read, so a slow answer cannot be overwritten with
- * the defaults.
+ * The loyalty tab, laid out as the current system's: the rules from GET /LoyaltyPoints and the switch from GET /Settings,
+ * then the sales settings' cancel / save footer. Saving waits for the record to be read, so a slow answer cannot be
+ * overwritten with the defaults.
  */
 export function LoyaltyTab({ readOnly }: { readOnly: boolean }) {
   const { t } = useTranslation()
@@ -101,14 +148,14 @@ export function LoyaltyTab({ readOnly }: { readOnly: boolean }) {
   const record = useLoyaltyPoints()
   const save = useSaveLoyalty()
   const saved = useMemo(() => loyaltyFormOf(record.data, settings.enableLoyaltyPoints), [record.data, settings.enableLoyaltyPoints])
-  const form = useForm<FieldValues>({ resolver: zodResolver(loyaltySchema) as never, defaultValues: saved })
+  const form = useForm<LoyaltyValues>({ resolver: zodResolver(loyaltySchema), defaultValues: saved })
   useEffect(() => { form.reset(saved) }, [saved, form])
   const blocker = useBlocker(({ currentLocation, nextLocation }) => form.formState.isDirty && currentLocation.pathname !== nextLocation.pathname)
-  const submit = form.handleSubmit((data) => save.mutate({ data: data as LoyaltyValues, saved }))
+  const submit = form.handleSubmit((data) => save.mutate({ data, saved }))
 
   return (
     <form onSubmit={submit} noValidate>
-      <fieldset disabled={readOnly || !record.isSuccess} className="contents"><LoyaltyFields form={form} /></fieldset>
+      <fieldset disabled={readOnly || !record.isSuccess} className="contents"><LoyaltyFields control={form.control} /></fieldset>
       {record.isError && (
         <p className="mt-4 text-sm text-destructive" role="alert">
           {t("common.loadFailed")} <Button type="button" variant="link" className="h-auto p-0" onClick={() => record.refetch()}>{t("common.retry")}</Button>

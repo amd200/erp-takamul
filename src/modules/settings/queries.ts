@@ -45,7 +45,10 @@ export function useSaveTab() {
 }
 
 /** GET /LoyaltyPoints (`null` = no record yet). */
-export const useLoyaltyPoints = () => useQuery({ queryKey: loyaltyKeys.all, queryFn: loyaltyApi.get })
+export const useLoyaltyPoints = () => {
+  const branch = useBranchChoice((s) => s.branchId)
+  return useQuery({ queryKey: loyaltyKeys.detail(branch), queryFn: loyaltyApi.get })
+}
 
 /** Saves the loyalty tab (see `loyaltyApi.save`); both reads are refreshed afterwards, whether it worked or not. */
 export function useSaveLoyalty() {

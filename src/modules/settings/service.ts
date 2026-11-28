@@ -90,20 +90,15 @@ export const settingsApi = {
   },
 }
 
-/** .NET `DayOfWeek` names, by number (0 = Sunday, as `Date.getDay()`). */
-const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-
-/** The loyalty tab's form values: the record (or the server's defaults when there is none) and the on/off switch. */
+/** The loyalty tab's form values: the record as the server sends it (or its defaults when there is none) and the switch. */
 export function loyaltyFormOf(rec: LoyaltyPoints | null | undefined, enabled: boolean | undefined): LoyaltyValues {
   const base = emptyLoyalty.loyalty
   return {
     enableLoyaltyPoints: enabled === true,
+    // Only the form's own fields, so an extra one the server sends (an id) does not count as a change.
     loyalty: rec ? {
-      calculationScope: rec.calculationScope === "SelectedCategories" ? "SelectedCategories" : "AllCategories",
-      selectedCategoryIds: rec.selectedCategoryIds ?? [],
-      workingDays: (rec.workingDays ?? []).map((d) => (typeof d === "number" ? d : DAY_NAMES.indexOf(d))).filter((d) => d >= 0 && d <= 6),
-      earningInvoiceAmount: rec.earningInvoiceAmount ?? base.earningInvoiceAmount,
-      earnedPoints: rec.earnedPoints ?? base.earnedPoints,
+      calculationScope: rec.calculationScope, selectedCategoryIds: rec.selectedCategoryIds ?? [], workingDays: rec.workingDays ?? [],
+      earningInvoiceAmount: rec.earningInvoiceAmount ?? base.earningInvoiceAmount, earnedPoints: rec.earnedPoints ?? base.earnedPoints,
       redemptionPoints: rec.redemptionPoints ?? base.redemptionPoints,
       minimumRedemptionInvoiceAmount: rec.minimumRedemptionInvoiceAmount ?? base.minimumRedemptionInvoiceAmount,
       redemptionDiscountAmount: rec.redemptionDiscountAmount ?? base.redemptionDiscountAmount,
@@ -123,8 +118,8 @@ export const loyaltyApi = {
   },
 
   /**
-   * Saves what the tab changed: the rules with PUT /LoyaltyPoints (creates the record or updates it; days are sent as
-   * `DayOfWeek` numbers), then the switch with PUT /Settings/loyalty-points. Rules first, so a refused rule does not
+   * Saves what the tab changed: the rules with PUT /LoyaltyPoints (creates the record or updates it; days go as
+   * `DayOfWeek` names, "Saturday", as the current system sends them), then the switch with PUT /Settings/loyalty-points. Rules first, so a refused rule does not
    * leave the program switched on.
    */
   save: async (data: LoyaltyValues, saved: LoyaltyValues) => {

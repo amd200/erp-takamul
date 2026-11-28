@@ -71,14 +71,14 @@ export type Settings = { [K in GroupKey]?: Partial<Groups[K]> } & {
 
 export type SettingValue = boolean | number | string | null
 
-/**
- * GET /LoyaltyPoints as the server sends it (camelCase, enums by name). `workingDays` are .NET `DayOfWeek` values: the
- * report does not say whether they come back as numbers or names ("Saturday"), so both are accepted on reading.
- */
+/** A day of the week as the server names it (.NET `DayOfWeek` through its string enum converter). */
+export type LoyaltyWorkingDay = "Saturday" | "Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday"
+
+/** GET /LoyaltyPoints as the server sends it (camelCase, enums by name). */
 export type LoyaltyPoints = {
   calculationScope: "AllCategories" | "SelectedCategories"
   selectedCategoryIds: number[] | null
-  workingDays: (number | string)[] | null
+  workingDays: LoyaltyWorkingDay[] | null
   earningInvoiceAmount: number
   earnedPoints: number
   redemptionPoints: number

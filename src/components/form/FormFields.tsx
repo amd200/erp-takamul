@@ -51,7 +51,7 @@ const emptyNumber = (name: string) => (/\.\d+(\.|$)/.test(name) ? null : undefin
  * A number box that has been 0 shows nothing (its placeholder) while it is 0, and clearing it means 0 again. Boxes that never
  * held 0 (optional ones such as calories) keep their own empty value. The text is kept here so "0." can be typed.
  */
-function NumberText({ value, onValue, empty, placeholder, ...rest }: { value: number | null | undefined; onValue: (v: number | null | undefined) => void; empty: null | undefined } & Omit<ComponentProps<typeof Input>, "value" | "onChange" | "type">) {
+export function NumberText({ value, onValue, empty, placeholder, ...rest }: { value: number | null | undefined; onValue: (v: number | null | undefined) => void; empty: null | undefined } & Omit<ComponentProps<typeof Input>, "value" | "onChange" | "type">) {
   const zero = useRef(false)
   if (value === 0) zero.current = true
   const show = (v: number | null | undefined) => (v == null || (zero.current && v === 0) ? "" : String(v))

@@ -137,7 +137,7 @@ export const emptyCustomers: z.infer<typeof customersSchema> = {
  * on/off switch `enableLoyaltyPoints` from GET /Settings, saved with PUT /Settings/loyalty-points. Field names are the
  * server's. Earning: every `earningInvoiceAmount` of an invoice gives `earnedPoints`. Redemption: every
  * `redemptionPoints` points are worth a `redemptionDiscountAmount` discount on an invoice of at least
- * `minimumRedemptionInvoiceAmount`. Days are .NET `DayOfWeek` numbers, the same as `Date.getDay()` (0 = Sunday).
+ * `minimumRedemptionInvoiceAmount`. Days are `DayOfWeek` names ("Saturday"), as the current system sends them.
  * The rules are the server's: nothing negative, `redemptionPoints` above zero once a minimum or a discount is given,
  * at least one category when the scope is `SelectedCategories`.
  */
@@ -148,7 +148,7 @@ export const loyaltySchema = z.object({
   loyalty: z.object({
     calculationScope: z.enum(["AllCategories", "SelectedCategories"]),
     selectedCategoryIds: z.array(z.number()),
-    workingDays: z.array(z.number().int().min(0).max(6)).min(1, "settings.loyalty.err.days"),
+    workingDays: z.array(z.enum(["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"])).min(1, "settings.loyalty.err.days"),
     earningInvoiceAmount: money,
     earnedPoints: points,
     redemptionPoints: points,
@@ -166,7 +166,7 @@ export type LoyaltyValues = z.infer<typeof loyaltySchema>
 export const emptyLoyalty: LoyaltyValues = {
   enableLoyaltyPoints: false,
   loyalty: {
-    calculationScope: "AllCategories", selectedCategoryIds: [], workingDays: [6, 0, 1, 2, 3, 4],
+    calculationScope: "AllCategories", selectedCategoryIds: [], workingDays: ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
     earningInvoiceAmount: 0, earnedPoints: 0, redemptionPoints: 0, minimumRedemptionInvoiceAmount: 0, redemptionDiscountAmount: 0,
   },
 }

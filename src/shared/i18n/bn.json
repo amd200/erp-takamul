@@ -1900,13 +1900,12 @@
       "enableNotifications": "Enable invoice notifications",
       "defaultCategoryId": "Difalt bivag",
       "defaultUnitId": "Difalt ekok",
-      "enableLoyaltyPoints": "Loyalty point chalu korun",
+      "enableLoyaltyPoints": "Loyalty point program",
       "calculationScope": "Hisaber poddhoti",
       "selectedCategoryIds": "Ontorbhukto category",
-      "workingDays": "Program cholar din",
       "earningInvoiceAmount": "Invoice-er poriman",
       "earnedPoints": "Orjito point",
-      "minimumRedemptionInvoiceAmount": "Redeem korar jonno invoice-er nunotom poriman",
+      "minimumRedemptionInvoiceAmount": "Redeem korar nunotom invoice poriman",
       "redemptionPoints": "Redeem kora point",
       "redemptionDiscountAmount": "Somotullo discount-er poriman"
     },
@@ -2103,25 +2102,32 @@
       "units": "Unit load kora jayni. Abar chesta korun."
     },
     "loyalty": {
+      "intro": "Grahok kenakatay point pay, tarpor invoice-e discount hisebe redeem kore. Program bondho thakle notun point jog hoy na ebong redeem kora jay na.",
       "sec": {
-        "method": "Program-er porisor",
+        "method": "Hisaber poddhoti",
         "days": "Kajer din",
         "earning": "Point orjoner niyom",
         "redemption": "Point redeem-er niyom"
       },
-      "day": {
-        "0": "Robibar",
-        "1": "Shombar",
-        "2": "Mongolbar",
-        "3": "Budhbar",
-        "4": "Brihoshpotibar",
-        "5": "Shukrobar",
-        "6": "Shonibar"
+      "desc": {
+        "method": "Je bikrite point hisab hoy.",
+        "days": "Je dine program chole.",
+        "earning": "Invoice-er porimaner jonno grahok koto point pay.",
+        "redemption": "Redeem korle point-er mullo, ebong nunotom koto invoice-e redeem kora jay."
       },
-      "earningSummary": "Invoice-er protiti {{amount}} porimaner jonno grahok {{points}} point pay.",
-      "redemptionSummary": "Protiti {{points}} point {{amount}} discount-er soman; kompokkhe {{min}} porimaner invoice-e redeem kora jay.",
+      "day": {
+        "Saturday": "Shonibar",
+        "Sunday": "Robibar",
+        "Monday": "Shombar",
+        "Tuesday": "Mongolbar",
+        "Wednesday": "Budhbar",
+        "Thursday": "Brihoshpotibar",
+        "Friday": "Shukrobar"
+      },
+      "hintEvery": "Ei porimaner protiti gunitoke point deya hoy.",
+      "pointUnit": "point",
       "err": {
-        "points": "Nunotom invoice poriman ba discount dile redeem kora point shunner beshi hote hobe",
+        "points": "Nunotom ba discount poriman dile redeem kora point kompokkhe 1 hote hobe",
         "days": "Kompokkhe ekti din bachai korun"
       }
     }

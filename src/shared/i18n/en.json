@@ -1902,10 +1902,9 @@
       "enableNotifications": "Enable invoice notifications for customers",
       "defaultCategoryId": "Default category",
       "defaultUnitId": "Default unit",
-      "enableLoyaltyPoints": "Enable loyalty points",
+      "enableLoyaltyPoints": "Loyalty points program",
       "calculationScope": "Calculation method",
       "selectedCategoryIds": "Included categories",
-      "workingDays": "Days the program applies",
       "earningInvoiceAmount": "Invoice amount",
       "earnedPoints": "Points earned",
       "minimumRedemptionInvoiceAmount": "Minimum invoice amount to redeem",
@@ -2105,25 +2104,32 @@
       "units": "Could not load the units. Try again."
     },
     "loyalty": {
+      "intro": "Customers earn points on their purchases, then redeem them for a discount on their invoices. While the program is off, no new points are earned and nothing can be redeemed.",
       "sec": {
-        "method": "Program scope",
+        "method": "Calculation method",
         "days": "Working days",
         "earning": "Earning rule",
         "redemption": "Redemption rule"
       },
-      "day": {
-        "0": "Sunday",
-        "1": "Monday",
-        "2": "Tuesday",
-        "3": "Wednesday",
-        "4": "Thursday",
-        "5": "Friday",
-        "6": "Saturday"
+      "desc": {
+        "method": "The sales that earn points.",
+        "days": "The days the program runs.",
+        "earning": "How many points the customer earns for the invoice amount.",
+        "redemption": "What points are worth when redeemed, and the smallest invoice they can be redeemed on."
       },
-      "earningSummary": "The customer earns {{points}} points for every {{amount}} of the invoice amount.",
-      "redemptionSummary": "Every {{points}} points equal a {{amount}} discount; redemption is available on invoices of at least {{min}}.",
+      "day": {
+        "Saturday": "Saturday",
+        "Sunday": "Sunday",
+        "Monday": "Monday",
+        "Tuesday": "Tuesday",
+        "Wednesday": "Wednesday",
+        "Thursday": "Thursday",
+        "Friday": "Friday"
+      },
+      "hintEvery": "Points are given for every multiple of this amount.",
+      "pointUnit": "points",
       "err": {
-        "points": "Points redeemed must be above zero when a minimum invoice amount or a discount is set",
+        "points": "Points redeemed must be at least 1 when a minimum or discount amount is set",
         "days": "Choose at least one day"
       }
     }
